@@ -15,11 +15,11 @@ omflow的流程引擎是使用Python+Django開發,這代表除了方便的流程
 =================
 
 *  開源版下載
-   https://github.com/syscomgo/omflow
+   https://github.com/syscomgo/omflow  
 
-*  免費版本(免費版非GPL V3授權)
-   免費版本包含資料收集以及服務管理功能，個人及學術機構與評估用途免費使用
-   包裝好的免費版本可以至 https://www.syscomgo.com/ 下載.
+*  免費版本(免費版非GPL V3授權)  
+   免費版本包含資料收集以及服務管理功能，個人及學術機構與評估用途免費使用  
+   包裝好的免費版本可以至 https://www.syscomgo.com/ 下載.  
 
 
 軟體功能
