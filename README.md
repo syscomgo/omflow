@@ -35,6 +35,19 @@ omflow的流程引擎是使用Python+Django開發,這代表除了方便的流程
 *  人員管理
 *  系統設定
 
+
+畫面截圖
+=================
+
+<img width="594" src="https://raw.githubusercontent.com/syscomgo/omflow/master/screenshot/dashboard.png">
+<img width="594" src="https://raw.githubusercontent.com/syscomgo/omflow/master/screenshot/flow.png">
+<img width="594" src="https://raw.githubusercontent.com/syscomgo/omflow/master/screenshot/mission.png">
+<img width="594" src="https://raw.githubusercontent.com/syscomgo/omflow/master/screenshot/new-field.png">
+<img width="594" src="https://raw.githubusercontent.com/syscomgo/omflow/master/screenshot/schedule.png">
+<img width="594" src="https://raw.githubusercontent.com/syscomgo/omflow/master/screenshot/self-service.png">
+
+
+
 軟硬體需求
 =================
 
