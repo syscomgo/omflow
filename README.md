@@ -39,12 +39,12 @@ omflow的流程引擎是使用Python+Django開發,這代表除了方便的流程
 畫面截圖
 =================
 
-<img width="594" src="https://raw.githubusercontent.com/syscomgo/omflow/master/screenshot/dashboard.png">
-<img width="594" src="https://raw.githubusercontent.com/syscomgo/omflow/master/screenshot/flow.png">
-<img width="594" src="https://raw.githubusercontent.com/syscomgo/omflow/master/screenshot/mission.png">
-<img width="594" src="https://raw.githubusercontent.com/syscomgo/omflow/master/screenshot/new-field.png">
-<img width="594" src="https://raw.githubusercontent.com/syscomgo/omflow/master/screenshot/schedule.png">
-<img width="594" src="https://raw.githubusercontent.com/syscomgo/omflow/master/screenshot/self-service.png">
+<img width="594" src="https://raw.githubusercontent.com/syscomgo/omlib/master/screenshot/dashboard.png">
+<img width="594" src="https://raw.githubusercontent.com/syscomgo/omlib/master/screenshot/flow.png">
+<img width="594" src="https://raw.githubusercontent.com/syscomgo/omlib/master/screenshot/mission.png">
+<img width="594" src="https://raw.githubusercontent.com/syscomgo/omlib/master/screenshot/new-field.png">
+<img width="594" src="https://raw.githubusercontent.com/syscomgo/omlib/master/screenshot/schedule.png">
+<img width="594" src="https://raw.githubusercontent.com/syscomgo/omlib/master/screenshot/self-service.png">
 
 
 
