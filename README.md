@@ -48,12 +48,12 @@ omflow的流程引擎是使用Python+Django開發,這代表除了方便的流程
 軟硬體需求
 =================
 
+*  支援Windows以及Linux系統
 *  Python3 以上的版本
 *  Django 2.2 以上的版本
 
 使用pip安裝Django: 
 <pre><code>
-  
 pip install django
 
 </code></pre>
@@ -68,7 +68,6 @@ pip install django
 下載檔案後,解壓縮到指定的資料夾,執行下面的指令即可啟動
 
 <pre><code>
-  
 python manage.py runserver 0.0.0.0:8000
 
 </code></pre>
