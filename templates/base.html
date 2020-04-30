@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+{% load static %}
+{% load i18n %}
+{% load omflow_tags %}
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+{% include 'base_import.html' %}
+  <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
+        page. However, you can choose any other skin. Make sure you
+        apply the skin class to the body tag so the changes take effect. -->
+	<link rel="stylesheet" href="{% static 'css/skins/skin-syscom.css' %}">
+	<!-- AdminLTE App -->
+	<script src="{% static 'js/adminlte.min.js' %}"></script>
+</head>
+<!--
+BODY TAG OPTIONS:
+=================
+Apply one or more of the following classes to get the
+desired effect
+|---------------------------------------------------------|
+| SKINS         | skin-blue                               |
+|               | skin-black                              |
+|               | skin-purple                             |
+|               | skin-yellow                             |
+|               | skin-red                                |
+|               | skin-green                              |
+|---------------------------------------------------------|
+|LAYOUT OPTIONS | fixed                                   |
+|               | layout-boxed                            |
+|               | layout-top-nav                          |
+|               | sidebar-collapse                        |
+|               | sidebar-mini                            |
+|---------------------------------------------------------|
+-->
+<body class="hold-transition skin-syscom sidebar-mini">
+<div class="wrapper">
+
+  <!-- Main Header -->
+  <header class="main-header">
+{% include 'base_header.html' %}  
+  </header>
+  <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+{% include 'base_l_aside.html' %} 
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+        {% block content %}
+		
+		{% endblock %}
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <!-- To the right -->
+    <div class="pull-right hidden-xs">
+     	 {% onflow_version %} {% omflow_version_type %} 
+    </div>
+    <!-- Default to the left -->
+    <strong>&copy; 2020 <a href="#">The SYSCOM Group</a>.</strong> 版權所有.
+  </footer>
+
+  <!-- Add the sidebar's background. This div must be placed
+  immediately after the control sidebar -->
+  <div class="control-sidebar-bg"></div>
+</div>
+<!-- ./wrapper -->
+ {% include 'base_component.html' %}
+</body>
+</html>

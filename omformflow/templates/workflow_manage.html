@@ -1,0 +1,458 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %} 
+{% block content %}
+<!-- 
+	workflow_manage.html workflowManagePage
+	author : Pei lin
+-->
+
+	<!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i> 首頁</a></li>
+		<li >流程管理</li>
+        <li><a href="/flowmanage/page/workflow-app/">已上架應用</a></li>
+      </ol>
+    </section>
+    <section class="content">
+      <div class="row">
+      	<div class="col-xs-12">
+	  	<div class="box box-primary">
+  	      <div class="box-header with-border">
+  	      	<div class="pull-left">
+		      <button type="button" class="btn btn-default" onclick="active_flowdesign()" id="active_flowdesign" disabled="disabled" style="margin:1px 0px;"><i class="fa fa-play"></i> 啟用</button>
+		      <button type="button" class="btn btn-default" onclick="inactive_flowdesign()" id="inactive_flowdesign" disabled="disabled" style="margin:1px 0px;"><i class="fa fa-stop"></i> 停用</button>
+		      <button type="button" class="btn btn-default" onclick="delete_flowdesign()" id="inactive_flowdesign" disabled="disabled" style="margin:1px 0px;display:none;"><i class="fa fa-stop"></i> 刪除</button>
+		      <button type="button" class="btn btn-default" onclick="deploy_flowdesign()" id="inactive_flowdesign" disabled="disabled" style="margin:1px 0px;display:none;"><i class="fa fa-stop"></i> </button>
+		      <button type="button" class="btn btn-default" onclick="filter_flowdesign()" style="margin:1px 0px;"><i class="fa fa-filter"></i> 篩選</button>
+              <button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default" onclick="filter_default()" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
+          	</div>
+  	      </div>
+  	      <!-- box-header -->
+  	      <div class="box-body">
+  	      	<table id="flow_table" class="table table-bordered table-striped table-hover">
+			  <thead>
+			  	<tr>
+				  <th style="width:15px"><a><i class="fa fa-lg fa-check-square-o checkbox-toggle" style="color:SteelBlue"></i></a></th>
+				  <th>流程名稱</th>
+				  <th>說明</th>
+                  <th>狀態</th>
+				  <th>版本</th>
+				  <th>LOG</th>
+				  <th>API</th>
+				  <th></th>
+{#				  <th></th>#}
+			  	</tr>
+			  </thead>
+			  <tbody>
+			  </tbody>
+		  	</table>
+  	      </div>
+		  <!-- box-body -->
+  	  	</div>
+  	  	<!-- box -->
+      	</div>
+      	<!-- col -->
+      </div>
+      <!-- row -->
+    </section>
+    
+    
+    <div class="modal fade" id="modal-workflow-set" data-backdrop="static">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title"><i class="fa fa-edit"></i>&nbsp;&nbsp;欄位設定</h4>
+		  </div>
+		  <div class="modal-body">
+		  <!-- /.form-group -->
+		  	<button id="display_field_add" type="button" class="btn btn-default" style="margin:1px 0px 10px 0px;"><i class="fa fa-plus"></i> 新增</button>
+		  	<ul class="list-group list-group-unbordered">
+              <li class="list-group-item">
+				<ul id="display_field_list" style="list-style-type: none; margin: 0; padding: 0">
+				</ul>	
+			  </li>
+			</ul>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
+			<button type="button" class="btn btn-primary" data-dismiss="modal" id="display_field_confirm">確定</button>
+		  </div>
+		</div>
+	  </div><!-- /.modal-content -->
+	</div>
+    
+    
+    <style>
+		table tr td:nth-child(2),
+		table tr td:nth-child(3){
+		  cursor:pointer;
+		}
+	</style>
+    <script>
+    var csrfmiddlewaretoken="{{ csrf_token }}";
+    var app_name;
+    var table ;
+    var date = new Date();
+    var flow_attr =[];
+    var is_active=['1','0'];
+    var data_tmp;
+	var data_len;
+	var data_page;
+	var undeploy_flag = ['0'];
+    date.setDate(date.getDate() + 1);
+	select_time = date.getFullYear() +'-'+(date.getMonth()+1)+'-'+date.getDate();
+    $(function () {
+    	var postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, a_app_id: '{{ app_id }}'};
+    	omflowJsonAjax(postbody, '{% url "getApplicationFlowNameAjax" %}', getname_action);
+		table = $('#flow_table').DataTable({
+			"autoWidth": false,
+			"ordering": false, 
+			"dom":"<<t>'row'<'col-sm-5'i><'col-sm-7'p>>",
+			"language": __const_language__,
+			"serverSide": true,							//	serverside data loading
+			"deferRender": true,
+			"processing": false,
+			"ajax": {
+           		"url": "{% url 'listFlowActiveAjax' %}",
+            	"type": "POST",
+            	"data": function ( d ) {
+							return $.extend( {}, d, {
+								csrfmiddlewaretoken: csrfmiddlewaretoken,
+								app_id		: {{app_id}},
+								is_active	: is_active,
+								datatable	: "True", 
+								worktype	: "workflow",
+								undeploy_flag: undeploy_flag,
+								deploytime	: select_time,
+								
+							});
+						},
+				"dataSrc": function(data){
+						a = dataCompare(data,data_tmp,data_len,data_page,table);
+						data_tmp = a['data_tmp']
+						data_len = a['data_len']
+						data_page = a['data_page']
+						data.data = a['data.data']
+						return data.data;
+					},
+				"error": function(xhr,status,error){
+							clearInterval(table_routine);
+					}
+        	},   
+			"columns":[ 
+				{"width": "15px", "data": "id", "orderable": false, "render": function (data, type, row)
+                	{return '<input type="checkbox" class="icheckbox_minimal-blue" value="'+data+'" data-value="'+row.flow_name+'" data-uuid="'+row.flow_uuid+'" data-version="'+row.version+'" id="flow_'+data+'"><label for="flow_'+data+'"></label>'}
+                },
+				{"data": "flow_name"},
+				{"data":"description", "width": "150px"},
+				{"data":"is_active", "width": "45px", "orderable": false, "render": function(data,type,row)
+					{	
+						if(data)
+	        				{return '<button class="btn btn-xs btn-success" onclick="update_FlowActive(this,'+row.id+',\'is_active\')" style="width:36px">啟用</button>'}
+	        			else	
+	        				{return '<button class="btn btn-xs btn-warning" onclick="update_FlowActive(this,'+row.id+',\'is_active\')" style="width:36px">停用</button>'}
+	        		}
+				},
+				{"data":"version","width": "45px", "orderable": false},
+				{"data":"flowlog", "orderable": false, "width": "45px", "render": function(data,type,row)
+					{	
+						if(data)
+	        				{return '<button class="btn btn-xs btn-success" onclick="update_FlowActive(this,'+row.id+',\'flowlog\')" style="width:36px">啟用</button>'}
+	        			else	
+	        				{return '<button class="btn btn-xs btn-warning" onclick="update_FlowActive(this,'+row.id+',\'flowlog\')" style="width:36px">停用</button>'}
+		        		
+	        		}
+	        	},
+				{"data":"api", "orderable": false, "width": "45px", "render": function(data,type,row)
+					{	
+						if(data)
+	        				{return '<button class="btn btn-xs btn-success" onclick="update_FlowActive(this,'+row.id+',\'api\')" style="width:36px">啟用</button>'}
+	        			else	
+	        				{return '<button class="btn btn-xs btn-warning" onclick="update_FlowActive(this,'+row.id+',\'api\')" style="width:36px">停用</button>'}
+	        		}
+	        	},
+	        	{"data":"id", "orderable": false, "width": "45px", "render": function(data, type, row)
+					{return '<button class="btn btn-xs btn-default" onclick="workflow_set(\''+data+'\')">設定</button>'}
+				},
+{#				{"data": "flow_uuid", "width": "15px", "orderable": false, "render": function(data, type, row)#}
+{#        			{return '<a href="/flowmanage/page/flowvaluePage/{{app_id}}/'+data+'" title="編輯'+row.flow_name+'" style="color:black;cursor: pointer;"><i class="fa fa-fw fa-edit" style="color:SteelBlue;"></i></a>'}#}
+{#        		}#}
+			],
+			rowCallback: function(row, data){
+				$('td:eq(1), td:eq(2)', row).attr('onclick', 'javascript:location.href="/flowmanage/page/flowvaluePage/{{app_id}}/'+data.flow_uuid+'"')
+			},
+			drawCallback: function(){
+				omflowCheckAll();
+				$('.table input[type="checkbox"]').change(function(){
+			    	enablebtt();
+			    });
+			}
+		});
+	});
+	
+	
+	function getname_action(data)
+	{
+		if(data.status == 200)
+		{ 
+			app_name = data.result
+			$('.content-header > h1').append(app_name+'<small>流程列表</small>');
+			$('ol.breadcrumb').append('<li class="active"><a href="javascript:location.reload();">'+app_name+'</a></li>')
+		}
+		else
+		{ 
+			omflowAlert('red', data.message);
+		}
+		$('ul.sidebar-menu ul.treeview-menu > li > a[href="/flowmanage/page/workflow-app/"]').parentsUntil(".sidebar-menu > .treeview-menu").siblings().removeClass('active menu-open').end().addClass('active menu-open');
+	}
+	
+	
+	function enablebtt(){
+		var count = $('.table input:checkbox:checked').length;
+    	if (count == 0)
+    	{
+    		$('#undeploy_flowdesign, #active_flowdesign, #inactive_flowdesign, #flow_output').prop('disabled', 'disabled');
+    	}
+    	else if( count == 1)
+    	{
+    		
+    		$('#undeploy_flowdesign, #active_flowdesign, #inactive_flowdesign, #flow_output').prop('disabled','');
+    	}
+    	else
+    	{
+    		$('#undeploy_flowdesign, #active_flowdesign, #inactive_flowdesign').prop('disabled', '');
+    		$('#flow_output').prop('disabled','disabled');
+    	} 
+	}
+	
+	
+	function filter_flowdesign(){
+		omflowFilter(['filter_search','filter_type','filter_status','filter_length','filter_date']);
+		$('#modal-default-filter-confirm').off("click").on("click",function(){
+			is_active = [];
+			flow_attr =[];
+			var searchkey = $.trim($('#modal-default-filter #search').val());
+			var page_length = $('#modal-default-filter #page_length').val();
+			$.each($('[name="filter_status"] input:checkbox:checked'), function(){
+				is_active.push($(this).data('value'));
+			});
+			$.each($('[name="filter_type"] input:checkbox:checked'), function(){
+				flow_attr.push($(this).data('value'));
+			});
+			table.page.len(page_length);
+			table.search(searchkey).draw();
+		});
+	}
+	
+	
+    function filter_default(){
+    	is_active = [];
+		flow_attr =[];
+    	table.page.len(10);
+		table.search('');
+    	table.draw();
+    }
+    
+    
+    function active_flowdesign(){
+    	omflowListDialogue('delete', '下列流程將被啟用');
+		
+		$('#modal-default-list button:eq(2)').off("click").on("click",function(){
+			postbody = {
+				csrfmiddlewaretoken : csrfmiddlewaretoken,
+				id			: [],
+				active				: "active"
+			}
+			$.each($('.table input:checkbox:checked'), function(){
+				postbody.id.push($(this).val());
+			});
+			
+			$('#modal-default-list').on('hidden.bs.modal', function () {
+				omflowJsonAjax(postbody,'{% url "activeFlowActiveAjax"%}', actions);
+				Swal.fire({
+				  title: '處理中...',
+				  toast: true,
+				  position: 'bottom-start',
+				  showConfirmButton: false,
+				});
+				Swal.showLoading() ;
+				$('#modal-default-list').off('hidden.bs.modal');
+			});
+		});
+    }
+    
+    
+    function inactive_flowdesign(){
+    	omflowListDialogue('delete', '下列流程將被停用');
+		
+		$('#modal-default-list button:eq(2)').off("click").on("click",function(){
+			postbody = {
+					csrfmiddlewaretoken : csrfmiddlewaretoken,
+					id			: [],
+					active				: "inactive"
+				}
+				$.each($('.table input:checkbox:checked'), function(){
+					postbody.id.push($(this).val());
+				});
+				
+				$('#modal-default-list').on('hidden.bs.modal', function () {
+					omflowJsonAjax(postbody,'{% url "activeFlowActiveAjax"%}', actions);
+					Swal.fire({
+					  title: '處理中...',
+					  toast: true,
+					  position: 'bottom-start',
+					  showConfirmButton: false,
+					});
+					Swal.showLoading() ;
+					$('#modal-default-list').off('hidden.bs.modal');
+				});				
+			});
+	    }
+	    
+	    
+	    function update_FlowActive(thisbt,flow_id,field){
+	    	$(thisbt).empty().html('<i class="fa fa-refresh fa-spin" style="text-align:center;"></i>');
+	    	var postbody = {
+	    		csrfmiddlewaretoken: csrfmiddlewaretoken,
+	    		flow_id	: flow_id,
+	    		field	: field
+	    	}; 
+	    	omflowJsonAjax(postbody, '{% url "updateFlowActiveAjax" %}',update_actions);
+	    	
+	    	function update_actions(data){
+	    		if(data.status == 200)
+				{table.draw();}
+				else if (data.status == 404)
+				{
+					omflowAlert('yellow', data.message);
+				}
+				else if (data.status == 500)
+				{
+					omflowAlert('blue', data.message);
+				}
+				else if (data.status == 403)
+				{
+					omflowAlert('red', data.message);
+				}
+	    	}
+	    }
+	    
+	    
+	    function workflow_set(flow_id)
+	    {
+	    	$('#display_field_list').empty();
+	    	var postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, flow_id: flow_id};
+	    	omflowJsonAjax(postbody, '{% url "getFlowFieldNameAjax" %}', callback)
+	    	function callback(data)
+	    	{
+	    		if (data.status == 200)
+	    		{
+		    		var count = 0;
+		    		var displayfield = data.result.display_field;
+		    		delete data.result.display_field;
+		    		var displaylist  = data.result;
+		    		var displayoption = '';
+		    		$.each(displaylist, function(index, value){
+		    			displayoption +=('<option value="'+index+'">'+value+'</option>');
+		    		})
+		    		
+		    		if (displayfield == null)
+		    		{}
+		    		else
+		    		{
+		    			displayfield = JSON.parse(displayfield);
+		    			$.each(displayfield, function(index, value){
+		    				display_field_add(displayoption, count);
+		    				$('#display_'+count).val(index);
+		    				count++;
+		    			})
+		    			
+		    		}
+		    		$('#display_field_list').sortable();
+		    		$('#display_field_add').off('click').on('click', function(){
+		    			display_field_add(displayoption, count);
+		    			count++;
+		    		});
+		    		
+		    		$('#display_field_confirm').off('click').on('click', function(){
+		    			var display_field = {};
+		    			$('#display_field_list select').each(function(){
+		    				display_field[this.value] = this.selectedOptions[0].text;
+		    			})
+		    			var postdata = {csrfmiddlewaretoken: csrfmiddlewaretoken, field: 'display_field' , flow_id: flow_id, display_field: JSON.stringify(display_field)}
+		    			omflowJsonAjax(postdata, '{% url "updateFlowActiveAjax" %}', actions);
+		    			Swal.fire({
+						  title: '處理中...',
+						  toast: true,
+						  position: 'bottom-start',
+						  showConfirmButton: false,
+						});
+						Swal.showLoading() ;
+		    		});
+		    		$('.select2').select2();
+		    		$('#modal-workflow-set').modal('show');
+		    	}
+		    	else
+		    	{
+		    		omflowAlert('red', data.message);
+		    	}
+	    	}
+	    }
+	    
+	    
+	    function display_field_add(displayoption, count)
+	    {
+	    	$('#display_field_list').append('<li id="displaylist_'+count+'" class="ui-state-default" style=" margin: 0 0 0 0;height:30px;">'
+					+ '<table width="100%"><tr>'
+					+'  <td width="4%" style="vertical-align:middle;"><span class="fa fa-arrows-v"></span></td>'
+					+'  <td width="92%"><select id="display_'+count+'" class="form-control select2" style="width:100%">'+displayoption+'</select></td>'
+					+'  <td width="4%" align="right" style="color:silver;"><i class="far fa-trash-alt" onclick="display_field_delete(\'displaylist_'+count+'\')" ></i></td>'
+					+'</tr></table></li>');
+	    }
+	    
+	    
+	    function display_field_delete(thislist)
+	    {
+	    	$('#'+thislist).remove();
+	    }
+	    
+	    
+	    function actions(data)
+	    {
+	    	Swal.close();
+			if(data.status == 200)
+			{
+				LSide();
+				table.draw();
+				Swal.fire({
+		      	  icon : 'success',
+		      	  title: '成功',
+		      	  toast: true,
+			  	  position: 'bottom-start',
+			  	  showConfirmButton: false,
+		      	  timer: 2000,
+	  		    });
+			}	
+			else if (data.status == 404)
+			{
+				omflowAlert('yellow', data.message);
+			}
+			else if (data.status == 500)
+			{
+				omflowAlert('blue', data.message);
+			}
+			else if (data.status == 403)
+			{
+				omflowAlert('red', data.message);
+			}
+		}
+		
+		var table_routine = setInterval(function(){ table.draw();}, {{user.frequency}}*1000);
+    </script>
+{% endblock %}

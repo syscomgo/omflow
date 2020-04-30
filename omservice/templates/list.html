@@ -1,0 +1,1736 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %} 
+{% block content %}
+    <script src="{% static 'plugins/autosize/autosize.min.js'%}"></script>
+    <section class="content-header">
+      <!-- Content Header (Page header) -->
+        <h1>{% trans '服務請求'%}&nbsp;
+        </h1>
+      	<ol class="breadcrumb">
+        	<li><a data-idx="-1" href="/"><i class="fa fa-dashboard"></i>{% trans '首頁'%}</a></li>
+        	<li><a data-idx="0" style="cursor:pointer;"onclick="setPath(0)">{% trans '服務請求'%}</a></li>
+      	</ol>
+      <!--<ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> 首頁</a></li>
+      </ol>-->
+    </section>
+    <!-- Main content -->
+    <section class="content" style="padding-bottom:0px;">
+      <div class="row">
+      	<div class="col-xs-12">
+      	  <div class="box box-primary">
+      	    <div class="box-header with-border" >
+      	      {% if perms.omservice.OmServiceDesign_Manage %}
+      	      <div class="pull-left">
+              	<button type="button" class="btn btn-default" id="edit-mode_save" onclick="ServiceRoot_save()" style="display:none;"><i class="fa fa-save"></i> 儲存</button>
+				<button type="button" class="btn btn-default" id="edit-mode_cancel" onclick="ServiceRoot_cancel()" style="display:none;"><i class="fa fa-undo"></i> 取消</button>
+		        <button type="button" class="btn btn-default" id="read-mode_edit" onclick="ServiceRoot_edit()" style="display:none;"><i class="fa fa-pencil-square-o"></i> 編輯</button>
+		      </div>
+              <div class="pull-right" >
+			    <button type="button" class="btn btn-default move-in" id="edit-mode_addS" onclick="add_service()" style="margin:1px 0px;display:none;"><i class="fa fa-plus"></i> 建立服務</button>
+			    <button type="button" class="btn btn-default move-in" id="edit-mode_addF" onclick="add_object('folder')" style="display:none;"><i class="fa fa-plus"></i> 建立資料夾</button>
+      	      </div>
+			  {% endif%}
+      	    </div>
+      	    <!-- box-header -->
+      	    <div class="box-body">
+	      	    <div class="input-group SearchBar">
+	                <input type="text" class="form-control" id="service_keyword" >
+	                    <span class="input-group-btn">
+	                      <button type="button" onclick="Service_Search()" class="btn btn-info btn-flat">{% trans '搜尋'%}</button>
+	                    </span>
+	            </div>
+	            <div class="col-md-2" style="padding: 0px 0px 0px 5px;">
+	            	<ul id="ServiceList">
+	            		<li id='ID_0' data-idx=0 onclick="ServiceRoot_input(0)"><label>{% trans '全部'%}</label></li>
+	            	</ul>
+	            </div>
+	      	    <div class="col-md-10" style="padding: 0px 30px 0px 0px;">
+	      	    	<div id="ServiceRoot" class="omflow-box-body" style="overflow:auto;padding-top:5px;"></div>
+				</div>
+			</div>
+			<!-- box-body -->
+      	  </div>
+      	  <!-- box -->
+      	</div>
+      	<!-- col -->
+      </div>
+      <!-- row -->
+    </section>
+
+	<script>
+    /**
+	 * dashboard
+	 * author:Arthur Wang
+	 */
+	//18N_translation
+    var const_home = "{% trans '首頁'%}",
+    	const_service = "{% trans '服務請求'%}",
+    	const_folder = "{% trans '資料夾'%}",
+    	const_hr = "{% trans '分隔線'%}",
+    	const_color = "{% trans '顏色'%}",
+    	const_title = "{% trans '標題'%}",
+    	const_tip = "{% trans '說明'%}",
+    	const_icon = "{% trans '圖示'%}",
+    	const_form = "{% trans '選擇表單'%}",
+    	const_first_step = "{% trans '第一步驟'%}",
+    	const_new_step = "{% trans '新步驟'%}",
+    	const_column = "{% trans '選擇欄位'%}",
+    	const_service_target = "{% trans '服務對象'%}",
+		const_color_blue = "{% trans '藍'%}",
+		const_color_sky = "{% trans '青'%}",
+		const_color_green = "{% trans '綠'%}",
+		const_color_yellow = "{% trans '黃'%}",
+		const_color_red = "{% trans '紅'%}",
+		const_color_purple = "{% trans '紫'%}",
+		const_color_gray = "{% trans '灰'%}",
+		const_color_dark_gray = "{% trans '深灰'%}",
+		const_color_cream = "{% trans '米黃'%}",
+		const_fill_form = "{% trans '填寫表單'%}",
+		const_all_people = "{% trans '所有人'%}",
+		const_lack_require = "{% trans '缺少必填欄位。'%}",
+		const_upload_file = "{% trans '上傳檔案'%}",
+		const_require = "{% trans '必填'%}",
+		const_off_shelf = "{% trans '下架'%}",
+		const_choice_file = "{% trans '選擇檔案'%}",
+		const_remind_tip = "{% trans '輸入提示說明'%}",
+		const_none_user = "{% trans '不預選受派人'%}",
+		const_none_column = "{% trans '已新增所有欄位'%}";
+    
+    //global_parameters
+	var box_container = 0; //action container id
+	var box_object = box_object();
+	var form_object = null;
+	var column_object = {};
+	var old_box_object = "";
+	var textFile = null; //設計檔案
+	var read_mode = true;
+	var csrfmiddlewaretoken="{{ csrf_token }}";
+	var timer_list = {} //重複更新需取消前次計時
+	var chart_list = {} //更新時須取消原圖
+	var color_set = [
+		{name:const_color_blue,color:"#337ab7"},
+		{name:const_color_sky,color:"#00c0ef"},
+		{name:const_color_green,color:"#00a65a"},
+		{name:const_color_yellow,color:"#f39c12"},
+		{name:const_color_red,color:"#dd4b39"},
+		{name:const_color_purple,color:"#9d44a5"},
+		{name:const_color_gray,color:"#d2d6de"},
+		{name:const_color_dark_gray,color:"#ABABAB"},
+		{name:const_color_cream,color:"#FFEE99"},
+		];
+	
+	var config_set = {
+		setColor:
+            '<div class="form-group">'+
+                '<label class="text-light-blue">'+const_color+'</label>'+
+                '<div></div>'+
+                '<input name="showColor" style="display:inline-block;width:20%;top:-1px;position:relative;" class="form-control" readOnly></input>'+
+                '<select style="display:inline-block;width:80%;" name="setColor" class="form-control select2" >'+
+                    '<option data-color="'+color_set[0].color+'" value="bg-blue">'+color_set[0].name+'</option>'+
+                    '<option data-color="'+color_set[1].color+'" value="bg-aqua">'+color_set[1].name+'</option>'+
+                    '<option data-color="'+color_set[2].color+'" value="bg-green">'+color_set[2].name+'</option>'+
+                    '<option data-color="'+color_set[3].color+'" value="bg-yellow">'+color_set[3].name+'</option>'+
+                    '<option data-color="'+color_set[4].color+'" value="bg-red">'+color_set[4].name+'</option>'+
+                    '<option data-color="'+color_set[5].color+'" value="color-purple">'+color_set[5].name+'</option>'+
+                '</select>'+
+            '</div>',
+		setChartColor:
+            '<div class="form-group">'+
+                '<label class="text-light-blue">'+const_color+'</label>'+
+                '<div></div>'+
+                '<input name="showColor" style="display:inline-block;width:20%;top:-1px;position:relative;" class="form-control" readOnly></input>'+
+                '<select style="display:inline-block;width:80%;" name="setColor" class="form-control select2" >'+
+                    '<option data-color="'+color_set[0].color+'" value="0">'+color_set[0].name+'</option>'+
+                    '<option data-color="'+color_set[1].color+'" value="1">'+color_set[1].name+'</option>'+
+                    '<option data-color="'+color_set[2].color+'" value="2">'+color_set[2].name+'</option>'+
+                    '<option data-color="'+color_set[3].color+'" value="3">'+color_set[3].name+'</option>'+
+                    '<option data-color="'+color_set[4].color+'" value="4">'+color_set[4].name+'</option>'+
+                    '<option data-color="'+color_set[5].color+'" value="5">'+color_set[5].name+'</option>'+
+                    '<option data-color="'+color_set[6].color+'" value="6">'+color_set[6].name+'</option>'+
+                    '<option data-color="'+color_set[7].color+'" value="7">'+color_set[7].name+'</option>'+
+                '</select>'+
+            '</div>',
+		setBoxColor:
+            '<div class="form-group">'+
+                '<label class="text-light-blue">'+const_color+'</label>'+
+                '<div></div>'+
+                '<input name="showColor" style="display:inline-block;width:20%;top:-1px;position:relative;" class="form-control" readOnly></input>'+
+                '<select style="display:inline-block;width:80%;" name="setColor" class="form-control select2" >'+
+                    '<option data-color="'+color_set[6].color+'" value="box-default">'+color_set[6].name+'</option>'+
+                    '<option data-color="'+color_set[0].color+'" value="box-primary">'+color_set[0].name+'</option>'+
+                    '<option data-color="'+color_set[1].color+'" value="box-info">'+color_set[1].name+'</option>'+
+                    '<option data-color="'+color_set[2].color+'" value="box-success">'+color_set[2].name+'</option>'+
+                    '<option data-color="'+color_set[3].color+'" value="box-warning">'+color_set[3].name+'</option>'+
+                    '<option data-color="'+color_set[4].color+'" value="box-danger">'+color_set[4].name+'</option>'+
+                '</select>'+
+            '</div>',
+        setBarColor:
+            '<div class="form-group">'+
+                '<label class="text-light-blue">'+const_color+'</label>'+
+                '<div></div>'+
+                '<input name="showColor" style="display:inline-block;width:20%;top:-1px;position:relative;" class="form-control" readOnly></input>'+
+                '<select name="setColor" style="display:inline-block;width:80%;" class="form-control select2" >'+
+                    '<option data-color="'+color_set[0].color+'" value="progress-bar-blue">'+color_set[0].name+'</option>'+
+                    '<option data-color="'+color_set[1].color+'" value="progress-bar-aqua">'+color_set[1].name+'</option>'+
+                    '<option data-color="'+color_set[2].color+'" value="progress-bar-green">'+color_set[2].name+'</option>'+
+                    '<option data-color="'+color_set[3].color+'" value="progress-bar-yellow">'+color_set[3].name+'</option>'+
+                    '<option data-color="'+color_set[4].color+'" value="progress-bar-red">'+color_set[4].name+'</option>'+
+                    '<option data-color="'+color_set[5].color+'" value="color-purple">'+color_set[5].name+'</option>'+
+                '</select>'+
+            '</div>',
+		setTitle:
+            '<div class="form-group">'+
+                '<label class="text-light-blue">'+const_title+'</label>'+
+                '<input name="setTitle" type="text" class="form-control" placeholder="輸入標題，空白時會自動隱藏">'+
+            '</div>',
+		setTip:
+            '<div class="form-group">'+
+                '<label class="text-light-blue">'+const_tip+'</label>'+
+                '<input type="text" name="setTip" class="form-control" placeholder="輸入說明">'+
+            '</div>',
+		setIcon:
+            '<div class="form-group">'+
+                '<label class="text-light-blue">'+const_icon+'</label>'+
+                '<div></div>'+
+                '<input name="showIcon" style="display:inline-block;width:20%;top:-2px;position:relative;text-align:center;" value="&#xf013" class="fa form-control" readOnly>'+
+                '<select name="setIcon" style="display:inline-block;width:80%;" class="form-control select2">'+
+                	'<option data-value="&#xf013" value="fa fa-gear">齒輪</option>'+
+					'<option data-value="&#xf2e7" value="fa fa-cutlery">餐具</option>'+
+					'<option data-value="&#xf0f4" value="fa fa-coffee">咖啡</option>'+
+					'<option data-value="&#xf21e" value="fa fa-heartbeat">心跳</option>'+
+					'<option data-value="&#xf1e0" value="fa fa-share-alt">分享</option>'+
+					'<option data-value="&#xf2dc" value="fa fa-snowflake-o">雪花</option>'+
+					'<option data-value="&#xf2c9" value="fa fa-thermometer-half">溫度</option>'+
+					'<option data-value="&#xf164" value="fa fa-thumbs-up">點讚</option>'+
+					'<option data-value="&#xf165" value="fa fa-thumbs-down">倒讚</option>'+
+					'<option data-value="&#xf201" value="fa fa-line-chart">折線圖</option>'+
+					'<option data-value="&#xf0ac" value="fa fa-globe">地球</option>'+
+					'<option data-value="&#xf254" value="fa fa-hourglass">沙漏</option>'+
+					'<option data-value="&#xf0e7" value="fa fa-bolt">電力</option>'+
+					'<option data-value="&#xf007" value="fa fa-user">使用者</option>'+
+					'<option data-value="&#xf0c0" value="fa fa-users">群組</option>'+
+					'<option data-value="&#xf4ad" value="fa fa-comment-dots">對話</option>'+
+					'<option data-value="&#xf277" value="fa fa-map-signs">路標</option>'+
+					'<option data-value="&#xf084" value="fas fa-key">鑰匙</option>'+
+					'<option data-value="&#xf071" value="fa fa-exclamation-triangle">警告</option>'+
+					'<option data-value="&#xf1b9" value="fa fa-car">汽車</option>'+
+					'<option data-value="&#xf207" value="fa fa-bus">公車</option>'+
+					'<option data-value="&#xf239" value="fa fa-subway">地鐵</option>'+
+					'<option data-value="&#xf21a" value="fa fa-ship">船隻</option>'+
+					'<option data-value="&#xf072" value="fa fa-plane">飛機</option>'+
+					'<option data-value="&#xf015" value="fa fa-home">房屋</option>'+
+					'<option data-value="&#xf275" value="fa fa-industry">工廠</option>'+
+					'<option data-value="&#xf200" value="fa fa-pie-chart">圓餅圖</option>'+
+					'<option data-value="&#xf073" value="far fa-calendar-alt">行事曆</option>'+
+					'<option data-value="&#xf290" value="fa fa-shopping-bag">購物袋</option>'+
+					'<option data-value="&#xf07a" value="fa fa-shopping-cart">購物車</option>'+
+					'<option data-value="&#xf0f3" value="fa fa-bell">鈴鐺</option>'+
+					'<option data-value="&#xf1c0" value="fa fa-database">資料庫</option>'+
+					'<option data-value="&#xf381" value="fa fa-cloud-download-alt">下載</option>'+
+					'<option data-value="&#xf017" value="fa fa-clock-o">時鐘</option>'+
+					'<option data-value="&#xf06c" value="fa fa-leaf">葉子</option>'+
+					'<option data-value="&#xf0e0" value="fa fa-envelope">信封</option>'+
+					'<option data-value="&#xf155" value="fas fa-dollar-sign">金錢</option>'+
+					'<option data-value="&#xf109" value="fa fa-laptop">電腦</option>'+
+					'<option data-value="&#xf02d" value="fa fa-book">書籍</option>'+
+					'<option data-value="&#xf15c" value="fa fa-file-text">文件</option>'+
+					'<option data-value="&#xf328" value="fas fa-clipboard">剪貼板</option>'+
+					'<option data-value="&#xf044" value="fas fa-edit">書寫</option>'+
+				'</select>'+
+            '</div>',
+        setForm:
+            '<div class="form-group">'+
+                '<label class="text-light-blue">'+const_form+'</label>'+
+                '<select name="setForm" class="form-control select2" >'+
+                    '<option value="">--'+const_form+'--</option>'+
+                '</select>'+
+            '</div>',
+        setColumn:
+            '<div class="form-group">'+
+                '<label class="text-light-blue">'+const_column+'</label>'+
+                '<select name="setColumn" class="form-control select2" >'+
+                    '<option value="">--'+const_column+'--</option>'+
+                '</select>'+
+            '</div>',
+        setRole:
+        	'<div class="form-group">'+
+                '<label class="text-light-blue">'+const_service_target+'</label>'+
+                //'<div name="setRole" class="form-control" ></div>'+
+                '<select name="setRole" class="form-control select2" style="width:100%;" multiple>'+
+                    RoleArray_to_Option()+
+                '</select>'+
+            '</div>',
+		setNull:
+			'<div class="form-group">'+
+				'<label>&nbsp;</label>'+
+				'<input type="text" class="form-control" style="visibility: hidden;">'+
+			'</div>'
+	};
+	
+	$(function(){
+		ServiceRoot_load();
+		$('.box-primary').css('min-height', $('.content-wrapper').height()-$('.content-header').height()-50+'px');
+		//檢查容量
+		$('body').change(' #attachment_input',function(evt){
+			//console.log('attachment_input');
+			if(evt.target.files==undefined)
+				return;
+			var output = [];
+			for (var i = 0; i < evt.target.files.length; i++) {
+				fileIdCounter++;
+				var file = evt.target.files[i];
+				var fileId = fileIdCounter;
+				var file_size = omflowSizeUnit(file.size);
+				
+				fileTotalSize += Math.ceil(file.size/Math.pow(2, 20));
+				filesToUpload.push({
+					id: fileId,
+					file: file
+				});
+				
+				output.push('<li><div class="mailbox-attachment-info">'
+					+'<p class="mailbox-attachment-name" style="word-break: break-all;"><i class="fa fa-paperclip"></i>&nbsp;&nbsp;'+file.name+'</p>'
+					+'<span class="mailbox-attachment-size">'+file_size
+					+'<button type="button" class="close pull-right" onclick="remove_upload(this,'+fileId+')">'
+					+'<span aria-hidden="true">&times;</span></button></span>'
+					+'</div></li>');
+			}
+			
+			$('#attach_upload').append(output.join(""));
+			evt.target.value = null;
+			check_disk();
+		});
+	});
+	function actions(data,status)
+	{
+		Swal.close();
+		if(data.status == 200)
+		{
+			LSide();
+			//table.draw();
+			Swal.fire({
+	      	  icon : 'success',
+	      	  title: status?status:"成功",
+	      	  toast: true,
+		  	  position: 'bottom-start',
+		  	  showConfirmButton: false,
+	      	  timer: 2000,
+  		    });
+		}	
+		else if (data.status == 404)
+		{
+			omflowAlert('yellow', data.message);
+		}
+		else if (data.status == 500)
+		{
+			omflowAlert('blue', data.message);
+		}
+		else if (data.status == 403)
+		{
+			omflowAlert('red', data.message);
+		}
+	}	
+    
+    //產生初始儀表板物件
+	function box_object(){
+		var output = {};
+		//output["width"] = 500;
+		//output["height"] = 500;
+		output["index"] = 1;
+		output["list"] = {};
+		output["tree"] = {0:[]};
+		return output;
+	}
+	
+    //根據現況重組tree物件
+	function build_object_tree(){
+		thisTree = searchfloor([],'ServiceRoot');
+		function searchfloor(tree,id){
+			$('#'+id+'>[id^=ID_]').each(function(i){
+				var item = {};
+				item["id"] = $(this).attr('id').substr(3,$(this).attr('id').length);
+				if($(this).find('[id^=ID_]').length>0){
+					subtree = searchfloor([],"CONTENT_"+item["id"]);
+					item["tree"] = subtree;
+				}
+				tree.push(item);
+			});
+			return tree;
+		}
+		box_object.tree = thisTree;
+	}
+    
+    function ServiceRoot_input(item_id){
+    	if(item_id!=0 && typeof(box_object.list[item_id])=="undefined")
+    		return;
+		$('#ServiceRoot').empty();
+		box_container = item_id;
+		var keyword = arguments[1]? $("#service_keyword").val() : false;
+		//重設路徑
+		setPath(item_id);
+		//設定active
+		$("#ServiceList li").removeClass('active');
+		$("#ServiceList li[id='ID_"+item_id+"']").addClass('active');
+		
+		//放置內容
+		if(keyword)
+			$.each(box_object.tree[box_container],function(idx,thisID){
+				$.each(box_object.list,function(key,thisObj){
+					if(thisObj.id==thisID && thisObj.type!="folder" 
+					&& ( thisObj.setting.setTitle.indexOf(keyword)>=0 || thisObj.setting.setTip.indexOf(keyword)>=0))
+						box_new_item(thisObj,'ServiceRoot');
+				});
+			});
+		else
+			$.each(box_object.tree[box_container],function(idx,thisID){
+				$.each(box_object.list,function(key,thisObj){
+					if(thisObj.id==thisID && thisObj.type!="folder")
+						box_new_item(thisObj,'ServiceRoot');
+				});
+			});
+		
+		if(read_mode)
+			DO_readmode();
+		else
+			ServiceRoot_edit();
+	}
+	
+	function Service_Search(){
+		var this_belong = $("#ServiceList .active:eq(0)").data("idx");
+		if($("#service_keyword").val()){
+			ServiceRoot_input(this_belong,$("#service_keyword").val());
+		}else{
+			ServiceRoot_input(this_belong);
+		}
+	}
+	
+    function ServiceRoot_edit(){
+		read_mode = false;
+		$(".readHide").show();
+		$(".borderHide").removeClass("no-border-top");
+		$('#ServiceRoot [id^=ID_]').prop( "draggable" , true );
+		$("#ServiceRoot .btn-box-tool").show();
+		$("#ServiceList .btn-box-tool").show();
+		//$(".box-header .pull-left").visible();
+		//$(".box-header").show();
+		$("#read-mode_edit").hide();
+		$("#edit-mode_save").show('fade');
+		$("#edit-mode_cancel").show('fade');
+		$("#edit-mode_addS").show('fade');
+		$("#edit-mode_addF").show('fade');
+		//$("#edit-mode_import").show();
+		//$("#edit-mode_export").show();
+	}
+	function DO_readmode(){
+		read_mode = true;
+		$(".readHide").hide();
+		$(".borderHide").addClass("no-border-top");
+		$('#ServiceRoot div[id^=ID_]').prop( "draggable" , false );
+		$("#ServiceRoot .btn-box-tool").hide();
+		$("#ServiceList .btn-box-tool").hide();
+		//$(".box-header .pull-left").invisible();
+		$("#read-mode_edit").show('fade');
+		$("#edit-mode_save").hide();
+		$("#edit-mode_cancel").hide();
+		$("#edit-mode_addS").hide();
+		$("#edit-mode_addF").hide();
+		//$("#edit-mode_import").hide();
+		//$("#edit-mode_export").hide();
+	}
+    function ServiceRoot_load(){
+		var postbody = {csrfmiddlewaretoken:csrfmiddlewaretoken};
+		var callback = function(){
+			data = arguments[0];
+			if (data.status==200){
+				box_object = data.result[0]?JSON.parse(data.result[0].content):box_object;
+				$.each(box_object.list,function(item_id,thisSer){
+					//thisSer.flow_uuid = thisSer.flow_uuid.replace('-','');
+					if(item_id!=0 && thisSer.type=="folder"){
+						box_new_item(thisSer,'ServiceList');
+					}
+					else{
+						//thisSer.role = [];
+						//thisSer.default_value = [];
+						//thisSer.flow_uuid = "021c1e7bb46d4833a88b8fffdb688164";
+						//thisSer.setting.setRole=[-1];
+						
+					}
+				});
+				
+				ServiceRoot_input(0);
+				old_box_object = JSON.stringify(box_object);
+			}
+			else
+			{actions(data)}
+		};
+		omflowJsonAjax(postbody,"{% url 'loadServiceAjax'%}",callback);
+	}
+	function ServiceRoot_save(){
+		old_box_object = JSON.stringify(box_object);
+		//console.log(box_object);
+		var postdata = {  csrfmiddlewaretoken: csrfmiddlewaretoken, content: JSON.stringify(box_object) };
+		$.ajax({
+			url: "{% url 'saveServiceAjax' %}",
+			type: 'post',
+			data: postdata,
+			success: function (data) {
+				if (data.status==200){
+				}
+				else
+				{actions(data)}
+			},
+			error: function(req, status, err) {
+				$('#modal_error').modal('show');
+				console.log('Something went wrong', status, err);
+			},
+			complete: function(){
+			    
+			}
+		});
+		DO_readmode();
+	}
+	function ServiceRoot_cancel(){
+		box_object = JSON.parse(old_box_object);
+		$("#ServiceList li:eq(0)").nextAll().remove();
+		$.each(box_object.list,function(item_id,thisSer){
+		//$.each(box_object.tree,function(idx,item_id){
+			if(item_id!=0 && thisSer.type=="folder"){
+				box_new_item(thisSer,'ServiceList');
+			}
+		});
+		ServiceRoot_input(0);
+		DO_readmode();
+	}
+	//設定路徑
+	function setPath(item_id){
+		var thisItem = $(".content-header:eq(0) a[data-idx="+item_id+"]")
+		if(thisItem.length)
+			thisItem.closest('li').nextAll().remove();
+		else if(item_id!=0){
+			$(".content-header:eq(0) a[data-idx=0]").closest('li').nextAll().remove();
+			$(".content-header:eq(0) .breadcrumb").append('<li><a data-idx="'+item_id+'" style="cursor:pointer;"onclick="ServiceRoot_input('+item_id+')">'+box_object.list[item_id].setting.setTitle+'</a></li>');
+			}
+		}
+	
+	//設定Folder內順序
+	function setTree(){
+		box_object.tree[box_container] = [];
+		$.each($(".omflow-board"),function(idx,thisDom){
+			box_object.tree[box_container].push(parseInt($(thisDom).attr("id").substring(3)));
+		});
+	}
+	
+	//
+	function add_service(){
+		Grid_listForm();
+		$("#modal-service-new").modal('show');
+	}
+    //區塊-新增區塊
+    function add_object(){
+    	var type = arguments[0];
+    	switch(type){
+	    	case "service":
+	    		item = {
+					id:box_object.index++,
+					type:type,
+					available:1,
+					belong:box_container,
+					flow_uuid:$("#modal-service-new select").val(),
+					setting:{
+						setTitle:const_service,
+						setTip:const_tip,
+						setIcon:"fas fa-edit",
+						setColor:0,
+						setRole:[-1]
+					},
+					service:{
+						index:1,
+						list:{
+							0:{
+								name:const_first_step,
+								tip:"",
+								rows:1,
+								column_list:[]
+							},
+						},
+						tree:[0]
+					},
+					default_value:[]
+				}
+			box_new_item(item,'ServiceRoot');
+			$("#modal-service-new").modal("hide");
+	    	break;
+	    	case "folder":
+	    		item = {
+					id:box_object.index++,
+					type:type,
+					belong:0,
+					setting:{
+						setTitle:const_folder
+					}
+				}
+			box_new_item(item,'ServiceList');
+	    	break;
+    	}
+		
+	}
+	
+	//區塊-新增窗格-執行 NEWTYPE
+	function box_new_item(item,container){
+		box_object.list[item.id]=item;
+		//判斷指定資料夾
+		if(typeof(box_object.tree[box_container])!="undefined"){
+			if($.inArray(item.id,box_object.tree[box_container])==-1)
+				box_object.tree[box_container].push(item.id);
+		}else{
+			box_object.tree[box_container]=[item.id];
+		}
+		//判斷root有沒有
+		if(typeof(box_object.tree[0])!="undefined"){
+			if($.inArray(item.id,box_object.tree[0])==-1)
+				box_object.tree[0].push(item.id);
+		}else{
+			box_object.tree[0]=[item.id];
+		}
+		
+	    var content = '';
+	    var drag = ' draggable="true" ondragstart="boxdrag(event)" ondragover="boxAllowDrop(event) "';
+	    var drop = ' ondrop="boxdrop(event,this)" ';
+	    var display_mode = '';
+	    var config_button = '<button type="button" class="btn btn-box-tool pull-right" style="z-index:51;" onclick="box_active_item(\'_p_id_\',\'_item_type_\')" '+display_mode+'><i class="fa fa-gear"></i></button>';
+	    var	remove_button = '<button type="button" class="btn btn-box-tool pull-right" style="z-index:51;" onclick="box_button_remove_item(\'_p_id_\')" '+display_mode+'><i class="fa fa-remove"></i></button>';
+	    var	add_button = '<button type="button" class="btn btn-box-tool pull-right" style="z-index:51;" onclick="box_button_add_item(\'_p_id_\',\'_item_type_\')" '+display_mode+'><i class="fa fa-plus"></i></button>';
+	    
+	    switch(item.type)
+	    {
+	        case 'folder':
+	        	var li_config_button = '<button type="button" class="btn btn-box-tool pull-right move-in" style="z-index:51;" onclick="box_button_config_item(\'_p_id_\',\'_item_type_\')" '+display_mode+'><i class="fa fa-gear"></i></button>';
+	    		var	li_remove_button = '<button type="button" class="btn btn-box-tool pull-right move-in" style="z-index:51;" onclick="box_button_remove_item(\'_p_id_\')" '+display_mode+'><i class="fa fa-remove"></i></button>';
+		    	content = '<li id="ID__p_id_" data-idx=_p_id_ onclick="ServiceRoot_input('+item.id+')"><label id="TITLE__p_id_">'+item.setting.setTitle+'</label>'+li_remove_button+li_config_button+'</li>'
+	        break;
+	        case 'service':
+	        	var width = 4;
+	            content ='<div id="ID__p_id_" class="col-md-'+width+' omflow-board move-down"' + drag + drop + ' style="margin-bottom: 0px;">'
+						+'<div class="omflow-box-header readHide move-in"><p id="TITLE__p_id_"></p>'
+	                    + remove_button + config_button
+	                    +'</div>'
+	                    +'<div id="CONTENT__p_id_" class="omflow-box-body" onclick="box_active_item(\'_p_id_\',\'_item_type_\')"></div>'
+	                    +'</div>';
+	        break;
+	    }
+	    content = content.replace(/_p_id_/g,item.id).replace(/_item_type_/g,item.type);
+
+	    $('#' + container).append(content);
+	    box_init_item(item);
+	}
+
+	//窗格-重新設定 NEWTYPE
+	function box_init_item(item){
+		var thisDom = $("#ID_"+item.id);
+	    if(!read_mode || !item.setting.setTitle){
+	    	$("#ID_"+item.id+">.omflow-box-header").show();
+	    }
+	    switch(item.type){
+	    	case "folder":
+	    		thisDom.find("#TITLE_"+item.id).text(item.setting.setTitle);
+	    	break;
+	    	case "service":
+	    		var available = item.available? '':'<font color="red"> '+const_off_shelf+'</font>';
+	        	thisDom.find("#CONTENT_"+item.id).empty().append(
+					'<span class="omflow-box-icon" ><i class="'+item.setting.setIcon+'" style="color:'+color_set[item.setting.setColor].color+';"></i></span>'
+					+'<div class="omflow-box-title">'+item.setting.setTitle+available+'</div>'
+					+'<div class="omflow-box-txt">'+item.setting.setTip+'</div>'
+		    	);
+	    	break;
+	    }
+	}
+    //窗格-移除 NEWTYPE //待整理  刪除物件 要在兩個tree跟list
+	function box_button_remove_item(item_id){
+		
+		var item = box_object.list[item_id];
+		
+		function delObj(this_id){
+			//移除list
+			delete box_object.list[this_id];
+			//移除tree[0]
+			var idx = $.inArray( parseInt(this_id), box_object.tree[0]);
+		    if( idx!=-1 ){
+		    	box_object.tree[0].splice(idx,1);
+		    }
+		    //移除Dom
+			$('#ID_' + item_id).remove();
+		}
+		//刪除tree
+		if(typeof(box_object.tree[item_id])!='undefined'){
+    		$.each( box_object.tree[item_id], function(idx,thisIdx){
+    			delObj(thisIdx);
+    		});
+    		delete box_object.tree[item_id];
+    		delObj(item_id);
+    		ServiceRoot_input(0);
+    	}else{
+    		delObj(item_id);
+    	}
+    	
+    	return false;
+	}
+	
+	//窗格-窗格互動
+	function box_active_item(item_id,item_type){
+		if(item_type=="folder"){
+			ServiceRoot_input(item_id);
+		}else{
+			if(box_object.list[item_id].available){	
+				box_button_config_item(item_id, item_type, "service")
+				Service_Load(item_id);
+			}
+		}
+	}
+	
+    //窗格-編輯 NEWTYPE	
+    function box_button_config_item(item_id, item_type, type){
+		var item = box_object.list[item_id];
+		
+		var thisDialog = type=="service"? $("#tab-setting") : $("#modal-grid-config");
+			thisDialog.attr('name',item_id);
+		switch(item_type)
+		{
+			case 'service':
+				Grid_buildAdvance(["setTitle","setTip","setIcon","setChartColor","setRole"],item_type);
+				break;
+			case 'folder':
+				Grid_buildAdvance(["setTitle"],item_type);
+				break;
+		}
+		$.each(item.setting,function(key,val){
+			thisDialog.find('[name='+key+']:eq(0)').val(val);
+			if(key=="setColor"||key=="setIcon")
+				thisDialog.find('[name='+key+']:eq(0)').trigger('change');
+			if(key=="setRole"){
+				thisDialog.find('[name=setRole]:eq(0)').select2ToTree();
+			}
+		});
+		if(type!="service")
+			thisDialog.modal('show');
+	}
+    function Grid_buildAdvance(){
+    	
+        var thisList = arguments[0];
+        var type = arguments[1];
+        var count=1;
+        var thisDialogBody = type=="service"? $("#tab-setting").find("table").empty() : $("#modal-grid-config").find("table:eq(0)").empty();
+        $.each(thisList,function(idx,name){
+            if(count%2)
+                thisDialogBody.append($('<tr><td style="width:50%;padding-right:7px;"></td></tr>'));
+            else
+                thisDialogBody.find("tr:last").append($('<td style="width:50%;padding-left:7px;"></td>'));
+            var thisTD = thisDialogBody.find("td:last");
+            thisTD.append($(config_set[name]));
+            count++
+        });
+    }
+    function Grid_submit(type){
+		var thisDialog = type=="service"? $("#tab-setting") : $("#modal-grid-config");
+		var item_id = thisDialog.attr('name');
+		var item = box_object.list[item_id];
+		var thisSetting = {};
+		
+		thisDialog.find('[name^=set]').each(function(i){
+			var thisSet = $(this);
+			if($.inArray( thisSet.attr('name'), ["setColumn","setType","setGroup","setOrder"])>-1){
+				if(typeof(thisSetting[thisSet.attr('name')])=='undefined')
+					thisSetting[thisSet.attr('name')] = []
+				thisSetting[thisSet.attr('name')].push(thisSet.val());
+			}else{
+				var thisRole = thisSet.val();
+				for (i = 0; i < thisRole.length; i++) {
+					thisRole[i] = parseInt(thisRole[i]);
+				}
+				thisSetting[thisSet.attr('name')] = thisRole;
+			}
+		});
+		
+		item.setting = thisSetting;
+		if(type!="service")
+			$('#modal-grid-config').modal('hide');
+		box_init_item(item);
+		
+		item_id = undefined;
+		thisSetting = undefined;
+	}
+	function Grid_listForm(){
+		var postbody = {csrfmiddlewaretoken:csrfmiddlewaretoken};
+		var callback = function(){
+			data = arguments[0];
+			if (data.status==200){
+				thisSelect=$("#modal-service-new select[name=setForm]").empty();
+				$.each(data.result,function(key,value){
+					thisSelect.append($('<option value="'+key+'">'+value+'</option>'))
+				});
+			}
+			else
+			{actions(data)}
+		};
+		omflowJsonAjax(postbody,"{% url 'formServiceAjax'%}",callback);
+	}
+	
+	
+	function Service_listColumn(type){
+		var thisSelect = $('#modal-service-add-column');
+			thisSelect.find('select').empty();
+		var thatDialog = $('#service-grid-config');
+		$.each(form_object.items,function(idx,thisCol){
+			if(thisCol.type.indexOf('box')!=0 && thatDialog.find('li[data-id='+thisCol.id+']').length==0){
+				if(thisCol.type=="h_group")
+					thisSelect.find('select').append('<option value='+thisCol.id+'>'+thisCol.config.group_title+'</option>');
+				else
+					thisSelect.find('select').append('<option value='+thisCol.id+'>'+thisCol.config.title+'</option>');
+			}
+		});
+		
+		if(type=="default"){
+			thisSelect.find("button[name=normal-col]:eq(0)").hide();
+			thisSelect.find("button[name=default-col]:eq(0)").show();
+		}else{
+			if(form_object.attachment && thatDialog.find('li[data-id^="COL_UPLOAD"]').length==0)//表單允許上傳
+				thisSelect.find('select').append(
+					'<option value="COL_UPLOAD1" >'+const_upload_file+"("+const_require+")"+'</option>'+
+					'<option value="COL_UPLOAD0" >'+const_upload_file+'</option>'
+					);
+			thisSelect.find("button[name=default-col]:eq(0)").hide();
+			thisSelect.find("button[name=normal-col]:eq(0)").show();
+		}
+		if(thisSelect.find('select option').length)
+			thisSelect.modal('show');
+		else
+			actions({status:500, message:const_none_column});
+		//BindSwitchModal(thatDialog,thisSelect);
+		//BindSwitchModal(thisSelect,thatDialog);
+		//thatDialog.modal('hide');
+	}
+	
+	//讀取服務需求
+	function Service_Load(item_id){
+	
+		var thisItem = box_object.list[item_id];
+		var thisDialog = $('#service-grid-config').attr('name',item_id);
+		
+		thisDialog.find("#service-grid-title").text(thisItem.setting.setTitle);
+		thisDialog.find(".td-tab").empty();
+		thisDialog.find(".td-content").empty();
+		
+		//顯示按鈕
+		var display="";
+		var readOnly="";
+		if(read_mode){
+			readOnly = "readOnly"; //for步驟
+			display = "display:none;"; //for步驟
+			thisDialog.find(".cls_edit").hide();
+			thisDialog.find("#service-tab>ul").hide();
+			thisDialog.find("#service-tab").removeClass("nav-tabs-custom");
+		}else{
+			thisDialog.find(".cls_edit").show();
+			thisDialog.find("#service-tab>ul").show();
+			thisDialog.find("#service-tab").addClass("nav-tabs-custom");
+		}
+		//讀取formObj
+		var postbody = {csrfmiddlewaretoken:csrfmiddlewaretoken,flow_uuid:box_object.list[item_id].flow_uuid};
+		var callback = function(){
+			data = arguments[0];
+			if (data.status==200 && data.result.formobject){
+				form_object = JSON.parse(data.result.formobject);
+				form_object.attachment = data.result.attachment;
+				//console.log(form_object);
+				column_object = {};
+				$.each(form_object.items,function(idx,thisCol){
+					if(thisCol.type.indexOf('box')!=0){
+						column_object[thisCol.id] = thisCol;
+					}
+				});
+				
+				var needFirstStep = true;
+				var FirstStep_id = "";
+				$.each(thisItem.service.tree,function(idx,step_id){
+					var thisI = read_mode?'':'<i style="'+display+'" class="fa fa-remove" onclick="Step_remove('+step_id+')"></i>';
+					if(needFirstStep){
+						FirstStep_id = step_id;
+						needFirstStep = false;
+						thisI ='';
+					}
+					
+					var thisStep = thisItem.service.list[step_id];
+					
+					thisDialog.find(".td-tab").append(
+						$(
+						'<div data-step="'+step_id+'" class="tablinks" onclick="Step_Switch('+item_id+','+step_id+')">'+
+							'<input type="text" value="'+thisStep.name+'" '+readOnly+'>'+
+							thisI+
+						'</div>'
+						)
+					);
+					//判斷有無TIP
+					var thisTip = thisStep.tip?thisStep.tip:null;
+					var thisRows = thisTip? thisTip.split("\n").length:1;
+					var thisHeight = thisRows*20 + 20;
+					//thisDialog.find("#tab-step .td-content").append($('<div data-step="'+step_id+'" class="tabcontent"><textarea type="text" spellcheck="false" class="syscom-tip"'+readOnly+'></textarea><ul></ul></div>'));
+					thisDialog.find("#tab-step .td-content").append($('<div data-step="'+step_id+'" class="tabcontent"><ul class="tabcontent-ul"></ul><textarea type="text" placeholder="'+const_remind_tip+'" spellcheck="false" style="height:'+thisHeight+'px" class="syscom-tip"'+readOnly+'></textarea></div>'));
+					
+					Step_addCol(thisStep.column_list,step_id,null,thisTip);
+					
+					thisRows = undefined;
+					thisHeight = undefined;
+				});
+				
+				//導入預設值
+				thisDialog.find("#tab-default .td-content").append($('<div data-step="default" class="tabcontent"><ul class="tabcontent-ul"></ul></div>'));
+				
+				$.each(thisItem.default_value,function(idx,valueObj){
+					F_obj = {}
+					F_obj[valueObj.id] = valueObj.value;
+					Step_addCol([valueObj.id],"default",F_obj);
+				});
+				
+				if(!read_mode){
+					thisDialog.find(".tablinks").css("cursor","move");
+					thisDialog.find(".tabcontent-ul").sortable();
+					thisDialog.find(".td-tab").sortable();
+					autosize(thisDialog.find(".syscom-tip"));
+				}else{
+					thisDialog.find(".tablinks").css("cursor","pointer");
+					thisDialog.find(".tablinks input").css("cursor","pointer");
+					thisDialog.find(".syscom-tip").css("cursor","default");
+				}	
+				Step_Switch(item_id,FirstStep_id);
+				$("#service-tab").tabs();
+				if(read_mode)
+					$("#service-tab").tabs("option", "active", 1);
+				else{
+					$("#service-tab>ul>li").removeClass("active");
+					$("#service-tab>ul>li:eq(0)").addClass("active");
+					$("#service-tab").tabs("option", "active", 0);
+				}
+					
+				thisDialog.modal('show');
+			}
+			else
+			{//actions(data)
+			}
+		};
+		
+		omflowJsonAjax(postbody,"{% url 'columnServiceAjax'%}",callback);
+	}
+	
+	//新增步驟
+	function Step_add(){
+		var thisDialog = $("#service-grid-config");
+		var item_id = thisDialog.attr('name');
+		var step_id = box_object.list[item_id].service.index++;
+		thisDialog.find(".td-tab").append($(
+			'<div data-step="'+step_id+'" class="tablinks" onclick="Step_Switch('+item_id+','+step_id+')">'+
+				'<input type="text" value="'+const_new_step+'" >'+
+				'<i class="fa fa-remove" onclick="Step_remove('+step_id+')"></i>'+
+			'</div>'));
+		thisDialog.find("#tab-step .td-content").append($('<div data-step="'+step_id+'" class="tabcontent" style="display:none;"><ul class="tabcontent-ul"></ul><textarea type="text" placeholder="'+const_remind_tip+'" spellcheck="false" class="syscom-tip"></textarea></div>'));
+		
+		autosize(thisDialog.find('[data-step="'+step_id+'"] .syscom-tip'));
+		Step_Switch(item_id,step_id);
+	}
+	
+	//刪除步驟
+	function Step_remove(step_id){
+		var thisDialog = $("#service-grid-config");
+		var thisTab = thisDialog.find('.tablinks[data-step='+step_id+']:eq(0)');
+		var pre_step_id = thisTab.prev().data('step');
+		thisTab.remove();
+		thisDialog.find('.tabcontent[data-step='+step_id+']:eq(0)').remove();
+		Step_Switch(thisDialog.attr('name'),pre_step_id);
+	}
+		
+	//新增欄位
+	function Step_addCol(){
+		var thisDialog = $("#service-grid-config");
+		var step_id = null!=arguments[1]? arguments[1]:thisDialog.find(".tablinks.active:eq(0)").data('step');
+		var thisTabContent = thisDialog.find('.tabcontent[data-step='+step_id+']:eq(0) .tabcontent-ul');
+		var thisTxtarea = thisDialog.find('.tabcontent[data-step='+step_id+']:eq(0) .syscom-tip');
+		var thisCol_List = arguments[0]? arguments[0] : [$("#modal-service-add-column select").val()];
+		var thisValue_List = arguments[2];
+		var thisTip = arguments[3];
+		
+		if(read_mode && !thisTip){
+			thisTxtarea.hide();
+		}else{
+			thisTxtarea.val(thisTip).show();
+		}
+		var moveable = read_mode?'':'cursor: move;';
+		$.each(thisCol_List,function(idx,Col_id){
+			if( Col_id=="level" || Col_id=="title" || Col_id=="status" || Col_id=="group")
+				return;
+			else if( (Col_id=="COL_UPLOAD1"||Col_id=="COL_UPLOAD0") && form_object.attachment){//附加檔案欄位
+				var require = Col_id=="COL_UPLOAD1"? '<font color="red"> *</font>' : "";
+				var display = read_mode?'':'display:none;';
+				var thisI = read_mode?'':Col_id=="COL_UPLOAD1"?
+					'<i class="fa fa-remove column-remove" onclick="Remove_Column(\'COL_UPLOAD1\')"></i>':
+					'<i class="fa fa-remove column-remove" onclick="Remove_Column(\'COL_UPLOAD0\')"></i>';
+				thisTabContent.append(
+					'<li class="form-group" style="width:100%;" id="'+Col_id+'" data-id="'+Col_id+'" data-type="file">'+
+		                '<label class="text-light-blue">'+ const_upload_file + require +'</label>'+
+		                thisI+
+		                '<button class="btn btn-default btn-file" style="margin:0px 4px 10px 0px;display:block;" >'+
+		                '<i class="fa fa-file-archive"></i> '+const_choice_file+
+		                	'<input type="file" style="'+display+'" class="file" id="attachment_input" name="attachment_input" multiple="multiple" >'+
+		                '</button>'+
+		                '<label name="fileWarning" class="text-red" style="display:none;">{% trans '硬碟容量不足，請移除部分檔案再上傳或聯絡系統管理員'%}</label>'+
+		            '</li>'
+		        );
+		        thisTabContent.after('<ul class="clearfix" id="attach_upload"></ul>');
+				
+			}else{
+				var thisCol = column_object[Col_id];
+				var thisI = read_mode?'':'<i class="fa fa-remove column-remove" onclick="Remove_Column(\''+thisCol.id+'\')"></i>';
+				var require = thisCol.config.require ? '<font color="red"> *</font>':'';
+				var readonly = step_id=="default" ? '' : thisCol.config.readonly||read_mode==false ? 'readonly disabled' :'';
+				var thisValue = thisValue_List? thisValue_List[Col_id] : thisCol.config.value?thisCol.config.value :"";
+				
+				//var content = $('<div id="COL_'+thisCol.id+'" name='+thisCol.id+' class="col-md-6"></div>');
+				switch(thisCol.type){
+					case "h_title":
+						thisTabContent.append(
+							'<li class="form-group" style="'+moveable+'" id="COL_'+thisCol.id+'" data-id="'+thisCol.id+'" data-type="'+thisCol.type+'">'+
+				                '<label class="text-light-blue">'+ thisCol.config.title + require +'</label>'+
+				                thisI+
+				                '<input name="setValue" type="text" value="'+thisValue+'" class="form-control" '+readonly+'>'+
+				            '</li>'
+				            );
+					break;
+					case "h_status":
+						var content = $('<li class="form-group" style="'+moveable+'" id="COL_'+thisCol.id+'" data-id="'+thisCol.id+'" data-type="'+thisCol.type+'">'+
+				                '<label class="text-light-blue">'+ thisCol.config.title + require +'</label>'+
+				                thisI+
+				                '<select name="setValue" value="'+thisValue+'" class="form-control select2" style="width: 100%;" '+readonly+'>' + Array_to_Option(thisCol) + '</select>'+
+				            '</li>');
+				        content.find('select').val(thisValue);
+						thisTabContent.append(content);
+					break;
+					case "inputbox":
+						thisTabContent.append(
+							'<li class="form-group" style="'+moveable+'" id="COL_'+thisCol.id+'" data-id="'+thisCol.id+'" data-type="'+thisCol.type+'">'+
+				                '<label class="text-light-blue">'+ thisCol.config.title + require +'</label>'+
+				                thisI+
+				                '<input name="setValue" type="text" value="'+thisValue+'" class="form-control" '+readonly+'>'+
+				            '</li>'
+						);
+					break;
+					case "areabox":
+						var content = $('<li class="form-group" style="'+moveable+'" id="COL_'+thisCol.id+'" data-id="'+thisCol.id+'" data-type="'+thisCol.type+'">'+
+				                '<label class="text-light-blue">'+ thisCol.config.title + require +'</label>'+
+				                thisI+
+				                '<textarea name="setValue" rows="' + thisCol.config.rows + '" class="form-control" '+readonly+'></textarea>'+
+				            '</li>');
+				        content.find('textarea').val(thisValue);
+						thisTabContent.append(content);
+					break;
+					case "list":
+						var content = $('<li class="form-group" style="'+moveable+'" id="COL_'+thisCol.id+'" data-id="'+thisCol.id+'" data-type="'+thisCol.type+'">'+
+				                '<label class="text-light-blue">'+ thisCol.config.title + require +'</label>'+
+				                thisI+
+				                '<select name="setValue" value="'+thisValue+'" class="form-control select2" '+readonly+'>' + Array_to_Option(thisCol) + '</select>'+
+				            '</li>');
+				        content.find('select').val(thisValue);
+						thisTabContent.append(content);
+				    break;
+					case 'h_level':
+						var content = $('<li class="form-group" style="'+moveable+'" id="COL_'+thisCol.id+'" data-id="'+thisCol.id+'" data-type="'+thisCol.type+'" >'+
+				                '<label class="text-light-blue">'+ thisCol.config.title + require +'</label>'+
+				                thisI+
+				                '<select name="setValue" value="'+thisValue+'" class="form-control select2" '+readonly+'>' + Array_to_Option(thisCol) + '</select>'+
+				            '</li>');
+				        content.find('select').val(thisValue);
+						thisTabContent.append(content);
+					break;
+					case 'h_group':
+						var user_require = thisCol.config.user_require ? '<font color="red"> *</font>':'';
+						//console.log(thisValue);
+						thisTabContent.append(
+							'<li class="form-group" style="'+moveable+'" id="COL_'+thisCol.id+'" data-id="'+thisCol.id+'" data-type="'+thisCol.type+'" >'+
+				                '<label class="text-light-blue">'+ thisCol.config.group_title + require +'</label>'+
+				                thisI+
+				                '<select name="setValue1" class="form-control " style="width:100%;" '+readonly+'>' + 
+				                GroupArray_to_Option() + 
+				                '</select>'+
+				                '<label style="margin-top:15px;" class="text-light-blue">'+ thisCol.config.user_title + user_require +'</label>'+
+				                '<select name="setValue2" class="form-control " '+readonly+'>' + '</select>'+
+				            '</li>'
+				        );
+				        thisTabContent.find("[name=setValue1]").val(thisValue.group).change(function(){
+				        	thisTabContent.find("[name=setValue2]").empty().append(
+				        		GroupUserArray_to_Option(thisTabContent.find("[name=setValue1]").val())
+				        	);
+				        }).trigger('change').select2ToTree();
+				        thisTabContent.find("[name=setValue1]").next().css("display","block");
+				        thisTabContent.find("[name=setValue2]").val(thisValue.user);
+					break;
+					case 'checkbox':
+						//thisValue = thisValue.split(",");
+						thisTabContent.append(
+							'<li class="form-group" style="'+moveable+'" id="COL_'+thisCol.id+'" data-id="'+thisCol.id+'" data-type="'+thisCol.type+'" >'+
+				                '<label class="text-light-blue">'+ thisCol.config.title + '<font color="red"> *</font>' +'</label>'+
+				                thisI+
+				                '<div>' + Array_to_CheckBox(thisCol) + '</div>'+
+				            '</li>'
+				        );
+				        for(i=0;i<thisValue.length;i++){
+				        	thisTabContent.find('input[value='+thisValue[i]+']').prop('checked',true);
+				        }
+					break;
+				}
+			}
+			var addDialog = $("#modal-service-add-column");
+			if(!addDialog.is(":hidden"))
+				addDialog.modal('hide');
+		});
+	}
+	
+	function Remove_Column(col_id){
+		$("#service-grid-config").find('li[data-id='+col_id+']').remove();
+	}
+	
+	//切換步驟
+	function Step_Switch(item_id,step_id){
+		var thisDialog = $('#service-grid-config');
+		var thisTextarea = thisDialog.find(".syscom-tip:eq(0)");
+		var thisDom = thisDialog.find('.tablinks[data-step='+step_id+']');
+		if(thisDom.length==0)
+			return;
+		var thisItem = box_object.list[item_id];
+		var thisStep = thisItem.service.list[step_id];
+		
+		
+		thisDialog.find('#tab-step .tabcontent').hide();
+		thisDialog.find('.tablinks').removeClass("active");
+		thisDialog.find('.tabcontent[data-step='+step_id+']').show();
+		thisDom.addClass("active");
+		
+		if(read_mode){
+			//判斷有無下一步驟
+			if(thisDom.nextAll().length){
+				thisDialog.find('.cls_submit').hide();
+				thisDialog.find('.cls_save').hide();
+				thisDialog.find('.cls_next').show().off('click').on('click',function(){
+					Step_Switch(item_id,thisDom.next().data('step'));
+				})
+			}else{
+				thisDialog.find('.cls_next').hide();
+				thisDialog.find('.cls_save').hide();
+				thisDialog.find('.cls_submit').show();
+			}
+			
+			//判斷有無上一步驟
+			if(thisDom.prevAll().length){
+				thisDialog.find('.cls_cancel').hide();
+				thisDialog.find('.cls_last').show().off('click').on('click',function(){
+					Step_Switch(item_id,thisDom.prev().data('step'));
+				})
+			}else{
+				thisDialog.find('.cls_last').hide();
+				thisDialog.find('.cls_cancel').show();
+			}
+		}else{
+			thisDialog.find('.cls_next').hide();
+			thisDialog.find('.cls_submit').hide();
+			thisDialog.find('.cls_save').show();
+			thisDialog.find('.cls_last').hide();
+			thisDialog.find('.cls_cancel').show();
+		}
+		
+		//Service_buildColumn(thisDialog.find('.tabcontent[data-step='+step_id+'] table'),thisStep.json)		
+		thisDialog = undefined;
+		thisItem = undefined;
+		thisTip = undefined;
+	}
+	
+	//取得指定DIV下欄位值
+	function getFormdata(thisDialog){
+		var thisDialog = $(thisDialog);
+		var data = [];
+		var RequireWarning = false;
+		$.each(thisDialog.find('li[id^=COL_]'),function(idx,thisDom){
+			var thisDom = $(thisDom);
+			var thisID = thisDom.data('id');
+			var thisType = thisDom.data('type');
+			var thisItem = column_object[thisID];
+			
+			switch(thisType){
+				case 'inputbox':
+				case 'areabox':
+				case 'list':
+					var thisValue=thisDom.find('[name=setValue]:eq(0)').val();
+					if(thisDom.find('font[color=red]').length && (null==thisValue || thisValue.length==0))
+						RequireWarning = true;
+					else{
+						var item_data = {};
+						item_data['id'] = thisID;
+						item_data['value'] = thisValue;
+						item_data['type'] = thisType;
+						data.push(item_data);
+					}
+					break;
+				case 'checkbox':
+					//抓取值
+					var thisValue=[];
+					if(thisItem.config.multiple){
+						thisValue= $('input[name="' + thisID + '"]:checked').map(function() { return $(this).val(); }).get();
+					}else{
+						thisValue= [];
+						thisValue.push($('input[name="' + thisID + '"]:checked').val());
+					}
+					//檢查必填
+					//console.log(thisValue);
+					if(thisDom.find('font[color=red]').length && thisValue==[])
+						RequireWarning = true;
+					else{
+						var item_data = {};
+						item_data['id'] = thisID;
+						item_data['type'] = thisType;
+						item_data['value'] = thisValue;
+						data.push(item_data);
+					}
+					break;
+				case 'h_level':
+					//抓取值
+					var thisValue=thisDom.find('[name=setValue]:eq(0)').val();
+					//檢查必填
+					if(thisDom.find('font[color=red]').length && (null==thisValue || thisValue.length==0))
+						RequireWarning = true;
+					else{
+						var item_data = {};
+						item_data['id'] = thisID;
+						item_data['value'] = thisValue;
+						item_data['type'] = thisType;
+						data.push(item_data);
+						//
+						var header_item_data = {};
+						header_item_data['id'] = 'level';
+						header_item_data['value'] = item_data['value'];
+						header_item_data['type'] = 'header';
+						data.push(header_item_data);
+					}
+					break;
+				case 'h_title':
+					//抓取值
+					var thisValue=thisDom.find('[name=setValue]:eq(0)').val();
+					//檢查必填
+					if(thisDom.find('font[color=red]').length && (null==thisValue || thisValue.length==0))
+						RequireWarning = true;
+					else{
+						var item_data = {};
+						item_data['id'] = thisID;
+						item_data['value'] = thisValue;
+						item_data['type'] = thisType;
+						data.push(item_data);
+						//
+						var header_item_data = {};
+						header_item_data['id'] = 'title';
+						header_item_data['value'] = thisValue;
+						header_item_data['type'] = 'header';
+						data.push(header_item_data);
+					}
+					break;
+				case 'h_status':
+					//抓取值
+					var thisValue=thisDom.find('[name=setValue]:eq(0)').val();
+					var thisText=thisDom.find('[name=setValue]:eq(0) :selected').text();
+					//檢查必填
+					if(thisDom.find('font[color=red]').length && (null==thisValue || thisValue.length==0))
+						RequireWarning = true;
+					else{
+						var item_data = {};
+						item_data['id'] = thisID;
+						item_data['value'] = thisValue;
+						item_data['type'] = thisType;
+						data.push(item_data);
+						//
+						var header_item_data = {};
+						header_item_data['id'] = 'status';
+						header_item_data['value'] = thisText;
+						header_item_data['type'] = 'header';
+						data.push(header_item_data);
+					}
+					break;
+				case 'h_group':
+					//抓取值
+					var thisValue1=thisDom.find('[name=setValue1]:eq(0)').val();
+					var thisValue2=thisDom.find('[name=setValue2]:eq(0)').val();
+					//檢查必填
+					if( 
+						thisDom.find('label:eq(0) font[color=red]').length && (null==thisValue1 || thisValue1.length==0 ) ||
+						thisDom.find('label:eq(1) font[color=red]').length && (null==thisValue2 || thisValue2.length==0 )
+					)
+						RequireWarning = true;
+					else{
+						var item_data = {};
+						item_data['id'] = thisID;
+						item_data['value'] = {'group':thisValue1,'user':thisValue2};
+						item_data['type'] = thisType;
+						data.push(item_data);
+						var header_item_data = {};
+						header_item_data['id'] = 'group';
+						header_item_data['value'] = item_data['value'];
+						header_item_data['type'] = 'header';
+						data.push(header_item_data);
+					}
+					break;
+				case 'file':
+					var thisValue=thisDom.find('.file').val();
+					if(thisDom.find('font[color=red]').length && (null==thisValue || thisValue.length==0))
+						RequireWarning = true;
+					break;
+			}
+			
+			if(RequireWarning)
+				return false;
+		});
+		
+		if(RequireWarning)
+			return false;
+		else
+			return data;
+	}
+	
+	//送出服務需求
+	function Request_Send(){
+		var thisDialog = $('#service-grid-config');
+		var flow_uuid = box_object.list[thisDialog.attr('name')].flow_uuid;
+
+		var data = getFormdata(thisDialog.find("#tab-step"));
+		if(data==false){
+			thisDialog.off('hidden.bs.modal');
+			thisDialog.on('hidden.bs.modal', function () {
+				thisDialog.off('hidden.bs.modal');
+			    var callback = function(){
+			    	thatDialog = $("#modal_yellow");
+			    	thatDialog.off('hidden.bs.modal');
+					thatDialog.on('hidden.bs.modal', function () {
+						thatDialog.off('hidden.bs.modal');
+						$('#service-grid-config').modal('show');
+					});
+			    };
+			    omflowAlert('yellow', const_lack_require, callback);
+			});
+			thisDialog.modal('hide');
+			return;
+		}
+		//omflowJsonAjax(postbody, '{% url "requestServiceAjax"%}', callback);
+		
+		
+		var form_data = new FormData();
+		var url = '{% url "requestServiceAjax"%}';
+		form_data.append("csrfmiddlewaretoken", '{{ csrf_token }}');
+		form_data.append("flow_uuid", flow_uuid);
+		form_data.append("service_id", thisDialog.attr('name'));
+		form_data.append("formdata", JSON.stringify(data));
+		for (var i = 0, len = filesToUpload.length; i < len; i++) {
+			form_data.append("files", filesToUpload[i].file);
+		}
+		$.ajax({
+			url: url,
+			type: 'post',
+			data: form_data,
+			cache:false,
+			processData: false,
+			contentType: false,
+			dataType: 'json',
+			xhr : function () {
+				var myXhr = $.ajaxSettings.xhr();
+				if(myXhr.upload){
+					myXhr.upload.addEventListener('progress',progressHandlingFunction, false);
+					return myXhr;
+				}
+			},
+			success: function (data) {
+				//$('button[name="file_upload"]').hide();
+				//console.log(data);
+				$("#modal-progress").modal("hide");
+				$('#attach_upload').empty();
+				fileIdCounter = 0;
+				filesToUpload = [];
+				fileTotalSize = 0;
+				//attachment_browser();
+				actions(data,"請求成功");
+			},
+			error: function(req, status, err) {
+				$('#modal_error').modal('show');
+				console.log('Something went wrong', status, err);
+			}
+		});
+		
+		function progressHandle()
+		{
+			var value = (event.loaded / event.total * 100 | 0);
+			var strProgress = value + "%";
+			$("#modal_attachment_browser .progress-bar").css({"width": strProgress});
+			$("#modal_attachment_browser .progress-bar").text(strProgress);
+		}
+		thisDialog.modal('hide');
+	}
+	
+	//儲存服務需求設定
+	function Service_save(){
+		var thisDialog = $('#service-grid-config');
+		var item_id = thisDialog.attr('name');
+		var item = box_object.list[item_id];
+		
+		//一般設定
+		Grid_submit("service");
+		
+		item.service.tree = [];
+		item.service.list = {};
+		var data = getFormdata(thisDialog.find("#tab-default"));
+		if(data.length && data==false){
+			thisDialog.off('hidden.bs.modal');
+			thisDialog.on('hidden.bs.modal', function () {
+				thisDialog.off('hidden.bs.modal');
+			    var callback = function(){
+			    	thatDialog = $("#modal_yellow");
+			    	thatDialog.off('hidden.bs.modal');
+					thatDialog.on('hidden.bs.modal', function () {
+						thatDialog.off('hidden.bs.modal');
+						$('#service-grid-config').modal('show');
+					});
+			    };
+			    omflowAlert('yellow', const_lack_require, callback);
+			});
+			thisDialog.modal('hide');
+			return;
+		}
+		item.default_value = data;
+		
+		//儲存步驟設定
+		$.each(thisDialog.find(".tablinks"),function(idx,thisTab){
+			var thisTab = $(thisTab);
+			var thisStep = {
+					name:thisTab.find('input').val(),
+					column_list:[],
+					tip:""
+				};
+			var step_id = thisTab.data('step');
+			var thisContent = thisDialog.find('.tabcontent[data-step='+step_id+']');
+			thisStep.tip = thisContent.find('.syscom-tip').val();
+			//thisStep.rows = thisContent.find('.syscom-tip')[0].rows+1;
+			$.each(thisContent.find('li[id^=COL_]'),function(idx,thisCol){
+				thisStep.column_list.push($(thisCol).data('id'));
+			});
+			
+			item.service.tree.push(step_id);
+			item.service.list[step_id]=thisStep;
+		});
+		
+		//儲存預設值
+		//var column_list = [];
+		//$.each(thisDialog.find(".tabcontent[data-step=default] [id^=COL_]"),function(idx,thisCol){
+			//thisCol_obj = {};
+			//thisFormCol = column_object[thisCol.id];
+			//column_list.push($(thisCol).data('id'));
+		//});
+		//item["default_value"]=column_list;
+		
+		thisDialog.modal('hide');
+	}
+	
+	function Array_to_Option(thisItem){
+		var options = ''
+		$.each(thisItem.config.lists,function(idx,thisObj){
+			options += '<option value="'+thisObj.value+'">'+thisObj.text+'</option>'
+		});
+		return options;
+	}
+	
+	function Array_to_CheckBox(thisItem){
+		var output = '';
+		//var global_id = active_id + '_' + form_item.id;
+		var multiple = thisItem.config.multiple;
+		var readonly = '';
+		if(thisItem.config.readonly)
+		{
+			readonly = 'readonly';
+		}
+		
+		thisItem.config.lists.forEach(function(item, index, array)
+		{
+			if(multiple)
+			{
+				//checkbox
+				output += '<div><input id="' + thisItem.id + '_' + index + '" name="' + thisItem.id + '" type="checkbox" class="icheckbox_minimal-blue" value="' + item.value + '" '+readonly+'><label for="' + thisItem.id + '_' + index + '"></label>' + item.text + '</div>'
+			}
+			else
+			{
+				//radio
+				output += '<div><input id="' + thisItem.id + '_' + index + '" name="' + thisItem.id + '" type="radio" class="iradio_minimal-blue" value="' + item.value + '" '+readonly+'><label for="' + thisItem.id + '_' + index + '"></label>' + item.text + '</div>'
+			}
+				
+		});
+		
+		return output;
+	}
+	
+	//讀取組織清單
+	function GroupArray_to_Option(){
+		var postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken};
+		var output = '';
+		$.ajax({
+			url	: '{% url 'listGroupAjax' %}',
+			type: 'post',
+	        data: postbody,
+	        async:false,
+	        dataType: 'json',
+	        success: function (data) {
+	        	//console.log(data);
+	            var group_tree_data_uuid = [];
+				var list_count = 0;
+				var uuid_mode = false;
+				//get global
+				if(group_tree_data_uuid.length <= 0 ){
+				
+					var group_tree_data_source = data.result;
+					group_tree_data_source.forEach(function(option_item){
+						if(option_item.parent_group == null){
+							group_tree_data_uuid.push({'id':option_item.id ,'value':option_item.group_uuid ,'text':option_item.display_name ,'parent_group':option_item.parent_group ,'parent':null,'level':1,'nonleaf':'non-leaf'});
+						}
+						else{
+							var new_class = 0;
+							var parent_uuid = '';
+							group_tree_data_uuid.forEach(function(parent_item){
+								
+								if(parent_item.id == option_item.parent_group){
+									new_class = parent_item.level + 1;
+									parent_uuid = parent_item.value;
+								}
+							});
+							//find child
+							var nonleaf = '';
+							group_tree_data_source.forEach(function(find_item){
+								if(find_item.parent_group == option_item.id){
+									nonleaf = 'non-leaf';
+								}
+							});
+							group_tree_data_uuid.push({'id':option_item.id ,'value':option_item.group_uuid ,'text':option_item.display_name ,'parent_group':option_item.parent_group ,'parent':parent_uuid,'level':new_class,'nonleaf':nonleaf });
+						}
+					});
+				}
+				
+				if(list_count <= 0){//remake
+					if(uuid_mode){
+						group_tree_data_uuid.forEach(function(group_item){
+							if (group_item.parent==null){
+								output += '<option value="' + group_item.value + '" class="l' + group_item.level + ' ' + group_item.nonleaf + '" >' + group_item.text + '</option><!--' + group_item.value + '-->';
+							}else{
+								output = output.replace('<!--' + group_item.parent + '-->','<option value="' + group_item.value + '" data-pup="' + group_item.parent + '" class="l' + group_item.level + ' ' + group_item.nonleaf + '" >' + group_item.text + '</option><!--' + group_item.value + '--><!--' + group_item.parent + '-->'); 
+							}
+						});
+					}else{//convert to id
+						group_tree_data_uuid.forEach(function(group_item){
+							if (group_item.parent==null){
+								output += '<option value="' + group_item.id + '" class="l' + group_item.level + ' ' + group_item.nonleaf + '" >' + group_item.text + '</option><!--' + group_item.id + '-->';
+							}else{
+								output = output.replace('<!--' + group_item.parent_group + '-->','<option value="' + group_item.id + '" data-pup="' + group_item.parent_group + '" class="l' + group_item.level + ' ' + group_item.nonleaf + '" >' + group_item.text + '</option><!--' + group_item.id + '--><!--' + group_item.parent_group + '-->'); 
+							}
+						});	
+					}
+				}else{
+					if(uuid_mode){
+						group_tree_data_uuid.forEach(function(group_item){
+							if (group_item.parent==null){
+								output += '<option value="' + group_item.value + '" class="l' + group_item.level + ' ' + group_item.nonleaf + '" >' + group_item.text + '</option><!--' + group_item.value + '-->';
+							}else{
+								output = output.replace('<!--' + group_item.parent + '-->','<option value="' + group_item.value + '" data-pup="' + group_item.parent + '" class="l' + group_item.level + ' ' + group_item.nonleaf + '" >' + group_item.text + '</option><!--' + group_item.value + '--><!--' + group_item.parent + '-->'); 
+							}
+						});
+					}else{
+						//需支援多層次
+						var output_multi = '';
+						form_item.config.lists.forEach(function(list_item){
+							output = '';
+							var root_id = 0;
+							var tree_item = [];
+							group_tree_data_uuid.forEach(function(group_item){
+								//循線往下長
+								var root_level = 1;
+								if (group_item.value == list_item.text){
+									output += '<option value="' + group_item.id + '" class="l' + '1' + ' ' + group_item.nonleaf + '" >' + group_item.text + '</option><!--' + group_item.id + '-->';
+									root_level = group_item.level;
+									tree_item.push(group_item.id);
+								}else{
+									if((tree_item.indexOf(group_item.id))||(tree_item.indexOf(group_item.parent_group))){
+										if(!(group_item.id in tree_item)){
+											tree_item.push(group_item.id);
+										}
+										output = output.replace('<!--' + group_item.parent_group + '-->','<option value="' + group_item.id + '" data-pup="' + group_item.parent_group + '" class="l' + group_item.level + ' ' + group_item.nonleaf + '" >' + group_item.text + '</option><!--' + group_item.id + '--><!--' + group_item.parent_group + '-->'); 
+									}
+								}
+							});	
+							output_multi = output_multi + output;
+						});
+						output = output_multi;
+					}
+				}
+			},
+	        error: function(req, status, err) {
+				$('#modal_error').modal('show');
+	        	console.log('Something went wrong', status, err);
+	    	}
+		});
+		
+		return output;
+	}
+	
+	//讀取組織人員清單
+	function GroupUserArray_to_Option(group_id){
+		if(!group_id)
+			return "";
+			
+		var userlist = '<option value="">'+const_none_user+'</option>';
+		$.ajax({
+			url: "{% url 'searchGroupUserAjax' %}",
+			type: 'post',
+			async:false,
+			data: { csrfmiddlewaretoken: '{{ csrf_token }}' , searchkey: group_id},
+			success: function (data) {
+	            $.each(data.result,function(idx,thisObj){
+	            	userlist += '<option value='+thisObj.id+'>'+thisObj.username+'</option>';
+	            });
+			},
+			error: function(req, status, err) {
+				$('#modal_error').modal('show');
+	        	console.log('Something went wrong', status, err);
+	    	}
+		});
+		return userlist;
+	}
+	
+	//
+	function RoleArray_to_Option(){
+		var rolelist = '<option value=-1>'+const_all_people+'</option>';
+		$.ajax({
+			url: "{% url 'listGroupAjax' %}",
+			type: 'post',
+			async:false,
+			data: {  csrfmiddlewaretoken: csrfmiddlewaretoken, functional_flag: 1 },
+			success: function (data) {
+	            $.each(data.result,function(idx,thisObj){
+	            	//console.log(thisObj.id);
+	            	rolelist += '<option value='+thisObj.id+'>'+thisObj.display_name+'</option>';
+	            });
+			},
+			error: function(req, status, err) {
+				$('#modal_error').modal('show');
+	        	console.log('Something went wrong', status, err);
+	    	}
+		});
+		return rolelist;
+	}
+	
+	function BindSwitchModal(thisModal,nextModal){
+		thisModal = $(thisModal);
+		nextModal = $(nextModal);
+		thisModal.off('hidden.bs.modal');
+		thisModal.on('hidden.bs.modal', function () {
+			thisModal.off('hidden.bs.modal');
+		    nextModal.modal('show');
+		});
+	}
+	
+	//Listener
+    //改變選項顏色
+    $('body').on('change','select[name="setColor"]',function(){
+    	var thisColor = $(this).find('option[value="'+$(this).val()+'"]').data('color');
+    	$(this).closest('td').find('[name="showColor"]').css(
+    		{
+	    		'background-color':thisColor,
+	    		border:thisColor,
+	    		color:"white"
+    		}
+    	);
+    });
+    //改變Icon
+    $('body').on('change','select[name="setIcon"]',function(){
+    	var thisIcon = $(this).find('option[value="'+$(this).val()+'"]').data('value');
+    	$(this).closest('td').find('[name="showIcon"]').val(thisIcon);
+    });
+    
+    //上傳檔案
+    var fileIdCounter = 0;
+	var filesToUpload = [];
+	var fileTotalSize = 0;
+	 
+	
+	function remove_upload(th,item)
+	{
+		
+		for (var i = 0; i < filesToUpload.length; ++i) {
+			if (filesToUpload[i].id === item)
+				filesToUpload.splice(i, 1);
+		}
+		$(th).closest('li').remove();
+		if (filesToUpload.length != 0)
+			{check_disk();}
+		//else
+			//{$('button[name="file_upload"]').hide();}
+	}
+	
+	
+	function check_disk()
+	{
+		var postbody = { csrfmiddlewaretoken: '{{ csrf_token }}', file_size: fileTotalSize };
+		omflowJsonAjax(postbody, '{% url "getDiskStatusAjax" %}', actions_upload)
+		
+		function actions_upload(data){
+			if (data.result)
+			{
+				$('label[name="fileWarning"]').hide();
+				//$('button[name="file_upload"]').show();
+			} 
+			else
+			{
+				$('label[name="fileWarning"]').show();
+				//$('button[name="file_upload"]').hide();
+			}
+		}
+	}
+    
+    //改變欄位
+    //drop、drag
+	function boxdrag(ev){
+	    ev.dataTransfer.setData("boxid", ev.target.id);
+	}
+	function boxdrop(ev, target_object){
+	    ev.preventDefault();
+	    ev.stopPropagation();
+	    var target = $('#'+target_object.id);
+	    var source = $('#'+ev.dataTransfer.getData("boxid"));
+		
+	    if(source.attr('class').startsWith('omflow-form-group'))
+	    {
+	        source.prependTo(target.find('div[id^=CONTENT_]:eq(0)'));
+	    }
+	    else
+	    {
+	        if(target != source){
+		        var targetSpot = $('<span></span>');
+				var sourceSpot = $('<span></span>');
+				targetSpot.insertBefore(target);
+				sourceSpot.insertBefore(source);
+				target.insertBefore(sourceSpot);
+				source.insertBefore(targetSpot);
+				targetSpot.remove();
+				sourceSpot.remove();
+			}
+	    }
+	    setTree();
+	}
+	function boxAllowDrop(ev){
+	    ev.preventDefault();
+	}
+
+    </script>
+{% endblock %}

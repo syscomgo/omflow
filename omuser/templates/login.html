@@ -1,0 +1,112 @@
+{% extends '_base.html' %}
+{% load static %}
+{% load i18n %} 
+{% block content %}
+	
+	<form id="omform" autocomplete="off" onsubmit="loginSubmit(); return false;">
+	{% csrf_token %}
+		<input type="text" id="username" placeholder="{% trans '帳號或是電子郵件' %}" autofocus>
+		<input type="password" id="token" placeholder="{% trans '密碼'%}">
+		<select name="language" >
+		  {% get_current_language as LANGUAGE_CODE %}
+	   	  {% for code,name in LANGUAGES %}
+	       	<option value="{{ code }}"{% if code == LANGUAGE_CODE %} selected="selected"{% endif %}>
+	          	{{ name }} ({{ code }})
+	       	</option>
+	      {% endfor %}
+		</select>
+		<input type="submit" value="{% trans '登入'%}">
+	  <div id="formFooter">
+		 <a href="{% url 'userRegisterPage'  %}" class="text-center">{% trans '註冊'%}</a>
+	  </div>
+	</form>
+
+<script>
+
+function make_base_auth(user, password) {
+  var tok = user + ':' + password;
+  var hash = btoa(tok);
+  return "Basic " + hash;
+}
+
+function loginSubmit()
+{
+	var username = $('#username').val();
+	var password = $('#token').val(); 
+	$.ajax
+  	({
+    	type: 'post',
+   		url: '{% url 'checkMultipleLoginAjax' %}',
+    	dataType: 'json',
+    	data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+    	headers: {"Authorization": make_base_auth(username, password)},
+    	beforeSend: function(){
+    		extendCookie();
+    	},
+    	success: function(data){
+        	if(data.status == 200 && data.result == false)
+        	{
+        		var location = String(window.location);
+        		if(location.indexOf("next=") < 1)
+        		{
+        			window.location = "/";
+        		}
+        		else
+        		{
+        			window.location =location.substr(location.indexOf("next=") + 5);
+        		}
+			}
+			else if(data.status == 200 && data.result == true)
+			{
+				$('#modal_multiplelogin').modal('show');
+				
+				$('#modal_multiplelogin button:eq(2)').off('click').on('click', function(){
+					$.ajax
+				  	({
+				    	type: 'post',
+				   		url: '{% url 'loginAjax' %}',
+				    	dataType: 'json',
+				    	data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+				    	headers: {"Authorization": make_base_auth(username, password)},
+				    	success: function(data){
+				        	if(data.status == 200)
+				        	{
+				        		var location = String(window.location);
+				        		if(location.indexOf("next=") < 1)
+				        		{
+				        			window.location = "/";
+				        		}
+				        		else
+				        		{
+				        			window.location =location.substr(location.indexOf("next=") + 5);
+				        		}
+							}
+						}
+					});
+				});
+			}
+			else
+			{
+				$('#modal_yellow_text').html('<p>' + data.message + '</p>');
+				$('#modal_yellow').modal('show');
+			}
+    	}
+	});
+}
+
+$('select[name="language"]').off("change").on("change", function(){
+	var sel = this.options[this.selectedIndex].value;
+	setCookie('django_language', sel, 90);
+	window.location.reload();
+})
+
+function extendCookie()
+{
+	var res = getCookie('django_language')
+	if(res)
+	{
+		setCookie('django_language', res, 90)
+	}
+}
+</script>
+{% endblock %}

@@ -1,0 +1,258 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %} 
+{% block content %}
+<!-- 
+	group_manage.html groupManagePage
+	author : Pei lin
+-->
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        {% trans '組織管理' %}
+        <small id="tt"></small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="{% url 'homePage' %}"><i class="fa fa-dashboard"></i>{% trans '首頁' %}</a></li>
+        <li><a href="#">{% trans '人員管理' %}</a></li>
+        <li><a href="/accounts/page/group-management/">{% trans '組織管理' %}</a></li>
+      </ol>
+    </section>
+    <section class="content">
+      <div class="row">
+       <!-- column -->
+        <div class="col-xs-12">
+	      <div class="box box-primary">
+	        <div class="box-header with-border">
+		  	  <button type="button" class="btn btn-default" onclick="create_group()" style="margin:1px 0px;display:None;" id="create_group_button"><i class="fa fa-plus"></i> {% trans '創建' %}</button>
+		  	  <button type="button" class="btn btn-default" onclick="delete_group()" style="margin:1px 0px;display:None;" id="delete_group_button"><i class="fa fa-trash"></i> {% trans '刪除' %}</button>
+		  	  <button type="button" class="btn btn-default" id="expander" style="margin:1px 0px;"><i class="fa fa-chevron-down"></i> {% trans '展開 ' %}</button>
+			  <button type="button" class="btn btn-default" id="collapser" style="margin:1px 0px;"><i class="fa fa-chevron-up"></i> {% trans '收合 ' %}</button>
+			  <button type="button" title="{% trans '篩選組織' %}" class="btn btn-default " onclick="filter_group()" id="filter_group" style="margin:1px 0px;"><i class="fa fa-filter"></i>{% trans ' 篩選' %}</button>
+			  <button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default " onclick="filter_default()" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
+			</div>
+			<div class="box-body">
+			  <div class="row">
+				<div class="col-md-12">
+			  	  <table id="group_table" class="table no-margin table-hover">
+				    <col width="5%">
+				    <col width="5%">
+				    <col width="90%">
+				    <thead>
+				      <tr>
+				      	<th></th>
+				      	<th>{% trans '編號' %}</th>
+				      	<th>{% trans '所有組織列表' %}</th>
+				      </tr>
+				    </thead>
+				    <tbody id="group_table_body">
+				    </tbody>
+				  </table>
+			    </div>
+			    <!-- /.col -->
+			  </div>
+			  <!-- /.row -->
+		    </div>
+		    <!-- /.bos-body -->
+	      </div>
+	    </div>
+	  </div>
+	</section>
+	<script>
+	var grouplist;
+	var csrfmiddlewaretoken = '{{ csrf_token }}'
+	$(function (){
+		listgroup();
+	});
+	
+	function listgroup(){
+		postdata = {csrfmiddlewaretoken: csrfmiddlewaretoken, 'functional_flag': 'False', 'ad_flag': ['0']};
+		omflowJsonAjax(postdata, '{% url 'listGroupAjax' %}', callback);
+		function callback(data){
+			if (data.status == 200)
+			{
+				$('#group_table_body').empty();
+				grouplist = data.result;
+				$.each(grouplist, function(index, value){
+					if (value.parent_group==null)
+					{
+						$('#group_table_body').prepend( '<tr data-node-id="'+value.id+'" id="group_id_'+value.id+'">'+
+							'<td><input type="checkbox" class="icheckbox_minimal-blue" data-name="checkbox" id="'+value.display_name+'" value="'+value.display_name+'" data-value="'+value.display_name+'"><label for="'+value.display_name+'"></label></td>'+
+							'<td>'+value.id+'</td>'+
+							'<td>&nbsp;&nbsp;<a href="/accounts/page/group-detail/'+value.id+'/" title="編輯'+value.display_name+'" style="color:black;"><i class="fa fa-fw fa-edit" style="color:SteelBlue"></i>' +value.display_name+'</a></td>'+
+							'</tr>')
+					}
+					else
+					{
+						$("#group_id_"+value.parent_group).after( '<tr data-node-id="'+value.id+'" data-node-pid="'+value.parent_group+'" id="group_id_'+value.id+'">'+
+							'<td><input type="checkbox" class="icheckbox_minimal-blue" data-name="checkbox" id="'+value.display_name+'" value="'+value.display_name+'" data-value="'+value.display_name+'"><label for="'+value.display_name+'"></label></td>'+
+							'<td>'+value.id+'</td>'+
+							'<td>&nbsp;&nbsp;<a href="/accounts/page/group-detail/'+value.id+'/" title="編輯'+value.display_name+'" style="color:black;"><i class="fa fa-fw fa-edit" style="color:SteelBlue"></i>' +value.display_name+'</a></td>'+
+							'</tr>')
+					}	
+				});
+				$('#group_table').simpleTreeTable({
+				    expander: $('#expander'),
+				    collapser: $('#collapser'),
+				    iconPosition: ':eq(4)',
+				    opened: 'all'
+				});
+				
+				check_permission();
+			}
+			else
+			{
+				omflowAlert('red', data.message);
+			}
+		}
+	}
+	
+	function check_permission()
+	{
+		{#如果有OmGroup_Modify權限，將顯示選取及儲存#}	
+		{% if perms.omuser.OmGroup_Modify %}
+			$('#store_group_button').show();
+			$('#store_role_button').show();
+		{% else %}
+			$('input[data-name="checkbox"]').attr('disabled','disabled');
+		{% endif %}
+		{#如果有OmGroup_Add權限，將顯示新增#}	
+		{% if perms.omuser.OmGroup_Add %}
+			$('#create_group_button').show();
+			$('#create_role_button').show();
+		{% endif %}
+		{# 如果有OmGroup_Delete權限，將顯示刪除 #}
+		{% if perms.omuser.OmGroup_Delete %}
+			$('#delete_group_button').show();
+			$('#delete_role_button').show();
+
+		{% endif %}
+	}
+	
+	function create_group(choice)
+	{	
+		$('#modal-create-group-text').empty();
+		$('#create_group').val('');
+		$('#create_group_description').val('');
+		$('#modal-create-group-text').removeAttr('disabled');
+		if (choice==null){
+			$('#modal-create-group-text').append('<option value=""></option>')
+			$.each(grouplist,function(index, value){
+				$('#modal-create-group-text').append('<option value="'+value.id+'">'+value.display_name+'</option>')
+			});
+		}else{
+			$('#modal-create-group-text').append('<option value='+choice+'>'+choice+'</option>');
+			$('#modal-create-group-text').attr('disabled','disabled');
+		}
+		$('#modal-create-group').modal('show');
+		$('#modal-create-group button:eq(2)').off("click").on("click",function(){
+			var postdata = {};
+			postdata['csrfmiddlewaretoken']=csrfmiddlewaretoken;
+			postdata['p_id']=$('#modal-create-group-text').val();
+			postdata['group_name']=$('#create_group').val();
+			postdata['functional_flag_%B']="False";
+			postdata['description']=$('#create_group_description').val();
+			omflowJsonAjax(postdata, '{% url 'addGroupAjax'%}', actions);
+			Swal.fire({
+			  title: '處理中...',
+			  toast: true,
+			  position: 'bottom-start',
+			  showConfirmButton: false,
+			});
+			Swal.showLoading() ;
+		});
+	}
+	
+	function delete_group()
+	{
+		omflowListDialogue("delete", "{% trans '下列組織將被刪除' %}")
+		$('#modal-default-list button:eq(2)').off("click").on("click",function(){
+			var postdata = {
+				csrfmiddlewaretoken : csrfmiddlewaretoken,
+				group_name			: []
+			};
+			$.each($('.table input:checkbox:checked'), function(){
+				postdata.group_name.push($(this).val());
+			});
+			$('#modal-default-list').on('hidden.bs.modal', function () {
+				omflowJsonAjax(postdata, '{% url 'deleteGroupAjax'%}', actions);
+				Swal.fire({
+				  title: '處理中...',
+				  toast: true,
+				  position: 'bottom-start',
+				  showConfirmButton: false,
+				});
+				Swal.showLoading() ;
+				$('#modal-default-list').off('hidden.bs.modal');
+			});
+		});
+	}
+	
+	function actions(data)
+	{		
+		Swal.close();
+		if(data.status == 200)
+		{
+			listgroup();
+			Swal.fire({
+	      	  icon : 'success',
+	      	  title: '成功',
+	      	  toast: true,
+		  	  position: 'bottom-start',
+		  	  showConfirmButton: false,
+	      	  timer: 2000,
+  		    });
+		}	
+		else if (data.status == 404)
+		{
+			omflowAlert('yellow', data.message);
+		}
+		else if (data.status == 500)
+		{
+			omflowAlert('blue', data.message);
+		}
+		else if (data.status == 403)
+		{
+			omflowAlert('red', data.message);
+		}
+	}
+
+	function filter_group()		
+	{
+		omflowFilter(['filter_search']);
+		$('#modal-default-filter button:eq(2)').off("click").on("click",function(){
+			var searchkey = $('#modal-default-filter #search').val();
+			if (searchkey!=null && searchkey.length!=0)
+			{
+				$('tr').hide();
+				$.each($('tr:contains("'+searchkey+'")'),function(){
+					var thisDom = $(this).show();
+					var pid =  $(this).data("node-pid");
+					if(typeof(pid)!="undefined" && pid.length!="0"){
+						showParent(pid);
+					}
+				});
+				//
+				function showParent(pid){
+					$('tr[data-node-id="'+pid+'"]').show();
+					var thisPid = $('tr[data-node-id="'+pid+'"]').data("node-pid");
+					if(typeof(thisPid)!="undefined" && thisPid.length!="0"){
+						showParent(thisPid);
+					}
+				}
+			}
+			else
+			{
+				$('tr').show();
+				$('#group_table').data('simple-tree-table').collapse();
+			}
+			$('#modal-default-filter').modal('hide');
+		});
+	}
+	
+	function filter_default()
+	{
+		$('tr').show();
+	}
+	</script>
+{% endblock %}

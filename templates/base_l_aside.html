@@ -1,0 +1,255 @@
+{% load static %}
+{% load i18n %} 
+{% load omflow_tags %}
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+      <!-- Sidebar Menu -->
+      <ul class="sidebar-menu" data-widget="tree">
+        <!-- Optionally, you can add icons to the links -->
+      </ul>
+      <!-- /.sidebar-menu -->
+    </section>
+    <!-- /.sidebar -->
+    
+    <div id="mymission" style="display:None;">
+      <li>
+	  	<a href="/my-mission/page/mission/#mymission">
+		  <i class="fa fa-commenting"></i> <span>{% trans '我的任務' %}</span>
+		  <span class="pull-right-container">
+            <small class="label pull-right bg-green"></small>
+            <small class="label pull-right bg-yellow"></small>
+       	    <small class="label pull-right bg-red"></small>
+          </span>
+	  	</a>
+	  </li>
+    </div>
+    
+    <div id="service" style="display:None;">
+      <li>
+		<a href="/service/page/list/">
+		  <i class="fa fa-shopping-cart"></i> <span>{% trans '服務請求' %}</span>
+		</a>
+	  </li>
+    </div>
+    
+    <div id="custom_1" style="display:None;">
+      <li class="treeview" id="custom_1">
+		<a >
+		  <i class="fa fa-folder"></i> <span>{% trans '自訂應用' %}</span>
+		  <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+		</a>
+	  <ul class="treeview-menu">
+	  </ul>
+	  </li>
+    </div>
+    
+    {%omflow_version_type as version_type%}
+    {%if version_type != "C"%}
+    <div id="servicemanage" style="display:None;">
+      <li class="treeview">
+        <a ><i class="fa fa-headphones"></i> <span>{% trans '服務管理' %}</span>
+          <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+        </a>
+        <ul class="treeview-menu">
+          <li><a ><i class="fa fa-circle-o"></i>{% trans '行事曆' %}</a></li>
+          <li><a ><i class="fa fa-circle-o"></i>{% trans '事件管理' %}</a></li>
+          <li><a ><i class="fa fa-circle-o"></i>{% trans '事故管理' %}</a></li>
+          <li><a ><i class="fa fa-circle-o"></i>{% trans '問題管理' %}</a></li>
+          <li><a ><i class="fa fa-circle-o"></i>{% trans '資產管理' %}</a></li>
+        </ul>
+      </li>
+    </div>
+    
+    <div id="servermanage" style="display:None;">
+      <li class="treeview">
+        <a ><i class="fa fa-server"></i> <span>{% trans '資料收集' %}</span>
+          <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+        </a>
+        <ul class="treeview-menu">
+          <li><a ><i class="fa fa-circle-o"></i>{% trans '代理程式管理' %}</a></li>
+          <li><a ><i class="fa fa-circle-o"></i>{% trans '原則管理' %}</a></li>
+          <li><a ><i class="fa fa-circle-o"></i>{% trans '資訊收集器' %}</a></li>
+        </ul>
+      </li>
+    </div>
+    {% endif %}
+    
+    {% if perms.omformflow.OmFormFlow_Manage %}
+    <div id="flowmgmt" style="display:None;">
+      <li class="treeview">
+        <a><i class="fa fa-cubes"></i> <span>{% trans '應用管理' %}</span>
+          <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+        </a>
+        <ul class="treeview-menu">
+          <li><a href="/flowmanage/page/flow-app/"><i class="fa fa-circle-o"></i>{% trans '應用設計' %}</a></li>
+          <li><a href="/flowmanage/page/workflow-app/"><i class="fa fa-circle-o"></i>{% trans '已上架應用' %}</a></li>
+          <li><a href="/flowmanage/page/scheduleflowManagePage/"><i class="fa fa-circle-o"></i>{% trans '排程設定' %}</a></li>
+        </ul>
+      </li>
+    </div>
+    {% endif %}
+    
+    <div id="staffmgmt" style="display:None;">
+      <li class="treeview">
+        <a ><i class="fa fa-user"></i> <span>{% trans '人員管理' %}</span>
+          <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+        </a>
+        <ul class="treeview-menu">
+            {% if perms.omuser.OmUser_View %}
+          <li><a href="/accounts/page/user-management/"><i class="fa fa-circle-o"></i>{% trans '使用者管理' %}</a></li>
+           	{% else %}
+          <li><a href="/accounts/page/profile/{{user.username}}/"><i class="fa fa-circle-o"></i>{% trans '使用者設定' %}</a></li>
+          	{% endif%}	
+           	{% if perms.omuser.OmGroup_View %}
+          <li><a href="/accounts/page/role-management/"><i class="fa fa-circle-o"></i>{% trans '角色管理' %}</a></li>
+          <li><a href="/accounts/page/group-management/"><i class="fa fa-circle-o"></i>{% trans '組織管理' %}</a></li>
+      			{% get_ldap_bool as ldap_bool %}
+      			{% if ldap_bool %}
+          <li><a href="/accounts/page/adgroup-management/"><i class="fa fa-circle-o"></i>{% trans 'AD檢視' %}</a></li>
+       			{% endif %}
+       		{% endif %}
+        </ul>
+      </li>
+    </div>
+    
+    {% if user.is_superuser %}
+    <div id="syssetting" style="display:None;">
+      <li class="treeview">
+        <a ><i class="fa fa-gear"></i> <span>{% trans '系統設定' %}</span>
+          <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+        </a>
+        <ul class="treeview-menu">
+          <li><a href="/page/system/"><i class="fa fa-circle-o"></i>{% trans '系統設定' %}</a></li>
+          <li><a ><i class="fa fa-circle-o"></i>{% trans '參數管理' %}</a></li>
+          <li><a href="/page/file-management/"><i class="fa fa-circle-o"></i>{% trans '附加檔案維護' %}</a></li>
+          <li><a href="/page/sidebar-management/"><i class="fa fa-circle-o"></i>{% trans '主選單管理' %}</a></li>
+        </ul>
+      </li>
+    </div>
+    {% endif%}
+    
+    
+{#    <div id="report" style="display:None;">#}
+{#      <li class="treeview"><a ><i class="fa fa-bar-chart"></i> <span>報表</span></a></li>#}
+{#    </div>#}
+    
+    <script>
+	var url = window.location;
+	var draw = 1;
+	var LSide = function(){
+		$.ajax({
+    		url: "{% url 'loadLSideAjax' %}",
+			type: 'post',
+			data: {csrfmiddlewaretoken: '{{ csrf_token }}', draw_$: draw},
+			success: function (data) {	
+				if (data.status == 200)
+				{
+					loadLSide_actions(data);
+					// for sidebar menu but not for treeview submenu
+					$('ul.sidebar-menu > li > a').filter(function() {
+						return this.href == url;
+					}).parent().siblings().removeClass('active').end().addClass('active');
+					// for treeview which is like a submenu
+					$('ul.sidebar-menu ul.treeview-menu > li > a').filter(function() {
+					    return this.href == url;
+					}).parentsUntil(".sidebar-menu > .treeview-menu").siblings().removeClass('active menu-open').end().addClass('active menu-open');
+				}
+				else if (data.status == 404)
+				{
+					omflowAlert('yellow', data.message);
+				}
+				else if (data.status == 500)
+				{
+					omflowAlert('blue', data.message);
+				}
+				else if (data.status == 403)
+				{
+					omflowAlert('red', data.message);
+				}
+				else
+				{
+					if(data.status == undefined)
+					{
+						omflowAlert('yellow', '你已被登出')
+						$('#modal_yellow button').off('click').on('click', function(){
+							location.href="/"
+						});
+						clearInterval(LSide_routine)
+					}
+					else
+					{
+						omflowAlert('red', data.message);
+					}
+					
+				}
+			},
+			 error: function(req, status, err) {
+				$('#modal_error').modal('show');
+	        	console.log('Something went wrong', status, err);
+	    	}
+    	});
+		draw++;
+	}
+	
+	function loadLSide_actions(data)
+	{
+		if (data.result.sidebar != null && data.result.sidebar != "" && data.result.sidebar.length != 0)
+		{
+			$('ul.sidebar-menu').empty();
+			defaultarr = ['mymission', 'custom_1', 'servicemanage', 'service', 'servermanage', 'flowmgmt', 'report', 'syssetting', 'staffmgmt']
+			$.each(data.result.sidebar, function(index, value){
+				if (defaultarr.indexOf(value.id) >= 0 && (value.p_id == null | value.p_id.length == 0))
+				{
+					$('ul.sidebar-menu').append($('div#'+value.id+'>li').clone());
+				}
+				else if ( (value.flow_uuid == 'custom' | value.flow_uuid == 'app') && (value.p_id == null | value.p_id.length == 0))
+				{
+					$('ul.sidebar-menu').append('<li id="'+value.id+'" class="treeview">'
+	        					+'<a ><i class="fa fa-'+value.icon+'"></i> <span>'+value.name+'</span>'
+	          					+'<span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>'
+	        					+'</a>'
+	        					+'<ul class="treeview-menu">'
+	        					+'</ul>'
+	        					+'</li>'
+					)
+				}
+				else if ( (value.flow_uuid == 'custom' | value.flow_uuid == 'app') && (value.p_id != null | value.p_id.length != 0))
+				{
+					$('ul.sidebar-menu li#'+value.p_id+'>ul').append('<li id="'+value.id+'" class="treeview">'
+	        					+'<a ><i class="fa fa-'+value.icon+'"></i> <span>'+value.name+'</span>'
+	          					+'<span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>'
+	        					+'</a>'
+	        					+'<ul class="treeview-menu">'
+	        					+'</ul>'
+	        					+'</li>'
+					)
+				}
+				else if (value.p_id == null | value.p_id.length == 0)
+				{
+					$('ul.sidebar-menu').append('<li id="'+value.id+'" class="treeview">'
+	        					+'<a ><i class="fa fa-'+value.icon+'"></i> <span>'+value.name+'</span>'
+	          					+'<span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>'
+	        					+'</a>'
+	        					+'</li>'
+					)
+				}
+				else
+				{	
+					var app_id =value.p_id.split('-').pop();
+					$('ul.sidebar-menu li#'+value.p_id+'>ul').append('<li id="'+value.id+'">'
+	        					+'<a href="/flowmanage/page/workflowPage/'+app_id+'/'+value.flow_uuid+'"><i class="fa fa-'+value.icon+'"></i> <span>'+value.name+'</span>'
+	        					+'</a>'
+	        					+'</li>'
+					)
+				}
+			});
+		}
+		
+		$('ul.sidebar-menu > li > a > .pull-right-container > small.bg-red').empty().text(data.result.mission[0]);
+		$('ul.sidebar-menu > li > a > .pull-right-container > small.bg-yellow').empty().text(data.result.mission[1]);
+		$('ul.sidebar-menu > li > a > .pull-right-container > small.bg-green').empty().text(data.result.mission[2]);
+	}    
+	
+	LSide();
+	var LSide_routine = setInterval(function(){ LSide()}, {{user.frequency}}*1000);
+    </script>

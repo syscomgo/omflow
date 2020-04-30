@@ -1,0 +1,118 @@
+{% load static %}
+{% load i18n %} 
+    <!-- Logo -->
+    <a href="{% url 'homePage' %}" class="logo">
+      <!-- mini logo for sidebar mini 50x50 pixels -->
+      <span class="logo-mini" ><font style='font-family:"Bauhaus 93";font-size:x-large'>OM</font></span>
+      <!-- logo for regular state and mobile devices -->
+      <span class="logo-lg"><font style='font-family:"Bauhaus 93";font-size:x-large'>OM</font><font style='font-family:"Eras ITC";font-size:x-large'><b>F</b></font><font style='font-family:"Bauhaus 93";font-size:x-large'>LOW</font></span>
+    </a>
+
+    <!-- Header Navbar -->
+    <nav class="navbar navbar-static-top" role="navigation">
+      <!-- Sidebar toggle button-->
+      <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+        <span class="sr-only">Toggle navigation</span>
+      </a>
+      <!-- Navbar Right Menu -->
+      <div class="navbar-custom-menu">
+        <ul class="nav navbar-nav">
+          <!-- Messages: style can be found in dropdown.less-->
+          <li>
+            <!-- Menu toggle button -->
+            <a href="/my-mission/page/mission/#currentmission">
+              <i class="far fa-flag"></i>
+              <span class="label label-success" name="mission_count"></span>
+            </a>
+          </li>
+          <li>
+            <!-- Menu toggle button -->
+            <a href="/announcement/page/messageManage/Inbox/">
+              <i class="fa fa-envelope-o"></i>
+              <span class="label label-success" name="message_count"></span>
+            </a>
+          </li>
+          <!-- User Account Menu -->
+          <li class="dropdown user user-menu">
+            <!-- Menu Toggle Button -->
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <span>{{user.nick_name}}</span>
+            </a>
+            <ul class="dropdown-menu">
+              <!-- The user image in the menu -->
+              <li class="user-header">
+                <p>
+                  {{user.nick_name}}
+                  <small>({{user}})</small>
+                  <small>{{user.company}}</small>
+                  <small>{{user.department}}</small>
+                  <small>{{user.email}}</small>
+                </p>
+              </li>
+              <!-- Menu Footer-->
+              <li class="user-footer">
+              <div class="row">
+                <div class="col-xs-4 text-center">
+                  <a href="/accounts/page/profile/{{user.username}}/" class="btn btn-default btn-flat">{% trans '個人資料' %}</a>
+                </div>
+                <div class="col-xs-4 text-center">
+                {% if not user.ad_flag %}  <a href="/accounts/page/password/" class="btn btn-default btn-flat">{% trans '更改密碼' %}</a> {% endif %}
+                </div>
+                <div class="col-xs-4 text-center">
+                  <a href="{%url 'logout'%}" class="btn btn-default btn-flat">{% trans '登出' %}</a>
+                </div>
+                </div>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <script>
+    var LHeader = function message_count() {
+    	var num;
+    	$.ajax({
+    		url: "{% url 'loadWorkinfoAjax' %}",
+			type: 'post',
+			data: { csrfmiddlewaretoken: '{{ csrf_token }}'},
+			success: function (data) {	
+				if (data.status == 200)
+				{
+					$('span[name="message_count"]').text(data.result.messages);
+					$('span[name="mission_count"]').text(data.result.missions);
+					num = data.result;
+				}
+				else if (data.status == 404)
+				{
+					omflowAlert('yellow', data.message);
+				}
+				else if (data.status == 500)
+				{
+					omflowAlert('blue', data.message);
+				}
+				else if (data.status == 403)
+				{
+					omflowAlert('red', data.message);
+				}
+				else
+				{
+					if(data.status == undefined)
+					{
+						omflowAlert('yellow', '你已被登出')
+						$('#modal_yellow button').off('click').on('click', function(){
+							location.href="/"
+						});
+						clearInterval(header_routine);
+					}
+					else
+					{
+						omflowAlert('red', data.message);
+					}
+					
+				}
+			}
+    	});
+    }
+    LHeader();
+    var header_routine = setInterval(function(){ LHeader() }, {{user.frequency}}*1000);
+    </script>

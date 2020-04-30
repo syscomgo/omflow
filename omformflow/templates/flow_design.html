@@ -1,0 +1,1011 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %} 
+{% block content %}
+<!-- 
+	flow_design.html flowdesignPage
+	author : Pei lin
+-->
+    <!-- Content Header (Page header) -->
+    <script src="/static/js/workflow.js"></script>
+    <section class="content-header">
+      <h1>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i> 首頁</a></li>
+		<li>流程管理</li>
+        <li><a href="/flowmanage/page/flow-app/">應用設計</a></li>
+        
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+       <!-- column -->
+        <div class="col-md-12">
+          <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+              <li class="active"><a href="#p1" data-toggle="tab">參數設定</a></li>
+              <li><a href="#p2" data-toggle="tab">權限設定</a></li>
+			  <li><a href="#p3" data-toggle="tab">表單設計</a></li>
+			  <li><a href="#p4" data-toggle="tab">流程設計</a></li>
+              <li><a href="#p5" data-toggle="tab">子流程</a></li>
+              <li class="pull-right" id="save_button">
+              	<div class="btn-group">
+                  <button type="button" class="btn btn-default" onclick="flow_save()"><i class="fa fa-save"></i> 儲存
+                </div>
+              </li>
+            </ul>
+            <div class="tab-content">
+              <div class="tab-pane active" id="p1">
+              <div class="box box-default">
+                <form id="omformFlowDesign" onsubmit="omflowSubmit(); return false;" role="form" autocomplete="off" >
+                {% csrf_token %} 
+                  <div class="box-body">
+				  	<div class="row">
+				      <div class="col-md-6">
+					  	<div class="form-group has-warning">
+						  <label>流程名稱</label>
+						  <input type="text" class="form-control" name="flow_name" id="flow_name" placeholder="請輸入流程名稱">
+					  	</div>
+					  	<div class="form-group">
+						  <label>說明</label>
+						  <textarea rows="3" class="form-control" name="description" id="description" placeholder="流程說明" style="resize:none;"></textarea>
+					  	</div>
+					  </div>
+					  <div class="col-md-6">
+					  	<div class="form-group">
+						  <label><h4>表單工作區設定:</h4></label>
+					  	</div>
+					  	<div class="form-group">
+						  <input type="checkbox" class="icheckbox_minimal-blue" id="fp_show" name="fp_show_%B"><label for="fp_show"></label>
+						  <label>查看目前流程及進度</label>
+					  	</div>
+					  	<div class="form-group">
+						  <input type="checkbox" class="icheckbox_minimal-blue" id="attachment" name="attachment_%B"><label for="attachment"></label>
+						  <label>附加檔案功能</label>
+					  	</div>
+					  	<div class="form-group">
+						  <input type="checkbox" class="icheckbox_minimal-blue" id="relation" name="relation_%B"><label for="relation"></label>
+						  <label>顯示資料關聯</label>
+					  	</div>
+					  	<div class="form-group">
+						  <input type="checkbox" class="icheckbox_minimal-blue" id="worklog" name="worklog_%B"><label for="worklog"></label>
+						  <label>填寫及顯示工作日誌</label>
+					    </div>
+					  	<div class="form-group">
+						  <input type="checkbox" class="icheckbox_minimal-blue" id="history" name="history_%B"><label for="history"></label>
+						  <label>檢視表單資料操作歷程</label>
+					  	</div>
+					  </div>
+					</div>
+				  </div>
+				</form>
+				</div>
+  			  </div>
+  			  <!-- /.tab-pane p1 -->
+			  <div class="tab-pane " id="p2">
+			  	<div class="row">
+				  <div class="col-xs-12">
+					<div class="box box-default">
+					  <div class="box-header with-border">
+						<button type="button" class="btn btn-default" onclick="permission_edit('add', null)" style="margin:1px 0px;"><i class="fa fa-plus"></i> 新增</button>
+						<button type="button" class="btn btn-default" onclick="permission_delete()"><i class="fa fa-trash-o" style="margin:1px 0px;"></i> 刪除</button>
+					  </div>
+					  <div class="box-body">
+						<table id="flow_permission_table" class="table table-bordered table-striped">
+						  <thead>
+							<tr>
+							  <th style="width:15px"></th>
+							  <th>角色名稱</th>				  
+							  <th style="width:15%">檢視</th>
+							  <th style="width:15%">新增</th>
+							  <th style="width:15%">修改</th>
+							  <th style="width:15%">刪除</th>
+							</tr>
+						  </thead>
+						  <tbody>
+						  </tbody>
+						  </table>
+						</div>
+						<!-- /.box-body -->
+					  </div>
+					  <!-- /.box -->
+					</div>
+					<!-- /.col -->
+				  </div>
+				  <!-- /.row -->
+		  	  </div>
+		  	  <!-- /.tab-pane p2 -->
+			  <div class="tab-pane " id="p3">
+			  	<div class="row">
+				  <div class="col-md-12">
+					<div class="box box-default">
+					  <div class="box-header with-border">
+						<button type="button" class="btn btn-default" onclick="formcontent.add_item('box12');" style="margin:1px 0px;"><i class="fa fa-plus"></i> 區塊</button>
+						<button type="button" class="btn btn-default" onclick="formcontent.add_item('box6');" style="margin:1px 0px;"><i class="fa fa-plus"></i> 半區塊</button>
+					  </div>
+					  <!-- /.box-header -->
+					  <div id="formcontent" class="box-body">
+					  </div>
+					  <!-- /.box-body -->
+					</div>
+					<!-- /.box -->
+				  </div>
+				  <!-- /.col -->
+				</div>
+				<!-- /.row -->
+			  </div>
+			  <!-- /.tab-pane p3 -->
+			  <div class="tab-pane " id="p4">
+			  	<div class="row">
+				  <div id="flowbox" class="col-md-12">
+					<div class="box box-default">
+					  <div class="box-header with-border">
+						<button type="button" class="btn btn-default" data-toggle="modal" data-target="#flowcontent_add_chart_modal"style="margin:1px 0px;"><i class="fa fa-plus"></i> 新增</button>
+
+					  </div>
+					  <!-- /.box-header -->
+					  <div id="flowcontent" style="width:calc(100%-10px);height:500px">
+					  </div>
+					</div>
+					<!-- /.box -->
+				  </div>
+				  <!-- /.col -->
+				</div>
+				<!-- /.row -->
+			  </div>
+			  <!-- /.tab-pane p4 -->
+			  <div class="tab-pane" id="p5">
+			  	<div class="row">
+              	  <div class="col-xs-12" id="subflow_table_box">
+              	    <div class="box box-default">
+              	      <div class="box-header with-dorder">
+              	      	<button type="button" class="btn btn-default" onclick="create_subflowdesign()" style="margin:1px 0px;"><i class="fa fa-plus"></i> 新增</button>
+              	      	<button type="button" class="btn btn-default" onclick="delete_subflowdesign()" style="margin:1px 0px;"><i class="fa fa-trash-o"></i> 刪除</button>
+              	      </div>
+              	      <!-- /.box-header -->
+              	      <div class="box-body">
+              	      	<table class="table table-bordered table-striped" id="subflow_table">
+              	      	  <thead>
+              	      	  	<tr>
+              	      	  	  <th style="width:15px"><a><i class="fa fa-lg fa-check-square-o checkbox-toggle" style="color:SteelBlue"></i></a></th>
+              	      	  	  <th>流程名稱</th>
+              	      	  	  <th>說明</th>
+              	      	  	</tr>
+              	      	  </thead>
+              	      	  <tbody>
+              	      	  </tbody>
+              	      	</table>
+              	      </div>
+              	      <!-- /.box-body -->
+              	    </div>
+              	    <!-- /.box -->
+              	  </div>
+              	  <!-- /.col -->
+              	  <div class="col-xs-12" id="subflow_box">
+		          </div>
+		          <!-- /.col -->
+              	</div>
+              	<!-- /.row -->
+			  </div>
+			  <!-- /.tab-pane p5 -->
+            </div>
+            <!-- /.tab-content -->
+          </div>
+          <!-- /.nav-tabs-custom -->        
+        </div>
+        <!--/.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+    
+    <div class="modal fade" id="modal-flowdesign-permission">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span>
+			</button>
+	        <h4 class="modal-title"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增權限角色</h4>
+		  </div>
+		  <div class="modal-body">
+			<div class="form-group">
+		  	  <label class="control-label">角色名稱</label>
+			  <select class="form-control" id="role_select">
+			  </select>
+			</div>
+			<div class="form-group">
+			  <label class="control-label">權限</label></br>
+		  	  <input type="checkbox"  id="role_select_view" class="icheckbox_minimal-blue" value="view"><label for="role_select_view"></label>
+				 檢視
+		  	  <input type="checkbox" id="role_select_add" class="icheckbox_minimal-blue" value="add"><label for="role_select_add"></label>
+				 新增
+		  	  <input type="checkbox" id="role_select_modify" class="icheckbox_minimal-blue" value="modify"><label for="role_select_modify"></label>
+			 	修改
+		  	  <input type="checkbox" id="role_select_delete" class="icheckbox_minimal-blue" value="delete"><label for="role_select_delete"></label>
+			 	刪除
+			</div>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+			<button type="button" class="btn btn-primary" id="permission_check">確定</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+    <script>
+    var csrfmiddlewaretoken="{{ csrf_token }}";
+    var flow_info = {};
+    var formcontent = new omformeng('formcontent');
+    var flowcontent = new omfloweng('flowcontent');
+    var subflows = [];
+    var subflow_flowcontent;
+    var config = {};
+    var retriveform;
+    config.subflow = [];
+	$(function () {
+		if ('{{flow_id}}' != 'newflow')
+		{
+			var getname_postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, w_flow_id: '{{ flow_id }}'};
+    		omflowJsonAjax(getname_postbody, '{% url "getApplicationFlowNameAjax" %}', getname_action);
+			var flow_postbody = {csrfmiddlewaretoken:csrfmiddlewaretoken, flow_id:'{{flow_id}}'};
+			omflowJsonAjax(flow_postbody, "{% url 'loadFlowWorkspaceAjax'%}", flow_action);
+	        
+	        var tabCookie = getCookie('tabCookie');
+	        if (tabCookie != null)
+	        {
+	        	tabCookie = JSON.parse(tabCookie.replace(/_1_/g,'"'));
+	       		$('.nav-tabs a[href="'+tabCookie[url.pathname]+'"]').tab('show');
+	       	}
+	       	else 
+	       	{ 	tabCookie = {} };
+	        $('.nav-tabs:first a').on('shown.bs.tab', function(event){
+	        	seltab = $(event.target).attr('href');
+	        	tabCookie[url.pathname] = seltab;
+	        	tabCookie = JSON.stringify(tabCookie).replace(/\"/g,'_1_');
+	        	setCookie('tabCookie', tabCookie, 0.5);
+	        	tabCookie = JSON.parse(tabCookie.replace(/_1_/g,'"'));
+	        });
+	    }
+	    else
+	    {
+	    	var postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, w_app_id: '{{ app_id }}'};
+    		omflowJsonAjax(postbody, '{% url "getApplicationFlowNameAjax" %}', getname_action);
+    		var role_postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, functional_flag: 'True', ad_flag: ['0']};
+			omflowJsonAjax(role_postbody, "{% url 'listGroupAjax'%}", role_action);
+	    	formcontent.event_group_list(load_group_list);
+	    	formcontent.init(true);
+	    	
+	    	var uid = Date.now();
+	    	flowcontent.event_app_list(load_app_list);
+	    	flowcontent.event_my_flow_list(my_flow_list);
+	    	flowcontent.event_my_flowIO_list(my_flowIO_list);
+	    	flowcontent.event_group_list(load_group_list);
+    		flowcontent.event_user_list(load_user_list);
+	    	flowcontent.init(true);
+	    	flowcontent.load('{"flow_item_counter":4,"flow_line_counter":3,"form_object":{"form_item_counter":0,"form_box_counter":0,"user":[],"group":[],"level":[],"title":false,"status":[],"op1":[],"op2":[],"items":[]},"is_sub":false,"subflow":[],"items":[{"id":"FITEM_1","type":"start","text":"開始","left":0,"top":0,"config":{"error_pass":false,"load_balance":false,"callable":false,"input":[{"require":false,"value":"success","name":"result","des":""}],"output":[],"subflow_input":[],"subflow_output":[],"top":0,"left":420}},{"id":"FITEM_2","type":"form","text":"人工輸入","left":0,"top":0,"config":{"calculate":[],"input":[],"output":[],"form_object":null,"form_setdata":[],"subflow_id":"","subflow_input":[],"subflow_output":[],"log":true,"top":100,"left":420,"input1":[],"input2":[],"cform_object":null,"action1":false,"action2":false,"action1_text":"","action2_text":""}},{"id":"FITEM_3","type":"switch","text":"判斷","left":0,"top":0,"config":{"calculate":[],"rules":[{"target":"FITEM_2","value1":"","value2":"","rule":"="}],"log":true,"top":200,"left":420}},{"id":"FLINE_MW1","type":"line","config":{"target_side":"top","source_side":"bottom","target_item":"FITEM_2","source_item":"FITEM_1","idcounter":1,"linebox_left":480,"linebox_top":100,"linebox_long":0,"linebox_top_width":20,"linebox_bottom_width":-20,"linebox_arrow_top":110,"linebox_arrow_left":476}},{"id":"FLINE_MW2","type":"line","config":{"target_side":"top","source_side":"bottom","target_item":"FITEM_3","source_item":"FITEM_2","idcounter":2,"linebox_left":480,"linebox_top":200,"linebox_long":0,"linebox_top_width":20,"linebox_bottom_width":-20,"linebox_arrow_top":210,"linebox_arrow_left":476}},{"id":"FLINE_MH3","type":"line","config":{"target_side":"left","source_side":"left","target_item":"FITEM_2","source_item":"FITEM_3","idcounter":3,"linebox_left":"355","linebox_top":"150","linebox_long":100,"linebox_top_width":65,"linebox_bottom_width":65,"linebox_arrow_top":146,"linebox_arrow_left":410}},{"id":"FITEM_4","type":"end","text":"結束","left":0,"top":0,"config":{"output":[{"value":"$(result)","name":"$(result)","des":""}],"calculate":[],"top":300,"left":420}}]}');
+	    	flowcontent.event_flow_list(load_flow_list);
+	    	flowcontent.event_flowIO_list(load_flowIO_list);
+	    	flowcontent.form(formcontent.getObject());
+	    	flowcontent.setUID(uid);
+			retriveform = JSON.stringify(formcontent.getObject());
+	    }
+ 	});
+ 	
+ 	
+ 	function getname_action(data)
+	{
+		if(data.status == 200)
+		{ 
+			if (typeof data.result === 'object')
+			{
+				$('.content-header > h1').append(data.result.flow_name+'<small>'+data.result.app_name+'</small>');
+				$('ol.breadcrumb').append('<li><a href="/flowmanage/page/flowManagePage/{{app_id}}">'+data.result.app_name+'</a></li>');
+				$('ol.breadcrumb').append('<li class="active"><a href="javascript:location.reload();">'+data.result.flow_name+'</a></li>');
+			}
+			else
+			{
+				$('.content-header > h1').append('{% trans "建立新流程"%}'+'<small>'+data.result.app_name+'</small>');
+				$('ol.breadcrumb').append('<li><a href="/flowmanage/page/flowManagePage/{{app_id}}">'+data.result+'</a></li>');
+				$('ol.breadcrumb').append('<li class="active"><a href="javascript:location.reload();">{% trans "建立新流程"%}</a></li>');
+			}
+		}
+		else
+		{ console.log(data.result) }
+		$('ul.sidebar-menu ul.treeview-menu > li > a[href="/flowmanage/page/flow-app/"]').parentsUntil(".sidebar-menu > .treeview-menu").siblings().removeClass('active menu-open').end().addClass('active menu-open');
+	}
+	
+	function role_action(data)
+	{
+		if(data.status == 200)
+		{	
+			$.each(data.result, function(index, value){
+				$('#role_select').append('<option value="'+value.display_name+'">'+value.display_name+'</option>')
+			});
+			$('#role_select').val('').trigger('change');
+			if (config['permission'] != undefined | null != config['permission'])
+			{
+				config['permission'].forEach( function(item, index){
+					$('#role_select option[value="'+item.role_name+'"]').hide();
+					$('#flow_permission_table tbody').append('<tr>'
+					+'<td><input type="checkbox" class="icheckbox_minimal-blue" value="'+item.role_name+'" id="'+item.role_name+'"><label for="'+item.role_name+'"></label></td>'
+					+'<td><a onclick="permission_edit(\'edit\',\''+item.role_name+'\')" style="color:black;"><i class="fa fa-fw fa-edit" style="color:SteelBlue"></i></a>'+item.role_name+'</td>'
+					+'<td><input type="checkbox" class="icheckbox_minimal-blue" name="view"  id="'+item.role_name+'_view" disabled><label for="'+item.role_name+'_view"></label> 允許</td>'
+					+'<td><input type="checkbox" class="icheckbox_minimal-blue" name="add"  id="'+item.role_name+'_add" disabled><label for="'+item.role_name+'_add"></label> 允許</td>'
+					+'<td><input type="checkbox" class="icheckbox_minimal-blue" name="modify" id="'+item.role_name+'_modify" disabled><label for="'+item.role_name+'_modify"></label> 允許</td>'
+					+'<td><input type="checkbox" class="icheckbox_minimal-blue" name="delete" id="'+item.role_name+'_delete" disabled><label for="'+item.role_name+'_delete"></label> 允許</td></tr>');
+					$('#'+item.role_name+'_view').prop('checked', item.value.view);
+					$('#'+item.role_name+'_add').prop('checked', item.value.add);
+					$('#'+item.role_name+'_modify').prop('checked', item.value.modify);
+					$('#'+item.role_name+'_delete').prop('checked', item.value.delete);
+				});
+			}
+		}
+		else
+		{
+		
+		}
+	}
+	
+	
+	function permission_check(action)
+	{
+		var role = $('#role_select').val();
+		if (role == null)
+			return
+		if(action == 'add')
+		{
+			$('#flow_permission_table tbody').append('<tr>'
+				+'<td><input type="checkbox" class="icheckbox_minimal-blue" value="'+role+'" id="'+role+'"><label for="'+role+'"></label></td>'
+				+'<td><a onclick="permission_edit(\'edit\',\''+role+'\')" style="color:black;"><i class="fa fa-fw fa-edit" style="color:SteelBlue"></i></a>'+role+'</td>'
+				+'<td><input type="checkbox" class="icheckbox_minimal-blue" name="view"  id="'+role+'_view" disabled><label for="'+role+'_view"></label> 允許</td>'
+				+'<td><input type="checkbox" class="icheckbox_minimal-blue" name="add"  id="'+role+'_add" disabled><label for="'+role+'_add"></label> 允許</td>'
+				+'<td><input type="checkbox" class="icheckbox_minimal-blue" name="modify" id="'+role+'_modify" disabled><label for="'+role+'_modify"></label> 允許</td>'
+				+'<td><input type="checkbox" class="icheckbox_minimal-blue" name="delete" id="'+role+'_delete" disabled><label for="'+role+'_delete"></label> 允許</td></tr>');
+		}
+		var thisper = {}
+		$.each($('#modal-flowdesign-permission input:checkbox'), function(index, item){
+			$('#'+role+'_'+item.value).prop('checked', this.checked);
+			thisper[item.value] = item.checked
+		});
+		var newper = true;
+		if(config['permission'] != undefined)
+		{
+			$(config['permission']).each( function(index, item){
+				if (role == item.role_name)
+				{
+					config['permission'][index]['value'] = thisper;
+					newper = false;
+				}
+			});
+		}
+		else
+		{
+			config['permission'] = []
+			config['permission'].push({'role_name': role, 'value': thisper})
+			newper = false;
+		}
+		if (newper)
+		{ config['permission'].push({'role_name': role, 'value': thisper}) }
+		$('#role_select option[value="'+role+'"]').hide();
+		$('#modal-flowdesign-permission').modal('hide');
+	}
+	
+	
+	function permission_edit(action, role)
+	{
+		if(action == 'edit')
+		{
+			$('#role_select').val(role).trigger('change').prop('disabled', true);
+			$('#role_select option[value="'+role+'"]').show();
+			config['permission'].forEach( function(item, index){
+				if(item.role_name == role)
+				{
+					$('#modal-flowdesign-permission input:checkbox[value="view"]').prop('checked', item.value.view);
+					$('#modal-flowdesign-permission input:checkbox[value="add"]').prop('checked', item.value.add)
+					$('#modal-flowdesign-permission input:checkbox[value="modify"]').prop('checked', item.value.modify)
+					$('#modal-flowdesign-permission input:checkbox[value="delete"]').prop('checked', item.value.delete)
+				}
+			});
+			$('#permission_check').off('click').on('click', function(){
+				permission_check('edit')
+			});
+		}
+		else
+		{
+			$('#permission_check').off('click').on('click', function(){
+				permission_check('add')
+			});
+		}
+		
+		$('#modal-flowdesign-permission').off('hidden.bs.modal').on('hidden.bs.modal', function(){
+			$('#role_select option[value="'+role+'"]').hide();
+			$('#role_select').val('').trigger('change').prop('disabled', false);
+			$('#modal-flowdesign-permission input:checkbox').prop('checked', false);
+		});
+		$('#modal-flowdesign-permission').modal('show');
+	}
+	
+	
+	
+	function permission_delete()
+	{
+		$.each($('#flow_permission_table tbody tr td:first-child input:checkbox'), function(index, item){
+			if(this.checked)
+			{
+				$(this).closest('tr').remove();
+				$('#role_select option[value="'+this.value+'"]').show();
+				config['permission'].forEach( function(config_item, config_index){
+				if(config_item.role_name == item.value)
+				{
+					config['permission'].splice(config_index, 1);
+				}
+			});
+			}
+		});
+	}
+	
+	
+	function flow_action(data)
+	{
+		if (data.status == 200)
+		{
+			var role_postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, functional_flag: 'True', ad_flag: ['0']};
+			omflowJsonAjax(role_postbody, "{% url 'listGroupAjax'%}", role_action);
+			res = data.result;
+			config = JSON.parse(res.config);
+			$('#flow_name').val(res.flow_name);
+			$('#description').val(res.description);
+			$('#fp_show').prop('checked',config.fp_show);
+			$('#attachment').prop('checked',config.attachment);
+			$('#relation').prop('checked',config.relation);
+			$('#worklog').prop('checked',config.worklog);
+			$('#history').prop('checked',config.history);
+			
+			flow_info['id'] = res.id;
+			
+			formcontent.init(true);
+			formcontent.event_group_list(load_group_list);
+			formcontent.load(res.formobject);
+			
+			flowcontent.event_app_list(load_app_list);
+			flowcontent.event_my_flow_list(my_flow_list);
+	    	flowcontent.event_my_flowIO_list(my_flowIO_list);
+			flowcontent.init(true);
+	    	flowcontent.event_group_list(load_group_list);
+	    	flowcontent.event_user_list(load_user_list);
+			flowcontent.load(res.flowobject);
+			flowcontent.event_flow_list(load_flow_list);
+	    	flowcontent.event_flowIO_list(load_flowIO_list);
+	    	
+			flowcontent.form(formcontent.getObject());
+			JSON.parse(res.flowobject).subflow.forEach(function(item,index){
+				subflows.push(item)
+				$('#subflow_table tbody').append('<tr><td><input type="checkbox" class="icheckbox_minimal-blue" id="'+item.uid+'" value="'+item.uid+'"></input><label for="'+item.uid+'"></label></td>'
+	          	      	  	  +'<td><a onclick="subflow_edit(\''+item.uid+'\')" title="編輯" style="color:black;cursor: pointer;"><i class="fa fa-fw fa-edit" style="color:SteelBlue;"></i>'+item.name+'</a></td>'
+	          	      	  	  +'<td>'+item.description+'</td></tr>');
+			});
+		}
+		else
+		{
+			omflowAlert('red', data.message);
+		}
+
+	};
+	
+	
+	function load_group_list()
+	{
+		var grouplist=[];
+		var postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, 'functional_flag_%B': 'False', 'ad_flag_%B': ['0']};
+		$.ajax({
+			url	: '{% url 'listGroupAjax' %}',
+			type: 'post',
+	        data: postbody,
+	        async:false,
+	        dataType: 'json',
+	        success: function (data) {
+	            grouplist = data.result;
+	        },
+	        error: function(req, status, err) {
+				$('#modal_error').modal('show');
+	        	console.log('Something went wrong', status, err);
+	    	}
+		});
+		return grouplist;
+	}
+	
+	
+	function load_user_list(group_id)
+	{
+		var userlist = []
+		$.ajax({
+			url: "{% url 'searchGroupUserAjax' %}",
+			type: 'post',
+			async:false,
+			data: { csrfmiddlewaretoken: '{{ csrf_token }}' , searchkey: group_id},
+			success: function (data) {
+				userlist = data.result;
+			},
+			error: function(req, status, err) {
+				$('#modal_error').modal('show');
+	        	console.log('Something went wrong', status, err);
+	    	}
+		});
+		return userlist;
+	}
+	
+	
+	function load_app_list()
+	{
+		var applist = []
+		var postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken};
+		$.ajax({
+			url	: '{% url 'listActiveApplicationAjax' %}',
+			type: 'post',
+	        data: postbody,
+	        async:false,
+	        dataType: 'json',
+	        success: function (data) {
+	            applist = data.result;
+	        },
+	        error: function(req, status, err) {
+				$('#modal_error').modal('show');
+	        	console.log('Something went wrong', status, err);
+	    	}
+		});
+		return applist;
+	}
+	
+	
+	function load_flow_list(app_id)
+	{
+		var flowlist = []
+		var postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, app_id: app_id};
+		$.ajax({
+			url	: '{% url 'listFlowActiveAjax' %}',
+			type: 'post',
+	        data: postbody,
+	        async:false,
+	        dataType: 'json',
+	        success: function (data) {
+	            flowlist = data.result;
+	        },
+	        error: function(req, status, err) {
+				$('#modal_error').modal('show');
+	        	console.log('Something went wrong', status, err);
+	    	}
+		});
+		return flowlist;
+	}
+	
+	
+	function load_flowIO_list(flow_uuid)
+	{	
+		var IOlist = []
+		var postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, flow_uuid: flow_uuid};
+		$.ajax({
+			url	: '{% url 'getOutsideFlowAjax' %}',
+			type: 'post',
+	        data: postbody,
+	        async:false,
+	        dataType: 'json',
+	        success: function (data) {
+	            IOlist = data.result;
+	        },
+	        error: function(req, status, err) {
+				$('#modal_error').modal('show');
+	        	console.log('Something went wrong', status, err);
+	    	}
+		});
+		return IOlist;
+	}
+	
+	
+	function my_flow_list()
+	{
+		var myflowlist = []
+		var postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, flow_id: '{{flow_id}}', app_id: '{{app_id}}'};
+		$.ajax({
+			url	: '{% url 'listFlowWorkspaceAjax' %}',
+			type: 'post',
+	        data: postbody,
+	        async:false,
+	        dataType: 'json',
+	        success: function (data) {
+	            myflowlist = data.result;
+	        },
+	        error: function(req, status, err) {
+				$('#modal_error').modal('show');
+	        	console.log('Something went wrong', status, err);
+	    	}
+		});
+		return myflowlist;
+	}
+	
+	
+	function my_flowIO_list(flow_name)
+	{	
+		var flowIOlist = []
+		var postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken,app_id: '{{app_id}}', flow_name: flow_name};
+		$.ajax({
+			url	: '{% url 'getInsideFlowAjax' %}',
+			type: 'post',
+	        data: postbody,
+	        async:false,
+	        dataType: 'json',
+	        success: function (data) {
+	            flowIOlist = data.result;
+	        },
+	        error: function(req, status, err) {
+				$('#modal_error').modal('show');
+	        	console.log('Something went wrong', status, err);
+	    	}
+		});
+		return flowIOlist;
+	}
+	
+	
+	function flow_save()
+	{
+		Swal.fire({
+		  title: '處理中...',
+		  toast: true,
+		  position: 'bottom-start',
+		  showConfirmButton: false,
+		});
+		Swal.showLoading();
+		config.name = $('#flow_name').val();
+		config.description = $('#description').val();
+		config.fp_show = $('#fp_show').prop('checked');
+		config.attachment = $('#attachment').prop('checked');
+		config.relation = $('#relation').prop('checked');
+		config.worklog = $('#worklog').prop('checked');
+		config.history = $('#history').prop('checked');
+		config.title_field = 0;
+		config.status_field = 0;
+		config.display_field = 0;
+		config.search_field = 0;
+	
+		flowcontent.subflow(subflows);
+		
+		var formobject = formcontent.toString();
+		var flowobject = flowcontent.toString();
+		var postbody =
+			{
+				csrfmiddlewaretoken : csrfmiddlewaretoken,
+				app_id		: {{app_id}},
+				flow_id  	: flow_info.id,
+				flow_name	: $('#flow_name').val(),
+				flow_attr	: 'user',
+				description	: $('#description').val(),
+				formobject	: formobject,
+				flowobject	: flowobject,
+				config		: JSON.stringify(config),
+			}
+		if ('{{flow_id}}' == 'newflow')
+		{
+			omflowJsonAjax(postbody, '{% url "createFlowWorkspaceAjax"%}', save_actions);
+		}
+		else
+		{
+			omflowJsonAjax(postbody, '{% url "updateFlowWorkspaceAjax"%}', save_actions);
+		}
+			
+	};
+	
+	
+	function create_subflowdesign()
+	{
+		subflow_flowcontent = '';
+		var uid = Date.now();
+		var subflow_box = '<div class="panel with-nav-tabs panel-default"><div class="panel-default panel-heading">'
+			         +'  	  <ul class="nav nav-tabs">'
+			         +'  	  	<li class="active"><a href="#subflow_p1" data-toggle="tab">參數設定</a></li>'
+					 +'		<li><a href="#subflow_p2" data-toggle="tab">流程設計</a></li>'
+					 +'		<li class="pull-right" id="subflow_confirm_button">'
+					 +'     	  <div class="btn-group">'
+			         +'         	<button type="button" class="btn btn-default" onclick="subflow_cancel()" style="margin:1px 0px;"><i class="fa fa-close"></i> 取消'
+			         +'           </div>'
+			         +'     	  <div class="btn-group">'
+			         +'         	<button type="button" class="btn btn-default" onclick="subflow_check(\''+uid+'\')" style="margin:1px 0px;"><i class="fa fa-check"></i> 確定'
+			         +'           </div>'
+			         +'     	</li>'
+			         +'  	  </ul>'
+			         +'		</div><div class="panel-body">'
+			         +'  	  <div class="tab-content">'
+	              	 +'	  	<div class="tab-pane active" id="subflow_p1">'
+	              	 +'	  	  <div class="box box-default">'
+					 +'			<div class="box-body">'
+					 +'		  	  <div class="row">'
+					 +'		      	<div class="col-md-6">'
+					 +'		      	  <div class="form-group has-warning">'
+					 +'					<label>流程名稱</label>'
+					 +'					<input type="text" class="form-control" name="subflow_name" id="subflow_name" data-toggle="tooltip" placeholder="請輸入流程名稱">'
+					 +'				  </div>'
+					 +'				  <div class="form-group">'
+					 +'					<label>說明</label>'
+					 +'					<textarea rows="3" class="form-control" name="subflow_description" id="subflow_description" placeholder="流程說明" style="resize:none;"></textarea>'
+					 +'				  </div>'
+					 +'				</div>'
+					 +'				<div class="col-md-6">'
+					 +'			  	</div>'
+					 +'			  </div>'
+					 +'		  	</div>'
+			         +'       </div>'
+	              	 +'	  	</div>'
+					 +'	  	<div class="tab-pane " id="subflow_p2">'
+					 +'	  	  <div class="row">'
+					 +'		  	<div id="flowbox" class="col-md-12">'
+					 +'			  <div class="box box-default">'
+					 +'			  	<div class="box-header with-border">'
+					 +'				  <button type="button" class="btn btn-default" data-toggle="modal" data-target="#subflow_flowcontent_add_chart_modal"style="margin:1px 0px;"><i class="fa fa-plus"></i> 新增</button>'
+					 +'			  	</div>'
+					 +'			  	<div id="subflow_flowcontent" style="width:calc(100%-10px);height:500px">'
+					 +'			  	</div>'
+					 +'			  </div>'
+					 +'		  	</div>'
+					 +'		  </div>'
+					 +'	  	</div>'
+	              	 +'	  </div>'
+	              	 +'	  </div>'
+			         +' </div>'
+		$('#subflow_table_box').hide();
+		$('#subflow_box').append(subflow_box);
+		
+		subflow_flowcontent = new omfloweng('subflow_flowcontent');
+		subflow_flowcontent.init_subflow(true);
+		subflow_flowcontent.load('{"flow_item_counter":4,"flow_line_counter":3,"form_object":{"form_item_counter":0,"form_box_counter":0,"user":[],"group":[],"level":[],"title":false,"status":[],"op1":[],"op2":[],"items":[]},"is_sub":false,"subflow":[],"items":[{"id":"FITEM_1","type":"start","text":"開始","left":0,"top":0,"config":{"error_pass":false,"load_balance":false,"callable":false,"input":[{"require":false,"value":"success","name":"result","des":""}],"output":[],"subflow_input":[],"subflow_output":[],"top":0,"left":420}},{"id":"FITEM_2","type":"form","text":"人工輸入","left":0,"top":0,"config":{"calculate":[],"input":[],"output":[],"form_object":null,"form_setdata":[],"subflow_id":"","subflow_input":[],"subflow_output":[],"log":true,"top":100,"left":420,"input1":[],"input2":[],"cform_object":null,"action1":false,"action2":false,"action1_text":"","action2_text":""}},{"id":"FITEM_3","type":"switch","text":"判斷","left":0,"top":0,"config":{"calculate":[],"rules":[{"target":"FITEM_2","value1":"","value2":"","rule":"="}],"log":true,"top":200,"left":420}},{"id":"FLINE_MW1","type":"line","config":{"target_side":"top","source_side":"bottom","target_item":"FITEM_2","source_item":"FITEM_1","idcounter":1,"linebox_left":480,"linebox_top":100,"linebox_long":0,"linebox_top_width":20,"linebox_bottom_width":-20,"linebox_arrow_top":110,"linebox_arrow_left":476}},{"id":"FLINE_MW2","type":"line","config":{"target_side":"top","source_side":"bottom","target_item":"FITEM_3","source_item":"FITEM_2","idcounter":2,"linebox_left":480,"linebox_top":200,"linebox_long":0,"linebox_top_width":20,"linebox_bottom_width":-20,"linebox_arrow_top":210,"linebox_arrow_left":476}},{"id":"FLINE_MH3","type":"line","config":{"target_side":"left","source_side":"left","target_item":"FITEM_2","source_item":"FITEM_3","idcounter":3,"linebox_left":"355","linebox_top":"150","linebox_long":100,"linebox_top_width":65,"linebox_bottom_width":65,"linebox_arrow_top":146,"linebox_arrow_left":410}},{"id":"FITEM_4","type":"end","text":"結束","left":0,"top":0,"config":{"output":[{"value":"$(result)","name":"$(result)","des":""}],"calculate":[],"top":300,"left":420}}]}');
+		subflow_flowcontent.event_group_list(load_group_list);
+		subflow_flowcontent.event_user_list(load_user_list);
+		subflow_flowcontent.event_app_list(load_app_list);
+	    subflow_flowcontent.event_flow_list(load_flow_list);
+	    subflow_flowcontent.event_flowIO_list(load_flowIO_list);
+		subflow_flowcontent.form(formcontent.getObject());
+		subflow_flowcontent.setUID(uid);
+	};
+	
+	
+	function subflow_edit(uid)
+	{
+		subflow_flowcontent = '';
+		var subflow_box = '<div class="panel with-nav-tabs panel-default"><div class="panel-default panel-heading">'
+			         +'  	  <ul class="nav nav-tabs">'
+			         +'  	  	<li class="active"><a href="#subflow_p1" data-toggle="tab">參數設定</a></li>'
+					 +'		<li><a href="#subflow_p2" data-toggle="tab">流程設計</a></li>'
+					 +'		<li class="pull-right" id="subflow_confirm_button">'
+					 +'     	  <div class="btn-group">'
+			         +'         	<button type="button" class="btn btn-default" onclick="subflow_cancel()" style="margin:1px 0px;"><i class="fa fa-close"></i> 取消'
+			         +'           </div>'
+			         +'     	  <div class="btn-group">'
+			         +'         	<button type="button" class="btn btn-default" onclick="subflow_check(\''+uid+'\')" style="margin:1px 0px;"><i class="fa fa-check"></i> 確定'
+			         +'           </div>'
+			         +'     	</li>'
+			         +'  	  </ul>'
+			         +'		</div><div class="panel-body">'
+			         +'  	  <div class="tab-content">'
+	              	 +'	  	<div class="tab-pane active" id="subflow_p1">'
+	              	 +'	  	  <div class="box box-default">'
+					 +'			<div class="box-body">'
+					 +'		  	  <div class="row">'
+					 +'		      	<div class="col-md-6">'
+					 +'		      	  <div class="form-group has-warning">'
+					 +'					<label>流程名稱</label>'
+					 +'					<input type="text" class="form-control" name="subflow_name" id="subflow_name" data-toggle="tooltip" placeholder="請輸入流程名稱">'
+					 +'				  </div>'
+					 +'				  <div class="form-group">'
+					 +'					<label>說明</label>'
+					 +'					<textarea rows="3" class="form-control" name="subflow_description" id="subflow_description" placeholder="流程說明" style="resize:none;"></textarea>'
+					 +'				  </div>'
+					 +'				</div>'
+					 +'				<div class="col-md-6">'
+					 +'			  	</div>'
+					 +'			  </div>'
+					 +'		  	</div>'
+			         +'       </div>'
+	              	 +'	  	</div>'
+					 +'	  	<div class="tab-pane " id="subflow_p2">'
+					 +'	  	  <div class="row">'
+					 +'		  	<div id="flowbox" class="col-md-12">'
+					 +'			  <div class="box box-default">'
+					 +'			  	<div class="box-header with-border">'
+					 +'				  <button type="button" class="btn btn-default" data-toggle="modal" data-target="#subflow_flowcontent_add_chart_modal"style="margin:1px 0px;"><i class="fa fa-plus"></i> 新增</button>'
+					 +'			  	</div>'
+					 +'			  	<div id="subflow_flowcontent" style="width:calc(100%-10px);height:500px">'
+					 +'			  	</div>'
+					 +'			  </div>'
+					 +'		  	</div>'
+					 +'		  </div>'
+					 +'	  	</div>'
+	              	 +'	  </div>'
+	              	 +'	  </div>'
+			         +' </div>'
+		$('#subflow_table_box').hide();
+		$('#subflow_box').append(subflow_box);
+		
+		subflow_flowcontent = new omfloweng('subflow_flowcontent');
+		
+		subflow_flowcontent.init_subflow(true);
+		subflow_flowcontent.event_group_list(load_group_list);
+		subflow_flowcontent.event_user_list(load_user_list);
+		subflows.forEach(function(item,index){
+			if (item.uid == uid)
+			{
+				$('#subflow_name').val(item.name);
+				$('#subflow_description').val(item.description);
+				subflow_flowcontent.load(JSON.stringify(item));
+			}
+		});
+		subflow_flowcontent.event_app_list(load_app_list);
+	    subflow_flowcontent.event_flow_list(load_flow_list);
+	    subflow_flowcontent.event_flowIO_list(load_flowIO_list);
+	    subflow_flowcontent.form(formcontent.getObject());
+		config.subflow.forEach(function(item,index){
+			if (item.uid == uid)
+			{
+				$('#subflow_fp_show').prop('checked',item.fp_show);
+				$('#subflow_attachment').prop('checked',item.attachment);
+				$('#subflow_relation').prop('checked',item.relation);
+				$('#subflow_worklog').prop('checked',item.worklog);
+				$('#subflow_history').prop('checked',item.history);
+			}
+		});
+	}
+	
+	
+	function delete_subflowdesign()
+	{
+		var deletelist = [];
+		subflows.forEach(function(item, index){
+			$.each($('#subflow_table input:checkbox:checked'), function(){
+				if (item.uid == $(this).val() )
+				{
+					deletelist.push(index);
+					$(this).closest('tr').hide();
+				}
+			});
+		});
+		deletelist.forEach(function(item,index){
+			subflows.splice(item,1);
+			config.subflow.splice(item,1);
+		})
+		
+	}
+	
+	
+	function subflow_cancel()
+	{
+		$('#subflow_box').empty()
+		$('#subflow_table_box').show();
+	}
+	
+	
+	function subflow_check(uid)
+	{
+		
+		var create = true;
+		var new_name = $('#subflow_name').val();
+		var new_id	 = subflow_flowcontent.getObject().uid;
+		var new_des  = $('#subflow_description').val();
+		var subflow_config = {};
+		var NO = false;
+		if (new_name == null | new_name.length == 0)
+		{
+			$('.nav-tabs a[href="#subflow_p1"]').tab('show');
+			$('#subflow_name').css("border-color","rgb(253, 13, 77)").prop("title","請輸入子流程名稱");
+			$('input').tooltip({
+			     placement: "top",
+			     trigger: "focus"
+			});
+			$('#subflow_name').focus()
+			NO = true;
+		}
+		else
+		{
+			config.subflow.forEach(function(item,index){
+				if (item.name == new_name && item.uid != new_id)
+				{
+					$('.nav-tabs a[href="#subflow_p1"]').tab('show');
+					$('#subflow_name').css("border-color","rgb(253, 13, 77)").prop("title","子流程名稱重複，請重新輸入。");
+					$('input').tooltip({
+					     placement: "top",
+					     trigger: "focus"
+					});
+					$('#subflow_name').focus()
+					NO = true;
+				}
+			});
+		}
+		if (NO)
+			return
+		
+		subflow_config.uid=uid;
+		subflow_config.name = new_name;
+		subflow_config.description = new_des;
+		subflow_config.fp_show = $('#subflow_fp_show').prop('checked');
+		subflow_config.attachment = $('#subflow_attachment').prop('checked');
+		subflow_config.relation = $('#subflow_relation').prop('checked');
+		subflow_config.worklog = $('#subflow_worklog').prop('checked');
+		subflow_config.history = $('#subflow_history').prop('checked');
+		
+		subflow_flowcontent.setName(new_name);
+		subflow_flowcontent.setDes(new_des);
+		
+		$('#subflow_table tbody').empty();
+		subflows.forEach(function(item,index){
+			if (item.uid == uid)
+			{
+				subflows[index] = subflow_flowcontent.getObject();
+				item = subflow_flowcontent.getObject();
+				create = false;
+			}
+			$('#subflow_table tbody').append('<tr><td><input type="checkbox" class="icheckbox_minimal-blue" id="'+item.uid+'" value="'+item.uid+'"></input><label for="'+item.uid+'"></label></td>'
+              	      	  	  +'<td><a onclick="subflow_edit(\''+item.uid+'\')" title="編輯" style="color:black;cursor: pointer;"><i class="fa fa-fw fa-edit" style="color:SteelBlue;"></i>'+item.name+'</a></td>'
+              	      	  	  +'<td>'+item.description+'</td></tr>');
+		});
+		config.subflow.forEach(function(item,index){
+			if (item.uid == uid)
+			{
+				config.subflow[index] = subflow_config;
+				create = false;
+			}
+		});
+		if (create)
+		{
+			subflows.push(subflow_flowcontent.getObject());
+			config.subflow.push(subflow_config);
+			$('#subflow_table tbody').append('<tr><td><input type="checkbox" class="icheckbox_minimal-blue" id="'+uid+'" value="'+uid+'"></input><label for="'+uid+'"></label></td>'
+              	      	  	  +'<td><a onclick="subflow_edit(\''+uid+'\')" title="編輯" style="color:black;cursor: pointer;"><i class="fa fa-fw fa-edit" style="color:SteelBlue;"></i>'+new_name+'</a></td>'
+              	      	  	  +'<td>'+new_des+'</td></tr>');
+			
+		}
+		flowcontent.subflow(subflows);
+		$('#subflow_box').empty();
+		$('#subflow_table_box').show();
+	}
+	
+	
+	function save_actions(data)
+	{
+		Swal.close();
+		if(data.status == 200)
+		{
+			if ('{{flow_id}}' == 'newflow')
+			{
+				omflowAlert('green',data.message,callback)
+				function callback(){
+					window.location.href = '/flowmanage/page/flowDesignPage/{{app_id}}/'+data.result.flow_id;
+				}
+			}
+			else
+			{
+				Swal.fire({
+		      	  icon : 'success',
+		      	  title: '成功',
+		      	  toast: true,
+			  	  position: 'bottom-start',
+			  	  showConfirmButton: false,
+		      	  timer: 2000,
+	  		    });
+			}
+		}	
+		else if (data.status == 404)
+		{
+			omflowAlert('yellow', data.message);
+		}
+		else if (data.status == 500)
+		{
+			omflowAlert('blue', data.message);
+		}
+		else if (data.status == 403)
+		{
+			omflowAlert('red', data.message);
+		}
+	};
+
+    </script>
+	
+{% endblock %}

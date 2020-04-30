@@ -1,0 +1,472 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %} 
+{% block content %}
+<!-- 
+	profile.html profilePage
+	author : Pei lin
+-->
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>事故處理流程
+        <small>1.0.0.0</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> 首頁</a></li>
+		<li >流程管理</li>
+        <li class="active"><a href="/flowmanage/page/flowManagePage/">流程設計</a></li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+       <!-- column -->
+        <div class="col-md-12">
+          <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+              <li class="active"><a href="#p1" data-toggle="tab">參數設定</a></li>
+              <li><a href="#p2" data-toggle="tab">權限設定</a></li>
+			  <li><a href="#p3" data-toggle="tab">表單設計</a></li>
+			  <li><a href="#p4" data-toggle="tab">流程設計</a></li>
+              <li><a href="#p5" data-toggle="tab">子流程</a></li>
+            </ul>
+            <div class="tab-content">
+              <div class="tab-pane active" id="p1">
+              <div class="box box-default">
+                <form>
+                  <div class="box-body">
+				  	<div class="row">
+				      <div class="col-md-6">
+					  	<div class="form-group has-warning">
+						  <label>流程名稱</label>
+						  <input type="text" class="form-control" id="formname" placeholder="請輸入流程名稱">
+					  	</div>
+					  	<div class="form-group">
+						  <label>說明</label>
+						  <textarea rows="3" class="form-control" id="formname" placeholder="流程說明"></textarea>
+					  	</div>
+					  	<div class="form-group">
+						  <label>流程代碼</label>
+						  <input type="text" class="form-control" id="formname" placeholder="三碼英文字母">
+					    </div>
+					  	<div class="form-group">
+						  <input type="checkbox" class="minimal" checked>
+						  <label>執行過程紀錄</label>
+					  	</div>
+					  	<div class="form-group">
+					      <input type="checkbox" class="minimal" checked>
+						  <label>表單於服務台顯示</label>
+					    </div>
+					  	<div class="form-group">
+						  <input type="checkbox" class="minimal" checked>
+						  <label>應用程式介面(API)</label>
+					  	</div>
+					  </div>
+					  <div class="col-md-6">
+					  	<div class="form-group">
+						  <label><h4>表單工作區設定:</h4></label>
+					  	</div>
+					  	<div class="form-group">
+						  <input type="checkbox" class="minimal" checked>
+						  <label>查看目前流程及進度</label>
+					  	</div>
+					  	<div class="form-group">
+						  <input type="checkbox" class="minimal" checked>
+						  <label>附加檔案功能</label>
+					  	</div>
+					  	<div class="form-group">
+						  <input type="checkbox" class="minimal" checked>
+						  <label>顯示資料關聯</label>
+					  	</div>
+					  	<div class="form-group">
+						  <input type="checkbox" class="minimal" checked>
+						  <label>填寫及顯示工作日誌</label>
+					    </div>
+					  	<div class="form-group">
+						  <input type="checkbox" class="minimal" checked>
+						  <label>檢視表單資料操作歷程</label>
+					  	</div>
+					  </div>
+					</div>
+				  </div>
+				  <div class="box-footer">
+				  	<div class="row">
+					  <div class="col-md-4">
+					  	<button type="submit" class="btn btn-primary btn-block btn-flat">確認</button>
+					  </div>
+					  <!-- /.col -->
+					</div>
+					<!-- /.row -->
+				  </div>
+				  <!-- /.box-footer -->
+				</form>
+				</div>
+  			  </div>
+  			  <!-- /.tab-pane p1 -->
+			  <div class="tab-pane " id="p2">
+			  	<div class="row">
+				  <div class="col-xs-12">
+					<div class="box box-default">
+					  <div class="box-header with-border">
+						<button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-default-add" style="margin:1px 0px;"><i class="fa fa-plus"></i> 新增</button>
+						<button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-default-delete"><i class="fa fa-trash-o" style="margin:1px 0px;"></i> 刪除</button>
+					  </div>
+					  <div class="box-body">
+						<table id="flow_permission_table" class="table table-bordered table-striped">
+						  <thead>
+							<tr>
+							  <th style="width:5%"><input type="checkbox" class="minimal"></th>
+							  <th>權限名稱</th>				  
+							  <th>說明</th>						  
+							  <th style="width:5%">檢視</th>
+							  <th style="width:5%">新增</th>
+							  <th style="width:5%">修改</th>
+							  <th style="width:5%">刪除</th>
+							</tr>
+						  </thead>
+						  <tbody>
+							<tr>
+							  <td><input type="checkbox" class="minimal"></td>
+							  <td nowrap data-toggle="modal" data-target="#modal-default-add"><i class="fa fa-fw fa-edit" style="color:SteelBlue"></i>im_admin</td>
+							  <td nowrap>事故管理員</td>
+							  <td nowrap>
+								<div class="col-sm-10">
+								  <input type="checkbox" class="minimal" checked disabled> 允許
+								</div>
+							  </td>
+							  <td nowrap>
+								<div class="col-sm-10">
+								  <input type="checkbox" class="minimal" checked disabled> 允許
+								</div>
+							  </td >
+							  <td nowrap>
+								<div class="col-sm-10">
+								  <input type="checkbox" class="minimal" checked disabled> 允許
+								</div>
+							  </td>
+							  <td nowrap>
+								<div class="col-sm-10">
+								  <input type="checkbox" class="minimal" checked disabled> 允許
+								</div>
+							  </td>
+							</tr>
+							</tbody>
+						  </table>
+						</div>
+						<!-- /.box-body -->
+					  </div>
+					  <!-- /.box -->
+					</div>
+					<!-- /.col -->
+				  </div>
+				  <!-- /.row -->
+		  	  </div>
+		  	  <!-- /.tab-pane p2 -->
+			  <div class="tab-pane " id="p3">
+			  	<div class="row">
+				  <div class="col-md-12">
+					<div class="box box-default">
+					  <div class="box-header with-border">
+						<button type="button" class="btn btn-default" onclick="BOXroot_add_12box()" style="margin:1px 0px;"><i class="fa fa-plus"></i> 區塊</button>
+						<button type="button" class="btn btn-default" onclick="BOXroot_add_6box()" style="margin:1px 0px;"><i class="fa fa-plus"></i> 半區塊</button>
+					  </div>
+					  <!-- /.box-header -->
+					  <div id="BOXroot_item" class="box-body">
+					  </div>
+					  <!-- /.box-body -->
+					</div>
+					<!-- /.box -->
+				  </div>
+				  <!-- /.col -->
+				</div>
+				<!-- /.row -->
+			  </div>
+			  <!-- /.tab-pane p3 -->
+			  <div class="tab-pane " id="p4">
+			  	<div class="row">
+				  <div id="flowbox" class="col-md-12">
+					<div class="box box-default">
+					  <div class="box-header with-border">
+						<button type="button" class="btn btn-default" onclick="hello.add_item('process')" style="margin:1px 0px;"><i class="fa fa-plus"></i> 處理</button>
+						<button type="button" class="btn btn-default" onclick="hello.add_item('select')" style="margin:1px 0px;"><i class="fa fa-plus"></i> 判斷</button>
+						<button type="button" class="btn btn-default" onclick="hello.add_item('form')" style="margin:1px 0px;"><i class="fa fa-plus"></i> 人工</button>
+						<button type="button" class="btn btn-default" onclick="hello.add_item('outside')" style="margin:1px 0px;"><i class="fa fa-plus"></i> 外部</button>
+						<button type="button" class="btn btn-default" onclick="hello.add_item('async')" style="margin:1px 0px;"><i class="fa fa-plus"></i> 非同步</button>
+						<button type="button" class="btn btn-default" onclick="hello.add_item('collection')" style="margin:1px 0px;"><i class="fa fa-plus"></i> 集合</button>
+						<button type="button" class="btn btn-default" onclick="hello.output_flow()" style="margin:1px 0px;"><i class="fa fa-plus"></i> 輸出測試</button>
+						<button type="button" class="btn btn-default" onclick="FLOWroot_input()" style="margin:1px 0px;"><i class="fa fa-plus"></i> 輸入測試</button>
+						<button type="button" class="btn btn-default" onclick="test()" style="margin:1px 0px;"><i class="fa fa-plus"></i> 測試</button>
+					  </div>
+					  <!-- /.box-header -->
+					  <div id="flowcontent" style="width:500px;height:500px">
+					  </div>
+					</div>
+					<!-- /.box -->
+				  </div>
+				  <!-- /.col -->
+				</div>
+				<!-- /.row -->
+			  </div>
+			  <!-- /.tab-pane p4 -->
+			  <div class="tab-pane" id="p5">
+			  	<div class="row">
+              	  <div class="col-xs-12">
+              	    <div class="box box-default">
+              	      <div class="box-header with-dorder">
+              	      </div>
+              	      <!-- /.box-header -->
+              	      <div class="box-body">
+              	      </div>
+              	      <!-- /.box-body -->
+              	    </div>
+              	    <!-- /.box -->
+              	  </div>
+              	  <!-- /.col -->
+              	</div>
+              	<!-- /.row -->
+			  </div>
+			  <!-- /.tab-pane p5 -->
+            </div>
+            <!-- /.tab-content -->
+          </div>
+          <!-- /.nav-tabs-custom -->        
+        </div>
+        <!--/.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+    <script>
+	$(function () {
+        $('#flow_permission_table').DataTable(
+        {
+            language: __const_language__,
+			searching: false,
+			"lengthChange": false, 
+        })
+	    //iCheck for checkbox and radio inputs
+	    $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+	    	checkboxClass: 'icheckbox_minimal-blue',
+	    	radioClass   : 'iradio_minimal-blue'
+	    });
+																			  
+		//$('[id^="FITEM_"]').draggable({ grid: [ 60, 30 ],containment: "parent",drag: function (){flow_drag_item(this)},stop: function (){flow_drag_item(this)}});
+ 	});
+	
+	function test()
+	{
+		var e = 'this is<!--start 123-->helloworld<!--end 123--> a book';
+		console.log(e.substring(0,e.indexOf('<!--start 123-->')) + e.substring(e.lastIndexOf('<!--end 123-->') + '<!--end 123-->'.length));
+	}
+	
+	var hello = new omfloweng();
+	hello.init();
+	
+	//==============================================================================================================================
+	/**
+	action map:
+	box_add_content_sumbit() ,
+	
+	**/
+	
+	var box_id = 0; //new object it
+	var box_container = ''; //action container id
+	
+	
+	function BOXroot_add_12box()
+	{
+	    box_container = 'BOXroot';
+	    box_new_item('box12', box_container);
+	}
+	function BOXroot_add_6box()
+	{
+	    box_container = 'BOXroot';
+	    box_new_item('box6', box_container);
+	}
+	
+	function box_new_item(item_type, container)
+	{
+	    /**
+	     _p_id_
+	     _item_type_
+	     **/
+	    box_id++;
+	    var content = '';
+	    var drag = ' draggable="true" ondragstart="boxdrag(event)" ondragover="boxAllowDrop(event) "';
+	    var drop = ' ondrop="boxdrop(event,this)" ';
+	    var config_button = '<button type="button" class="btn btn-box-tool pull-right" onclick="box_button_config_item(\'_p_id_\',\'_item_type_\')"><i class="fa fa-gear"></i></button>';
+	    var remove_button = '<button type="button" class="btn btn-box-tool pull-right" onclick="box_button_remove_item(\'_p_id_\')"><i class="fa fa-remove"></i></button>';
+	    var add_button = '<button type="button" class="btn btn-box-tool pull-right" onclick="box_button_add_item(\'_p_id_\',\'_item_type_\')"><i class="fa fa-plus"></i></button>';
+	
+	    switch(item_type)
+	    {
+	        case 'inputbox':
+	            content = '<div id="_p_id_" class="form-group "' + drag + '>'
+						+ remove_button + config_button
+	                    +'<label id="_p_id__des">文字輸入'
+	                    +'</label>'
+	                    +'<input id="_p_id__item" type="text" class="form-control" placeholder="">'
+	                    +'</div>';
+	        break;
+	        case 'areabox':
+	            content = '<div id="_p_id_" class="form-group "' + drag + '>'
+						+ remove_button + config_button
+	                    +'<label id="_p_id__des">文字輸入'
+	                    +'</label>'
+	                    +'<textarea id="_p_id__item" rows="3" class="form-control" placeholder=""></textarea>'
+	                    +'</div>';
+	        break;
+	        case 'box6':
+	            content ='<div id="_p_id_" class="col-md-6"' + drag + drop + '>'
+	                    +'<div id="_p_id__color" class="box box-default" >'
+	                    +'<div class="box-header with-border"><span id="_p_id__title">未命名</span>'
+	                    + remove_button + config_button + add_button
+	                    +'</div>'
+	                    +'<div id="_p_id__item" class="box-body"></div>'
+	                    +'</div></div>';
+	        break;
+			case 'box6clean':
+	            content ='<div id="_p_id_" class="col-md-6"' + drag + drop + '>'
+	                    + remove_button + config_button + add_button
+	                    +'<div id="_p_id__item" class="box-body"></div>'
+	                    +'</div>';
+	        break;
+	        case 'box12':
+	            content ='<div id="_p_id_" class="col-md-12"' + drag + drop + '>'
+	                    +'<div id="_p_id__color" class="box box-default" >'
+	                    +'<div class="box-header with-border"><span id="_p_id__title">未命名</span>'
+	                    + remove_button + config_button + add_button
+	                    +'</div>'
+	                    +'<div id="_p_id__item" class="box-body"></div>'
+	                    +'</div></div>';
+	        break;
+	        
+	    }
+	    content = '<!--start _p_id_-->' + content + '<!--end _p_id_-->';
+	    content = content.replace(/_p_id_/g,'BOX' + box_id).replace(/_item_type_/g,item_type);
+	    $('#' + container + '_item').append(content);
+	}
+	
+	function box_button_add_item(item_id, item_type)
+	{
+	    var deafult_option = '<option selected="selected" value="inputbox">輸入方塊</option>'
+	                        +'<option value="areabox">多行輸入</option>';
+	    var addtion_option = '<option value="box6">半區塊</option><option value="box6clean">隱藏半區塊</option>';
+	    if(item_type == 'box6')
+	    {
+	        $('#box_add_modal_select').html(deafult_option);
+	    }
+	    else
+	    {
+	        $('#box_add_modal_select').html(deafult_option + addtion_option);
+	    }
+	    
+	    box_container = item_id;
+	    $('#modal-box-add').modal('show');
+	}
+	function box_button_config_item(item_id, item_type)
+	{
+		box_container = item_id;
+		switch(item_type)
+		{
+			case 'box6':
+			case 'box12':
+				$('#box_config_modal_color').val($('#' + box_container + '_color').val());
+				$('#box_config_modal_title').val($('#' + box_container + '_title').html());
+				$('#modal-box-config').modal('show');
+				break;
+		}
+	}
+	function box_button_remove_item(item_id)
+	{
+	    //定位ＩＤ的註解會沒刪掉
+	  box_container = item_id;
+	  $('#' + box_container).remove();
+	}
+	function modal_add_sumbit()
+	{
+	  var item_type = $('#box_add_modal_select').val();
+	  box_new_item(item_type, box_container)
+	  $('#modal-box-add').modal('hide');
+	}
+	//box only
+	function modal_config_box_sumbit()
+	{
+		$('#' + box_container + '_color').attr('class',$('#box_config_modal_color').val()) ;
+		$('#' + box_container + '_title').html($('#box_config_modal_title').val()) ;
+		$('#modal-box-config').modal('hide');
+	}
+	//===drop drag
+	function boxdrag(ev)
+	{
+	    ev.dataTransfer.setData("boxid", ev.target.id);
+	}
+	function boxdrop(ev, target_object)
+	{
+	    ev.preventDefault();
+	    
+	    var target_id = target_object.id;
+	    var source_id = ev.dataTransfer.getData("boxid");
+	    var html_content = $('#BOXroot_item').html();
+	    
+	    //swap
+	    var source_content = "";
+	    var target_content = "";
+	    var target_start_pos = 0;
+	    var target_end_pos = 0;
+	    var source_start_pos = 0;
+	    var source_end_pos = 0;
+	    var output_header = "";
+	    var output_middle = "";
+	    var output_footer = "";
+	    
+	    target_start_pos = html_content.search("<!--start " + target_id + "-->");
+	    target_end_pos = html_content.search("<!--end " + target_id + "-->") + 11 + target_id.length;
+	    target_content = html_content.substring(target_start_pos,target_end_pos);
+	    source_start_pos = html_content.search("<!--start " + source_id + "-->");
+	    source_end_pos = html_content.search("<!--end " + source_id + "-->") + 11 + source_id.length;
+	    source_content = html_content.substring(source_start_pos,source_end_pos);
+	    
+	    if($('#' + source_id).attr('class').startsWith('form-group'))
+	    {
+	        //put into target box
+	        //becarefull that :drop in parent box
+	
+	        output_header = html_content.substring(0,source_start_pos);
+	        output_footer = html_content.substring(source_end_pos);
+	            
+	        $('#BOXroot_item').html(output_header +  output_footer);
+	        
+	        $('#' + target_id + '_item').append(source_content);
+	    }
+	    else
+	    {
+	        if(target_id != source_id)
+	        {
+	            //box and box swap
+	            if(target_start_pos > source_start_pos)
+	            {
+	                output_header = html_content.substring(0,source_start_pos);
+	                output_middle = html_content.substring(source_end_pos,target_start_pos);
+	                output_footer = html_content.substring(target_end_pos);
+	                
+	                $('#BOXroot_item').html(output_header + target_content + output_middle + source_content + output_footer);
+	            }
+	            else
+	            {
+	                output_header = html_content.substring(0,target_start_pos);
+	                output_middle = html_content.substring(target_end_pos,source_start_pos);
+	                output_footer = html_content.substring(source_end_pos);
+	                
+	                $('#BOXroot_item').html(output_header + source_content + output_middle + target_content + output_footer);
+	            }
+	        }
+	    }
+	}
+	function boxAllowDrop(ev)
+	{
+	    ev.preventDefault();
+	}
+    </script>
+{% endblock %}

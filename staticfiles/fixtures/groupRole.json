@@ -1,0 +1,102 @@
+[
+  {
+    "model": "auth.group",
+    "pk": 1,
+    "fields": {
+      "name": "UserAdmin",
+      "permissions": [
+        5,
+        8,
+        6,
+        7
+      ]
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 2,
+    "fields": {
+      "name": "UserViewer",
+      "permissions": [
+        7
+      ]
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 3,
+    "fields": {
+      "name": "GroupRoleAdmin",
+      "permissions": [
+        1,
+        4,
+        2,
+        3
+      ]
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 4,
+    "fields": {
+      "name": "GroupRoleViewer",
+      "permissions": [
+        3
+      ]
+    }
+  },
+  {
+    "model": "omuser.omgroup",
+    "pk": 1,
+    "fields": {
+      "parent_group": null,
+      "functional_flag": true,
+      "description": "UserAdmin have all OmUser permission,it can add,view,modify,delete.",
+      "permissions": [
+        5,
+        8,
+        6,
+        7
+      ]
+    }
+  },
+  {
+    "model": "omuser.omgroup",
+    "pk": 2,
+    "fields": {
+      "parent_group": null,
+      "functional_flag": true,
+      "description": "UserViewer only have OmUser_View permission,it can look for user list and user detail.",
+      "permissions": [
+        7
+      ]
+    }
+  },
+  {
+    "model": "omuser.omgroup",
+    "pk": 3,
+    "fields": {
+      "parent_group": null,
+      "functional_flag": true,
+      "description": "GroupRoleAdmin have all OmGroupRole permission,it can add,view,modify,delete.",
+      "permissions": [
+        1,
+        4,
+        2,
+        3
+      ]
+    }
+  },
+  {
+    "model": "omuser.omgroup",
+    "pk": 4,
+    "fields": {
+      "parent_group": null,
+      "functional_flag": true,
+      "description": "GroupRoleViewer only have OmGroupRole_View permission,it can look for user permission.",
+      "permissions": [
+        3
+      ]
+    }
+  }
+]

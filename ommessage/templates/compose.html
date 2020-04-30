@@ -1,0 +1,289 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %} 
+{% block content %}
+<!-- 
+	compose.html 
+	author : Pei lin
+-->
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        {% trans '新訊息' %}
+        <small id="h1_small"></small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="{% url 'homePage' %}"><i class="fa fa-dashboard"></i>{% trans '首頁' %}</a></li>
+        <li><a href="javascript: history.go(-1)">{% trans '訊息管理' %}</a></li>
+      </ol>
+    </section>
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-md-12">
+		  <div class="box box-primary">
+            <div class="box-header with-border">
+              <a href="javascript: history.go(-1)" class="btn btn-default"><i class="fa fa-arrow-left" ></i>{% trans ' 回到訊息管理' %}</a>
+            </div>
+            <!-- /.box-header -->
+            <form id="omformMessage" onsubmit="omflowSubmit(); return false;" role="form" autocomplete="off" enctype="multipart/form-data" method="post">
+            {% csrf_token %}	
+            <div class="box-body">
+              <div class="form-group">
+              	<div class="input-group" style="width:100%">
+              	  <span class="input-group-addon" style="width:12%">{% trans '標題' %}</span>
+                  <input class="form-control" id="subject" name="subject">
+                </div>
+              </div>
+               <p></p>
+              <div class="form-group">
+              	<div class="input-group" style="width:100%">    
+              	  <span class="input-group-addon" style="width:12%" >{% trans '發送身分' %}</span> 
+                  <select class="form-control" id="create_user_id" name="create_user_id" placeholder="{% trans '訊息發送身分' %}" style="width: 100%; ">
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="input-group" style="width:100%">
+                  <span class="input-group-addon" style="width:12%" >{% trans '訊息成員' %}</span>
+                  <input id="fake" class="form-control"></input>
+                  <select id="receiver" class="form-control" style="width:100%;display:none;" multiple></select>
+                </div>  
+                  
+                  <input type="hidden" class="form-control" id="receive_users_id_lst" name="receive_users_id_lst" style="width: 100%;">
+                  <input type="hidden" class="form-control" id="receive_groups_id_lst" name="receive_groups_id_lst" style="width: 100%;">
+              </div>
+              <p></p>
+              <div class="form-group">
+              	<textarea id="content" name="content" placeholder="內容" class="form-control" style="resize:None; height: 300px"></textarea>
+              </div>
+              <div class="form-group">
+                <div class="btn btn-default btn-file">
+                  <i class="fa fa-paperclip"></i> {% trans '新增附件' %}
+                  <input type="file" id="attachment" name="attachment" multiple="multiple">
+                </div>
+              </div>
+              <ul class="mailbox-attachments clearfix" id="message_attachment">
+              </ul>
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer">
+              <div class="pull-right">
+                <button type="submit" class="btn btn-primary"><i class="fa fa-envelope-o"></i> {% trans '傳送'%}</button>
+              </div>
+            </div>
+            <!-- /.box-footer -->
+            </form>
+          </div>
+          <!-- /. box -->	
+        </div>
+        <!-- /. col -->
+      </div>
+      <!-- /. row -->
+	</section>
+	
+	<style>
+	.s2-to-tree .select2-results__option {
+	  font-family: 'Font Awesome 5 Free';
+	  display: inline-block;
+	  padding-right: 3px;
+	  vertical-align: middle;
+	  font-weight: 900;
+	}
+	.select2-container--default .select2-selection--multiple .select2-selection__rendered li{
+	  font-family: 'Font Awesome 5 Free';
+	  display: inline-block;
+	  padding-right: 3px;
+	  vertical-align: middle;
+	  font-weight: 900;
+	}
+	</style>
+	<script>
+	var mes_his_id = location.pathname.split('/')[4];
+	$(function () {
+		var postdata = { csrfmiddlewaretoken: '{{ csrf_token }}' , messagehsitory_id: mes_his_id};
+		omflowJsonAjax(postdata, '{% url "composeMessageDetailAjax" %}', loadcompose)
+		
+		$('#attachment').change(function(){
+			$('#message_attachment').empty();
+			var sum = 0;
+			$.each($('#attachment')[0].files, function(index, value){
+				sum += Math.ceil(value.size/Math.pow(2, 20)); 
+			});
+			var postbody = { csrfmiddlewaretoken: '{{ csrf_token }}', file_size: sum };
+			omflowJsonAjax(postbody, '{% url "getDiskStatusAjax" %}', actions_upload)
+			
+			function actions_upload(data){
+				if (data.status == 200)
+				{
+					if (data.result)
+					{
+						$.each($('#attachment')[0].files, function(index, value){
+							var file_size = value.size
+							file_size = omflowSizeUnit(file_size);
+							$('#message_attachment').append(
+								'<li><div class="mailbox-attachment-info">'+
+					        	'<p class="mailbox-attachment-name" style="word-break: break-all;"><i class="fa fa-paperclip"></i>&nbsp;&nbsp;'+value.name+'</p>'+
+					            '<span class="mailbox-attachment-size">'+file_size+'</span>'+
+					      		'</div></li>'
+					      	);
+						});
+					} 
+					else
+					{
+						$('#attachment').val('');
+						omflowAlert('yellow', '硬碟空間不足，請重新選擇檔案或聯絡系統管理員。');
+					}
+				}
+				else
+				{
+					omflowAlert('red', data.message);
+				}
+			}
+		});		
+	});
+	
+	var receivelist = []
+	function loadcompose(data){
+		if (data.status == 200)
+		{
+			$('#create_user_id').append('<option value="'+{{user.id}}+'">'+"{{user.nick_name}}"+'</option>');
+			$.each(data.result.request_user_group_list, function(index, value){
+				$('#create_user_id').append('<option data-type="group" value="'+value.id+'">'+value.name+'</option>');
+			});
+			if (mes_his_id != null && mes_his_id.length != 0)
+			{
+				
+				$('.box-title').text('回覆訊息');
+				$.each(data.result.reply_users, function(index, value){
+					receivelist.push('user_'+value.user_id);
+				});
+				$.each(data.result.reply_groups, function(index, value){
+					receivelist.push('group_'+value.group_id);
+				});
+				$('#subject').val(data.result.reply_history.messages_id__subject);
+				$('#subject').attr('readonly','true');
+				$('#subject').after('<input type="hidden" name="messages_id" value="'+data.result.reply_history.messages_id+'">')
+				var from = ""
+				if (data.result.reply_history.create_user__nick_name)
+				{
+					from = data.result.reply_history.create_user__nick_name;
+				}
+				else 
+				{
+					from = data.result.reply_history.create_group_name;
+				}
+				$('#content').text( '\n\n\n\n\n'+'※※※※※※※※※※※※※※※\n'+
+									'From  :   '+from+'\n'+
+									'Time  :   '+data.result.reply_history.createtime+'\n'+
+									'To  :   '+data.result.receivers+'\n\n'+
+									data.result.reply_history.content);
+			}
+			
+			var postdata_group = { csrfmiddlewaretoken: '{{ csrf_token }}' , searchkey: '', adGroup: "['1','0']"}
+			omflowJsonAjax(postdata_group, '{% url "searchSendGroupAjax" %}', loadgroup)
+			
+			var postdata_user = { csrfmiddlewaretoken: '{{ csrf_token }}' , searchkey: ''}
+			omflowJsonAjax(postdata_user, '{% url "searchSendUserAjax"%}', loaduser)
+		}
+		else
+		{
+			omflowAlert('red', data.message)
+		}
+	}
+	
+	
+	function loadgroup(data){
+		if (data.status == 200)
+		{
+			$.each(data.result, function(index, value){
+				$('#receiver').prepend('<option value="group_'+value.id+'" data-type="group" class="l1">&#xf0c0;  '+value.omgroup__display_name+'</option>');
+				$.ajax({
+					url: "{% url 'searchGroupUserAjax' %}",
+					type: 'post',
+					async:false,
+					data: { csrfmiddlewaretoken: '{{ csrf_token }}' , searchkey: value.id},
+					success: function (Guser) {
+						$.each(Guser.result, function(Guser_index, Guser_value){
+							$('option[value="group_'+value.id+'"]').addClass('non-leaf').after('<option value="user_'+Guser_value.id+'" data-type="user" data-pup="group_'+value.id+'" class="l2">'+Guser_value.nick_name+'</option>');
+						});
+						$('#receiver').select2ToTree();
+						$('#fake').hide();
+						$('#receiver').show()
+					},
+					error: function (data){
+						
+					}
+				});
+			});
+			$('#receiver').val(receivelist).trigger('change');
+		}
+		else
+		{
+			omflowAlert('red', data.message);
+		}
+	}
+	
+	
+	function loaduser(data){
+		if (data.status == 200)
+		{
+			$.each(data.result, function(index, value){
+				$('#receiver').prepend('<option value="user_'+value.id+'" data-type="user" class="l1">'+value.nick_name+'</option>');
+			});
+		}
+		else
+		{
+			omflowAlert('red', data.message);
+		}
+	}
+	
+	function omflowSubmit(){
+		var recuser = [];
+		var recgrouop = [];
+		$.each($('#receiver').val(), function(index, value){
+			if (value.indexOf('user') >= 0)
+			{ recuser.push(value.slice(5)); }
+			else
+			{ recgrouop.push(value.slice(6)); }
+		});
+		$('#receive_users_id_lst').val(recuser)
+		$('#receive_groups_id_lst').val(recgrouop);
+		var select_create = $('option:selected').data('type');
+		if (select_create == 'group')
+		{
+			$('#create_user_id').attr('name','create_group_id');
+		}
+		else
+		{
+			$('#create_user_id').attr('name','create_user_id');
+		}
+		
+		if (mes_his_id != null && mes_his_id.length != 0)
+		{
+			omflowAjax('omformMessage','{% url 'createMessageHistoryAjax'%}', actions);
+		}
+		else
+		{	
+			omflowAjax('omformMessage','{% url 'createMessagesAjax' %}', actions);
+		}
+	}
+	
+	function actions(data)
+	{
+		$("#modal-progress").modal("hide");
+		if(data.status == 200)
+		{
+			omflowAlert('green', data.message);
+			$('#modal_green button').off("click").click(function(){
+				window.location.href='/announcement/page/messageManage/Sent/';
+				$('#modal_green').modal('hide');
+			});
+		}	
+		else
+		{
+			omflowAlert('yellow', data.message);
+		}
+	}
+	</script>
+{% endblock %}

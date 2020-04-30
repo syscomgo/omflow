@@ -1,0 +1,802 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %} 
+{% block content %}
+<!-- 
+	scheduleflow_manage.html scheduleflowManagePage
+	author : Pei lin
+-->
+
+	<script src="/static/js/workflow.js"></script>
+	<!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+       	排程設定
+        <small></small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i> 首頁</a></li>
+		<li >應用管理</li>
+        <li class="active"><a href="/flowmanage/page/flowManagePage/">排程設定</a></li>
+      </ol>
+    </section>
+    <section class="content">
+  	<div class="box box-default">
+      <div class="box-header with-border">
+      	<div class="pull-left">
+      	<button type="button" class="btn btn-default" onclick="schedule_flowactive('create','none','none','none','none','none')" id="schedule_flowactive" style="margin:1px 0px;"><i class="fa fa-plus"></i> 新增</button>
+	      <button type="button" class="btn btn-default" onclick="unschedule_flowactive()" id="unschedule_flowactive" disabled="disabled" style="margin:1px 0px;"><i class="fa fa-trash-o"></i> 刪除</button>
+	      <button type="button" class="btn btn-default" onclick="filter_flowdesign()" style="margin:1px 0px;"><i class="fa fa-filter"></i> 篩選</button>
+          <button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default" onclick="filter_default()" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
+      	</div>
+      </div>
+      <!-- box-header -->
+      <div class="box-body">
+      	<table id="flow_table" class="table table-bordered table-striped">
+		  <thead>
+		  	<tr>
+			  <th style="width:15px"><a><i class="fa fa-lg fa-check-square-o checkbox-toggle" style="color:SteelBlue"></i></a></th>
+			  <th>流程名稱</th>
+			  <th>狀態</th>
+			  <th>下次執行時間</th>
+              <th>排程設定</th>
+			  <th>上次執行時間</th>
+			  <th></th>
+		  	</tr>
+		  </thead>
+		  <tbody>
+		  </tbody>
+	  	</table>
+      </div>
+	  <!-- box-body -->
+  	</div>
+  	<!-- box -->
+    </section>
+    
+	<div class="modal fade" id="modal-flow-schedule" data-backdrop="static">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title"><i class="fa fa-lg fa-calendar" style="color:SteelBlue;"> {% trans '排程設定'%}</i></h4>
+          </div>
+          <div class="modal-body">
+		    <table class="table mo-margin dataTable">
+		      <col width="15%">
+		      <col width="65%">
+		      <col width="20%">
+		      <tbody>
+		        <tr>
+		      	  <td style="vertical-align:middle;">流程名稱 : </td>
+		      	  <td style="vertical-align:middle;">
+		      	  	<select class="form-control" name="flowactive_select" style="width:100%;">
+		      	  	</select>
+		      	  </td>
+		      	  <td>
+		      	  	<button type="button" class="btn btn-default" id="form_setting" onclick="switch_scheduleform('form')" style="display:none;">表單內容</button>
+          			<button type="button" class="btn btn-default" id="schedule_setting" onclick="switch_scheduleform('schedule')" style="display:none;">排程時間</button>
+		      	  </td>
+		      	</tr>
+			  </tbody>
+			</table>
+			<div id="schedule_table">
+		  	<table class="table mo-margin dataTable">
+		      <col width="15%">
+		      <tbody>
+		      	<tr>
+		    	  <td style="vertical-align:middle;">排程時間 : </td>
+		    	  <td>
+		    	  	<div class="form-group" style="margin:0px">
+            	  	  <div class="input-group date">
+              		  	<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+              		  	<input type="text" id="exec_date" class="form-control" data-provide="datepicker" data-date="new Date" data-date-format="yyyy-mm-dd" data-date-language="zh-TW" data-date-start-Date="today" data-date-default-View-Date="today" data-date-today-Highlight="true">
+            		  </div>
+            		  <!-- /.input group -->
+            	  	</div>
+          		  </td>
+		    	  <td>
+		    	  	<div class="form-group" style="margin:0px">
+            		  <div class="input-group date">
+              		  	<div class="input-group-addon"><i class="fa fa-clock-o"></i></div>
+		    		  	<input type="text" id="exec_time" class="form-control" data-provide="timepicker" data-format="hh:mm:ss" data-show-Seconds="true" data-second-Step="1" data-minute-Step="1" data-show-Meridian="false"></td>
+		    		  </div>
+            		  <!-- /.input group -->
+            	  	</div>
+            	  </td>
+		      	</tr>
+		      </tbody>
+		  	</table>
+		  	<table class="table mo-margin dataTable">
+		      <col width="15%">
+		      <tbody>
+		      	<tr>
+		    	  <td>週期 : </td>
+		    	  <td><input type="radio" name="cycle_type" class="iradio_minimal-blue form-control" value="Once" id="Once" checked="true"><label for="Once"></label>&nbsp;單次</td>
+		    	  <td><input type="radio" name="cycle_type" class="iradio_minimal-blue form-control" value="Secondly" id="Secondly"><label for="Secondly"></label>&nbsp;秒</td>
+		    	  <td><input type="radio" name="cycle_type" class="iradio_minimal-blue form-control" value="Minutely" id="Minutely"><label for="Minutely"></label>&nbsp;分</td>
+		    	  <td><input type="radio" name="cycle_type" class="iradio_minimal-blue form-control" value="Hourly" id="Hourly"><label for="Hourly"></label>&nbsp;小時</td>
+		    	  <td><input type="radio" name="cycle_type" class="iradio_minimal-blue form-control" value="Daily" id="Daily"><label for="Daily"></label>&nbsp;日</td>
+		    	  <td><input type="radio" name="cycle_type" class="iradio_minimal-blue form-control" value="Weekly" id="Weekly"><label for="Weekly"></label>&nbsp;週</td>
+		    	  <td><input type="radio" name="cycle_type" class="iradio_minimal-blue form-control" value="Monthly" id="Monthly"><label for="Monthly"></label>&nbsp;月	</td>
+		      	</tr>
+		      </tbody>
+		  	</table>
+		  	<table class="table mo-margin dataTable" name="short_period" hidden="true">
+		  	  <col width="15%">
+		  	  <col width="40%">
+		      <tbody>
+		      	<tr>
+		    	  <td style="vertical-align:middle;">每隔 : </td>
+		    	  <td><input type="number" min="1" step="1" value="1" name="every" class="form-control" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"></td>
+		    	  <td style="vertical-align:middle;" name="period">秒執行</td>
+		      	</tr>
+		      </tbody>
+		  	</table>
+		  	<table class="table mo-margin dataTable" name="week_period" hidden="true">
+		  	  <col width="15%">
+		      <tbody>
+		      	<tr>
+		    	  <td style="vertical-align:middle;">每週 : </td>
+		    	  <td><input type="checkbox" name="cycle_date_week" class="icheckbox_minimal-blue form-control" value="Monday" id="Monday"><label for="Monday"></label>&nbsp;一</td>
+		    	  <td><input type="checkbox" name="cycle_date_week" class="icheckbox_minimal-blue form-control" value="Tuesday" id="Tuesday"><label for="Tuesday"></label>&nbsp;二</td>
+		    	  <td><input type="checkbox" name="cycle_date_week" class="icheckbox_minimal-blue form-control" value="Wednesday" id="Wednesday"><label for="Wednesday"></label>&nbsp;三</td>
+		    	  <td><input type="checkbox" name="cycle_date_week" class="icheckbox_minimal-blue form-control" value="Thursday" id="Thursday"><label for="Thursday"></label>&nbsp;四</td>
+		    	  <td><input type="checkbox" name="cycle_date_week" class="icheckbox_minimal-blue form-control" value="Friday" id="Friday"><label for="Friday"></label>&nbsp;五</td>
+		    	  <td><input type="checkbox" name="cycle_date_week" class="icheckbox_minimal-blue form-control" value="Saturday" id="Saturday"><label for="Saturday"></label>&nbsp;六</td>
+		    	  <td><input type="checkbox" name="cycle_date_week" class="icheckbox_minimal-blue form-control" value="Sunday" id="Sunday"><label for="Sunday"></label>&nbsp;日</td>
+		    	  <td style="vertical-align:middle;">執行</td>
+		      	</tr>
+		      </tbody>
+		  	</table>
+		  	<table class="table mo-margin dataTable" name="month_period" hidden="true">
+		  	  <col width="15%">
+		  	  <col width="10%">
+		  	  <col width="10%">
+		  	  <col width="10%">
+		  	  <col width="10%">
+		  	  <col width="10%">
+		  	  <col width="10%">
+		  	  <col width="10%">
+		      <tbody>
+		      	<tr>
+		    	  <td style="vertical-align:middle;">每隔 : </td>
+		    	  <td colspan="2"><input type="number" min="1" max="12" step="1" value="1" name="every" class="form-control" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"></td>
+		    	  <td style="vertical-align:middle;" align="center">月</td>
+		    	  <td colspan="4"><input type="text" class="form-control" name="cycle_date" readonly="true"></td>
+		    	  <td style="vertical-align:middle;">執行</td>
+		      	</tr>
+    			<tr>
+    			  <td></td>
+    	  	      <td class="clk" align="center" data-value="01">1</td>
+    	  	      <td class="clk" align="center" data-value="02">2</td>
+    	  	      <td class="clk" align="center" data-value="03">3</td>
+    	  	      <td class="clk" align="center" data-value="04">4</td>
+    	  	      <td class="clk" align="center" data-value="05">5</td>
+    	  	      <td class="clk" align="center" data-value="06">6</td>
+    	  	      <td class="clk" align="center" data-value="07">7</td>
+    	          <td></td>
+    	        </tr>
+    		  	<tr>
+    		  	  <td></td>
+    	  	      <td class="clk" align="center" data-value="08">8</td>
+    	  	      <td class="clk" align="center" data-value="09">9</td>
+    	  	      <td class="clk" align="center" data-value="10">10</td>
+    	  	      <td class="clk" align="center" data-value="11">11</td>
+    	  	      <td class="clk" align="center" data-value="12">12</td>
+    	  	      <td class="clk" align="center" data-value="13">13</td>
+    	  	      <td class="clk" align="center" data-value="14">14</td>
+    	  	      <td></td>
+    	  	    </tr>
+    		  	<tr>
+    		  	  <td></td>
+    	  	      <td class="clk" align="center" data-value="15">15</td>
+    	  	      <td class="clk" align="center" data-value="16">16</td>
+    	  	      <td class="clk" align="center" data-value="17">17</td>
+    	  	      <td class="clk" align="center" data-value="18">18</td>
+    	  	      <td class="clk" align="center" data-value="19">19</td>
+    	  	      <td class="clk" align="center" data-value="20">20</td>
+    	  	      <td class="clk" align="center" data-value="21">21</td>
+    	  	      <td></td>
+    	  	    </tr>
+    			<tr>
+    			  <td></td>
+    	  	      <td class="clk" align="center" data-value="22">22</td>
+    	  	      <td class="clk" align="center" data-value="23">23</td>
+    	  	      <td class="clk" align="center" data-value="24">24</td>
+    	  	      <td class="clk" align="center" data-value="25">25</td>
+    	  	      <td class="clk" align="center" data-value="26">26</td>
+    	  	      <td class="clk" align="center" data-value="27">27</td>
+    	  	      <td class="clk" align="center" data-value="28">28</td>
+    	  	      <td></td>
+    	  	    </tr>
+    	  	  	<tr>
+    	  	  	  <td></td>
+    	  	      <td class="clk" align="center" data-value="29">29</td>
+    	  	      <td class="clk" align="center" data-value="30">30</td>
+    	  	      <td class="clk" align="center" data-value="31">31</td>
+    	  	      <td></td>
+    	  	      <td></td>
+    	  	      <td></td>
+    	  	      <td></td>
+    	  	      <td></td>
+    	  	    </tr>
+		      </tbody>
+		  	</table>
+		  	</div>
+		  	<div id="initform"  style="display:none;">
+		  	  <div id="formcontent"></div>
+		  	  <div id="initdata"></div>
+		  	</div>
+		  	
+          </div>
+          <div class="modal-footer">
+          	<button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
+          	<button type="button" class="btn btn-primary" id="schedule_confirm" data-dismiss="modal">確定</button>
+          </div>
+	    </div>
+      </div>
+  	</div>	
+	
+    <script>
+    var csrfmiddlewaretoken="{{ csrf_token }}";
+    var table ;
+    var formcontent = new omformeng('formcontent');
+    var flow_attr =[];
+    var is_active=[];
+    var data_tmp;
+	var data_len;
+	var data_page;
+	var schedule_formdata = {};
+	var formtype = ''
+	var nowid = null;
+	var date = new Date();
+    date.setDate(date.getDate() + 1);
+	select_time = date.getFullYear() +'-'+(date.getMonth()+1)+'-'+date.getDate();
+    $(function () {
+		table = $('#flow_table').DataTable({
+			"autoWidth": false,
+			"order": [[ 4, "asc" ]], 
+			"dom":"<<t>'row'<'col-sm-5'i><'col-sm-7'p>>",
+			"language": __const_language__,
+			"serverSide": true,							//	serverside data loading
+			"deferRender": true,
+			"processing": true,
+			"ajax": {
+           		"url": "{% url 'listSchedulerAjax' %}",
+            	"type": "POST",
+            	"data": function ( d ) {
+							return $.extend( {}, d, {
+								csrfmiddlewaretoken: csrfmiddlewaretoken,
+								datatable: "True", 
+								worktype: "schedule",
+								deploytime: select_time,
+								flow_attr: flow_attr,
+								is_active: is_active
+							});
+						},
+				"dataSrc": function(data){
+						a = dataCompare(data,data_tmp,data_len,data_page,table);
+						data_tmp = a['data_tmp']
+						data_len = a['data_len']
+						data_page = a['data_page']
+						data.data = a['data.data']
+						return data.data;
+					},
+				"error": function(xhr,status,error){
+							clearInterval(table_routine);
+					}
+        	},   
+			"columns":[ 
+				{"width": "15px", "data": "id", "orderable": false, "render": function (data, type, row)
+                	{return '<input type="checkbox" class="icheckbox_minimal-blue" value="'+data+'" data-value="'+row.flowactive_id__flow_name+'" data-flowid="'+row.flowactive_id+'" id="'+data+'" ><label for="'+data+'"></label>'}
+                },
+				{"data": "flowactive_id__flow_name","orderable": false},
+				{"data":"is_active", "orderable": false, "width": "45px", "render": function(data,type,row)
+					{	
+						if(data)
+	        				{return '<button class="btn btn-xs btn-success" onclick="active_flowdesign(this,'+row.id+')" style="width:36px">啟用</button>'}
+	        			else	
+	        				{return '<button class="btn btn-xs btn-warning" onclick="active_flowdesign(this,'+row.id+')" style="width:36px">停用</button>'}
+	        		}
+				},
+				{"data":"next_exec_time", "width": "150px"},
+				{"data":"cycle", "orderable": false, "render": function(data,type,row)
+					{
+						if (data == "Once")
+							{return '單次'}
+						else if (data == "Secondly")
+							{return '每隔'+row.every+'秒'}
+						else if (data == "Minutely")
+							{return '每隔'+row.every+'分'}
+						else if (data == "Hourly")
+							{return '每隔'+row.every+'小時'}
+						else if (data == "Daily")
+							{return '每隔'+row.every+'天'}
+						else if (data == "Weekly")
+							{return '每隔'+row.every+'週  '+ row.cycle_date.replace(/\'Monday'/g,'周一').replace(/\'Tuesday'/g,'週二').replace(/\'Wednesday'/g,'週三').replace(/\'Thursday'/g,'週四').replace(/\'Friday'/g,'週五').replace(/\'Saturday'/g,'週六').replace(/\'Sunday'/g,'週日')}
+						else if (data == "Monthly")
+							{return '每隔'+row.every+'月  '+row.cycle_date.replace(/\'/g,'')}
+					}
+				},
+				{"data":"last_exec_time", "width": "150px"},
+				{"data": "flowactive_id__flow_name", "width": "45px", "orderable": false, "render": function(data,type,row)
+					{return '<button class="btn btn-xs btn-default" onclick="schedule_flowactive(\'update\',\''+row.id+'\',\''+row.flowactive_id__flow_uuid+'\','+row.every+',\''+row.cycle+'\','+row.cycle_date+',\''+row.exec_time+'\')">編輯</button>'}
+				}
+			],
+			rowCallback: function( row, data ) {
+			      schedule_formdata[data.id] = (data.input_param);
+			},
+			drawCallback: function(){
+				omflowCheckAll();
+				$('#flow_table input[type="checkbox"]').change(function(){
+			    	enablebtt();
+			    });
+			}
+		});
+		
+		var postdata = {csrfmiddlewaretoken : csrfmiddlewaretoken, schedule: 'schedule'};
+		omflowJsonAjax(postdata, '{% url "listActiveApplicationAjax"%}', callback)
+		function callback(data){
+			if (data.status == 200)
+			{
+				data.result.app.forEach(function(item,index){
+					$('select[name="flowactive_select"]').append('<option value="'+item.id+'" class="l1 non-leaf" disabled="disabled">'+item.app_name+'</option>');
+				});
+				data.result.flow.forEach(function(item, index){
+					$('option[value="'+item.flow_app_id+'"]').after('<option value="'+item.flow_uuid+'" data-id="'+item.id+'" data-pup="'+item.flow_app_id+'" class="l2">'+item.flow_name+'</option>')
+				});
+				$('select[name="flowactive_select"]').select2ToTree();
+				
+				$('select[name="flowactive_select"]').val(null).trigger('change');
+				$('select[name="flowactive_select"]').change(function () {
+					formmodal(this.value)
+				});
+			}
+			else
+			{
+				omflowAlert('red', data.message);
+			}
+		}
+		
+		
+	});
+	
+	function enablebtt(){
+		var count = $('#flow_table input:checkbox:checked').length;
+    	if (count == 0)
+    	{
+    		$('#unschedule_flowactive, #active_flowdesign, #inactive_flowdesign').prop('disabled', 'disabled');
+    	}
+    	else
+    	{
+    		$('#unschedule_flowactive, #active_flowdesign, #inactive_flowdesign').prop('disabled', '');
+    	}
+	}
+	
+	
+	function filter_flowdesign(){
+		omflowFilter(['filter_search','filter_type','filter_status','filter_length']);
+		$('#modal-default-filter-confirm').off("click").on("click",function(){
+			is_active = [];
+			flow_attr =[];
+			var searchkey = $.trim($('#modal-default-filter #search').val());
+			var page_length = $('#modal-default-filter #page_length').val();
+			$.each($('[name="filter_status"] input:checkbox:checked'), function(){
+				is_active.push($(this).data('value'));
+			});
+			$.each($('[name="filter_type"] input:checkbox:checked'), function(){
+				flow_attr.push($(this).data('value'));
+			});
+			table.page.len(page_length);
+			table.search(searchkey).draw();
+		});
+	}
+    function filter_default(){
+    	is_active = [];
+		flow_attr =[];
+    	table.page.len(10);
+		table.search('');
+    	table.draw();
+    }
+    
+    function unschedule_flowactive(){
+    	omflowListDialogue('delete', '下列排程將被刪除');
+		
+		$('#modal-default-list button:eq(2)').off("click").on("click",function(){
+			postbody = {
+				csrfmiddlewaretoken : csrfmiddlewaretoken,
+				schedule_id			: [],
+				action		: 'delete'
+			}
+			$.each($('#flow_table input:checkbox:checked'), function(){
+				postbody.schedule_id.push($(this).val());
+			});
+			
+			$('#modal-default-list').on('hidden.bs.modal', function () {
+				omflowJsonAjax(postbody,'{% url "scheduleFlowActiveAjax"%}', actions);
+				$('#modal-default-list').off('hidden.bs.modal');
+			});
+		});
+    }
+    
+    function active_flowdesign(thisbt, schedule_id){
+    	$(thisbt).empty().html('<i class="fa fa-refresh fa-spin" style="text-align:center;"></i>');
+		var postbody = {
+			csrfmiddlewaretoken : csrfmiddlewaretoken,
+			schedule_id			: schedule_id
+		}
+		omflowJsonAjax(postbody,'{% url "activeScheduleAjax"%}', active_actions);
+		function active_actions(data)
+		{
+			if(data.status == 200)
+			{table.draw();}
+			else
+			{omflowAlert('yellow', data.message);}
+		}
+    }
+    
+	    
+    function actions(data){
+		Swal.close();
+		if(data.status == 200)
+		{
+			Swal.fire({
+	      	  icon : 'success',
+	      	  title: '成功',
+	      	  toast: true,
+		  	  position: 'bottom-start',
+		  	  showConfirmButton: false,
+	      	  timer: 2000,
+  		    });
+			LSide();
+			table.draw();
+		}	
+		else if (data.status == 404)
+		{
+			omflowAlert('yellow', data.message);
+		}
+		else if (data.status == 500)
+		{
+			omflowAlert('blue', data.message);
+		}
+		else if (data.status == 403)
+		{
+			omflowAlert('red', data.message);
+		}
+	}
+	
+	function schedule_flowactive(action,sche_id,flow_id,every,cycle,cycle_date,exec_time){
+		$('#modal-flow-schedule input[type="text"]').val('');
+		$('#modal-flow-schedule input[type="checkbox"]').prop('checked', false);
+		$('input[name="cycle_type"]#Once').prop('checked',true).trigger('click');
+		$('select[name="flowactive_select"]').val('').trigger('change');
+		$('table[name="month_period"] td').removeClass('selected');
+		
+		nowid = null;
+		var today = new Date();
+		var time = addZero(today.getHours()) + ":" + addZero(today.getMinutes()) + ":" + addZero(today.getSeconds());
+		
+		$("#exec_date").datepicker().datepicker('setDate', today);
+		$('#exec_time').val(time);
+		
+		var mon_sel = [];
+		$('td.clk').off('click').on( 'click', function(){
+			$(this).toggleClass('selected');
+			val = $(this).data('value');
+			if ($(this).attr('class').indexOf('selected')>0)
+	    	{
+	    		mon_sel.push(val);
+	    		mon_sel.sort();
+	    		$('#modal-flow-schedule table[name="month_period"] input[name="cycle_date"]').val(mon_sel);
+	    	}
+	    	else
+	    	{
+	    		var index = mon_sel.indexOf(val);
+	    		mon_sel.splice(index, 1);
+	    		mon_sel.sort();
+	    		$('#modal-flow-schedule table[name="month_period"] input[name="cycle_date"]').val(mon_sel);
+	    	}
+		})
+	    
+	    
+		$('input[name="cycle_type"]').off('click').on('click', function(){
+			display($(this).val());
+		}); 
+		
+		if (action == 'update')
+		{
+			nowid = sche_id;
+			$('select[name="flowactive_select"]').val(flow_id).trigger('change').prop('disabled',true);
+			$('#schedule_setting').trigger('click');
+			$('input[name="cycle_type"]#'+cycle).prop('checked',true);
+			$('#exec_time').val(exec_time);
+			display(cycle);
+			if (cycle == 'Weekly')
+			{	
+				cycle_date.forEach(function(item,index){
+					$('input[name="cycle_date_week"]#'+item).prop('checked',true);
+				});
+			}
+			else if (cycle == 'Monthly')
+			{
+				cycle_date.forEach(function(item,index){
+					$('table[name="month_period"] td[data-value="'+item+'"]').trigger('click');
+				});
+			}
+		}
+		
+		
+		$('#modal-flow-schedule').modal('show');
+		
+		$('#schedule_confirm').off("click").on("click",function(){
+			Swal.fire({
+			  title: '處理中...',
+			  toast: true,
+			  position: 'bottom-start',
+			  showConfirmButton: false,
+			});
+			Swal.showLoading() ;
+			flow_id = $('select[name="flowactive_select"] option:selected').data('id');
+			var flow_uuid = $('select[name="flowactive_select"]').val();
+			var exec_time = $("#exec_date").val() +' ' + $("#exec_time").val()
+			cycle = $('input[name="cycle_type"]:checked').val();
+			every = 1;
+			cycle_date = []
+			if (['Secondly', 'Minutely', 'Hourly', 'Daily'].indexOf(cycle) >= 0)
+			{
+				every = $('#modal-flow-schedule table[name="short_period"] input[name="every"]').val();
+			}
+			else if (cycle == 'Weekly')
+			{
+				$.each($('input[name="cycle_date_week"]:checked'), function(){
+					cycle_date.push($(this).val());
+				});	
+			}
+			else if (cycle == 'Monthly')
+			{
+				every = $('#modal-flow-schedule table[name="month_period"] input[name="every"]').val();
+				cycle_date = $('#modal-flow-schedule table[name="month_period"] input[name="cycle_date"]').val();
+				cycle_date = cycle_date.split(',');
+			}
+			var exec_fun;
+			var input_param;
+			
+			var postdata = {	
+								csrfmiddlewaretoken:csrfmiddlewaretoken,
+								flow_id:　flow_id,
+								flow_uuid: flow_uuid,
+								action: action,
+								exec_time: exec_time, 
+								every: every,
+								cycle: cycle,
+								cycle_date: cycle_date,
+								schedule_id: sche_id.split(','),
+							}
+			var formdata = {checker:[], values:{} };
+			if(formtype == 'formobject')
+			{ 
+				formdata = formcontent.getData();
+				postdata['formdata'] = JSON.stringify(formdata.values) 
+			}
+			else if (formtype == 'startinput')
+			{ 
+				formdata.checker = []
+				$.each($('#initdata input'), function(){
+					formdata['values'][this.name] = this.value
+				});
+				postdata['start_input'] = JSON.stringify(formdata.values)
+			}
+			
+			if (formdata.checker.length == 0)
+			{
+			
+				$('#modal-flow-schedule').off('hidden.bs.modal').on('hidden.bs.modal', function () {
+					omflowJsonAjax(postdata, '{% url "scheduleFlowActiveAjax"%}', actions);
+					$('#modal-flow-schedule').off('hidden.bs.modal');
+				});
+			}
+			else
+			{
+				formdata.checker.forEach(function(item){
+					$('#formcontent_'+item).addClass('has-warning');
+				});
+				Swal.close();
+				omflowAlert('blue', '缺少必填欄位', callback);
+				function callback()
+				{
+					$('#modal_blue').on('hidden.bs.modal', function () {
+						$('#modal-flow-schedule').modal('show');
+					})
+				}
+			}
+		});
+		
+		
+		function display(cycle_type){
+			if (cycle_type == 'Once')
+			{
+				$('#modal-flow-schedule table[name="short_period"]').hide();
+				$('#modal-flow-schedule table[name="week_period"]').hide();
+				$('#modal-flow-schedule table[name="month_period"]').hide();
+			}
+			else if (cycle_type == 'Secondly')
+			{
+				$('#modal-flow-schedule table[name="week_period"]').hide();
+				$('#modal-flow-schedule table[name="month_period"]').hide();
+				$('#modal-flow-schedule table[name="short_period"] input').val(10);
+				$('#modal-flow-schedule table[name="short_period"] td[name="period"]').empty().append('秒鐘執行')
+				$('#modal-flow-schedule table[name="short_period"]').show();
+			}
+			else if (cycle_type == 'Minutely')
+			{
+				$('#modal-flow-schedule table[name="week_period"]').hide();
+				$('#modal-flow-schedule table[name="month_period"]').hide();
+				$('#modal-flow-schedule table[name="short_period"] input').val(5);
+				$('#modal-flow-schedule table[name="short_period"] td[name="period"]').empty().append('分鐘執行')
+				$('#modal-flow-schedule table[name="short_period"]').show();
+			}
+			else if (cycle_type == 'Hourly')
+			{
+				$('#modal-flow-schedule table[name="week_period"]').hide();
+				$('#modal-flow-schedule table[name="month_period"]').hide();
+				$('#modal-flow-schedule table[name="short_period"] input').val(1);
+				$('#modal-flow-schedule table[name="short_period"] td[name="period"]').empty().append('小時執行')
+				$('#modal-flow-schedule table[name="short_period"]').show();
+			}
+			else if (cycle_type == 'Daily')
+			{
+				$('#modal-flow-schedule table[name="week_period"]').hide();
+				$('#modal-flow-schedule table[name="month_period"]').hide();
+				$('#modal-flow-schedule table[name="short_period"] input').val(1);
+				$('#modal-flow-schedule table[name="short_period"] td[name="period"]').empty().append('天執行')
+				$('#modal-flow-schedule table[name="short_period"]').show();
+			}
+			else if (cycle_type == 'Weekly')
+			{
+				$('#modal-flow-schedule table[name="short_period"]').hide();
+				$('#modal-flow-schedule table[name="month_period"]').hide();
+				$('#modal-flow-schedule table[name="week_period"]').show();
+			}
+			else if (cycle_type == 'Monthly')
+			{
+				$('#modal-flow-schedule table[name="short_period"]').hide();
+				$('#modal-flow-schedule table[name="week_period"]').hide();
+				$('#modal-flow-schedule table[name="month_period"]').show();
+			}
+		}
+		
+		function addZero(i) {
+  			if (i < 10) {
+    			i = "0" + i;
+  			}
+  			return i;
+		}
+		
+		
+	}
+	
+	function switch_scheduleform(type){
+		if (type == 'form')
+		{
+			$('select[name="flowactive_select"]').prop('disabled','disabled');
+			$('#schedule_table, #form_setting').hide();
+			$('#initform, #schedule_setting').show();
+		}
+		else if (type == 'schedule')
+		{
+			$('select[name="flowactive_select"]').prop('disabled','');
+			$('#initform, #schedule_setting').hide();
+			$('#schedule_table, #form_setting').show();
+		}
+	}
+	
+	
+	function formmodal(flow_uuid){
+		if(flow_uuid)
+		{
+			var postdata = {csrfmiddlewaretoken: csrfmiddlewaretoken, flow_uuid: flow_uuid};
+			omflowJsonAjax(postdata, '{% url "loadFormDesignAjax"%}', loadFormDesign_callback);
+			
+			function loadFormDesign_callback(data){
+				if (data.status == 200)
+				{
+					var formobject = JSON.parse(data.result.formobject);
+					if (formobject.items.length > 0)
+					{
+						formtype = 'formobject';
+						$('#initdata').empty()
+						formcontent.init(false);
+						formcontent.event_group_list(load_group_list);
+						formcontent.event_user_list(load_user_list);
+						formcontent.load(data.result.formobject);
+						if (nowid != null)
+						{formcontent.setData(JSON.parse(schedule_formdata[nowid]))}
+						$('#form_setting').show();
+					}
+					else if (data.result.start_input.length > 0)
+					{
+						formtype = 'startinput'
+						$('#formcontent').empty();
+						$.each(data.result.start_input, function(index, value){
+							var haswarning ='';
+							if (value.require)
+								{haswarning = 'has-warning'}
+							$('#initdata').append('<div class="form-group '+haswarning+'">'
+							  +'<label>'+ value.name +'</label>'
+								+'<input type="text" name="'+ value.name +'" class="form-control" placeholder="'+ value.name +'" value="'+ value.value +'" style="width:100%"/>'					
+							+'</div>');
+						})
+						if (nowid != null)
+						{schedule_formdata[nowid]}
+						$('#form_setting').show();
+					}
+					else
+					{
+						$('#form_setting').hide();
+						$('#initdata').empty()
+						$('#formcontent').empty();
+						formcontent.load(data.result.formobject);
+					}
+				}
+				else
+				{
+					omflowAlert('red', date.message);
+				}
+			}
+		}
+		else
+		{
+			$('#schedule_setting').hide().trigger('click');
+			$('#form_setting').hide();
+			$('#initdata').empty()
+			$('#formcontent').empty();
+		}
+	}
+	
+	
+	function load_group_list()
+	{
+		var grouplist=[];
+		var postbody = {csrfmiddlewaretoken: "{{ csrf_token }}", 'functional_flag_%B': 'False', 'ad_flag_%B': ['0']};
+		$.ajax({
+			url	: '{% url 'listGroupAjax' %}',
+			type: 'post',
+	        data: postbody,
+	        async:false,
+	        dataType: 'json',
+	        success: function (data) {
+	            grouplist = data.result;
+	        },
+	        error: function(req, status, err) {
+				$('#modal_error').modal('show');
+	        	console.log('Something went wrong', status, err);
+	    	}
+		});
+		return grouplist;
+	}
+    
+    
+	function load_user_list(group_id)
+	{
+		var userlist = []
+		$.ajax({
+			url: "{% url 'searchGroupUserAjax' %}",
+			type: 'post',
+			async:false,
+			data: { csrfmiddlewaretoken: '{{ csrf_token }}' , searchkey: group_id},
+			success: function (data) {
+				userlist = data.result;
+			},
+			error: function(req, status, err) {
+				$('#modal_error').modal('show');
+	        	console.log('Something went wrong', status, err);
+	    	}
+		});
+		return userlist;
+	}
+	
+	var table_routine = setInterval(function(){ table.draw();}, {{user.frequency}}*1000);
+    </script>
+{% endblock %}

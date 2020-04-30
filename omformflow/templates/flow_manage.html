@@ -1,0 +1,332 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %} 
+{% block content %}
+<!-- 
+	flow_manage.html flowManagePage
+	author : Pen Lin, Pei lin
+-->
+	
+	<!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+       	 
+        
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i> 首頁</a></li>
+		<li>流程管理</li>
+		<li><a href="/flowmanage/page/flow-app/">應用設計</a></li>
+        
+      </ol>
+    </section>
+    <section class="content">
+      <div class="row">
+      	<div class="col-xs-12">
+      	  <div class="box box-primary">
+      	    <div class="box-header with-border">
+      	      <div class="pull-left">
+      	        <button type="button" class="btn btn-default" onclick="create_flowdesign()" style="margin:1px 0px;"><i class="fa fa-plus"></i> 新增</button>
+      	        <button type="button" class="btn btn-default" onclick="copy_flowdesign()" id="copy_flowdesign" disabled="disabled" style="margin:1px 0px;"><i class="fas fa-copy"></i> 複製</button>
+			    <button type="button" class="btn btn-default" onclick="delete_flowdesign()" id="delete_flowdesign" disabled="disabled" style="margin:1px 0px;"><i class="fa fa-trash-o"></i> 刪除</button>
+			    <button type="button" class="btn btn-default" onclick="filter_flowdesign()" style="margin:1px 0px;"><i class="fa fa-filter"></i> 篩選</button>
+                <button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default" onclick="filter_default()" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
+              </div>
+      	    </div>
+      	    <!-- box-header -->
+      	    <div class="box-body">
+      	      <table id="flow_table" class="table table-bordered table-striped table-hover">
+				<thead>
+				  <tr>
+					<th style="width:15px"><a><i class="fa fa-lg fa-check-square-o checkbox-toggle" style="color:SteelBlue"></i></a></th>
+					<th>流程名稱</th>
+					<th>最後修改時間</th>
+					<th>說明</th>
+{#					<th></th>#}
+				  </tr>
+				</thead>
+				<tbody>
+				</tbody>
+			  </table>
+      	    </div>
+			<!-- box-body -->
+      	  </div>
+      	  <!-- box -->
+      	</div>
+      	<!-- col -->
+      </div>
+      <!-- row -->
+    </section>
+    
+    <div class="modal fade" id="modal-flow_input" data-backdrop="static">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title"><i class="fa fa-download"></i>&nbsp;&nbsp;流程匯入</h4>
+		  </div>
+		  <div class="modal-body">
+		  	<ul class="mailbox-attachments clearfix" id="flow_input_name">
+            </ul>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
+			<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="flow_input_save()">確定</button>
+		  </div>
+		</div>
+	  </div><!-- /.modal-content -->
+	</div>
+	
+	
+	<!-- List-Modal -->
+    <div class="modal fade" id="modal-copy_flow" data-backdrop="static">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title"><i class="fas fa-copy"></i>&nbsp;&nbsp;流程複製</h4>
+		  </div>
+		  <div class="modal-body">
+		  	<div class="form-group">
+			  <label>{% trans '將流程複製到'%}</label>
+		  	  <select class="form-control" id="modal-copy_flow-select"></select>
+		  	</div>
+		  	<ul class="list-group list-group-unbordered" id="modal-copy_flow-text">
+		  	</ul>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
+			<button type="button" 	class="btn btn-primary" data-dismiss="modal">確定</button>
+		  </div>
+		</div>
+	  </div><!-- /.modal-content -->
+	</div>
+    <!-- /.modal -->
+	
+    <style>
+		table tr{
+		  cursor:pointer;
+		}
+	</style>
+    <script>
+    var csrfmiddlewaretoken="{{ csrf_token }}";
+    var app_name;
+    var table ;
+    var date = new Date();
+    var textFile = null; //設計檔案
+    var input_file;
+    var data_tmp;
+	var data_len;
+	var data_page;
+	date.setDate(date.getDate() + 1);
+	select_time = date.getFullYear() +'-'+(date.getMonth()+1)+'-'+date.getDate();
+    $(function () {
+    	var postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, w_app_id: '{{ app_id }}'};
+    	omflowJsonAjax(postbody, '{% url "getApplicationFlowNameAjax" %}', getname_action);
+		table = $('#flow_table').DataTable({
+			"autoWidth": false,
+			"order": [[ 3, "dsc" ]], 
+			"dom":"<<t>'row'<'col-sm-5'i><'col-sm-7'p>>",
+			"language": __const_language__,
+			"serverSide": true,							//	serverside data loading
+			"deferRender": true,
+			"processing": true,
+			"ajax": {
+           		"url": "{% url 'listFlowWorkspaceAjax' %}",
+            	"type": "POST",
+            	"data": function ( d ) {
+							return $.extend( {}, d, {
+								csrfmiddlewaretoken: csrfmiddlewaretoken, 
+								updatetime: select_time,
+								datatable: 'True',
+								app_id: {{ app_id }}
+							});
+						},
+				"dataSrc": function(data){
+						a = dataCompare(data,data_tmp,data_len,data_page,table);
+						data_tmp = a['data_tmp']
+						data_len = a['data_len']
+						data_page = a['data_page']
+						data.data = a['data.data']
+						return data.data;
+					},
+				"error": function(xhr,status,error){
+							clearInterval(table_routine);
+					}
+        	},   
+			"columns":[
+				{"width": "15px", "data": "id", "orderable": false, "render": function (data, type, row)
+                	{return '<input type="checkbox" class="icheckbox_minimal-blue" value="'+data+'" data-value="'+row.flow_name+'" data-uuid="'+row.flow_uuid+'" id="flow_'+data+'"><label for=flow_'+data+'></label>'}
+                },
+				{"data": "flow_name"},
+				{"data":"updatetime", "width": "150px", "render": function(data)
+					{return data.slice(0,-7)}
+				},
+				{"data":"description", "orderable": false},
+{#				{"data": "id", "width": "15px", "orderable": false, "render": function(data, type, row)#}
+{#        			{return '<a href="/flowmanage/page/flowDesignPage/{{ app_id }}/'+data+'" title="編輯'+row.flow_name+'" style="color:black;cursor: pointer;"><i class="fa fa-fw fa-edit" style="color:SteelBlue;"></i></a>'}#}
+{#        		}#}
+			],
+			rowCallback: function( row, data ) {
+			      $('td:not(:eq(0))', row).attr('onclick', 'javascript:location.href="/flowmanage/page/flowDesignPage/{{ app_id }}/'+data.id+'"')
+			},
+			drawCallback: function(){
+				omflowCheckAll()
+				$('.table input[type="checkbox"]').change(function(){
+			    	enablebtt();
+			    });
+			}
+		});
+	});
+	
+	
+	function getname_action(data)
+	{
+		if(data.status == 200)
+		{ 
+			app_name = data.result
+			$('.content-header > h1').append(app_name+'<small>流程列表</small>');
+			$('ol.breadcrumb').append('<li class="active"><a href="javascript:location.reload();">'+app_name+'</a></li>')
+		}
+		else
+		{ omflowAlert('red', data.message); }
+		$('ul.sidebar-menu ul.treeview-menu > li > a[href="/flowmanage/page/flow-app/"]').parentsUntil(".sidebar-menu > .treeview-menu").siblings().removeClass('active menu-open').end().addClass('active menu-open');
+	}
+	
+	
+	function enablebtt()
+	{
+		var count = $('.table input:checkbox:checked').length;
+    	if (count == 0)
+    	{
+    		$('#delete_flowdesign, #copy_flowdesign').prop('disabled', 'disabled');
+    	}
+    	else
+    	{
+    		$('#delete_flowdesign, #copy_flowdesign').prop('disabled', '');
+    	} 
+	}
+	
+	
+	function create_flowdesign()
+	{
+    	window.location.href='/flowmanage/page/flowDesignPage/{{app_id}}/newflow';
+    }
+	
+	function filter_flowdesign(){
+		omflowFilter(['filter_search','filter_length','filter_date']);
+		$('#modal-default-filter-confirm').off("click").on("click",function(){
+			var searchkey = $.trim($('#modal-default-filter #search').val());
+			var page_length = $('#modal-default-filter #page_length').val();
+			table.page.len(page_length);
+			table.search(searchkey).draw();
+			
+		});
+	}
+	
+    function filter_default(){
+		select_time = date.getFullYear() +'-'+(date.getMonth()+1)+'-'+date.getDate();
+		table.page.len(10);
+		table.search('');
+    	table.draw()
+    }
+    
+	function delete_flowdesign(){
+		omflowListDialogue('delete', '下列流程將被刪除');
+		
+		$('#modal-default-list button:eq(2)').off("click").on("click",function(){
+			postbody = {
+				csrfmiddlewaretoken : csrfmiddlewaretoken,
+				flow_id			: [],
+			}
+			$.each($('.table input:checkbox:checked'), function(){
+				postbody.flow_id.push($(this).val());
+			});
+			
+			$('#modal-default-list').on('hidden.bs.modal', function () {
+				omflowJsonAjax(postbody,'{% url "deleteFlowWorkspaceAjax"%}', actions);
+				Swal.fire({
+				  title: '處理中...',
+				  toast: true,
+				  position: 'bottom-start',
+				  showConfirmButton: false,
+				});
+				Swal.showLoading() ;
+				$('#modal-default-list').off('hidden.bs.modal');
+			});			
+		});
+	}
+	
+	
+	function copy_flowdesign()
+	{
+		$('#modal-copy_flow-text, #modal-copy_flow-select').empty();
+		var flow_id = [];
+		$.each($('.table input:checkbox:checked'), function(){
+			flow_id.push($(this).val());
+			$('#modal-copy_flow-text').prepend('<li class="list-group-item"><i class="fa fa-circle"></i>&nbsp;&nbsp;<b class="text-light-blue">'+$(this).data('value')+'</b></li>');
+		});
+		var postdata = {csrfmiddlewaretoken : csrfmiddlewaretoken}	
+		omflowJsonAjax(postdata, '{% url "listWorkspaceApplicationAjax"%}', callback)
+		function callback(data)
+		{
+			if (data.status == 200)
+			{
+				$.each(data.result, function(index, item){
+					if(item.id == '{{ app_id}}')
+						return
+					$('#modal-copy_flow-select').append('<option value="'+item.id+'">'+item.app_name+'</option>');
+				});
+			}
+			else
+			{
+				omflowAlert('red', data.message)
+			}
+		}
+		$('#modal-copy_flow').modal('show');
+		$('#modal-copy_flow button:eq(2)').off("click").on("click",function(){
+			var postbody = {
+				csrfmiddlewaretoken : csrfmiddlewaretoken,
+				flow_id : flow_id,
+				app_id : $('#modal-copy_flow-select').val()
+			}
+			omflowJsonAjax(postbody, '{% url "copyFlowWorkspaceAjax"%}', actions)
+		});
+	}
+	
+	    
+    function actions(data)
+	{
+		Swal.close();
+		if(data.status == 200)
+		{
+			LSide();
+			table.draw();
+			Swal.fire({
+	      	  icon : 'success',
+	      	  title: '成功',
+	      	  toast: true,
+		  	  position: 'bottom-start',
+		  	  showConfirmButton: false,
+	      	  timer: 2000,
+  		    });
+		}	
+		else if (data.status == 404)
+		{
+			omflowAlert('yellow', data.message);
+		}
+		else if (data.status == 500)
+		{
+			omflowAlert('blue', data.message);
+		}
+		else if (data.status == 403)
+		{
+			omflowAlert('red', data.message);
+		}
+	}
+	
+	var table_routine = setInterval(function(){ table.draw();}, {{user.frequency}}*1000);
+    </script>
+{% endblock %}

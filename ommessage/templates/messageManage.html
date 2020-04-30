@@ -1,0 +1,358 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %} 
+{% block content %}
+<!-- 
+	messageManage.html 
+	author : Pei lin
+-->
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        {% trans '訊息管理' %}
+        <small id="h1_small"></small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="{% url 'homePage' %}"><i class="fa fa-dashboard"></i>{% trans '首頁' %}</a></li>
+        <li><a href="javascript:location.reload();">{% trans '訊息管理' %}</a></li>
+      </ol>
+    </section>
+    <!-- Main content -->
+    <section class="content">
+	      <div class="row">
+	      	<div class="col-md-3">
+	      	  <a href="/announcement/page/compose/" class="btn btn-primary btn-block margin-bottom">{% trans '新訊息'%}</a>
+	      	  <div class="box box-solid">
+            <div class="box-header with-border">
+              <h3 class="box-title">{% trans '資料夾'%}</h3>
+
+            </div>
+            <div class="box-body no-padding">
+              <ul class="nav nav-pills nav-stacked">
+                <li {%if mes_box == 'Inbox' %}class="active" {% endif %}><a href="/announcement/page/messageManage/Inbox"><i class="fa fa-inbox"></i> {% trans '我的訊息'%}
+                  <span class="label label-success pull-right" name="message_count"></span></a></li>
+                <li {%if mes_box == 'Sent' %}class="active" {% endif %}><a href="/announcement/page/messageManage/Sent"><i class="fa fa-envelope-o"></i> {% trans '發送紀錄'%}</a></li>
+                <li {%if mes_box == 'Trash' %}class="active" {% endif %}><a href="/announcement/page/messageManage/Trash"><i class="fa fa-trash-o"></i> {% trans '垃圾桶'%}</a></li>
+              </ul>
+            </div>
+            <!-- /.box-body -->
+          </div>
+	      	</div>
+	        <div class="col-md-9">
+	          <div class="box box-primary" id="listbox">
+                <div class="box-header with-border">
+	  			  <h3 class="box-title">{%if mes_box == 'Inbox' %} {% trans '我的訊息'%} {% elif mes_box == 'Sent' %} {% trans '寄件備份'%} {% elif mes_box == 'Trash' %} {% trans '垃圾桶'%} {% endif %}</h3>
+	            </div>
+	            <!-- /.box-header -->
+	            <div class="box-body no-padding">
+	              <div class="mailbox-controls">
+	                <!-- Check all button -->
+	                <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i></button>
+	                <div class="btn-group">
+	                  <button type="button" class="btn btn-default btn-sm" onclick="delete_message('delete')"><i class="fa fa-trash-o"></i></button>
+	                  <button type="button" class="btn btn-default btn-sm"><i class="fa fa-reply"></i></button>
+	                </div>
+	                <!-- /.btn-group -->
+	                <button type="button" class="btn btn-default btn-sm" onclick="filter_search()"><i class="fa fa-search"></i></button>
+	              </div>
+	              <div class="table-responsive mailbox-messages">
+	                <table id="message_table" class="table table-hover table-striped out_table" style="width:100%">
+	                  <col width="3%">
+	                  <col width="3%">
+	                  <col width="10%">
+	                  <col width="72%">
+	                  <col width="5%">
+	                  <col width="10%">
+	                  <tbody>
+	                  </tbody>
+			        </table>
+			      </div
+	            </div>
+	            <!-- /.box-body -->
+	          </div>
+	          <!-- /. box -->
+	        </div>
+	        <!-- /.col -->
+	      </div>
+	      <!-- /. row -->
+	</section>
+	<style>
+		table td {
+			max-width: 120px;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			word-break: break-all;
+			overflow: hidden;
+			}
+		table tr{
+			cursor:pointer;
+		}
+		table thead{
+			display: none;
+		}
+		tbody tr.selected {
+		    background-color: #C4C4C4 !important;
+		}
+	</style>
+<script>
+var csrfmiddlewaretoken = "{{ csrf_token }}";
+var table;
+var data_tmp;
+var data_len;
+var data_page;
+$(function () {
+	list_read();
+    window.onhashchange = list_read;
+});
+
+
+function list_read()
+	{
+		if (location.hash)
+		{	readmessage(location.hash.replace(/\#/g,''))}
+		else
+		{
+		   listmessage()
+		}
+	}
+
+
+function listmessage()
+	{
+		$('#message_box').remove();
+		$('#listbox').show();
+		table = $('#message_table').DataTable({
+	      "autoWidth": false,
+				"order": [[ 5, "dsc" ]], 					//	default order column[1]
+				"info":     false,
+				"dom": 'rt<"bottom"p>',	
+				"language": __const_language__,
+				"serverSide": true,	
+				"ajax":{
+					"url": "{% url 'listMessagesAjax' %}",
+	            	"type": "POST",
+	            	"data": {"csrfmiddlewaretoken": csrfmiddlewaretoken,"mes_box": "{{mes_box}}"},
+	            	"dataSrc": function(data){
+							a = dataCompare(data,data_tmp,data_len,data_page,table);
+							data_tmp = a['data_tmp']
+							data_len = a['data_len']
+							data_page = a['data_page']
+							data.data = a['data.data']
+							return data.data;
+						},
+					"error": function(xhr,status,error){
+							clearInterval(table_routine);
+					}
+				},
+				"columns": [
+		            {"data": "id", "orderable": false, "render": function (data,type,row)
+	                	{return '<input type="checkbox" id="check_this_'+data+'" data-value="'+row.messages_id__subject+'" class="icheckbox_minimal-blue" value="'+data+'"><label for="check_this_'+data+'"></label>'}
+	                },
+	                {"data": "id", "render": function(data)
+	                	{return '<a href="#"><i class="fa text-yellow fa-star-o"></i></a>'}
+	                },
+	                {"data": "create_user__nick_name", "orderable": false, "render":function(data,type,row)
+	                	{if (data)
+	                		{ return '<a>'+data+'</a>'}
+	                	 else
+	                	 	{ return row.create_group__name+row.create_group__name}
+	                	}
+	                },
+		            {"data": "messages_id__subject", "orderable": false, "render":function(data,type,row)
+		            	{return '<b>' + data +'</b>  -  '+ row.content.split('※※※※※※※※※※※※※※※',1)}
+		            },
+		            {"data": "messagehistoryfiles__main_id", "orderable": false, "render":function(data)
+		            	{if (data != null)
+		            		{return '<i class="fa fa-paperclip pull-right"></i>'}
+		            	 else
+		            	 	{return ' '}
+		            	}
+		            },
+		            {"data": "createtime", "orderable": false, "render": function(data)
+		            	{
+		            		var gsDayNames = [
+							  '{% trans "周日 " %}',
+							  '{% trans "周一 " %}',
+							  '{% trans "周二 " %}',
+							  '{% trans "周三 " %}',
+							  '{% trans "周四 " %}',
+							  '{% trans "周五 " %}',
+							  '{% trans "周六 " %}'
+							];
+								            		
+		            		var now = new Date();
+		            		data = new Date(data)
+							if((now.getDate()-data.getDate()) >= 7)
+							{
+								return (data.getMonth()+1) + '月' + data.getDate() + '日' + data.getHours() + ':' + data.getMinutes();
+							}
+							else if ((now.getDate()-data.getDate()) >= 1)
+							{
+								return gsDayNames[data.getDay()] + data.getHours() + ':' + data.getMinutes();
+							}
+							else
+							{
+								return data.getHours() + ':' + data.getMinutes();
+							}
+						}
+		            }
+		            
+	  			],
+	  			rowCallback: function (row, data) {
+	  				if (data.messagebox__read == false)
+	  				{ $(row).css('font-weight','bold').addClass('selected'); }
+	  				$(row).data('id',data.id);
+	  				$('td:eq(1)', row).addClass('mailbox-star');
+	  			},
+	  			drawCallback: function () {
+	  				$('#message_table tbody tr').on('click', 'td:eq(2), td:eq(3), td:eq(4), td:eq(5)', function(){
+						var messagehistory_id = $(this).parent().data('id');
+						location.hash=messagehistory_id;
+						LHeader();
+			   		});
+			   		$(".mailbox-star").click(function (e) {
+				    	e.preventDefault();
+				      	//detect type
+				      	var $this = $(this).find("a > i");
+				      	var fa = $this.hasClass("fa");
+				
+				      	//Switch states
+				      	if (fa) {
+				        	$this.toggleClass("fa-star");
+				        	$this.toggleClass("fa-star-o");
+				      	}
+				    });
+			   	}
+	    });
+	}
+
+
+function filter_search()
+	{
+		omflowFilter(['filter_search']);
+		$('#modal-default-filter button:eq(2)').off("click").on("click",function(){
+			var searchkey = $.trim($('#modal-default-filter #search').val());
+			if (searchkey)
+			{
+				$('tr').hide();
+				$('tr:contains("'+searchkey+'")').show();
+			}
+			else
+			{
+				$('tr').show();
+			}	
+		});
+	}
+
+function readmessage(messagehistory_id){
+	if (table) 
+		table.destroy();
+	var postdata = {  csrfmiddlewaretoken: csrfmiddlewaretoken , messagehistory_id: messagehistory_id};
+		$.ajax({
+			url: "{% url 'loadMessageHistoryAjax' %}",
+			type: 'post',
+			data: postdata,
+			success: function(data){
+				var attach = '';
+				$.each(data.result.messagehistory.files, function(index, value){
+					var delete_mes = '';
+					var file_href = 'href="/api/history-files/download/'+value.file+'"';
+					if (value.delete)
+					{
+						delete_mes = '<br>({% trans "此附件已刪除" %})'
+						file_href = '';
+					}
+					var file_size = value.size
+					file_size = omflowSizeUnit(file_size);
+					attach += ('<li><div class="mailbox-attachment-info">'
+                    	  	+'<a '+file_href+' class="mailbox-attachment-name" style="word-break: break-all;">'
+                    	    +'<i class="fa fa-paperclip"></i>&nbsp;&nbsp;'+value.file.replace(/(\w+)\/(\d+)\//g,"")+delete_mes+'</a>'
+                          	+'<span class="mailbox-attachment-size">'+file_size
+                        	+'<a '+file_href+' class="btn btn-default btn-xs pull-right"><i class="fa fa-cloud-download"></i></a></span>'
+                  			+'</div></li>')
+				});
+			
+				$('#listbox').hide().parent().append('<div class="box box-default" id="message_box">'
+				            +'<div class="box-header with-border">'
+				              +'<h1 class="box-title" id="message_subject" style="font-size:28px">'+data.result.messagehistory.messages_id__subject+'</h1>'
+			                  +'<div class="pull-right box-tools">'
+			            	    +'<button type="button" title="{% trans '回覆'%}" onclick="replyall('+messagehistory_id+')" id="reply" class="btn btn-default">'
+			                    +'<i class="fa fa-reply"></i>{% trans ' 回覆'%}'
+			                    +'</button>'
+			          		  +'</div>'
+				            +'</div>'
+				            +'<div class="box-body no-padding">'
+				              +'<div class="mailbox-read-info" id="message_user">'
+				                +'<h3 id="message_from">'+data.result.messagehistory.create_user__nick_name+data.result.messagehistory.create_group_name+'</h3>'
+				                +'<p></p>'
+				                +'<h5 id="message_to">'+data.result.receivers
+								+'<span class="mailbox-read-time pull-right"><h5>'+data.result.messagehistory.createtime.replace(/\T/g,' ')+'</h5></span></h5>'
+				              +'</div>'
+				              +'<div class="mailbox-read-message">'
+				              +'<textarea id="message_content" class="form-control" style="resize:none;font-size:20px; height: 300px" readonly>'+data.result.messagehistory.content+'</textarea>'
+				              +'</div>'
+				            +'</div>'
+				            +'<div class="box-footer">'
+							  +'<ul class="mailbox-attachments clearfix" id="message_attachment">'+attach
+				              +'</ul>'
+				            +'</div>'
+				          +'</div>')
+
+			},
+			error: function(req, status, err) {
+			$('#modal_error').modal('show');
+			console.log('Something went wrong', status, err);
+		}
+		});
+}
+
+function replyall(messagehistory_id){
+	window.location.href="/announcement/page/compose/"+messagehistory_id+"";
+}
+
+function delete_message(action){
+	var select_message = [];
+	var counter = 0;
+	$.each($('#message_table input:checkbox:checked'), function(){
+		select_message.push($(this).val());
+		counter++;
+	});
+	if (select_message)
+	{
+		//omflowAlert('blue',"{% trans '刪除' %}"+counter+"{% trans '筆訊息' %}")
+		omflowListDialogue("delete", "{% trans '刪除' %}"+counter+"{% trans '筆訊息' %}");
+		
+		$('#modal-default-list button:eq(2)').off("click").on("click",function(){
+			postbody = {
+				csrfmiddlewaretoken : csrfmiddlewaretoken,
+				messagehistory_id: select_message,
+				action: action
+			}
+			
+			omflowJsonAjax(postbody,'{% url "deleteMessageHistoryAjax"%}', actions)
+			$('#modal-default-list').modal('hide');
+			
+		});
+	}
+	else
+	{
+		omflowAlert('yellow', '請選擇訊息');
+	}
+}
+
+function actions(data)
+{
+	if(data.status == 200)
+	{
+		omflowAlert('green', data.message);
+	}	
+	else
+	{
+		omflowAlert('yellow', data.message);
+	}
+}
+
+var table_routine =setInterval(function(){ table.draw();}, {{user.frequency}}*1000);
+</script>
+
+{% endblock %}

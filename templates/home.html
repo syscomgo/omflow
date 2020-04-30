@@ -1,0 +1,1279 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %} 
+{% block content %}
+    <!-- dashboard -->
+	<script src="{% static 'components/chartjs/Chart.bundle.js'%}"></script>
+	<script src="{% static 'plugins/jQuery-Mapael2.2.0/raphael-min.js'%}"></script>
+	<script src="{% static 'plugins/jQuery-Mapael2.2.0/jquery.mapael.min.js'%}"></script>
+	<script src="{% static 'plugins/jQuery-Mapael2.2.0/jquery.mousewheel.min.js'%}"></script>
+	<script src="{% static 'plugins/jQuery-Mapael2.2.0/maps/world_countries_miller.js'%}"></script>
+    <section class="content-header">
+      <!-- Content Header (Page header) -->
+        <h1>{% trans '首頁'%}&nbsp;</h1>
+      	<ol class="breadcrumb">
+        	<li><a href="/"><i class="fa fa-dashboard"></i>{% trans '首頁'%}</a></li>
+      	</ol>
+        <!--<h1>{% trans '首頁'%}&nbsp;<i style="cursor:pointer;color:gray;" id="read-mode_edit" onclick="DashboardRoot_edit()" class="fa fa-gear"></i></h1>-->
+    </section>
+    <!-- Main content -->
+    <section class="content" style="padding-bottom:0px;">
+      <div class="row">
+      	<div class="col-xs-12">
+      	  <div class="box box-primary" style="margin-bottom:10px;">
+      	    <div class="box-header with-border">
+              <div class="pull-left">
+              	<!--<button type="button" class="btn btn-default" id="read-mode_edit" onclick="DashboardRoot_edit()" style=""><i class="fa fa-edit"></i> 編輯</button>-->
+              	<button type="button" class="btn btn-default" id="read-mode_edit" onclick="DashboardRoot_edit()" style="display:none;"><i class="fa fa-save"></i> 編輯</button>
+				<button type="button" class="btn btn-default" id="edit-mode_save" onclick="DashboardRoot_save()" style="display:none;"><i class="fa fa-save"></i> 儲存</button>
+				<button type="button" class="btn btn-default" id="edit-mode_cancel" onclick="DashboardRoot_cancel()" style="display:none;"><i class="fa fa-undo"></i> 取消</button>
+      	        
+      	        <button type="button" class="btn btn-default" onclick="add_box(12)" style="display:none;margin-left:7px;"><i class="fa fa-plus"></i> 1區塊</button>
+			    <button type="button" class="btn btn-default" onclick="add_box(6)" style="display:none;"><i class="fa fa-plus"></i> 1/2區塊</button>
+			    <button type="button" class="btn btn-default" onclick="add_box(8)" style="display:none;"><i class="fa fa-plus"></i> 2/3區塊</button>
+			    <button type="button" class="btn btn-default" onclick="add_box(4)" style="display:none;"><i class="fa fa-plus"></i> 1/3區塊</button>
+			    <button type="button" class="btn btn-default" onclick="add_box(9)" style="display:none;"><i class="fa fa-plus"></i> 3/4區塊</button>
+			    <button type="button" class="btn btn-default" onclick="add_box(3)" style="display:none;"><i class="fa fa-plus"></i> 1/4區塊</button>
+			  </div>
+      	      <div class="pull-right" style="display:none;">
+              	<button type="button" class="btn btn-default" onclick="Dashboard_importDialog()" ><i class="fa fa-download"></i> 匯入</button>
+			    <button type="button" class="btn btn-default" onclick="DashboardRoot_output()" ><i class="fa fa-upload"></i> 匯出</button>
+			  </div>
+      	    </div>
+      	  </div>
+      	</div>
+      	<div class="col-xs-12" style="padding-right:0px;padding-left:15px;">
+      	  <div class="box-primary">
+      	    <!-- box-header -->
+      	    <div id="DashboardRoot" class="omflow-box-body" style="overflow:auto;padding-top:5px;"></div>
+			<!-- box-body -->
+      	  </div>
+      	  <!-- box -->
+      	</div>
+      	<!-- col -->
+    </section>
+    <!-- /.content -->
+    <script>
+    /**
+	 * dashboard
+	 * author:Arthur Wang
+	 */
+	 
+	//18N_translation
+    var const_home = "{% trans '首頁'%}",
+    	const_word = "{% trans '顯示文字'%}",
+    	const_meter_bar = "{% trans '計量條'%}",
+    	const_tube = "{% trans '水管圖'%}",
+    	const_line = "{% trans '折線圖'%}",
+    	const_bar = "{% trans '長條圖'%}",
+    	const_world = "{% trans '世界地圖'%}",
+    	const_color = "{% trans '顏色'%}",
+    	const_title = "{% trans '標題'%}",
+    	const_tip = "{% trans '說明'%}",
+    	const_unit = "{% trans '單位'%}",
+    	const_limit = "{% trans '數值上限'%}",
+    	const_height = "{% trans '高度'%}",
+    	const_icon = "{% trans '圖示'%}",
+    	const_type = "{% trans '類型'%}",
+    	const_group = "{% trans '分類'%}",
+    	const_non_group = "{% trans '不分類'%}",
+    	const_startY = "{% trans '縱軸(Y軸)起點'%}",
+    	const_time_range = "{% trans '時間範圍'%}",
+    	const_today = "{% trans '今天'%}",
+    	const_yesterday = "{% trans '昨天'%}",
+    	const_this_week = "{% trans '本周'%}",
+    	const_last_week = "{% trans '上周'%}",
+    	const_this_month = "{% trans '本月'%}",
+    	const_last_month = "{% trans '上月'%}",
+    	const_this_year = "{% trans '今年'%}",
+    	const_last_year = "{% trans '去年'%}",
+    	const_all_time = "{% trans '所有時間'%}",
+    	const_select_form = "{% trans '選擇表單'%}",
+    	const_select_column = "{% trans '選擇欄位'%}",
+    	const_search_form = "{% trans '查詢表單'%}",
+    	const_search_column = "{% trans '查詢欄位'%}",
+    	const_val_new = "{% trans '最新值'%}",
+    	const_val_avg = "{% trans '平均值'%}",
+    	const_val_max = "{% trans '最大值'%}",
+    	const_val_min = "{% trans '最小值'%}",
+    	const_val_sum = "{% trans '總和'%}",
+    	const_val_count = "{% trans '數量'%}",
+		const_color_blue = "{% trans '藍'%}",
+		const_color_sky = "{% trans '青'%}",
+		const_color_green = "{% trans '綠'%}",
+		const_color_yellow = "{% trans '黃'%}",
+		const_color_red = "{% trans '紅'%}",
+		const_color_purple = "{% trans '紫'%}",
+		const_color_gray = "{% trans '灰'%}",
+		const_color_dark_gray = "{% trans '深灰'%}";
+		 
+	var box_container = ''; //action container id
+	var box_object = box_object();
+	var grid_object = {
+		type:"",
+		data:[]
+	};
+	var data_object = null;
+	var old_box_object = "";
+	var textFile = null; //設計檔案
+	var read_mode = true;
+	var csrfmiddlewaretoken="{{ csrf_token }}";
+	var timer_list = {} //重複更新需取消前次計時
+	var chart_list = {} //更新時須取消原圖
+	var color_set = [
+		{name:const_color_blue,color:"#337ab7"},
+		{name:const_color_sky,color:"#00c0ef"},
+		{name:const_color_green,color:"#00a65a"},
+		{name:const_color_yellow,color:"#f39c12"},
+		{name:const_color_red,color:"#dd4b39"},
+		{name:const_color_purple,color:"#9d44a5"},
+		{name:const_color_gray,color:"#d2d6de"},
+		{name:const_color_dark_gray,color:"#ABABAB"},
+		];
+	
+	var config_set = {
+		setColor:
+            '<div class="form-group">'+
+                '<label class="text-light-blue">'+const_color+'</label>'+
+                '<div></div>'+
+                '<input name="showColor" style="display:inline-block;width:20%;top:-1px;position:relative;" class="form-control" readOnly></input>'+
+                '<select style="display:inline-block;width:80%;" name="setColor" class="form-control select2" >'+
+                    '<option data-color="'+color_set[0].color+'" value="bg-blue">'+color_set[0].name+'</option>'+
+                    '<option data-color="'+color_set[1].color+'" value="bg-aqua">'+color_set[1].name+'</option>'+
+                    '<option data-color="'+color_set[2].color+'" value="bg-green">'+color_set[2].name+'</option>'+
+                    '<option data-color="'+color_set[3].color+'" value="bg-yellow">'+color_set[3].name+'</option>'+
+                    '<option data-color="'+color_set[4].color+'" value="bg-red">'+color_set[4].name+'</option>'+
+                    '<option data-color="'+color_set[5].color+'" value="color-purple">'+color_set[5].name+'</option>'+
+                '</select>'+
+            '</div>',
+		setChartColor:
+            '<div class="form-group">'+
+                '<label class="text-light-blue">'+const_color+'</label>'+
+                '<div></div>'+
+                '<input name="showColor" style="display:inline-block;width:20%;top:-1px;position:relative;" class="form-control" readOnly></input>'+
+                '<select style="display:inline-block;width:80%;" name="setColor" class="form-control select2" >'+
+                    '<option data-color="'+color_set[0].color+'" value="0">'+color_set[0].name+'</option>'+
+                    '<option data-color="'+color_set[1].color+'" value="1">'+color_set[1].name+'</option>'+
+                    '<option data-color="'+color_set[2].color+'" value="2">'+color_set[2].name+'</option>'+
+                    '<option data-color="'+color_set[3].color+'" value="3">'+color_set[3].name+'</option>'+
+                    '<option data-color="'+color_set[4].color+'" value="4">'+color_set[4].name+'</option>'+
+                    '<option data-color="'+color_set[5].color+'" value="5">'+color_set[5].name+'</option>'+
+                    '<option data-color="'+color_set[6].color+'" value="6">'+color_set[6].name+'</option>'+
+                    '<option data-color="'+color_set[7].color+'" value="7">'+color_set[7].name+'</option>'+
+                '</select>'+
+            '</div>',
+		setBoxColor:
+            '<div class="form-group">'+
+                '<label class="text-light-blue">'+const_color+'</label>'+
+                '<div></div>'+
+                '<input name="showColor" style="display:inline-block;width:20%;top:-1px;position:relative;" class="form-control" readOnly></input>'+
+                '<select style="display:inline-block;width:80%;" name="setColor" class="form-control select2" >'+
+                    '<option data-color="'+color_set[6].color+'" value="box-default">'+color_set[6].name+'</option>'+
+                    '<option data-color="'+color_set[0].color+'" value="box-primary">'+color_set[0].name+'</option>'+
+                    '<option data-color="'+color_set[1].color+'" value="box-info">'+color_set[1].name+'</option>'+
+                    '<option data-color="'+color_set[2].color+'" value="box-success">'+color_set[2].name+'</option>'+
+                    '<option data-color="'+color_set[3].color+'" value="box-warning">'+color_set[3].name+'</option>'+
+                    '<option data-color="'+color_set[4].color+'" value="box-danger">'+color_set[4].name+'</option>'+
+                '</select>'+
+            '</div>',
+        setBarColor:
+            '<div class="form-group">'+
+                '<label class="text-light-blue">'+const_color+'</label>'+
+                '<div></div>'+
+                '<input name="showColor" style="display:inline-block;width:20%;top:-1px;position:relative;" class="form-control" readOnly></input>'+
+                '<select name="setColor" style="display:inline-block;width:80%;" class="form-control select2" >'+
+                    '<option data-color="'+color_set[0].color+'" value="progress-bar-blue">'+color_set[0].name+'</option>'+
+                    '<option data-color="'+color_set[1].color+'" value="progress-bar-aqua">'+color_set[1].name+'</option>'+
+                    '<option data-color="'+color_set[2].color+'" value="progress-bar-green">'+color_set[2].name+'</option>'+
+                    '<option data-color="'+color_set[3].color+'" value="progress-bar-yellow">'+color_set[3].name+'</option>'+
+                    '<option data-color="'+color_set[4].color+'" value="progress-bar-red">'+color_set[4].name+'</option>'+
+                    '<option data-color="'+color_set[5].color+'" value="color-purple">'+color_set[5].name+'</option>'+
+                '</select>'+
+            '</div>',
+		setTitle:
+            '<div class="form-group">'+
+                '<label class="text-light-blue">'+const_title+'</label>'+
+                '<input name="setTitle" type="text" class="form-control" placeholder="輸入標題，空白時會自動隱藏">'+
+            '</div>',
+		setTip:
+            '<div class="form-group">'+
+                '<label class="text-light-blue">'+const_tip+'</label>'+
+                '<input type="text" name="setTip" class="form-control" placeholder="輸入說明">'+
+            '</div>',
+		setUnit:
+            '<div class="form-group">'+
+                '<label class="text-light-blue">'+const_unit+'</label>'+
+                '<input type="text" name="setUnit" class="form-control" placeholder="輸入文字">'+
+            '</div>',
+		setIcon:
+            '<div class="form-group">'+
+                '<label class="text-light-blue">'+const_icon+'</label>'+
+                '<div></div>'+
+                '<input name="showIcon" style="display:inline-block;width:20%;top:-2px;position:relative;text-align:center;" value="&#xf013" class="fa form-control" readOnly>'+
+                '<select name="setIcon" style="display:inline-block;width:80%;" class="form-control select2">'+
+                	'<option data-value="&#xf013" value="fa fa-gear">齒輪</option>'+
+					'<option data-value="&#xf2e7" value="fa fa-cutlery">餐具</option>'+
+					'<option data-value="&#xf0f4" value="fa fa-coffee">咖啡</option>'+
+					'<option data-value="&#xf21e" value="fa fa-heartbeat">心跳</option>'+
+					'<option data-value="&#xf1e0" value="fa fa-share-alt">分享</option>'+
+					'<option data-value="&#xf2dc" value="fa fa-snowflake-o">雪花</option>'+
+					'<option data-value="&#xf2c9" value="fa fa-thermometer-half">溫度</option>'+
+					'<option data-value="&#xf164" value="fa fa-thumbs-up">點讚</option>'+
+					'<option data-value="&#xf165" value="fa fa-thumbs-down">倒讚</option>'+
+					'<option data-value="&#xf201" value="fa fa-line-chart">折線圖</option>'+
+					'<option data-value="&#xf0ac" value="fa fa-globe">地球</option>'+
+					'<option data-value="&#xf254" value="fa fa-hourglass">沙漏</option>'+
+					'<option data-value="&#xf0e7" value="fa fa-bolt">電力</option>'+
+					'<option data-value="&#xf007" value="fa fa-user">使用者</option>'+
+					'<option data-value="&#xf0c0" value="fa fa-users">群組</option>'+
+					'<option data-value="&#xf4ad" value="fa fa-comment-dots">對話</option>'+
+					'<option data-value="&#xf277" value="fa fa-map-signs">路標</option>'+
+					'<option data-value="&#xf084" value="fas fa-key">鑰匙</option>'+
+					'<option data-value="&#xf071" value="fa fa-exclamation-triangle">警告</option>'+
+					'<option data-value="&#xf1b9" value="fa fa-car">汽車</option>'+
+					'<option data-value="&#xf207" value="fa fa-bus">公車</option>'+
+					'<option data-value="&#xf239" value="fa fa-subway">地鐵</option>'+
+					'<option data-value="&#xf21a" value="fa fa-ship">船隻</option>'+
+					'<option data-value="&#xf072" value="fa fa-plane">飛機</option>'+
+					'<option data-value="&#xf015" value="fa fa-home">房屋</option>'+
+					'<option data-value="&#xf275" value="fa fa-industry">工廠</option>'+
+					'<option data-value="&#xf200" value="fa fa-pie-chart">圓餅圖</option>'+
+					'<option data-value="&#xf073" value="far fa-calendar-alt">行事曆</option>'+
+					'<option data-value="&#xf290" value="fa fa-shopping-bag">購物袋</option>'+
+					'<option data-value="&#xf07a" value="fa fa-shopping-cart">購物車</option>'+
+					'<option data-value="&#xf0f3" value="fa fa-bell">鈴鐺</option>'+
+					'<option data-value="&#xf1c0" value="fa fa-database">資料庫</option>'+
+					'<option data-value="&#xf381" value="fa fa-cloud-download-alt">下載</option>'+
+					'<option data-value="&#xf017" value="fa fa-clock-o">時鐘</option>'+
+					'<option data-value="&#xf06c" value="fa fa-leaf">葉子</option>'+
+					'<option data-value="&#xf0e0" value="fa fa-envelope">信封</option>'+
+					'<option data-value="&#xf155" value="fas fa-dollar-sign">金錢</option>'+
+					'<option data-value="&#xf109" value="fa fa-laptop">電腦</option>'+
+					'<option data-value="&#xf02d" value="fa fa-book">書籍</option>'+
+					'<option data-value="&#xf15c" value="fa fa-file-text">文件</option>'+
+					'<option data-value="&#xf328" value="fas fa-clipboard">剪貼板</option>'+
+					'<option data-value="&#xf044" value="fas fa-edit">書寫</option>'+
+                '</select>'+
+            '</div>',
+		setMax:
+            '<div class="form-group">'+
+                '<label class="text-light-blue">'+const_limit+'</label>'+
+                '<input type="number" name="setMax" class="form-control" placeholder="請輸入數字">'+
+            '</div>',
+		setHeight:
+            '<div class="form-group">'+
+                '<label class="text-light-blue">'+const_height+'(px)</label>'+
+                '<input type="number" name="setHeight" class="form-control" placeholder="請輸入數字">'+
+            '</div>',
+        setForm:
+            '<div class="form-group">'+
+                '<label class="text-light-blue">'+const_search_form+'</label>'+
+                '<select name="setForm" class="form-control select2" >'+
+                    '<option value="">--'+const_select_form+'--</option>'+
+                '</select>'+
+            '</div>',
+        setColumn:
+            '<div class="form-group">'+
+                '<label class="text-light-blue">'+const_search_column+'</label>'+
+                '<select name="setColumn" class="form-control select2" >'+
+                    '<option value="">--'+const_select_column+'--</option>'+
+                '</select>'+
+            '</div>',
+        setTime:
+            '<div class="form-group">'+
+                '<label class="text-light-blue">'+const_time_range+'</label>'+
+                '<select name="setTime" class="form-control select2" >'+
+                    '<option value="all">'+const_all_time+'</option>'+
+                    '<option value="today">'+const_today+'</option>'+
+                    '<option value="this_week">'+const_this_week+'</option>'+
+                    '<option value="this_month">'+const_this_month+'</option>'+
+                    '<option value="this_year">'+const_this_year+'</option>'+
+                    '<option value="yesterday">'+const_yesterday+'</option>'+
+                    '<option value="last_week">'+const_last_week+'</option>'+
+                    '<option value="last_month">'+const_last_month+'</option>'+
+                    '<option value="last_year">'+const_last_year+'</option>'+
+                '</select>'+
+            '</div>',
+        setType:
+            '<div class="form-group">'+
+                '<label class="text-light-blue">'+const_type+'</label>'+
+                '<select name="setType" class="form-control select2" >'+
+                    '<option value="static">'+const_val_new+'</option>'+
+                    '<option value="avg">'+const_val_avg+'</option>'+
+                    '<option value="max">'+const_val_max+'</option>'+
+                    '<option value="min">'+const_val_min+'</option>'+
+                    '<option value="sum">'+const_val_sum+'</option>'+
+                    '<option value="count">'+const_val_count+'</option>'+
+                '</select>'+
+            '</div>',
+        setGroup:
+            '<div class="form-group">'+
+                '<label class="text-light-blue">'+const_group+'</label>'+
+                '<select name="setGroup" class="form-control select2" >'+
+                    '<option value="">'+const_non_group+'</option>'+
+                '</select>'+
+            '</div>',
+		setYstart:
+			'<div class="form-group">'+
+				'<label class="text-light-blue">'+const_startY+'</label>'+
+				'<input type="number" name="setYstart" class="form-control" value="0" placeholder="請輸入數字">'+
+			'</div>',
+		setNull:
+			'<div class="form-group">'+
+				'<label>&nbsp;</label>'+
+				'<input type="text" class="form-control" style="visibility: hidden;">'+
+			'</div>'
+	};
+	
+	$(function(){
+		DashboardRoot_load();
+	});
+	function actions(data){		
+		if(data.status == 200)
+		{
+			omflowAlert('green', data.message);
+		}	
+		else if (data.status == 404)
+		{
+			omflowAlert('yellow', data.message);
+		}
+		else if (data.status == 500)
+		{
+			omflowAlert('blue', data.message);
+		}
+		else if (data.status == 403)
+		{
+			omflowAlert('red', data.message);
+		}
+	}
+    
+    //產生初始儀表板物件
+	function box_object(){
+		var output = {};
+		//output["width"] = 500;
+		//output["height"] = 500;
+		output["index"] = 0;
+		output["list"] = {};
+		output["tree"] = [];
+		return output;
+	}
+	
+    //根據現況重組tree物件
+	function build_object_tree(){
+		thisTree = searchfloor([],'DashboardRoot');
+		function searchfloor(tree,id){
+			$('#'+id+'>[id^=ID_]').each(function(i){
+				var item = {};
+				item["id"] = $(this).attr('id').substr(3,$(this).attr('id').length);
+				if($(this).find('[id^=ID_]').length>0){
+					subtree = searchfloor([],"CONTENT_"+item["id"]);
+					item["tree"] = subtree;
+				}
+				tree.push(item);
+			});
+			return tree;
+		}
+		box_object.tree = thisTree;
+	}
+    
+    //儀錶板功能
+	function DashboardRoot_output(){
+		//產生
+		var makeTextFile = function (text) {
+	            var data = new Blob([text], {
+	                type: 'text/plain'
+	            });
+	
+	            // If we are replacing a previously generated file we need to
+	            // manually revoke the object URL to avoid memory leaks.
+	            if (textFile !== null) {
+	                window.URL.revokeObjectURL(textFile);
+	            }
+	            textFile = window.URL.createObjectURL(data);
+	
+	            return textFile;
+	        };
+        
+        //產生檔名
+        var NowDate = new Date();
+		var Y = NowDate.getYear()+1900;
+		var M = NowDate.getMonth()+1;
+		var d = NowDate.getDate();
+		var h = NowDate.getHours();
+		var m = NowDate.getMinutes();
+		var s = NowDate.getSeconds();
+        var filename = "OMFLOW-Dashboard_"+Y+"-"+M+"-"+d+"_"+h+"-"+m+"-"+s+".txt";
+		
+		build_object_tree();
+		$('body').append($('<a id="exporta" href="'+makeTextFile(JSON.stringify(box_object))+'" download="'+filename+'" style="display:none;"></a>'));
+		$('#exporta')[0].click();
+		$('#exporta').remove();
+	}
+    function DashboardRoot_input(){
+		$('#DashboardRoot').empty();
+		box_object = arguments[0];
+		searchfloor(box_object.tree,'DashboardRoot');
+		function searchfloor(thisArray,id){
+			thisArray.forEach(function(item, index, array){
+				box_new_item(box_object.list[item.id],id);
+				//testLength
+				if(item.hasOwnProperty("tree")&&item.tree){
+					searchfloor(item.tree,"CONTENT_"+item.id);
+				}
+			});
+		}
+	}
+    function DashboardRoot_edit(){
+		read_mode = false;
+		$(".readHide").show();
+		$(".borderHide").removeClass("no-border-top");
+		$('#DashboardRoot [id^=ID_]').prop("draggable",true).css('cursor','move');
+		$("#DashboardRoot .btn-box-tool").show();
+		$(".box-header .pull-right").show('fade');
+		$("#read-mode_edit").hide();
+		$("#edit-mode_save").show('fade');
+		$("#edit-mode_cancel").show('fade');
+		$("#edit-mode_cancel").nextAll().show('fade');
+	}
+	function DO_readmode(){
+		read_mode = true;
+		$(".readHide").hide();
+		$(".borderHide").addClass("no-border-top");
+		$('#DashboardRoot [id^=ID_]').prop("draggable",false).css('cursor','default');
+		$("#DashboardRoot .btn-box-tool").hide();
+		$(".box-header .pull-right").hide();
+		$("#read-mode_edit").show('fade');
+		$("#edit-mode_save").hide();
+		$("#edit-mode_cancel").hide();
+		$("#edit-mode_cancel").nextAll().hide();
+	}
+    function DashboardRoot_load(){
+		var postbody = {csrfmiddlewaretoken:csrfmiddlewaretoken};
+		var callback = function(){
+			const duration = performance.now() - startTime;
+{#			console.log(`DashboardRoot_load：${duration}ms`);#}
+			data = arguments[0];
+			if (data.status==200){
+				const startTime2 = performance.now();
+				DashboardRoot_input(JSON.parse(data.result[0].content));
+				const duration2 = performance.now() - startTime2;
+{#				console.log(`DashboardRoot_input：${duration2}ms`);#}
+				old_box_object = JSON.stringify(box_object);
+				DO_readmode();
+			}else{actions(data)}
+		}
+	    const startTime = performance.now();
+		omflowJsonAjax(postbody,"{% url 'loadDashboardAjax'%}",callback);
+	}
+	function DashboardRoot_save(){
+		build_object_tree();
+		old_box_object = JSON.stringify(box_object);
+		var postdata = {  csrfmiddlewaretoken: csrfmiddlewaretoken, content: JSON.stringify(box_object) };
+		$.ajax({
+			url: "{% url 'saveDashboardAjax' %}",
+			type: 'post',
+			data: postdata,
+			success: function (data) {
+				if (data.status==200){
+				}else{actions(data)}
+			},
+			error: function(req, status, err) {
+				$('#modal_error').modal('show');
+				console.log('Something went wrong', status, err);
+			},complete: function(){}
+		});
+		DO_readmode();
+		//$(".omflow-box-header").off("hover");
+	}
+	function DashboardRoot_cancel(){
+		DashboardRoot_input(JSON.parse(old_box_object));
+		DO_readmode();
+		//$(".omflow-box-header").off("hover");
+	}
+	
+    //區塊-新增區塊
+    function add_box(num){  
+		var item = {
+			id:box_object.index++,
+			type:'box'+num,
+			setting:{
+				setTitle:"",
+				setColor: "box-default"
+			}
+		}
+		box_new_item(item,'DashboardRoot');
+	}
+	//區塊-選擇新增窗格類型
+	function box_button_add_item(item_id, item_type){
+	    var default_option = '<option value="word">顯示文字</option>'
+	    					+'<option value="meter-bar">計量條</option>'
+	    					+'<option value="tube">水管圖</option>'
+	    					+'<option value="line">折線圖</option>'
+	    					+'<option value="bar">長條圖</option>'
+	    					+'<option value="pie">圓餅圖</option>'
+	                        +'<option value="map-world">世界地圖</option>';
+	                        //+'<option value="map-taiwan">顯示台灣地圖</option>';
+	    var addtion_option = '<option value="box12">1區塊</option>'
+	    					+'<option value="box6">1/2區塊</option>'
+	                        +'<option value="box8">2/3區塊</option>'
+	                        +'<option value="box4">1/3區塊</option>'
+	                        +'<option value="box9">3/4區塊</option>'
+	                        +'<option value="box3">1/4區塊</option>';
+	    if(item_type == 'box12' && $("#CONTENT_"+item_id).closest(".omflow-board").length==1){
+	    	if($("#CONTENT_"+item_id+">.omflow-board").length)
+	    		$('#box_add_modal_select').html(addtion_option);
+	    	else if($("#CONTENT_"+item_id+">.omflow-form-group").length)
+	    		$('#box_add_modal_select').html(default_option);
+	    	else
+	        	$('#box_add_modal_select').html(default_option + addtion_option);
+	    }else{
+	        $('#box_add_modal_select').html(default_option);
+	    }
+	    
+	    box_container = "CONTENT_"+item_id;
+	    $('#modal-box-add').modal('show');
+	}
+	//區塊-選擇新增窗格類型-儲存 NEWTYPE
+	function modal_add_sumbit(){
+	  //var item_type = $('#box_add_modal_select').val();
+	  var thisType = $('#box_add_modal_select').val();
+	  var thisSetting = {};
+	  switch(thisType){
+		  case "box3":
+		  case "box4":
+		  case "box6":
+		  case "box8":
+		  case "box9":
+		  	thisSetting = {
+				setTitle:'',
+				setColor:"box-default"
+			}
+		  break;
+		  case "word":
+		  	thisSetting = {
+		  		setTitle:'',
+				setIcon:'fa fa-gear',
+		  		setColor:'bg-blue',
+		  		setUnit:'單位',
+		  		setTip:'',
+		  		setRefresh: 60
+		  	}
+		  break;
+		  case "meter-bar":
+		  	thisSetting = {
+		  		setTitle:'',
+		  		setColor:'progress-bar-aqua',
+		  		setUnit:'單位',
+		  		setTip:'',
+		  		setMax:100,
+		  		setRefresh: 60
+		  	}
+		  break;
+		  case "tube":
+		  	thisSetting = {
+		  		setTitle:'',
+				setIcon:'fa fa-gear',
+		  		setColor:'bg-blue',
+		  		setUnit:'單位',
+		  		setTip:'',
+		  		setMax:100,
+		  		setRefresh: 60
+		  	}
+		  break;
+		  case "line":
+		  case "bar":
+		  	thisSetting = {
+		  		setTitle:'',
+		  		setHeight: '240',
+		  		setY: 0,
+		  		setColor: 0,
+		  		setRefresh: 60
+		  	}
+		  break;
+		  case "pie":
+		  	thisSetting = {
+		  		setTitle:'',
+		  		setHeight: '240',
+		  		setColor: 0,
+		  		setRefresh: 60
+		  	}
+		  break;
+		  case "map-world":
+		  case "map-taiwan":
+		  	thisSetting = {
+		  		setTitle:'',
+		  		setHeight: 360,
+		  		setRefresh: 60,
+		  		setColor: 7,
+		  	}
+		  break;
+	  }
+	  
+	  var item = {
+			id:box_object.index++,
+	  		type:thisType,
+	  		setting:thisSetting
+	  }
+	  box_new_item(item,box_container)
+	  $('#modal-box-add').modal('hide');
+	}
+	//區塊-新增窗格-執行 NEWTYPE
+	function box_new_item(item,container){
+		box_object.list[item.id]=item;
+		
+	    var content = '';
+	    var drag = ' draggable="true" ondragstart="boxdrag(event)" ondragover="boxAllowDrop(event) " style="cursor:move;"';
+	    var drop = ' ondrop="boxdrop(event,this)" ';
+	    var display_mode = '';
+	    var config_button = '<button type="button" class="btn btn-box-tool pull-right move-in" style="z-index:51;" onclick="box_button_config_item(\'_p_id_\',\'_item_type_\')" '+display_mode+'><i class="fa fa-gear"></i></button>';
+	    var	remove_button = '<button type="button" class="btn btn-box-tool pull-right move-in" style="z-index:51;" onclick="box_button_remove_item(\'_p_id_\')" '+display_mode+'><i class="fa fa-remove"></i></button>';
+	    var	add_button = '<button type="button" class="btn btn-box-tool pull-right move-in" style="z-index:51;" onclick="box_button_add_item(\'_p_id_\',\'_item_type_\')" '+display_mode+'><i class="fa fa-plus"></i></button>';
+	    
+	    switch(item.type)
+	    {
+	        case 'box3':
+	        case 'box4':
+	        case 'box8':
+	        case 'box9':
+	        case 'box6':
+	        case 'box12':
+	        	var width = item.type.substr(3,item.type.length);
+	            content ='<div id="ID__p_id_" class="col-md-'+width+' omflow-board"' + drag + drop + ' style="margin-bottom: 0px;">'
+	                    +'<div id="COLOR__p_id_" class="omflow-box box" >'
+	                    +'<div class="omflow-box-header with-border" ><p id="TITLE__p_id_"></p>'
+	                    + remove_button + config_button + add_button
+	                    +'</div>'
+	                    +'<div id="CONTENT__p_id_" class="omflow-box-body"></div>'
+	                    +'</div></div>';
+	        break;       
+	        default:
+	            content = '<div id="ID__p_id_" class="omflow-form-group "' + drag + '>'
+	                    +'<div class="omflow-box-header with-border" ><p id="TITLE__p_id_"></p>'
+	                    + remove_button + config_button
+	                    +'</div>'
+	                    +'<div id="CONTENT__p_id_" class="omflow-box-body"></div>'
+	                    +'</div></div>';
+	    }
+	    content = content.replace(/_p_id_/g,item.id).replace(/_item_type_/g,item.type);
+	    $('#' + container).append(content);
+	    box_init_item(item);
+	}
+
+	//窗格-重新設定 NEWTYPE
+	function box_init_item(item){
+		var thisDom = $("#ID_"+item.id);
+	    thisDom.find("#TITLE_"+item.id).text(item.setting.setTitle);
+	    if(item.setting.setTitle){
+	    	thisDom.find(".omflow-box-header:eq(0)").removeClass('readHide');
+	    	thisDom.find("#COLOR_"+item.id).removeClass('borderHide');
+	    }else{
+	    	thisDom.find(".omflow-box-header:eq(0)").addClass('readHide');
+	    	thisDom.find("#COLOR_"+item.id).addClass('borderHide');
+	    }
+	    
+	    thisDom.find("#COLOR_"+item.id).removeClass("box-default box-danger box-warning box-primary box-info box-success").addClass(item.setting.setColor);
+
+	    if(!read_mode || !item.setting.setTitle){
+	    	$("#ID_"+item.id+">.omflow-box-header").show();
+	    }
+
+	    switch(item.type)
+	    {
+	        case 'word':
+	        	thisDom.find("#CONTENT_"+item.id).empty().append(
+					'<span class="info-box-icon '+item.setting.setColor+'"><i class="'+item.setting.setIcon+'"></i></span>'+
+					'<div class="info-box-content" style="height:90px;">'+
+		              '<span class="info-box-text">'+item.setting.setTip+'</span>'+
+		              '<span class="info-box-number">讀取中...</span>'+
+		            '</div>'
+	        	);
+	        break;
+	        case 'meter-bar':
+	        	thisDom.find("#CONTENT_"+item.id).empty().append(
+					'<div class="progress-group" style="padding:5px 15px;">'+
+	                    '<span class="progress-text">'+item.setting.setTip+'</span>'+
+	                    '<span class="progress-number"><b>0</b>/'+item.setting.setMax+'</span>'+
+	                    '<div class="progress sm">'+
+	                      '<div class="progress-bar '+item.setting.setColor+'" style="width: 0%"></div>'+
+	                    '</div>'+
+					'</div>'
+	        	);
+	        break;
+	        case 'tube':
+	        	thisDom.find("#CONTENT_"+item.id).empty().append(
+					'<div class="info-box '+item.setting.setColor+'" style="margin-bottom:0px;">'+
+		            	'<span class="info-box-icon"><i class="'+item.setting.setIcon+'"></i></span>'+
+						'<div class="info-box-content">'+
+							'<span class="info-box-text">'+item.setting.setTitle+'</span>'+
+							'<span class="info-box-number">0'+item.setting.setUnit+'</span>'+
+							'<div class="progress">'+
+								'<div class="progress-bar" style="width: 0%"></div>'+
+							'</div>'+
+							'<span class="progress-description">'+item.setting.setTip+'</span>'+
+			            '</div>'+
+					'</div>'
+	        	);
+	        break;
+	        case 'line':
+	        case 'bar':
+	        case 'pie':
+	        	thisDom.find("#CONTENT_"+item.id).empty().append(
+					'<canvas id="CHART_'+item.id+'" style="width:100%;height:'+item.setting.setHeight+'px;padding:15px;"></canvas>'
+	        	);
+	        break;
+	        case 'map-world':
+	        	thisDom.find("#CONTENT_"+item.id)
+	        		.empty().css({
+	        			"height":item.setting.setHeight,
+	        			"background":color_set[item.setting.setColor].color
+	        		})
+	        		.append('<div class="map"><span></span></div><div class="areaLegend"><span></span></div>')
+	        		.mapael(
+	        		{
+	        			map: {
+		                    name: "world_countries_miller",
+		                    defaultArea: {
+		                        attrs: {
+		                            fill: "#eee",
+		                            stroke: color_set[item.setting.setColor].color,
+		                            "stroke-width": 0.3
+		                        },
+					            attrsHover: {
+					                fill: "#fff"
+					            }
+		                    }
+		                    , zoom: {
+		                        enabled: true
+		                        , step: 0.25
+		                        , maxLevel: 20
+		                    }
+		                }
+	        		});
+	        	thisDom.find("#CONTENT_"+item.id)
+	        break;
+	        case 'map-taiwan':
+	        	thisDom.find("#CONTENT_"+item.id)
+	        		.empty().css({
+	        			"height":item.setting.setHeight,
+	        			"background":"-webkit-gradient(linear, left bottom, left top, color-stop(0, #3c8dbc), color-stop(1, #67a8ce)) !important;"
+	        		})
+	        		.append('<div class="map"><span></span></div><div class="areaLegend"><span></span></div>')
+	        		.mapael(
+	        		{
+	        			map: {
+		                    name: "world_countries_miller",
+		                    defaultArea: {
+		                        attrs: {
+		                            fill: "#dddddd",
+		                            stroke: "#bbbbbb",
+		                            "stroke-width": 0.3
+		                        }
+		                    }
+		                    , zoom: {
+		                        enabled: true
+		                        , step: 0.25
+		                        , maxLevel: 20
+		                    }
+		                }
+	        		});
+	        break;
+	    }
+	    box_update_item(item);
+	}
+	//窗格-更新資訊 NEWTYPE
+    function box_update_item(item){
+    	//判斷窗格是否存在
+    	if($("#ID_"+item.id).length)
+    		var thisDom = $("#ID_"+item.id);
+    	else
+			return;
+		
+		postdata={
+			type:item.type,
+			form:item.setting.setForm,
+			column:[],
+			time_range:item.setting.setTime,
+			groupby:item.setting.setGroup,
+			orderby:item.setting.setOrder
+		};
+		$.each(item.setting.setColumn,function(idx,thisColumn){
+			postdata.column[idx]={
+				column:thisColumn,
+				value:item.setting.setType[idx]
+			};
+		});
+		
+		postbody = {
+			content:JSON.stringify(postdata),
+			csrfmiddlewaretoken:csrfmiddlewaretoken
+		}
+		var callback = function(){};
+		//呼叫Ajax
+		switch(item.type){
+		case "word":
+			callback = function(){
+				var data = arguments[0];
+				if (null==data || data.status==200){
+					var thisValue = null==data? Math.floor(Math.random()*99+1):data.result.dataset[0].data[0];
+					thisDom.find("#CONTENT_"+item.id+" .info-box-number").html(thisValue+'<small>'+item.setting.setUnit+'</small>');
+				}else{actions(data)}
+			};
+		break;
+		case "meter-bar":
+			callback = function(){
+				var data = arguments[0];
+				if (null==data || data.status==200){
+					var thisValue = null==data? Math.floor(Math.random()*item.setting.setMax/2)+Math.floor(item.setting.setMax/2) : data.result.dataset[0].data[0];
+					var thisProportion = Math.floor(thisValue*100/item.setting.setMax);
+		        	thisDom.find("#CONTENT_"+item.id+" .progress-number").text(thisValue+item.setting.setUnit);
+		        	thisDom.find("#CONTENT_"+item.id+" .progress-bar").css("width",thisProportion+"%");
+				}else{actions(data)}
+			};
+		break;
+		case "tube":
+			callback = function(){
+				var data = arguments[0];
+				if (null==data || data.status==200){
+					var thisValue = null==data? Math.floor(Math.random()*item.setting.setMax/2)+Math.floor(item.setting.setMax/2) : data.result.dataset[0].data[0];
+		        	var thisProportion = Math.floor(thisValue*100/item.setting.setMax);
+		        	thisDom.find("#CONTENT_"+item.id+" .info-box-number").text(thisValue+item.setting.setUnit);
+		        	thisDom.find("#CONTENT_"+item.id+" .progress-bar").css("width",thisProportion+"%");
+				}else{actions(data)}
+			};
+		break;
+		case "bar":
+			callback = function(){
+				var data = arguments[0];
+				if (null==data || data.status==200){
+					if(null!=chart_list[item.id])
+						chart_list[item.id].destroy();
+					var dataset = null==data? [
+						{name:"Name1",data:[Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1)]},
+						{name:"Name2",data:[Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1)]},
+						{name:"Name3",data:[Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1)]}
+					]:data.result.dataset;
+					var labels = null==data? ["周日","周一","周二","周三","周四","周五","周六"] : data.result.labels;
+					var datasets=[];
+					var count=color_set.length;
+					$.each(dataset,function(idx,thisData){
+						datasets.push({
+				            label: dataset[idx].name,
+				            data: dataset[idx].data,
+				            backgroundColor: color_set[(parseInt(idx)+parseInt(item.setting.setColor))%count].color
+				        });
+					});
+					
+					var chartJson = {
+					    type: 'bar',
+					    data: {
+					        labels: labels,
+					        datasets: datasets
+					    },
+					    options: {
+							responsive: true,
+				            legend: {
+				                position: 'right',
+				                labels: {
+				                    boxWidth: 20,
+				                    padding: 20,
+				                }
+				            },
+					        scales: {
+								xAxes: [{
+									gridLines: {
+										color: "rgba(0, 0, 0, 0)"
+									}
+								}],
+					            yAxes: [{
+									gridLines: {
+										color: "rgba(0, 0, 0, 0)"
+									},
+					                ticks: {
+					                    beginAtZero:true,
+					                    suggestedMin: item.setting.setY
+					                }
+					            }]
+					        }
+					    }
+					};
+					var ctx = document.getElementById('CHART_'+item.id).getContext('2d');
+					chart_list[item.id] = new Chart(ctx, chartJson);
+				}else{actions(data)}
+			};
+		break;
+		case "line":
+			callback = function(){
+				var data = arguments[0];
+				if (null==data || data.status==200){
+					if(null!=chart_list[item.id])
+						chart_list[item.id].destroy();
+					var dataset = null==data? [
+						{name:"Name1",data:[Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1)]},
+						{name:"Name2",data:[Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1)]},
+						{name:"Name3",data:[Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1)]}
+					]:data.result.dataset;
+					var labels = null==data? ["周日","周一","周二","周三","周四","周五","周六"] : data.result.labels;
+					var datasets=[];
+					var count=color_set.length;
+					
+					$.each(dataset,function(idx,thisData){
+						datasets.push({
+				            label: dataset[idx].name,
+				            //data: [Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1)],
+					        data: dataset[idx].data,
+					        backgroundColor: color_set[(parseInt(idx)+parseInt(item.setting.setColor))%count].color,
+							borderColor: color_set[(parseInt(idx)+parseInt(item.setting.setColor))%count].color,
+					        fill: false
+				        });
+					});
+					var canvas = $('#CHART_'+item.id).empty();
+					var ctx = document.getElementById('CHART_'+item.id).getContext('2d');
+					var chartJson = {
+						    type: 'line',
+						    data: {
+						        labels: labels,
+						        datasets: datasets
+						    },
+						    options: {
+								responsive: true,
+					            legend: {
+					                position: 'right',
+					                labels: {
+					                    boxWidth: 20,
+					                    padding: 20
+					                }
+					            },
+						        scales: {
+									xAxes: [{
+										gridLines: {
+											color: "rgba(0, 0, 0, 0)"
+										}
+									}],
+						            yAxes: [{
+										gridLines: {
+											color: "rgba(0, 0, 0, 0)"
+										},
+						                ticks: {
+						                    suggestedMin: item.setting.setY
+						                }
+						            }]
+						        }
+						    }
+						};
+					chart_list[item.id] = new Chart(ctx, chartJson);
+				}else{actions(data)}
+			};
+		break;
+		case "pie":
+			callback = function(){
+				var data = arguments[0];
+				if (null==data || data.status==200){
+					if(null!=chart_list[item.id])
+						chart_list[item.id].destroy();
+					var dataset = null==data? [
+						{name:"Name1",data:[Math.floor(Math.random()*10+1)]},
+						{name:"Name2",data:[Math.floor(Math.random()*10+1)]},
+						{name:"Name3",data:[Math.floor(Math.random()*10+1)]}
+					]:data.result.dataset;
+					var ctx = document.getElementById('CHART_'+item.id).getContext('2d');
+					
+					var labels=[];
+					var datasets=[];
+					var colorsets=[];
+					var count=color_set.length;
+					
+					$.each(dataset,function(idx,thisData){
+						labels.push(thisData.name);
+						//datasets.push(Math.floor(Math.random()*10+1));
+						datasets.push(thisData.data[0]);
+						colorsets.push(color_set[(parseInt(idx)+parseInt(item.setting.setColor))%count].color);
+					});
+					
+					chart_list[item.id] = new Chart(ctx, {
+					    type: 'doughnut',
+					    data: {
+					    	labels: labels,
+						    datasets: [{
+						    	data: datasets,
+								backgroundColor: colorsets
+						    }],
+						},
+					    options: {
+				            responsive: true,
+				            legend: {
+				                position: 'right',
+				                labels: {
+				                    boxWidth: 20,
+				                    padding: 20
+				                }
+				            }
+				        }
+					});
+				}else{actions(data)}
+			};
+		break;
+		}
+		
+		if(item.setting.setForm){
+			omflowJsonAjax(postbody,"{% url 'updateGridAjax'%}",callback);
+		}else
+			callback();
+			
+		if(null!=timer_list[item.id])
+			clearTimeout(timer_list[item.id]);
+		timer_list[item.id]=setTimeout(function() {
+			box_update_item(item);}, 60*1000 );
+	}
+    //窗格-移除 NEWTYPE
+	function box_button_remove_item(item_id){
+	    $('#ID_' + item_id+' [id^=ID_]').each(function(i){
+	    	delete box_object.list[$(this).attr('id').substr(3,$(this).attr('id').length)];
+	    });
+	    delete box_object.list[item_id];
+		$('#ID_' + item_id).remove();
+	}
+	
+    //窗格-編輯 NEWTYPE	
+    function box_button_config_item(item_id, item_type){
+		var item = box_object.list[item_id];
+		box_container = item_id;
+		
+		grid_object.type = item.type;
+		grid_object.data = $.extend( true, [], item.setting );
+		$("#modal-grid-config").attr('name',item_id);
+		switch(item_type)
+		{
+			case 'box3':
+			case "box4":
+			case "box6":
+			case "box8":
+			case "box9":
+			case 'box12':
+				Grid_buildAdvance(["setTitle","setBoxColor"]);
+				break;
+			case 'word':
+				Grid_buildAdvance(["setTitle","setTip","setIcon","setColor","setUnit"]);
+				Grid_buildSearch(["setForm","setColumn","setTime","setType","setNull"]);
+				break;
+			case 'meter-bar':
+				Grid_buildAdvance(["setTitle","setTip","setBarColor","setMax","setUnit"]);
+				Grid_buildSearch(["setForm","setColumn","setTime","setType","setNull"]);
+				break;
+			case 'tube':
+				Grid_buildAdvance(["setTitle","setTip","setIcon","setColor","setUnit","setMax"]);
+				Grid_buildSearch(["setForm","setColumn","setTime","setType","setNull"]);
+				break;
+			case 'line':
+			case 'bar':
+				Grid_buildAdvance(["setTitle","setChartColor","setHeight","setYstart","setNull"]);
+				Grid_buildSearch(["setForm","setColumn","setTime","setType","setGroup"]);
+				break;
+			case 'pie':
+				Grid_buildAdvance(["setTitle","setChartColor","setUnit","setHeight","setNull"]);
+				Grid_buildSearch(["setForm","setColumn","setTime","setType","setGroup"]);
+				break;
+			case 'map-world':
+			case 'map-taiwan':
+				Grid_buildAdvance(["setTitle","setHeight","setChartColor"]);
+				//Grid_buildSearch(["setForm","setColumn","setTime","setType","setGroup"]);
+				break;
+		}
+		$.each(item.setting,function(key,val){
+			$('#modal-grid-config [name='+key+']:eq(0)').val(val);
+			if(key=="setColor"||key=="setIcon")
+				$('#modal-grid-config [name='+key+']:eq(0)').trigger('change');
+		});
+		$('#modal-grid-config').modal('show');
+	}
+    function Grid_buildAdvance(){
+        var thisList = arguments[0];
+        var count=1;
+        $("#modal-grid-config table").empty().show();
+    	$("#modal-grid-config #showAdvance").hide();
+        $("#modal-grid-config #showSearch").hide();
+        var thisDialogBody = $("#modal-grid-config table:eq(0)");
+        $.each(thisList,function(idx,name){
+            if(count%2)
+                thisDialogBody.append($('<tr><td style="width:50%;padding-right:7px;"></td></tr>'));
+            else
+                thisDialogBody.find("tr:last").append($('<td style="width:50%;padding-left:7px;"></td>'));
+            var thisTD = thisDialogBody.find("td:last");
+            thisTD.append($(config_set[name]));
+            count++
+        });
+    }
+    function Grid_buildSearch(){
+    	var thisList = arguments[0];
+    	var count=1;
+        $("#modal-grid-config table:eq(1)").empty();
+        var thisDialogBody = $("#modal-grid-config table:eq(1)");
+        $.each(thisList,function(idx,name){
+            if(count%2)
+                thisDialogBody.append($('<tr><td style="width:50%;padding-right:7px;"></td></tr>'));
+            else
+                thisDialogBody.find("tr:last").append($('<td style="width:50%;padding-left:7px;"></td>'));
+            var thisTD = thisDialogBody.find("td:last");
+            thisTD.append($(config_set[name]));
+            count++
+        });
+        Grid_listForm();
+        Grid_showSearch();
+    }
+    function Grid_showAdvance(){
+		var thisDialog = $("#modal-grid-config");
+        thisDialog.find("table:eq(0)").show();
+        thisDialog.find("table:eq(1)").hide();
+    	thisDialog.find('#showAdvance').hide();
+        thisDialog.find('#showSearch').show("fade");
+    }
+    function Grid_showSearch(){
+		var thisDialog = $("#modal-grid-config");
+        thisDialog.find("table:eq(0)").hide();
+        thisDialog.find("table:eq(1)").show();
+    	thisDialog.find('#showAdvance').show("fade");
+        thisDialog.find('#showSearch').hide();
+    }
+    function Grid_submit(){
+		var item_id = $('#modal-grid-config').attr('name');
+		var item = box_object.list[item_id];
+		var thisSetting = {};
+		
+		$('#modal-grid-config [name^=set]').each(function(i){
+			if($.inArray( $(this).attr('name'), ["setColumn","setType","setGroup","setOrder"])>-1){
+				if(typeof(thisSetting[$(this).attr('name')])=='undefined')
+					thisSetting[$(this).attr('name')] = []
+				thisSetting[$(this).attr('name')].push($(this).val());
+			}else
+				thisSetting[$(this).attr('name')] = $(this).val();
+		});
+		
+		item.setting = thisSetting;
+		$('#modal-grid-config').modal('hide');
+		box_init_item(item);
+		
+		item_id = undefined;
+		thisSetting = undefined;
+	}
+	function Grid_listForm(value){
+		var postbody = {csrfmiddlewaretoken:csrfmiddlewaretoken};
+		var callback = function(){
+			data = arguments[0];
+			if (data.status==200){
+				thisSelect=$("#modal-grid-config select[name=setForm]");
+				$.each(data.result,function(key,value){
+					thisSelect.append($('<option value="'+key+'">'+value+'</option>'))
+				});
+				thisSelect.val(grid_object.data.setForm);
+				Grid_listColumn(grid_object.data.setForm)
+			}
+			else
+			{actions(data)}
+		}
+		omflowJsonAjax(postbody,"{% url 'formGridAjax'%}",callback);
+	}
+	function Grid_listColumn(){
+		var thisForm = arguments[0];
+		var postbody = {csrfmiddlewaretoken:csrfmiddlewaretoken,model:thisForm};
+		var callback = function(){
+			data = arguments[0];
+			if (data.status==200){
+				thisColumnSelect=$("#modal-grid-config select[name=setColumn]");
+				thisTypeSelect=$("#modal-grid-config select[name=setType]");
+				thisGroupSelect=$("#modal-grid-config select[name=setGroup]");
+				thisOrderSelect=$("#modal-grid-config select[name=setOrder]");
+				$.each(data.result,function(key,value){
+					thisColumnSelect.append($('<option value="'+key+'">'+value+'</option>'))
+					thisGroupSelect.append($('<option value="'+key+'">'+value+'</option>'))
+					thisOrderSelect.append($('<option value="'+key+'">'+value+'</option>'))
+				});
+				$.each(grid_object.data.setColumn,function(idx,value){
+					$(thisColumnSelect[idx]).val(value);
+				})
+				$.each(grid_object.data.setType,function(idx,value){
+					$(thisTypeSelect[idx]).val(value);
+				});
+				$.each(grid_object.data.setGroup,function(idx,value){
+					$(thisGroupSelect[idx]).val(value);
+				});
+				$.each(grid_object.data.setOrder,function(idx,value){
+					$(thisOrderSelect[idx]).val(value);
+				});
+			}
+			else
+			{actions(data)}
+		}
+		if(null!=thisForm && thisForm.length){
+			omflowJsonAjax(postbody,"{% url 'columnGridAjax'%}",callback);
+		}else{
+			$("#modal-grid-config select[name=setColumn]").find('option:gt(0)').remove();
+			$("#modal-grid-config select[name=setGroup]").find('option:gt(0)').remove();
+			$("#modal-grid-config select[name=setOrder]").find('option:gt(0)').remove();
+		}
+	}
+	
+	function Dashboard_importDialog(){
+		$("#modal-dashboard-input").modal('show');
+	}
+	function Dashboard_importJson(){
+		DashboardRoot_input(JSON.parse($("#dashboard_content").val()));
+		$("#dashboard_content").empty();
+		$("#modal-dashboard-input").modal('hide');
+	}
+		
+	//Listener
+    //改變選項顏色
+    $('body').on('change','select[name="setColor"]',function(){
+    	var thisColor = $(this).find('option[value="'+$(this).val()+'"]').data('color');
+    	$(this).closest('td').find('[name="showColor"]').css(
+    		{
+	    		'background-color':thisColor,
+	    		border:thisColor,
+	    		color:"white"
+    		}
+    	);
+    	//grid_object.data.setColor = $(this).val();
+    });
+    //改變Icon
+    $('body').on('change','select[name="setIcon"]',function(){
+    	var thisIcon = $(this).find('option[value="'+$(this).val()+'"]').data('value');
+    	$(this).closest('td').find('[name="showIcon"]').val(thisIcon);
+    	//grid_object.data.setColor = $(this).val();
+    });
+    //改變欄位
+    $('body').on('change','select[name="setForm"]',function(){
+		Grid_listColumn($(this).val());
+    });
+    //drop、drag
+	function boxdrag(ev){
+	    ev.dataTransfer.setData("boxid", ev.target.id);
+	}
+	function boxdrop(ev, target_object){
+	    ev.preventDefault();
+	    ev.stopPropagation();
+	    var target = $('#'+target_object.id);
+	    var source = $('#'+ev.dataTransfer.getData("boxid"));
+		
+	    if(source.attr('class').startsWith('omflow-form-group'))
+	    {
+	        source.prependTo(target.find('div[id^=CONTENT_]:eq(0)'));
+	    }
+	    else
+	    {
+	        if(target != source){
+		        var targetSpot = $('<span></span>');
+				var sourceSpot = $('<span></span>');
+				targetSpot.insertBefore(target);
+				sourceSpot.insertBefore(source);
+				target.insertBefore(sourceSpot);
+				source.insertBefore(targetSpot);
+				targetSpot.remove();
+				sourceSpot.remove();
+			}
+	    }
+	}
+	function boxAllowDrop(ev){
+	    ev.preventDefault();
+	}
+
+    </script>
+{% endblock %}

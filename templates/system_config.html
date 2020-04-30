@@ -1,0 +1,264 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %} 
+{% block content %}
+<!-- 
+	message.html 
+	author : Pei lin
+-->
+    <!-- Content Header (Page header) -->
+   <section class="content-header">
+      <h1>
+     	{% trans ' 系統設定' %}
+        <small></small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i> {% trans '首頁' %}</a></li>
+        <li class="active">{% trans '系統設定' %}</li>
+      </ol>
+    </section>
+    <form id="loglevel" onsubmit="omflowSubmit(); return false;" autocomplete="off">
+    {% csrf_token %}
+    <section class="content">
+      <div class="row">
+    	<div class="col-xs-12">
+    	  <div class="box box-primary">
+    	  	<div class="box-header with-border">
+    	  	  <button type="button" class="btn btn-default" onclick="store_config()" style="margin:1px 0px;"><i class="fa fa-save"></i> {% trans '儲存' %}</button>
+    	  	</div>
+    	  	<!-- /.box-header -->
+            <div class="box-body">
+          	  <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+              	  	<h4>{% trans '一般設定'%}</h4>
+              	  </div>
+              	</div>
+            	<div class="col-md-4">
+            	  <div class="form-group">
+				    <label>{% trans '最大執行緒數量'%}</label>
+					  <input type="text" name="POOL_MAX_WORKER" id="POOL_MAX_WORKER" class="form-control" placeholder="{% trans '最大執行緒數量'%}"/>					
+				  </div>
+				</div>
+				<div class="col-md-4">
+				  <div class="form-group" name="LOG_LEVEL">
+                	<label>LOG_等級</label>
+                	<select class="form-control select2"  name="LOG_LEVEL" style="width: 100%;">
+                  	  <option id="DEBUG">DEBUG</option>
+                  	  <option id="INFO">INFO</option>
+                  	  <option id="ERROR">ERROR</option>
+                  	  <option id="CRITICAL">CRITICAL</option>
+                	</select>
+                  </div>
+              	</div>
+              	<!-- /.col -->
+              </div>
+              <!-- /.row -->
+              <div class="sep-line"></div>
+              <div class="row" name="ldap">
+                <div class="col-md-12">
+                  <div class="form-group">
+              	  	<h4>{% trans 'LDAP 設定'%}<small>{% trans '(修改設定後即自動同步)'%}</small><button type="button" class="btn btn-default pull-right" onclick="check_connect()" style="margin:1px 0px;" title="{% trans 'LDAP 連線檢查' %}"><i class="fa fa-link"></i> {% trans '連線檢查' %}</button></h4>
+              	  </div>
+              	</div>
+              	<div class="col-md-4">
+            	  <div class="form-group">
+				    <label>server ip</label>
+					  <input type="text" name="ldap_client_server" id="ldap_client_server" class="form-control" placeholder="server ip"/>					
+				  </div>
+				  <!-- /.form-group -->
+				</div>
+              	<!-- /.col -->
+              	<div class="col-md-4">
+            	  <div class="form-group">
+				    <label>server port</label>
+					  <input type="text" name="ldap_client_server_port" id="ldap_client_server_port" class="form-control" placeholder="server port"/>					
+				  </div>
+				  <!-- /.form-group -->
+				</div>
+              	<!-- /.col -->
+              	<div class="col-md-4">
+            	  <div class="form-group">
+				    <label>server domain</label>
+					  <input type="text" name="ldap_client_domain" id="ldap_client_domain" class="form-control" placeholder="server domain"/>					
+				  </div>
+				  <!-- /.form-group -->
+				</div>
+              	<!-- /.col -->
+              	<div class="col-md-4">
+            	  <div class="form-group">
+				    <label>bind user</label>
+					  <input type="text" name="ldap_bind_user" id="ldap_bind_user" class="form-control" placeholder="bind user"/>					
+				  </div>
+				  <!-- /.form-group -->
+				</div>
+              	<!-- /.col -->
+              	<div class="col-md-4">
+            	  <div class="form-group">
+				    <label>bind password</label>
+				      <input type="password" style="display:none;">
+					  <input type="password" name="ldap_bind_user_password" id="ldap_bind_user_password" class="form-control" placeholder="bind password" autocomplete="off"/>					
+				  </div>
+				  <!-- /.form-group -->
+				</div>
+              	<!-- /.col -->
+              	<div class="col-md-4">
+            	  <div class="form-group">
+				    <label>base dn</label>
+					  <input type="text" name="ldap_base_dn" id="ldap_base_dn" class="form-control" placeholder="base dn"/>					
+				  </div>
+				  <!-- /.form-group -->
+				</div>
+              	<!-- /.col -->
+              </div>
+              <!-- /.row -->
+              <div class="sep-line"></div>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+				    <label>個資使用同意</label>
+					  <textarea row="9" name="PI_agree" id="PI_agree" class="form-control" placeholder="個資使用同意" style="height:150px;resize:none;"></textarea>					
+				  </div>
+				  <!-- /.form-group -->
+                </div>
+                <!-- /.col -->
+                <div class="col-md-12">
+                  <div class="form-group">
+				    <label>軟體使用同意</label>
+					  <textarea row="9" name="SU_agree" id="SU_agree" class="form-control" placeholder="軟體使用同意" style="height:150px;resize:none;"></textarea>					
+				  </div>
+				  <!-- /.form-group -->
+                </div>
+                <!-- /.col -->
+              </div>
+              <!-- /.row -->
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    </form>
+    <style>
+    	.sep-line {
+            width: 100%;
+            height: 1px;
+            border-top: solid #ACC0D8 1px;
+            margin: 0px 0px 15px;
+        }
+    </style>
+	<script>
+	$(function(){
+		var postdata = {  csrfmiddlewaretoken: '{{ csrf_token }}'};
+		$.ajax({
+			url: "{% url 'loadSystemConfigAjax' %}",
+			type: 'post',
+			data: postdata,
+			success: function (data) {
+				$('#'+data.result.LOG_LEVEL).prop('selected',true);
+				$('#POOL_MAX_WORKER').val(data.result.POOL_MAX_WORKER);
+				$('#PI_agree').val(data.result.PI_agree);
+				$('#SU_agree').val(data.result.SU_agree);
+				$('#ldap_client_server').val(data.result.ldap_config.ldap_client_server);
+				$('#ldap_client_server_port').val(data.result.ldap_config.ldap_client_server_port);
+				$('#ldap_client_domain').val(data.result.ldap_config.ldap_client_domain);
+				$('#ldap_bind_user').val(data.result.ldap_config.ldap_bind_user);
+				$('#ldap_bind_user_password').val(data.result.ldap_config.ldap_bind_user_password);
+				$('#ldap_base_dn').val(data.result.ldap_config.ldap_base_dn);
+				if (data.result.Level_Change)
+		       	{
+					$('select[name="LOG_LEVEL"]').css("border-color","rgb(253, 13, 77)")
+   		       		$('div[name="LOG_LEVEL"]').append('<span style="color:red;font-size:13px";>'+data.result.settings_log_level+'</span')
+   		       	}
+			}
+		});
+		if ('{{is_ldap}}' == 'False')
+		{
+			$('div[name="ldap"] input').prop('disabled', true);
+			$('div[name="ldap"] button').prop('disabled', true);
+		}
+	});
+	
+	function store_config()	 
+	{	
+		Swal.fire({
+		  title: '處理中...',
+		  toast: true,
+		  position: 'bottom-start',
+		  showConfirmButton: false,
+		});
+		Swal.showLoading() ;	
+		omflowAjax('loglevel','{% url 'updateSystemConfigAjax' %}',actions);
+	}
+	
+	function actions(data)
+	{
+		Swal.close();
+		if(data.status == 200)
+		{	
+			Swal.fire({
+	      	  icon : 'success',
+	      	  title: data.message,
+	      	  toast: true,
+		  	  position: 'bottom-start',
+		  	  showConfirmButton: false,
+	      	  timer: 2000,
+		    });
+		}	
+		else
+		{	
+			omflowAlert('yellow', data.message);
+		}
+	}
+	
+	function check_connect(){
+		Swal.fire({
+		  title: '處理中...',
+		  toast: true,
+		  position: 'bottom-start',
+		  showConfirmButton: false,
+		});
+		Swal.showLoading() ;
+		var ldap_client_server 		= $('#ldap_client_server').val();
+		var ldap_client_server_port = $('#ldap_client_server_port').val();
+		var ldap_client_domain 		= $('#ldap_client_domain').val();
+		var ldap_bind_user 			= $('#ldap_bind_user').val();
+		var ldap_bind_user_password = $('#ldap_bind_user_password').val();
+		var ldap_base_dn 			= $('#ldap_base_dn').val();
+		postdata = {
+			csrfmiddlewaretoken		: '{{ csrf_token }}',
+			ldap_client_server		: ldap_client_server,
+			ldap_client_server_port	: ldap_client_server_port,
+			ldap_client_domain		: ldap_client_domain,
+			ldap_bind_user			: ldap_bind_user,
+			ldap_bind_user_password : ldap_bind_user_password,
+			ldap_base_dn			: ldap_base_dn
+		}
+		omflowJsonAjax(postdata, '{% url 'ldapCheckConnectAjax' %}', check_connect_action);
+	}
+	
+	function check_connect_action(data)
+	{
+		Swal.close();
+		if(data.status == 200)
+		{
+			Swal.fire({
+	      	  icon : 'success',
+	      	  title: data.message,
+	      	  toast: true,
+		  	  position: 'bottom-start',
+		  	  showConfirmButton: false,
+	      	  timer: 2000,
+		    });
+		}	
+		else if (data.status == 404)
+		{
+			omflowAlert('yellow', data.message);
+		}
+		
+	}
+	</script>
+{% endblock %}

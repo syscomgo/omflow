@@ -1,0 +1,270 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %} 
+{% block content %}
+
+	<!-- 
+	file_manage.html file Page
+	author : Pei lin
+	-->
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        {% trans '附加檔案維護' %}
+        <small id="h1_small"></small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="{% url 'homePage' %}"><i class="fa fa-dashboard"></i>{% trans '首頁' %}</a></li>
+        <li><a href="#">{% trans '系統設定' %}</a></li>
+        <li><a href="/file_manage">{% trans '附加檔案維護' %}</a></li>
+      </ol>
+    </section>
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+       <!-- column -->
+        <div class="col-xs-12">
+          <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+            {% for app in app_name %}
+              <li><a id="tab_p{{forloop.counter}}" href="#p{{forloop.counter}}" data-toggle="tab" value="{{app}}">{{app}}</a></li>
+            {% endfor %}
+            </ul>
+            <div class="tab-content">
+            {% for app in app_name %}
+              <div class="tab-pane" id="p{{forloop.counter}}" name="{{app}}">
+                <div class="row">
+				  <div class="col-md-12">
+				  	<div class="box box-default">
+				  	<div class="box-header with-border">
+				  	  <button type="button" class="btn btn-default " name="delete_file" onclick="delete_file()" style="margin:1px 0px;" disabled><i class="fa fa-trash-o"></i> {% trans '刪除' %}</button>
+					  <button type="button" title="{% trans '篩選檔案' %}" class="btn btn-default " onclick="filter_search({{app}}_table)" style="margin:1px 0px;"><i class="fa fa-filter"></i>{% trans ' 篩選' %}</button>
+					  <button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default " onclick="filter_default({{app}}_table)" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
+					</div>
+  					<div class="box-body">
+					  <div class="row">
+  						<div class="col-md-12">
+					  	  <table id="{{app}}_table" class="table table-striped table-bordered">
+						   
+						  </table>
+					    </div>
+					    <!-- /.col -->
+					  </div>
+					  <!-- /.row -->
+				    </div>
+				    <!-- /.box-body -->	
+				    </div>
+				    <!-- /.box -->	
+				  </div>
+				  <!-- /.col -->
+				</div>
+			    <!-- /.row -->
+              </div>
+              <!-- /.tab-pane -->
+            {% endfor %}
+            </div>
+            <!-- /.tab-content -->
+		  </div>
+		  <!-- /.nav-tabs-custom -->  
+		</div>
+		<!-- /.col -->
+	  </div>
+	  <!-- /.row -->
+	</section>
+	<!-- /.content -->
+	<script>
+	var csrfmiddlewaretoken = "{{ csrf_token }}"
+	var date = new Date();
+	date.setDate(date.getDate() + 1);
+	var select_time;
+	var app_name;
+	var table;
+	var data_tmp;
+	var data_len;
+	var data_page;
+	$(function () {
+		$('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+			if(table != undefined)
+			{
+				table.clear();
+				table.destroy();
+				$('#'+app_name+'_table').empty();
+			}
+			app_name = this.text;
+			$('#'+app_name+'_table').append('<thead>'
+			      +'<tr>'
+			      	+'<th align="center"><a><i class="fa fa-lg fa-check-square-o checkbox-toggle" style="color:SteelBlue"></i></a></th>'
+			      	+'<th>{% trans '檔案名稱' %}</th>'
+			      	+'<th>{% trans '大小' %}</th>'
+			      	+'<th>{% trans '上傳時間' %}</th>'
+			      +'</tr>'
+			    +'</thead>'
+			    +'<tfoot><tr><th></th><th></th><th></th><th></th></tr></tfoot>');
+			select_time = date.getFullYear() +'-'+('0'+(date.getMonth()+1)).substr(-2)+'-'+('0'+date.getDate()).substr(-2);
+			table = $('#'+app_name+'_table').DataTable({
+				"autoWidth": false,
+				"order": [[ 3, "asc" ]], 					//	default order column[1]
+				"serverSide": true,							//	serverside data loading
+				"dom":"<<t>'row'<'col-sm-5'i><'col-sm-7'p>>",
+				"language": __const_language__,
+				searchDelay: 1000,
+				"ajax": {
+	           		"url": "{% url 'listFilesAjax' %}",
+	            	"type": "POST",
+	            	"data":	function ( d ) {
+								return $.extend( {}, d, {
+							        "csrfmiddlewaretoken": "{{ csrf_token }}",
+							        app_name: app_name,
+							        createtime: select_time
+							    }); 
+							},
+					"dataSrc": function(data){
+						a = dataCompare(data,data_tmp,data_len,data_page,table);
+						data_tmp = a['data_tmp']
+						data_len = a['data_len']
+						data_page = a['data_page']
+						data.data = a['data.data']
+						return data.data;
+					},
+					"error": function(xhr,status,error){
+							clearInterval(table_routine);
+					}
+	        	},
+	        	"columns":[	
+	        		{"data": "file", "orderable": false, "render": function (data,type,row)
+                		{return '<input type="checkbox" class="icheckbox_minimal-blue" value="'+data+'" data-value="'+data.split("/").pop()+'" data-size="'+row.size+'" id="'+data+'"><label for="'+data+'"></label>'}
+	        		},
+	        		{"data": "file", "render": function (data)
+	        			{return data.split("/").pop()}
+	        		},
+	        		{"data": "size", "render": function (data)
+	        			{return omflowSizeUnit(data)}
+	        		},
+	        		{"data": "createtime", "render": function (data)
+	        			{return data.replace(/\T/g,' ')}
+	        		},
+{#	        		{"data": "main_id"}#}
+	        	],
+	        	drawCallback: function () 
+	        	{
+	        		var api = this.api();
+					var total = api.column( 2, {page:'current'} ).data().sum()
+					var select_size = 0;
+					
+					table_footer(api, select_size, total)
+	        		$('#'+app_name+'_table input[type="checkbox"]').change(function(){
+	        			$( api.table().footer(2) ).empty();
+	        			var isChecked = this.checked;
+	        			if (isChecked)
+	        				{ select_size += $(this).data('size'); }
+	        			else
+	        				{ select_size -= $(this).data('size'); }
+	        			table_footer(api, select_size, total)
+	        			var count = $('#'+app_name+'_table input:checkbox:checked').length;
+	        			if (count == 0)
+				    	{
+				    		$('.tab-pane[name="'+app_name+'"] button[name="delete_file"]').prop('disabled', true);
+				    	}
+				    	else
+				    	{
+				    		$('.tab-pane[name="'+app_name+'"] button[name="delete_file"]').prop('disabled', false);
+				    	} 
+				    });
+	    		}        
+	        });
+		});
+		$('#tab_p1').tab('show');
+		
+	});
+	function filter_search()
+	{
+		omflowFilter(['filter_search','filter_length','filter_date']);
+		$('.list-group-item[name="filter_type"], .list-group-item[name="filter_status"]').remove();
+		$('#modal-default-filter').on('shown.bs.modal', function () {
+		    $('#modal-default-filter #search').focus();
+		}) 
+		$('#modal-default-filter').modal('show');
+		$('#modal-default-filter #modal-default-filter-confirm').off("click").on("click",function(){
+			var searchkey = $.trim($('#modal-default-filter #search').val());
+			var page_length = $('#modal-default-filter #page_length').val();
+			table.page.len(page_length);
+			table.search(searchkey).draw();
+			
+			
+		});
+	}
+	function filter_default()
+	{
+		select_time = date.getFullYear() +'-'+('0'+(date.getMonth()+1)).substr(-2)+'-'+('0'+date.getDate()).substr(-2);
+		table.page.len(10);
+		table.search('');
+		table.draw();
+	}
+	function delete_file(){
+		omflowListDialogue("delete", "{% trans '下列檔案將被刪除' %}");
+	
+		$('#modal-default-list button:eq(2)').off("click").on("click",function(){
+			var select_file = [];
+			postbody = {
+				csrfmiddlewaretoken : csrfmiddlewaretoken,
+				app_name: app_name,
+				path: select_file
+			}
+			$.each($('#'+app_name+'_table input:checkbox:checked'), function(){
+				select_file.push($(this).val());
+			});
+			
+			$('#modal-default-list').on('hidden.bs.modal', function () {
+				omflowJsonAjax(postbody,'{% url "deleteFilesAjax"%}', actions);
+				Swal.fire({
+				  title: '處理中...',
+				  toast: true,
+				  position: 'bottom-start',
+				  showConfirmButton: false,
+				});
+				Swal.showLoading();
+				$('#modal-default-list').off('hidden.bs.modal');
+			});
+		});
+	}
+	
+	function table_footer(api, select_size, total){
+		select_size = omflowSizeUnit(select_size);
+		total = omflowSizeUnit(total);
+		$( api.table().footer(2) ).html('<tr><th></th><th>Total</th><th>'+select_size+'/'+total+'</th><th></th><th></th></tr>');
+	}
+	
+	function actions(data)
+	{
+		Swal.close();
+		if(data.status == 200)
+		{
+			Swal.fire({
+	      	  icon : 'success',
+	      	  title: data.message,
+	      	  toast: true,
+		  	  position: 'bottom-start',
+		  	  showConfirmButton: false,
+	      	  timer: 2000,
+  		    });
+  		    table.draw();
+		}	
+		else if (data.status == 404)
+		{
+			omflowAlert('yellow', data.message);
+		}
+		else if (data.status == 500)
+		{
+			omflowAlert('blue', data.message);
+		}
+		else if (data.status == 403)
+		{
+			omflowAlert('red', data.message);
+		}
+	}
+	omflowCheckAll();
+	var table_routine = setInterval(function(){ table.draw();}, {{user.frequency}}*1000);
+	</script>
+    
+    
+{% endblock %}

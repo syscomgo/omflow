@@ -1,0 +1,81 @@
+{% extends '_base.html' %}
+{% load static %}
+{% load i18n %} 
+{% block content %}
+
+
+    <form id="omform" onsubmit="omflowSubmit(); return false;">
+    {% csrf_token %}
+        <input type="text" name="username" class="fadeIn second" placeholder="{% trans '帳號' %}" required="true" autocomplete="off" autofocus>
+        <input type="password" name="token"  class="fadeIn third" placeholder="{% trans '密碼'%}"  required="true" autocomplete="off">
+        <input type="password" name="token2" class="fadeIn third" placeholder="{% trans '密碼'%}"  required="true" autocomplete="off">
+        <input type="email" name="email_@" class="fadeIn fourth" placeholder="{% trans '電子郵件'%}"  required="true" autocomplete="off"><br />
+        <div class="row">
+          <div class="col-xs-2">
+          </div>
+          <div class="col-xs-4">
+          	<input type="checkbox" id="PI_agree" name="agree" class="icheckbox_minimal-blue"><label for="PI_agree"></label><label><a onclick="agree_modal('PI_agree')">&nbsp;個資使用同意</a></label>
+          </div>
+          <div class="col-xs-4">
+          	<input type="checkbox" id="SU_agree" name="agree" class="icheckbox_minimal-blue"><label for="SU_agree"></label><label><a onclick="agree_modal('SU_agree')">&nbsp;軟體使用同意 </a></label>
+          </div>
+          <div class="col-xs-2">
+          </div>
+          <div class="col-xs-12"> <label name="Warning" class="text-red" style="display:none;">※&nbsp;{% trans '請確認使用同意'%}</label></div>
+        </div>
+        <input type="submit" class="fadeIn fifth" value="{% trans '註冊'%}">
+    </form>
+     <!-- /.col -->
+<script>
+function omflowSubmit()
+{
+	var count = 2;
+	$.each($('#omform input[type="checkbox"]'), function(){
+		if(this.checked)
+		{count--}
+		else
+		{$('label[name="Warning"]').show();}
+	})
+	if(count == 0)
+	{
+		omflowAjax('omform','{% url 'registerAjax' %}',actions);
+	}
+}
+function actions(data)
+{
+	if(data.status == 200)
+	{
+		$('#modal_green_text').html('<p>' + data.message + '</p>');
+		$('#modal_green').modal('show');
+		$('#modal_green').off("click").click(function(){
+			window.location.href = "{% url 'loginPage'%}";
+		});
+		
+	}
+	else
+	{
+		omflowAlert('yellow', data.message, cactions, data);
+	}
+}
+function cactions(data)
+{
+	$.each(data.result.result, function(index, value){
+		$('input[name="'+value+'"]').css("border-color","rgb(253, 13, 77)")
+	});
+}
+function agree_modal(agree_type)
+{
+	var postbody = {csrfmiddlewaretoken: '{{ csrf_token }}', agree_type: agree_type};
+	omflowJsonAjax(postbody, '{% url "getAgreeAjax" %}', callback);
+	function callback(data)
+	{
+		if (data.status == 200)
+		{
+			$('#modal_white .modal-title').text('使用同意書')
+			$('#modal_white .modal-body').html('<textarea class="form-control" style="height:300px;resize:none;" readonly>'+data.result+'</textarea>');
+			$('#modal_white').modal('show');
+		}
+	}
+}
+</script>
+{% endblock %}

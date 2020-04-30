@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %} 
+{% block content %}
+<!-- 
+	message.html 
+	author : Pei lin
+-->
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        {% trans '訊息管理' %}
+        <small id="h1_small"></small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="{% url 'homePage' %}"><i class="fa fa-dashboard"></i>{% trans '首頁' %}</a></li>
+        <li><a href="/announcement/page/messageManage/">{% trans '訊息管理' %}</a></li>
+      </ol>
+    </section>
+    <section class="content">
+      <div class="box box-default" id="message_box">
+        <div class="box-header with-border">
+          <h1 class="box-title" id="message_subject" style="font-size:28px"></h1>
+          <div class="pull-right box-tools">
+    	    <button type="button" title="{% trans '回覆'%}" onclick="replyall(this.value)" id="reply" class="btn btn-default">
+            <i class="fa fa-reply"></i>{% trans ' 回覆'%}
+            </button>
+  		  </div>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body no-padding">
+          <div class="mailbox-read-info" id="message_user">
+            <h3 id="message_from"></h3>
+            <p></p>
+            <h5 id="message_to">
+              <span class="mailbox-read-time pull-right"></span></h5>
+          </div>
+          <!-- /.mailbox-read-info -->
+          <div class="mailbox-read-message">
+          <textarea id="message_content" class="form-control" style="resize:none;font-size:20px; height: 300px" readonly></textarea>
+          </div>
+          <!-- /.mailbox-read-message -->
+        </div>
+        <!-- /.box-body -->
+        <div class="box-footer">
+		  <ul class="mailbox-attachments clearfix" id="message_attachment">
+          </ul>
+        </div>
+        <!-- /.box-footer -->
+      </div>
+      <!-- /. box -->
+    </section>
+{% endblock %}

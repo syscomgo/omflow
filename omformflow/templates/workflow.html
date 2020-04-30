@@ -1,0 +1,686 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %} 
+{% block content %}
+<!-- 
+	workflow.html workflowPage
+	author : Pei lin
+-->
+	<script src="/static/js/workflow.js"></script>
+	<!-- Content Header (Page header) -->
+	<section class="content-header">
+      <h1 id="page_title">
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i> 首頁</a></li>
+      </ol>
+    </section>
+    <section class="content">
+  	<div class="box box-default">
+  	  <div class="box-header with-border">
+  	    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-create_ticket"><i class="fa fa-plus"></i> 新增</button>
+	    <button type="button" class="btn btn-default" onclick="delete_omdata()" id="delete_omdata" disabled="disabled" style="margin:1px 0px;"><i class="fa fa-trash-o"></i> 刪除</button>
+	    <button type="button" class="btn btn-default" onclick="filter_omdata()" style="margin:1px 0px;"><i class="fa fa-filter"></i> 篩選</button>
+        <button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default" onclick="filter_default()" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
+  	  </div>
+  	  <div class="box-body">
+  	    <table class="table table-bordered table-striped table-hover" id="omdata_table">
+  	   	  <thead>
+  	  	    <tr>
+  	  	      
+  	  	  	</tr>
+  	  	  </thead>
+  	  	  <tbody>
+  	  	  </tbody>
+  	    </table>
+  	  </div>
+    </div>
+    
+    
+    <div class="modal fade" id="modal-create_ticket" data-backdrop="static">
+	  <div class="modal-dialog modal-lg">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title"></h4>
+		  </div>
+		  <div class="modal-body">
+	        <div id="formcontent"></div>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
+			<button type="button" class="btn btn-primary" id="modal-create_ticket-confirm" data-dismiss="modal">確定</button>
+		  </div>
+		</div>
+	  </div><!-- /.modal-content -->
+	</div>
+	
+	
+	<div class="modal fade" id="modal-update_ticket" data-backdrop="static">
+	  <div class="modal-dialog modal-lg">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title"></h4>
+		  </div>
+		  <div class="modal-body">
+	        <div id="updateformcontent"></div>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
+			<button type="button" class="btn btn-primary" id="modal-update_ticket-confirm" data-dismiss="modal">確定</button>
+		  </div>
+		</div>
+	  </div><!-- /.modal-content -->
+	</div>
+    
+    
+    </section>
+    <style>
+		table tr{
+		  cursor:pointer;
+		}
+		thead th { white-space: nowrap; }
+	</style>
+    <script>
+    var csrfmiddlewaretoken="{{ csrf_token }}";
+    var date = new Date();
+	date.setDate(date.getDate() + 1);
+	var select_time;
+	var is_closed = [];
+    var table;
+    var data_tmp;
+	var data_len;
+	var data_page;
+	var formcontent = new omformeng('formcontent');
+	var updateformcontent = new omformeng('updateformcontent')
+	updateformcontent.init(false);
+    $(function(){
+    	formmodal();		//讀取  formdesign 做好 modal
+    	listomdata();		//列表  ticket
+    });
+    
+    
+    function listomdata(){
+    	var postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, a_flow_uuid: '{{ flow_uuid }}'};
+    	omflowJsonAjax(postbody, '{% url "getApplicationFlowNameAjax" %}', getname_action);
+    	omflowJsonAjax(postbody, '{% url "getFlowActiveDisplayFieldAjax"%}', table_callback);
+    	
+    }
+    
+    
+    function table_callback(data)
+    {
+    	if (data.status == 200)
+    	{
+	    	var table_column = [];
+			var display_field = JSON.parse(data.result.display_field);
+			$('#omdata_table thead tr').append('<th></th>');
+			table_column.push({"data": "id", "width": "15px", "orderable": false, "render": function(data, type, row)
+				{return '<input type="checkbox" class="icheckbox_minimal-blue" value="'+data+'" data-value="'+row.data_no+'" id="omdata_'+data+'"><label for=omdata_'+data+'></label>'}
+			});
+			$.each(display_field, function(index, value){
+				$('#omdata_table thead tr').append('<th>'+value+'</th>');
+				if(index == 'data_no')
+				{
+					table_column.push({"data": index, "render": function(data)
+						{	
+							return paddingLeft(data,8)
+						}	
+					});
+				}
+				else if(index == 'closed')
+				{
+					table_column.push({"data": index, "render": function(data)
+						{
+							if(data)
+								{return '已關閉'}
+							else
+								{return '未關閉'}
+						}
+					});
+				}
+				else if(index == 'running')
+				{
+					table_column.push({"data": index, "render": function(data)
+						{
+							if(data)
+								{return '流程執行中'}
+							else
+								{return '流程等待中'}		
+						}
+					});
+				}
+				else if(index == 'error')
+				{	
+					table_column.push({"data": index, "render": function(data)
+						{
+							if(data)
+							{return '<div class="label label-danger">異常</div>'}
+							else
+							{return '<div class="label label-success">正常</div>'}
+						}
+					});
+				}
+				else if(index == 'level')
+				{	
+					table_column.push({"data": index, "render": function(data)
+						{
+							if(data == 'green')
+								{return '<div class="label label-success">綠燈</div>'}
+							else if(data == 'yellow')
+								{return '<div class="label label-warning">黃燈</div>'}
+							else if(data == 'red')
+								{return '<div class="label label-danger">紅燈</div>'}		
+						}
+					});
+				}
+				else if(index == 'updatetime')
+				{
+					table_column.push({"data": index, "width": "150px", "render": function(data)
+						{
+							if(data)
+								{return data.slice(0,-7)}
+							else
+								{return data}
+						}
+					});
+				}
+				else
+				{
+					table_column.push({"data": index});
+				}
+			});
+	    	select_time = date.getFullYear() +'-'+('0'+(date.getMonth()+1)).substr(-2)+'-'+('0'+date.getDate()).substr(-2);
+	    	table = $('#omdata_table').DataTable({
+				"autoWidth"	: false,
+				"order"		: [[ 0, "dsc" ]], 					//	default order column[1]
+				"serverSide": true,							//	serverside data loading
+				"dom"		:"<<t>'row'<'col-sm-5'i><'col-sm-7'p>>",
+				"language"	: __const_language__,
+				"ajax": {
+	           		"url": "{% url 'listOmDataAjax' %}",
+	            	"type": "POST",
+	            	"data":	function ( d ) {
+								return $.extend( {}, d, {
+							        csrfmiddlewaretoken: csrfmiddlewaretoken,
+							        flow_uuid	: '{{flow_uuid}}',
+							        updatetime	: select_time,
+							        "closed"	: is_closed
+							    }); 
+							},
+					"dataSrc": function(data){
+						a = dataCompare(data,data_tmp,data_len,data_page,table);
+						data_tmp = a['data_tmp']
+						data_len = a['data_len']
+						data_page = a['data_page']
+						data.data = a['data.data']
+						return data.data;
+					},
+					"error": function(xhr,status,error){
+							clearInterval(table_routine);
+					}
+	        	},
+	        	"columns":	table_column,
+	        	"rowCallback": function( row, data ) {
+	        		if (data.running)
+	        		{
+	        			$('td:eq(0)', row).html('<i class="fas fa-spinner fa-spin"></i>');
+	        			$(row).css('color','#b5bbc8');
+	        		}
+	        		else
+	        		{
+			    		$('td:not(:eq(0))', row).attr('onclick', 'javascript:location.href="/flowmanage/page/myform/{{flow_uuid}}/'+data.data_no+'/'+data.id+'"')
+			    	}
+				},
+				drawCallback:function(){
+					$('#omdata_table input[type="checkbox"]').change(function(){
+				    	enablebtt();
+				    });
+				}
+			});
+		}
+		else
+		{
+			omflowAlert('red', data.message);
+		}
+    }
+    
+    
+    function getname_action(data)
+	{
+		if(data.status == 200)
+		{ 
+			$('.content-header > h1').append(data.result.flow_name+'<small>表單列表</small>');
+			$('ol.breadcrumb').append('<li><a>'+data.result.app_name+'</a></li>');
+			$('ol.breadcrumb').append('<li class="active"><a href="javascript:location.reload();">'+data.result.flow_name+'</a></li>');
+		}
+		else
+		{ console.log(data.result) }
+	}
+    
+    var fileIdCounter = 0;
+	var filesToUpload = [];
+	var fileTotalSize = 0;
+	var isAttachment  = false;
+	var formtype = 'formobject';
+    function formmodal(){
+    	var postdata = {csrfmiddlewaretoken: csrfmiddlewaretoken, flow_uuid: '{{flow_uuid}}'};
+    	omflowJsonAjax(postdata, '{% url "loadFormDesignAjax"%}', loadFormDesign_callback);
+    	
+    	function loadFormDesign_callback(data){
+    		if(data.status == 200)
+			{
+				if (data.result.start_input.length != 0)
+				{
+					formtype = 'startinput'
+					$.each(data.result.start_input, function(index, value){
+						var haswarning ='';
+						var thisvalue = '';
+						if (value.require)
+							{haswarning = 'has-warning'}
+						$('#modal-create_ticket .modal-body').append('<div class="form-group '+haswarning+'">'
+						  +'<label>'+ value.name +'</label>'
+							+'<input type="text" name="'+ value.name +'" class="form-control" placeholder="'+ value.name +'" value="'+ thisvalue +'" style="width:100%"/>'					
+						+'</div>');
+						if(value.value = null)
+							{$('input[nmae="'+value.name+'"]').val('')}
+					});
+				}
+				else
+				{
+					formcontent.init(false);
+					formcontent.event_group_list(load_group_list);
+					formcontent.event_user_list(load_user_list);
+					formcontent.load(data.result.formobject);
+				}
+				if (data.result.attachment)
+				{
+					isAttachment = true;
+					$('#modal-create_ticket > .modal-dialog > .modal-content > .modal-body').append('<div class="box-body"><div class="col-md-12"><div class="box"><div class="form-group"><div class="box-header">'
+					    +'<div class="btn btn-default btn-file">'
+						  +'<i class="fa fa-plus"></i> {% trans '新增檔案'%}'
+						  +'<input type="file" class="file" id="attachment_input" name="attachment_input" multiple="multiple" style="disply:none;">'
+					    +'</div>'
+						+'<label name="fileWarning" class="text-red" style="display:none;">{% trans '硬碟容量不足，請移除部分檔案再上傳或聯絡系統管理員'%}</label>'
+					  +'</div></div><div class="box-body">'
+					  +'<ul class="mailbox-attachments clearfix" id="attach_upload">'
+					  +'</ul></div></div></div></div>');
+				}
+    			$('#modal-create_ticket .modal-title').html('<i class="fa fa-plus"></i>&nbsp;&nbsp;'+data.result.flow_name+'-開單');
+    			$('#attachment_input').change(function(evt){
+					var output = [];
+					
+					for (var i = 0; i < evt.target.files.length; i++) {
+						fileIdCounter++;
+						var file = evt.target.files[i];
+						var fileId = fileIdCounter;
+						var file_size = omflowSizeUnit(file.size);
+						
+						fileTotalSize += Math.ceil(file.size/Math.pow(2, 20));
+						filesToUpload.push({
+							id: fileId,
+							file: file
+						});
+						
+						output.push('<li><div class="mailbox-attachment-info">'
+							+'<p class="mailbox-attachment-name" style="word-break: break-all;"><i class="fa fa-paperclip"></i>&nbsp;&nbsp;'+file.name+'</p>'
+							+'<span class="mailbox-attachment-size">'+file_size
+							+'<button type="button" class="close pull-right" onclick="remove_upload(this,'+fileId+')">'
+							+'<span aria-hidden="true">&times;</span></button></span>'
+							+'</div></li>');
+					}
+					
+					$('#attach_upload').append(output.join(""));
+					  
+					evt.target.value = null;
+					check_disk();
+					
+				});
+    			
+    			$('#modal-create_ticket-confirm').off('click').on('click', createOmdata)
+    		}
+    		else if (data.status == 404)
+			{
+				omflowAlert('yellow', data.message);
+			}
+			else if (data.status == 500)
+			{
+				omflowAlert('blue', data.message);
+			}
+			else if (data.status == 403)
+			{
+				omflowAlert('red', data.message);
+			}
+    	}
+    	
+    	
+    	function createOmdata(){
+			Swal.fire({
+			  title: '處理中...',
+			  toast: true,
+			  position: 'bottom-start',
+			  showConfirmButton: false,
+			});
+			Swal.showLoading() ;
+			var postbody = {	
+								csrfmiddlewaretoken: csrfmiddlewaretoken, 
+								flow_uuid: '{{flow_uuid}}',
+								action	 : 'create',
+							}
+			var formdata = {checker:[], values:{} };
+			if (formtype == 'formobject')
+			{	
+				formdata = formcontent.getData();
+				postbody['formdata'] = JSON.stringify(formdata.values)
+			}
+			else 
+			{
+				formdata.checker = []
+				$.each($('#modal-create_ticket .modal-body input[type="text"]'), function(){
+					formdata['values'][this.name] = this.value
+				});
+				postbody['start_input'] = JSON.stringify(formdata.values)
+			}
+			if (formdata.checker.length == 0)
+			{
+				if( filesToUpload.length == 0)
+				{
+					omflowJsonAjax(postbody, '{% url "editOmDataAjax"%}', actions)
+				}
+				else
+				{
+					var form_data = new FormData();
+					form_data.append("csrfmiddlewaretoken", csrfmiddlewaretoken);
+					form_data.append("flow_uuid", '{{flow_uuid}}');
+					form_data.append("action", 'create');
+					form_data.append("formdata", JSON.stringify(formdata.values));
+					for (var i = 0, len = filesToUpload.length; i < len; i++) {
+					    form_data.append("files", filesToUpload[i].file);
+					}
+					$.ajax({
+					url: '{% url "editOmDataAjax"%}',
+					type: 'post',
+			        data: form_data,
+			        cache:false,
+			        processData: false,
+			        contentType: false,
+			        dataType: 'json',
+			        xhr : function () {
+			        	var myXhr = $.ajaxSettings.xhr();
+			        	if(myXhr.upload)
+			        	{
+			        		myXhr.upload.addEventListener('progress',progressHandlingFunction, false);
+			        		return myXhr;
+			        	}
+			      	},
+			        success: function (data) {
+			        	$("#modal-progress").modal("hide");
+			        	if(data.status == 200)
+			        	{
+				            $('#attach_upload').empty();
+				            fileIdCounter = 0;
+				            filesToUpload = [];
+				            fileTotalSize = 0;
+				            Swal.fire({
+					      	  icon : 'success',
+					      	  title: '檔案上傳成功',
+					      	  toast: true,
+						  	  position: 'bottom-start',
+						  	  showConfirmButton: false,
+					      	  timer: 2000,
+				  		    });
+				  		 }
+				  		 else
+				  		 {
+				  		 	omflowAlert('red', data.messge);
+				  		 }
+			        },
+			        error: function(req, status, err) {
+			        	$("#modal-progress").modal("hide");
+						$('#modal_error').modal('show');
+			        	console.log('Something went wrong', status, err);
+			    	}
+				});
+				}
+			}
+			else
+			{
+				omflowAlert('blue', formdata.checker);
+			}
+		}
+    }
+    
+    
+    function remove_upload(th,item)
+	{
+		
+		for (var i = 0; i < filesToUpload.length; ++i) {
+			if (filesToUpload[i].id === item)
+				filesToUpload.splice(i, 1);
+		}
+		$(th).closest('li').remove();
+		if (filesToUpload.length != 0)
+			{check_disk();}
+		else
+			{$('button[name="file_upload"]').hide();}
+	}
+	
+	
+	function check_disk()
+	{
+		var postbody = { csrfmiddlewaretoken: '{{ csrf_token }}', file_size: fileTotalSize };
+		omflowJsonAjax(postbody, '{% url "getDiskStatusAjax" %}', actions_upload)
+		
+		function actions_upload(data){
+			if (data.status == 200)
+			{
+				if (data.result)
+				{
+					$('label[name="fileWarning"]').hide();
+					$('button[name="file_upload"]').show();
+				} 
+				else
+				{
+					$('label[name="fileWarning"]').show();
+					$('button[name="file_upload"]').hide();
+				}
+			}
+			else
+			{
+				omflowAlert('red', data.message);
+			}
+			
+		}
+	}
+    
+    
+    function enablebtt(){
+		var count = $('.table input:checkbox:checked').length;
+    	if (count == 0)
+    	{
+    		$('#delete_omdata').prop('disabled', true);
+    	}
+    	else if (count == 1)
+    	{
+    		$('#delete_omdata').prop('disabled', false);
+    	}
+    	else
+    	{
+    		$('#delete_omdata').prop('disabled', true);
+    	} 
+	}
+    
+    
+    function delete_omdata()
+    {
+    	omflowListDialogue('delete', '下列表單將被刪除')
+    	$('#modal-default-list button:eq(2)').off("click").on("click",function(){
+	    	Swal.fire({
+			  title: '處理中...',
+			  toast: true,
+			  position: 'bottom-start',
+			  showConfirmButton: false,
+			});
+			Swal.showLoading() ;
+			var postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, 
+							flow_uuid:  '{{flow_uuid}}',
+							data_no  :	$('#omdata_table input[type="checkbox"]').data('value'),
+							data_id	 :	$('#omdata_table input[type="checkbox"]').val(),
+							action	 : 	'delete'
+				}
+			omflowJsonAjax(postbody, '{% url "editOmDataAjax"%}', actions)
+		});
+    }
+    
+    
+    function load_group_list()
+	{
+		var grouplist=[];
+		var postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, 'functional_flag': 'False', 'ad_flag': ['0']};
+		$.ajax({
+			url	: '{% url 'listGroupAjax' %}',
+			type: 'post',
+	        data: postbody,
+	        async:false,
+	        dataType: 'json',
+	        success: function (data) {
+	            grouplist = data.result;
+	        },
+	        error: function(req, status, err) {
+				$('#modal_error').modal('show');
+	        	console.log('Something went wrong', status, err);
+	    	}
+		});
+		return grouplist;
+	}
+	
+	
+	function load_user_list(group_id)
+	{
+		var userlist = []
+		$.ajax({
+			url: "{% url 'searchGroupUserAjax' %}",
+			type: 'post',
+			async:false,
+			data: { csrfmiddlewaretoken: '{{ csrf_token }}' , searchkey: group_id},
+			success: function (data) {
+				userlist = data.result;
+			},
+			error: function(req, status, err) {
+				$('#modal_error').modal('show');
+	        	console.log('Something went wrong', status, err);
+	    	}
+		});
+		return userlist;
+	}
+    
+    
+    function actions(data){
+    	Swal.close();
+		if(data.status == 200)
+		{
+			Swal.fire({
+	      	  icon : 'success',
+	      	  title: '成功',
+	      	  toast: true,
+		  	  position: 'bottom-start',
+		  	  showConfirmButton: false,
+	      	  timer: 2000,
+  		    });
+  		    table.draw();
+  		    LSide();
+		}
+		else if (data.status == 404)
+		{
+			omflowAlert('yellow', data.message);
+		}
+		else if (data.status == 500)
+		{
+			Swal.fire({
+	      	  icon : 'info',
+	      	  title: data.message,
+	      	  toast: true,
+		  	  position: 'bottom-start',
+		  	  showConfirmButton: false,
+	      	  timer: 10000,
+  		    });
+  		    $('#modal-create_ticket').modal('show')
+		}
+		else if (data.status == 403)
+		{
+			omflowAlert('red', data.message);
+		}
+    }
+    
+    
+    function readform(data_id, close)
+    {
+    	var postdata = {csrfmiddlewaretoken: csrfmiddlewaretoken, flow_uuid: '{{flow_uuid}}', data_id: data_id};
+    	omflowJsonAjax(postdata, '{% url "loadOmDataAjax"%}', readFormDesign_callback);
+    	function readFormDesign_callback(data)
+    	{	
+    		if (data.status == 200)
+    		{
+	    		$('#updateformcontent').empty();
+	    		updateformcontent.event_group_list(load_group_list);
+				updateformcontent.event_user_list(load_user_list);
+	    		updateformcontent.load(JSON.stringify(data.result.formobject));
+	    		
+	    		updateformcontent.setData(data.result.formdata);
+	    		$('#modal-update_ticket .modal-title').html('&nbsp;&nbsp;表單');
+	    		if (!close)
+	    		{$('#modal-update_ticket-confirm').off('click').on('click', updateOmdata)}
+	    		$('#modal-update_ticket').modal('show');
+	    	}
+	    	else
+	    	{
+	    		omflowAlert('red', data.message);
+	    	}
+    	}
+    	
+    	function updateOmdata(){
+			Swal.fire({
+			  title: '處理中...',
+			  toast: true,
+			  position: 'bottom-start',
+			  showConfirmButton: false,
+			});
+			Swal.showLoading() ;
+			var postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, 
+							flow_uuid: '{{flow_uuid}}',
+							data_id	 : data_id,
+							action	 : 'update',
+							formdata : JSON.stringify(updateformcontent.getData())}
+			omflowJsonAjax(postbody, '{% url "editOmDataAjax"%}', actions)
+		}
+    }
+    
+    
+    function filter_omdata()
+    {
+    	omflowFilter(['filter_search','filter_closed','filter_length']);
+    	$('#modal-default-filter-confirm').off("click").on("click",function(){
+    		is_closed = [];
+			var searchkey = $.trim($('#modal-default-filter #search').val());
+			var page_length = $('#modal-default-filter #page_length').val();
+			$.each($('[name="filter_closed"] input:checkbox:checked'), function(){
+				is_closed.push($(this).data('value'));
+			});
+			table.page.len(page_length);
+			table.search(searchkey).draw();
+		});
+    }
+    
+    function filter_default(){
+		is_closed = [];
+    	table.page.len(10);
+		table.search('');
+    	table.draw();
+    }
+    
+    var table_routine = setInterval(function(){ table.draw();}, {{user.frequency}}*1000);
+    </script>
+{% endblock%}

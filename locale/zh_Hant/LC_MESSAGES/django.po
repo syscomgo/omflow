@@ -1,0 +1,982 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-11-16 09:20+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: .\flowdesign\models.py:18 .\omworkspace\models.py:16
+msgid "表單編號"
+msgstr ""
+
+#: .\flowdesign\models.py:19 .\flowdesign\models.py:49
+#: .\omworkspace\models.py:20
+msgid "標記"
+msgstr ""
+
+#: .\flowdesign\models.py:21 .\flowdesign\models.py:38
+#: .\flowdesign\models.py:79 .\omworkspace\models.py:18
+#: .\omworkspace\models.py:60 .\omworkspace\models.py:85
+msgid "建立時間"
+msgstr ""
+
+#: .\flowdesign\models.py:22 .\flowdesign\models.py:37
+msgid "表單格式設計"
+msgstr ""
+
+#: .\flowdesign\models.py:23
+msgid "表單流程設計"
+msgstr ""
+
+#: .\flowdesign\models.py:24
+msgid "表單版本"
+msgstr ""
+
+#: .\flowdesign\models.py:63
+msgid "下階段目標點"
+msgstr ""
+
+#: .\flowdesign\models.py:64
+msgid "下階段參數"
+msgstr ""
+
+#: .\flowdesign\models.py:65 .\omworkspace\models.py:19
+msgid "更新時間"
+msgstr ""
+
+#: .\flowdesign\models.py:78
+msgid "執行結果"
+msgstr ""
+
+#: .\omflow\syscom\common.py:220 .\omflow\views.py:369 .\omflow\views.py:402
+#: .\omflow\views.py:418 .\omuser\views.py:183 .\omuser\views.py:376
+#: .\omuser\views.py:398 .\omuser\views.py:441 .\omuser\views.py:470
+#: .\omuser\views.py:511 .\omuser\views.py:553 .\omuser\views.py:595
+#: .\omworkspace\views.py:197
+msgid "您沒有權限瀏覽該頁面"
+msgstr ""
+
+#: .\omflow\views.py:249
+msgid "網址錯誤，請確認後重新發送請求"
+msgstr ""
+
+#: .\omflow\views.py:280
+msgid "授權碼過期，請重新登入"
+msgstr ""
+
+#: .\omflow\views.py:282
+msgid "授權碼錯誤，請確認授權碼或重新登入取得新的授權碼"
+msgstr ""
+
+#: .\omflow\views.py:284
+msgid "取得授權碼失敗，請提供授權碼或登入取得授權碼"
+msgstr ""
+
+#: .\omflow\views.py:312 .\omflow\views.py:317 .\omuser\views.py:181
+#: .\omuser\views.py:509
+msgid "讀取成功"
+msgstr ""
+
+#: .\omflow\views.py:338
+msgid "LOG等級更改成功"
+msgstr ""
+
+#: .\omflow\views.py:340
+msgid "LOG等級更改失敗"
+msgstr ""
+
+#: .\omflow\views.py:398
+msgid "檔案刪除成功"
+msgstr ""
+
+#: .\omflow\views.py:416
+msgid "請求成功"
+msgstr ""
+
+#: .\omuser\main.py:31
+msgid "Queue is Empty"
+msgstr ""
+
+#: .\omuser\main.py:75
+msgid "Good"
+msgstr ""
+
+#: .\omuser\models.py:15
+msgid "電子郵件"
+msgstr ""
+
+#: .\omuser\models.py:18
+msgid "暱稱"
+msgstr ""
+
+#: .\omuser\models.py:19 .\omuser\templates\profile.html:81
+msgid "生日"
+msgstr ""
+
+#: .\omuser\models.py:20 .\omuser\templates\profile.html:69
+msgid "性別"
+msgstr ""
+
+#: .\omuser\models.py:20
+msgid "男"
+msgstr ""
+
+#: .\omuser\models.py:20
+msgid "女"
+msgstr ""
+
+#: .\omuser\models.py:21 .\omuser\templates\profile.html:116
+#: .\omuser\templates\profile.html:119
+msgid "電話"
+msgstr ""
+
+#: .\omuser\models.py:22 .\omuser\templates\profile.html:124
+#: .\omuser\templates\profile.html:127
+msgid "手機"
+msgstr ""
+
+#: .\omuser\models.py:23
+msgid "部門名稱"
+msgstr ""
+
+#: .\omuser\models.py:24
+msgid "公司名稱"
+msgstr ""
+
+#: .\omuser\models.py:25
+msgid "更新頻率"
+msgstr ""
+
+#: .\omuser\models.py:29 .\omuser\templates\user_manage.html:28
+msgid "新增使用者"
+msgstr ""
+
+#: .\omuser\models.py:30
+msgid "修改使用者"
+msgstr ""
+
+#: .\omuser\models.py:31
+msgid "檢視使用者"
+msgstr ""
+
+#: .\omuser\models.py:32 .\omuser\templates\user_manage.html:29
+msgid "刪除使用者"
+msgstr ""
+
+#: .\omuser\models.py:46
+msgid "上層群組"
+msgstr ""
+
+#: .\omuser\models.py:47
+msgid "功能群組標記"
+msgstr ""
+
+#: .\omuser\models.py:48 .\omuser\templates\profile.html:241
+#: .\omuser\templates\role_manage.html:40 .\templates\base_component.html:255
+msgid "說明"
+msgstr ""
+
+#: .\omuser\models.py:53
+msgid "新增組織/角色"
+msgstr ""
+
+#: .\omuser\models.py:54
+msgid "修改組織/角色"
+msgstr ""
+
+#: .\omuser\models.py:55
+msgid "檢視組織/角色"
+msgstr ""
+
+#: .\omuser\models.py:56
+msgid "刪除組織/角色"
+msgstr ""
+
+#: .\omuser\templates\change_password.html:11 .\templates\base_header.html:64
+msgid "更改密碼"
+msgstr ""
+
+#: .\omuser\templates\change_password.html:15
+#: .\omuser\templates\groups_permission.html:12
+#: .\omuser\templates\profile.html:16 .\omuser\templates\role_detail.html:16
+#: .\omuser\templates\role_manage.html:16
+#: .\omuser\templates\user_manage.html:16
+#: .\omworkspace\templates\compose.html:16
+#: .\omworkspace\templates\message.html:16 .\templates\file_manage.html:17
+msgid "首頁"
+msgstr ""
+
+#: .\omuser\templates\change_password.html:16
+#: .\omuser\templates\groups_permission.html:13
+#: .\omuser\templates\profile.html:17 .\omuser\templates\role_detail.html:17
+#: .\omuser\templates\role_manage.html:17
+#: .\omuser\templates\user_manage.html:17 .\templates\file_manage.html:18
+msgid "系統設定"
+msgstr ""
+
+#: .\omuser\templates\change_password.html:17
+#: .\omuser\templates\profile.html:12 .\omuser\templates\profile.html:18
+#: .\omuser\templates\user_manage.html:12
+#: .\omuser\templates\user_manage.html:18
+msgid "使用者管理"
+msgstr ""
+
+#: .\omuser\templates\change_password.html:24
+msgid "密碼更改後使用者將被登出"
+msgstr ""
+
+#: .\omuser\templates\change_password.html:47
+msgid "確認修改"
+msgstr ""
+
+#: .\omuser\templates\groups_permission.html:8
+#: .\omuser\templates\groups_permission.html:14
+msgid "群組權限管理"
+msgstr ""
+
+#: .\omuser\templates\login.html:6
+msgid "登入後開始使用 OMFLOW"
+msgstr ""
+
+#: .\omuser\templates\login.html:11
+msgid "帳號或是電子郵件"
+msgstr ""
+
+#: .\omuser\templates\login.html:15 .\omuser\templates\profile.html:53
+#: .\omuser\templates\profile.html:56 .\omuser\templates\register.html:15
+#: .\omuser\templates\register.html:19
+msgid "密碼"
+msgstr ""
+
+#: .\omuser\templates\login.html:22
+msgid "記住我"
+msgstr ""
+
+#: .\omuser\templates\login.html:28
+msgid "登入"
+msgstr ""
+
+#: .\omuser\templates\login.html:33
+msgid "忘記密碼"
+msgstr ""
+
+#: .\omuser\templates\login.html:34
+msgid "註冊使用者"
+msgstr ""
+
+#: .\omuser\templates\profile.html:19
+msgid "使用者設定"
+msgstr ""
+
+#: .\omuser\templates\profile.html:30
+msgid "資料設定"
+msgstr ""
+
+#: .\omuser\templates\profile.html:31
+msgid "組織設定"
+msgstr ""
+
+#: .\omuser\templates\profile.html:32
+msgid "角色設定"
+msgstr ""
+
+#: .\omuser\templates\profile.html:45 .\omuser\templates\profile.html:48
+#: .\omuser\templates\register.html:11
+msgid "帳號"
+msgstr ""
+
+#: .\omuser\templates\profile.html:61 .\omuser\templates\profile.html:64
+#: .\omuser\templates\register.html:27
+msgid "電子郵件地址"
+msgstr ""
+
+#: .\omuser\templates\profile.html:92 .\omuser\templates\profile.html:95
+#: .\omuser\templates\register.html:23 .\templates\base_component.html:305
+msgid "名稱"
+msgstr ""
+
+#: .\omuser\templates\profile.html:100 .\omuser\templates\profile.html:103
+#: .\omuser\templates\role_detail.html:54
+#: .\omuser\templates\user_manage.html:45
+msgid "公司"
+msgstr ""
+
+#: .\omuser\templates\profile.html:108 .\omuser\templates\profile.html:111
+#: .\omuser\templates\user_manage.html:46
+msgid "部門"
+msgstr ""
+
+#: .\omuser\templates\profile.html:135
+msgid "組織"
+msgstr ""
+
+#: .\omuser\templates\profile.html:143
+msgid "角色"
+msgstr ""
+
+#: .\omuser\templates\profile.html:151
+msgid "通知更新頻率"
+msgstr ""
+
+#: .\omuser\templates\profile.html:164 .\omuser\templates\profile.html:181
+#: .\omuser\templates\profile.html:225 .\omuser\templates\role_detail.html:36
+#: .\omuser\templates\role_detail.html:75 .\templates\system_config.html:35
+msgid "儲存"
+msgstr ""
+
+#: .\omuser\templates\profile.html:182 .\omuser\templates\profile.html:226
+msgid "創建"
+msgstr ""
+
+#: .\omuser\templates\profile.html:183 .\omuser\templates\profile.html:201
+#: .\omuser\templates\profile.html:227 .\omuser\templates\role_manage.html:30
+#: .\omworkspace\templates\message.html:25 .\templates\file_manage.html:40
+msgid "刪除"
+msgstr ""
+
+#: .\omuser\templates\profile.html:184
+msgid "展開 "
+msgstr ""
+
+#: .\omuser\templates\profile.html:185
+msgid "收合 "
+msgstr ""
+
+#: .\omuser\templates\profile.html:186
+msgid "篩選組織"
+msgstr ""
+
+#: .\omuser\templates\profile.html:186 .\omuser\templates\profile.html:228
+#: .\omuser\templates\role_detail.html:37
+#: .\omuser\templates\role_detail.html:76
+#: .\omuser\templates\role_manage.html:31
+#: .\omuser\templates\user_manage.html:32
+#: .\omworkspace\templates\message.html:26 .\templates\file_manage.html:41
+msgid " 篩選"
+msgstr ""
+
+#: .\omuser\templates\profile.html:199
+msgid "所有組織列表"
+msgstr ""
+
+#: .\omuser\templates\profile.html:200 .\omuser\templates\role_manage.html:29
+msgid "建立"
+msgstr ""
+
+#: .\omuser\templates\profile.html:228
+msgid "篩選角色"
+msgstr ""
+
+#: .\omuser\templates\profile.html:240
+msgid "所有角色列表"
+msgstr ""
+
+#: .\omuser\templates\profile.html:283 .\omuser\templates\profile.html:401
+msgid "秒"
+msgstr ""
+
+#: .\omuser\templates\profile.html:357 .\omuser\templates\profile.html:362
+msgid "建立子群組"
+msgstr ""
+
+#: .\omuser\templates\profile.html:358 .\omuser\templates\profile.html:363
+msgid "刪除此群組"
+msgstr ""
+
+#: .\omuser\templates\register.html:6
+msgid "註冊新的使用者"
+msgstr ""
+
+#: .\omuser\templates\register.html:34
+msgid "我同意"
+msgstr ""
+
+#: .\omuser\templates\register.html:34
+msgid "使用條款"
+msgstr ""
+
+#: .\omuser\templates\register.html:39
+msgid "註冊"
+msgstr ""
+
+#: .\omuser\templates\role_detail.html:12
+#: .\omuser\templates\role_detail.html:18
+#: .\omuser\templates\role_manage.html:12
+#: .\omuser\templates\role_manage.html:18
+msgid "權限角色管理"
+msgstr ""
+
+#: .\omuser\templates\role_detail.html:28
+msgid "使用者"
+msgstr ""
+
+#: .\omuser\templates\role_detail.html:29
+msgid "權限"
+msgstr ""
+
+#: .\omuser\templates\role_detail.html:37
+#: .\omuser\templates\user_manage.html:32
+msgid "篩選使用者"
+msgstr ""
+
+#: .\omuser\templates\role_detail.html:38
+#: .\omuser\templates\role_detail.html:77
+#: .\omuser\templates\role_manage.html:32
+#: .\omuser\templates\user_manage.html:33 .\templates\file_manage.html:42
+msgid "清除篩選條件"
+msgstr ""
+
+#: .\omuser\templates\role_detail.html:38
+#: .\omuser\templates\role_detail.html:77
+#: .\omuser\templates\role_manage.html:32
+#: .\omuser\templates\user_manage.html:33 .\templates\file_manage.html:42
+msgid " 還原"
+msgstr ""
+
+#: .\omuser\templates\role_detail.html:52
+#: .\omuser\templates\user_manage.html:41
+msgid "使用者帳號"
+msgstr ""
+
+#: .\omuser\templates\role_detail.html:53
+#: .\omuser\templates\user_manage.html:43
+msgid "使用者名稱"
+msgstr ""
+
+#: .\omuser\templates\role_detail.html:55
+msgid "狀態"
+msgstr ""
+
+#: .\omuser\templates\role_detail.html:76
+msgid "篩選權限名稱"
+msgstr ""
+
+#: .\omuser\templates\role_detail.html:89
+msgid "權限名稱"
+msgstr ""
+
+#: .\omuser\templates\role_detail.html:90
+msgid "內容"
+msgstr ""
+
+#: .\omuser\templates\role_manage.html:31
+msgid "篩選腳色"
+msgstr ""
+
+#: .\omuser\templates\role_manage.html:39
+msgid "權限角色"
+msgstr ""
+
+#: .\omuser\templates\user_manage.html:13
+msgid "使用者列表"
+msgstr ""
+
+#: .\omuser\templates\user_manage.html:28
+msgid " 新增"
+msgstr ""
+
+#: .\omuser\templates\user_manage.html:29
+#: .\omworkspace\templates\message.html:25
+msgid " 刪除"
+msgstr ""
+
+#: .\omuser\templates\user_manage.html:30
+msgid "啟用使用者"
+msgstr ""
+
+#: .\omuser\templates\user_manage.html:30
+msgid " 啟用"
+msgstr ""
+
+#: .\omuser\templates\user_manage.html:31
+msgid "停用使用者"
+msgstr ""
+
+#: .\omuser\templates\user_manage.html:31
+msgid " 停用"
+msgstr ""
+
+#: .\omuser\templates\user_manage.html:42
+msgid "狀態 "
+msgstr ""
+
+#: .\omuser\templates\user_manage.html:44
+msgid "信箱"
+msgstr ""
+
+#: .\omuser\templates\user_manage.html:47
+msgid "上次登入時間"
+msgstr ""
+
+#: .\omuser\templates\user_manage.html:186
+msgid "下列使用者將被刪除"
+msgstr ""
+
+#: .\omuser\templates\user_manage.html:190
+#: .\omuser\templates\user_manage.html:228
+#: .\omuser\templates\user_manage.html:267
+msgid "請選擇使用者"
+msgstr ""
+
+#: .\omuser\templates\user_manage.html:224
+msgid "下列使用者將被啟用"
+msgstr ""
+
+#: .\omuser\templates\user_manage.html:263
+msgid "下列使用者將被停用"
+msgstr ""
+
+#: .\omuser\views.py:83
+msgid "登入成功"
+msgstr ""
+
+#: .\omuser\views.py:87
+msgid "登入失敗"
+msgstr ""
+
+#: .\omuser\views.py:144
+msgid "註冊成功"
+msgstr ""
+
+#: .\omuser\views.py:146
+msgid "註冊失敗"
+msgstr ""
+
+#: .\omuser\views.py:216 .\omuser\views.py:439 .\omuser\views.py:551
+#: .\omuser\views.py:593 .\omworkspace\views.py:370
+msgid "更新成功"
+msgstr ""
+
+#: .\omuser\views.py:218
+msgid "更新失敗"
+msgstr ""
+
+#: .\omuser\views.py:277
+msgid "新增使用者失敗"
+msgstr ""
+
+#: .\omuser\views.py:279
+msgid "該使用者名稱已經被使用"
+msgstr ""
+
+#: .\omuser\views.py:280
+msgid "新增使用者成功"
+msgstr ""
+
+#: .\omuser\views.py:297
+msgid "無法刪除系統管理員"
+msgstr ""
+
+#: .\omuser\views.py:312
+msgid "無法刪除人員"
+msgstr ""
+
+#: .\omuser\views.py:314
+msgid "刪除使用者成功"
+msgstr ""
+
+#: .\omuser\views.py:316
+msgid "找不到使用者"
+msgstr ""
+
+#: .\omuser\views.py:335
+msgid "無法停用系統管理員"
+msgstr ""
+
+#: .\omuser\views.py:339
+msgid "啟用使用者成功"
+msgstr ""
+
+#: .\omuser\views.py:342
+msgid "停用使用者成功"
+msgstr ""
+
+#: .\omuser\views.py:344
+msgid "請選擇停用或啟用"
+msgstr ""
+
+#: .\omuser\views.py:346
+msgid "您無法停用或啟用"
+msgstr ""
+
+#: .\omuser\views.py:369
+msgid "父群組名稱錯誤"
+msgstr ""
+
+#: .\omuser\views.py:372
+msgid "建立成功"
+msgstr ""
+
+#: .\omuser\views.py:374
+msgid "欄位不得為空"
+msgstr ""
+
+#: .\omuser\views.py:394
+msgid "此組織不存在"
+msgstr ""
+
+#: .\omuser\views.py:396
+msgid "刪除成功"
+msgstr ""
+
+#: .\omuser\views.py:416
+msgid "使用者錯誤"
+msgstr ""
+
+#: .\omuser\views.py:528 .\omuser\views.py:570
+msgid "組織錯誤"
+msgstr ""
+
+#: .\omuser\views.py:628
+msgid "密碼修改成功"
+msgstr ""
+
+#: .\omuser\views.py:630
+msgid "請輸入相同密碼"
+msgstr ""
+
+#: .\omuser\views.py:632
+msgid "舊密碼輸入錯誤"
+msgstr ""
+
+#: .\omworkspace\models.py:15
+msgid "主旨"
+msgstr ""
+
+#: .\omworkspace\models.py:17
+msgid "資料編號"
+msgstr ""
+
+#: .\omworkspace\models.py:55
+msgid "發送者名稱"
+msgstr ""
+
+#: .\omworkspace\models.py:57
+msgid "發送群組名稱"
+msgstr ""
+
+#: .\omworkspace\models.py:58
+msgid "已刪除的接收者名稱"
+msgstr ""
+
+#: .\omworkspace\models.py:59
+msgid "接收群組名稱"
+msgstr ""
+
+#: .\omworkspace\models.py:61
+msgid "內文"
+msgstr ""
+
+#: .\omworkspace\models.py:71
+msgid "是否讀取"
+msgstr ""
+
+#: .\omworkspace\models.py:84 .\templates\file_manage.html:57
+msgid "大小"
+msgstr ""
+
+#: .\omworkspace\models.py:86
+msgid "是否刪除"
+msgstr ""
+
+#: .\omworkspace\templates\alert.html:23
+msgid "此頁全選"
+msgstr ""
+
+#: .\omworkspace\templates\alert.html:23
+msgid "全選"
+msgstr ""
+
+#: .\omworkspace\templates\alert.html:24
+msgid "刪除通知"
+msgstr ""
+
+#: .\omworkspace\templates\alert.html:25
+msgid "全部已讀"
+msgstr ""
+
+#: .\omworkspace\templates\alert.html:26
+msgid "篩選"
+msgstr ""
+
+#: .\omworkspace\templates\alert.html:34
+msgid "燈號"
+msgstr ""
+
+#: .\omworkspace\templates\alert.html:35
+msgid "通知收到時間"
+msgstr ""
+
+#: .\omworkspace\templates\alert.html:36
+msgid "通知發送模組"
+msgstr ""
+
+#: .\omworkspace\templates\alert.html:37
+msgid "通知訊息"
+msgstr ""
+
+#: .\omworkspace\templates\alert.html:38
+msgid "讀取"
+msgstr ""
+
+#: .\omworkspace\templates\alert.html:151
+msgid "處理中..."
+msgstr ""
+
+#: .\omworkspace\templates\alert.html:152
+msgid "載入中..."
+msgstr ""
+
+#: .\omworkspace\templates\alert.html:153
+msgid "每頁顯示 "
+msgstr ""
+
+#: .\omworkspace\templates\alert.html:153
+msgid "筆結果"
+msgstr ""
+
+#: .\omworkspace\templates\alert.html:154
+msgid "沒有符合的結果"
+msgstr ""
+
+#: .\omworkspace\templates\alert.html:155
+msgid "顯示第"
+msgstr ""
+
+#: .\omworkspace\templates\alert.html:155
+msgid "至"
+msgstr ""
+
+#: .\omworkspace\templates\alert.html:155
+msgid "項結果，共"
+msgstr ""
+
+#: .\omworkspace\templates\alert.html:155
+msgid "項"
+msgstr ""
+
+#: .\omworkspace\templates\alert.html:156
+msgid "顯示第 0 至 0 項結果，共 0 項"
+msgstr ""
+
+#: .\omworkspace\templates\alert.html:157
+msgid "(從 "
+msgstr ""
+
+#: .\omworkspace\templates\alert.html:157
+msgid "項結果中過濾)"
+msgstr ""
+
+#: .\omworkspace\templates\alert.html:159
+msgid "搜尋:"
+msgstr ""
+
+#: .\omworkspace\templates\alert.html:161
+msgid "第一頁"
+msgstr ""
+
+#: .\omworkspace\templates\alert.html:162
+msgid "上一頁"
+msgstr ""
+
+#: .\omworkspace\templates\alert.html:163
+msgid "下一頁"
+msgstr ""
+
+#: .\omworkspace\templates\alert.html:164
+msgid "最後一頁"
+msgstr ""
+
+#: .\omworkspace\templates\alert.html:167
+msgid "升冪排列"
+msgstr ""
+
+#: .\omworkspace\templates\alert.html:168
+msgid "降冪排列"
+msgstr ""
+
+#: .\omworkspace\templates\compose.html:12
+msgid "新訊息"
+msgstr ""
+
+#: .\omworkspace\templates\compose.html:17
+#: .\omworkspace\templates\message.html:12
+#: .\omworkspace\templates\message.html:17
+msgid "訊息管理"
+msgstr ""
+
+#: .\omworkspace\templates\compose.html:26
+msgid " 回到訊息管理"
+msgstr ""
+
+#: .\omworkspace\templates\compose.html:34
+msgid "標題"
+msgstr ""
+
+#: .\omworkspace\templates\compose.html:41
+msgid "發送身分"
+msgstr ""
+
+#: .\omworkspace\templates\compose.html:42
+msgid "訊息發送身分"
+msgstr ""
+
+#: .\omworkspace\templates\compose.html:48
+msgid "訊息成員"
+msgstr ""
+
+#: .\omworkspace\templates\compose.html:60
+msgid "新增附件"
+msgstr ""
+
+#: .\omworkspace\templates\compose.html:70
+msgid "傳送"
+msgstr ""
+
+#: .\omworkspace\templates\message.html:24
+msgid "建立新訊息"
+msgstr ""
+
+#: .\omworkspace\templates\message.html:24
+msgid " 新訊息"
+msgstr ""
+
+#: .\omworkspace\templates\message.html:26
+msgid "篩選訊息"
+msgstr ""
+
+#: .\omworkspace\templates\message.html:38
+msgid "訊息"
+msgstr ""
+
+#: .\omworkspace\templates\message.html:39
+msgid "時間"
+msgstr ""
+
+#: .\omworkspace\templates\message.html:54
+msgid "回覆"
+msgstr ""
+
+#: .\omworkspace\templates\message.html:55
+msgid " 回覆"
+msgstr ""
+
+#: .\omworkspace\templates\message.html:296
+msgid "此附件已刪除"
+msgstr ""
+
+#: .\omworkspace\views.py:108 .\omworkspace\views.py:321
+#: .\omworkspace\views.py:338 .\omworkspace\views.py:355
+#: .\omworkspace\views.py:383
+msgid "請求處理成功"
+msgstr ""
+
+#: .\omworkspace\views.py:130 .\omworkspace\views.py:285
+msgid "提供資料格式有誤"
+msgstr ""
+
+#: .\omworkspace\views.py:147 .\omworkspace\views.py:195
+msgid "搜尋成功"
+msgstr ""
+
+#: .\omworkspace\views.py:149 .\omworkspace\views.py:199
+msgid "請提供訊息編號"
+msgstr ""
+
+#: .\omworkspace\views.py:283
+msgid "發送成功"
+msgstr ""
+
+#: .\omworkspace\views.py:302
+msgid "刪除訊息成功"
+msgstr ""
+
+#: .\omworkspace\views.py:304
+msgid "您沒有該筆訊息"
+msgstr ""
+
+#: .\templates\base_component.html:16 .\templates\base_component.html:41
+#: .\templates\base_component.html:62 .\templates\base_component.html:83
+#: .\templates\base_component.html:104 .\templates\base_component.html:124
+msgid "關閉"
+msgstr ""
+
+#: .\templates\base_component.html:35
+msgid "資訊"
+msgstr ""
+
+#: .\templates\base_component.html:56
+msgid "警告"
+msgstr ""
+
+#: .\templates\base_component.html:77
+msgid "完成"
+msgstr ""
+
+#: .\templates\base_component.html:98 .\templates\base_component.html:118
+msgid "錯誤"
+msgstr ""
+
+#: .\templates\base_component.html:121
+msgid "系統發生嚴重的錯誤"
+msgstr ""
+
+#: .\templates\base_component.html:193
+msgid "新建群組名稱"
+msgstr ""
+
+#: .\templates\base_component.html:194
+msgid "群組名稱"
+msgstr ""
+
+#: .\templates\base_component.html:251
+msgid "角色名稱"
+msgstr ""
+
+#: .\templates\base_component.html:328
+msgid "上傳中"
+msgstr ""
+
+#: .\templates\base_header.html:61
+msgid "個人資料"
+msgstr ""
+
+#: .\templates\base_header.html:67
+msgid "登出"
+msgstr ""
+
+#: .\templates\file_manage.html:13 .\templates\file_manage.html:19
+msgid "檔案管理"
+msgstr ""
+
+#: .\templates\file_manage.html:41
+msgid "篩選檔案"
+msgstr ""
+
+#: .\templates\file_manage.html:56
+msgid "檔案名稱"
+msgstr ""
+
+#: .\templates\file_manage.html:58
+msgid "上傳時間"
+msgstr ""
+
+#: .\templates\file_manage.html:59
+msgid "編號"
+msgstr ""
+
+msgid "登入失敗哦"
+msgstr "Login failed"

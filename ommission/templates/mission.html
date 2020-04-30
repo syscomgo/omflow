@@ -1,0 +1,691 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %} 
+{% block content %}
+
+	<script src="/static/js/workflow.js"></script>
+    <section class="content-header">
+      <h1>
+      	{% trans '我的任務	'%}
+        <small></small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i> {% trans '首頁'%}</a></li>
+        <li class="active"><a href="javascript:window.location.reload();">{% trans '我的任務'%}</a></li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+              <li class="active"><a href="#p1" data-toggle="tab" data-name="mymission">{% trans '任務列表' %}</a></li>
+              <li><a href="#p2" data-toggle="tab" data-name="currentmission">{% trans '進行中任務' %}</a></li>
+              <li><a href="#p3" data-toggle="tab" data-name="historymission">{% trans '處理紀錄' %}</a></li>
+            </ul>
+            <div class="tab-content">
+              <div class="tab-pane active" id="p1">
+		        <div class="box box-default">
+		          <div class="box-header with-border">
+		            <!-- Check all button -->
+		            <button type="button" class="btn btn-default" onclick="filter_mymission()" style="margin:1px 0px;"><i class="fa fa-filter"></i>{% trans ' 篩選'%}</button>
+		            <button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default" onclick="filter_default()" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
+		          </div>
+		          <div class="box-body">
+		            <table id="mymission_table" class="table table-bordered table-striped table-hover">
+		              <thead>
+		                <tr>
+		                  <th>{% trans '功能名稱' %}</th>
+		                  <th>{% trans '表單編號' %}</th>
+		                  <th>{% trans '燈號' %}</th>
+		          	      <th>{% trans '標題' %}</th>
+		                  <th>{% trans '開單人' %}</th>
+		                  <th>{% trans '更新日期' %}</th>
+		                  <th>{% trans '受派單位' %}</th>
+		                  <th>{% trans '受派人' %}</th>
+		                  <th>{% trans '狀態' %}</th>
+		                  <th>{% trans '快速操作' %}</th>   
+		                </tr>
+		              </thead>
+		              <tbody>
+		              </tbody>
+		            </table>
+		            <!-- /.table -->
+		          </div>
+		          <!-- /.box-body -->
+		        </div>
+		        <!-- /.box -->
+		      </div>
+  			  <!-- /.tab-pane p1 -->
+	           <div class="tab-pane " id="p2">
+	            <div class="box box-default">
+	              <div class="box-header with-border">
+	                <!-- Check all button -->
+	                <button type="button" class="btn btn-default" onclick="filter_currentmission()" style="margin:1px 0px;"><i class="fa fa-filter"></i>{% trans ' 篩選'%}</button>
+	                <button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default" onclick="filter_default()" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
+	              </div>
+	              <div class="box-body">
+	                <table id="currentmission_table" class="table table-bordered table-striped table-hover">
+	                  <thead>
+	                    <tr>
+	                      <th>{% trans '功能名稱' %}</th>
+	                      <th>{% trans '表單編號' %}</th>
+	                      <th>{% trans '燈號' %}</th>
+	                  	  <th>{% trans '標題' %}</th>
+	                  	  <th>{% trans '開單人' %}</th>
+	                  	  <th>{% trans '開單日期' %}</th>
+	                  	  <th>{% trans '更新日期' %}</th>
+	                  	  <th>{% trans '受派單位' %}</th>
+	                  	  <th>{% trans '受派人' %}</th>
+	                  	  <th>{% trans '狀態' %}</th>
+	                    </tr>
+	                  </thead>
+	                  <tbody>
+	                  </tbody>
+	                </table>
+	                <!-- /.table -->
+	              </div>
+	              <!-- /.box-body -->
+	            </div>
+	            <!-- /.box -->
+	          </div>
+	          <!-- /.tab-pane p2 -->
+	          <div class="tab-pane " id="p3">
+	            <div class="box box-default">
+	              <div class="box-header with-border">
+	                <!-- Check all button -->
+	                <button type="button" class="btn btn-default" onclick="filter_historymission()" style="margin:1px 0px;"><i class="fa fa-filter"></i>{% trans ' 篩選'%}</button>
+	                <button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default" onclick="filter_default()" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
+	              </div>
+	              <div class="box-body">
+	                <table id="historymission_table" class="table table-bordered table-striped table-hover">
+	                  <thead>
+	                    <tr>
+	                      <th>{% trans '功能名稱' %}</th>
+	                      <th>{% trans '表單編號' %}</th>
+	                      <th>{% trans '燈號' %}</th>
+	                  	  <th>{% trans '標題' %}</th>
+	                  	  <th>{% trans '開單人' %}</th>
+	                  	  <th>{% trans '開單日期' %}</th>
+	                  	  <th>{% trans '更新日期' %}</th>
+	                  	  <th>{% trans '受派單位' %}</th>
+	                  	  <th>{% trans '受派人' %}</th>
+	                  	  <th>{% trans '狀態' %}</th>
+	                    </tr>
+	                  </thead>
+	                  <tbody>
+	                  </tbody>
+	                </table>
+	                <!-- /.table -->
+	              </div>
+	              <!-- /.box-body -->
+	            </div>
+	            <!-- /.box -->
+	          </div>
+	          <!-- /.tab-pane p3 -->
+	        </div>
+	        <!-- /.tab-content -->
+	      </div>
+	      <!-- /.nav-tabs-custom -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+    
+    
+    <div class="modal fade" id="modal_omdata_history" data-backdrop="static">
+      <div class="modal-dialog" style="width:90%;">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title"></h4>
+          </div>
+          <div class="modal-body" >
+          	<div id="omdata_history_formcontent"></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary pull-right" data-dismiss="modal">{% trans '關閉' %}</button>
+          </div>
+        </div>
+        <!-- /.modal-content -->
+      </div>
+      <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+    
+    <div class="modal fade" id="modal_flow_browser" data-backdrop="static">
+      <div class="modal-dialog" style="width:90%;">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title"></h4>
+          </div>
+          <div class="modal-body" >
+            <div id="flowcontent" style="width:100%;height:430px"></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary pull-right" data-dismiss="modal">{% trans '關閉' %}</button>
+          </div>
+        </div>
+        <!-- /.modal-content -->
+      </div>
+      <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
+<style>
+thead th , tbody td{ white-space: nowrap; }
+table tr td:not(:last-child){
+  cursor:pointer;
+}
+</style>
+<script>
+	var csrfmiddlewaretoken="{{ csrf_token }}";
+	var date = new Date();
+	date.setDate(date.getDate() + 1);
+	var group_list = [];
+	{% for group in user.groups.all %} group_list.push({'id': '{{group.id}}', 'display_name': '{{group.name}}'}); {% endfor %}
+	var mymission_select_time;
+	var mymission_table;
+	var mymission_data_tmp;
+	var mymission_data_len;
+	var mymission_data_page;
+	
+	var historymission_select_time;
+	var historymission_table;
+	var historymission_data_tmp;
+	var historymission_data_len;
+	var historymission_data_page;
+	
+	var currentmission_select_time;
+	var currentmission_table;
+	var currentmission_data_tmp;
+	var currentmission_data_len;
+	var currentmission_data_page;	
+ 	$(function () {
+    	mymission_select_time = date.getFullYear() +'-'+('0'+(date.getMonth()+1)).substr(-2)+'-'+('0'+date.getDate()).substr(-2);
+    	mymission_table = $('#mymission_table').DataTable({
+			"autoWidth": false,
+			"order": [[ 5 , "dsc "]],
+			"dom":"<<t>'row'<'col-sm-5'i><'col-sm-7'p>>",
+			"serverSide": true,							
+			"language": __const_language__,
+			"ajax": {
+				"url": "{% url 'listMyMissionAjax'%}",
+				"type": "POST",
+	            	"data":	function ( d ) {
+						return $.extend( {}, d, {
+					        csrfmiddlewaretoken : csrfmiddlewaretoken,
+					        ticket_createtime	: mymission_select_time,
+					    }); 
+					},
+					"dataSrc": function(data){
+						var mymission_compare = dataCompare(data,mymission_data_tmp,mymission_data_len,mymission_data_page,mymission_table);
+						mymission_data_tmp = mymission_compare['data_tmp']
+						mymission_data_len = mymission_compare['data_len']
+						mymission_data_page = mymission_compare['data_page']
+						data.data = mymission_compare['data.data']
+						return data.data;
+					},
+					"error": function(xhr,status,error){
+							clearInterval(table_routine);
+					}
+			},
+			"columns":[
+				{"data": "flow_name"},
+				{"data": "data_no", "render": function(data)
+					{
+						return paddingLeft(data,8)
+					}
+				},
+				{"data": "level", "render": function(data)
+					{
+						if(data == 'green')
+							{return '<div class="label label-success">綠燈</div>'}
+						else if(data == 'yellow')
+							{return '<div class="label label-warning">黃燈</div>'}
+						else if(data == 'red')
+							{return '<div class="label label-danger">紅燈</div>'}
+						else if(data == null)
+							{return '<div class="label label-success">綠燈</div>'}		
+					}
+				},
+				{"data": "title", "width": "150px", "render": function(data, type, row)
+					{
+						if(row.attachment)
+							{
+								return data+' <i class="fa fa-paperclip"></i>'
+							}
+						else
+							{
+								return data
+							}
+					}
+				},
+				{"data": "create_user_id__nick_name"},
+				{"data": "ticket_createtime", "width": "125px", "render": function(data)
+					{
+						if(data)
+							{return data.slice(0,-15)}
+						else
+							{return data}
+					}
+				},
+{#				{"data": "createtime", "width": "125px", "render": function(data)#}
+{#					{#}
+{#						if(data)#}
+{#							{return data.slice(0,-15)}#}
+{#						else#}
+{#							{return data}#}
+{#					}#}
+{#				},#}
+				{"data": "assign_group_id__display_name",},
+				{"data": "assignee_id__nick_name"},
+				{"data": "status"},
+				{"data": "action", "orderable": false, "width": "25px", "render": function(data, type, row)
+					{	
+						var action1 = '';
+						var action2 = '';
+						data = data.split(',');
+						if(data[0].length != 0)
+							{
+								action1 = '<a title="'+data[0]+'" onclick="quick_action(\'action1\', \''+row.flow_uuid+'\', \''+row.data_id+'\')" class="btn btn-xs bg-olive" style="width">'+data[0]+'</a>&nbsp;';
+							}
+						if(data[1].length != 0)
+							{
+								action2 = '<a title="'+data[1]+'" onclick="quick_action(\'action2\', \''+row.flow_uuid+'\', \''+row.data_id+'\')" class="btn btn-xs bg-maroon">'+data[1]+'</a>';
+							}
+						return (action1 + action2)
+					}
+				},
+			],
+			"rowCallback": function(row, data){
+				$("td:not(:last)", row).attr("onclick", 'javascript:location.href="/my-mission/page/myform/'+data.flow_uuid+'/'+data.data_no+'/'+data.data_id+'"');
+			}
+		});
+		
+		historymission_select_time = date.getFullYear() +'-'+('0'+(date.getMonth()+1)).substr(-2)+'-'+('0'+date.getDate()).substr(-2);
+		historymission_table = $('#historymission_table').DataTable({
+			"autoWidth": false,
+			"order": [[ 5 , "dsc "]],
+			"dom":"<<t>'row'<'col-sm-5'i><'col-sm-7'p>>",
+			"serverSide": true,							
+			"language": __const_language__,
+			"ajax": {
+				"url": "{% url 'listHistoryMissionAjax'%}",
+				"type": "POST",
+	            	"data":	function ( d ) {
+						return $.extend( {}, d, {
+					        csrfmiddlewaretoken : csrfmiddlewaretoken,
+					        ticket_createtime	: historymission_select_time,
+					    }); 
+					},
+					"dataSrc": function(data){
+						var historymission_compare = dataCompare(data,historymission_data_tmp,historymission_data_len,historymission_data_page,historymission_table);
+						historymission_data_tmp = historymission_compare['data_tmp']
+						historymission_data_len = historymission_compare['data_len']
+						historymission_data_page = historymission_compare['data_page']
+						data.data = historymission_compare['data.data']
+						return data.data;
+					},
+					"error": function(xhr,status,error){
+							clearInterval(table_routine);
+					}
+			},
+			"columns":[
+				{"data": "flow_name"},
+				{"data": "data_no", "render": function(data)
+					{
+						return paddingLeft(data,8)
+					}
+				},
+				{"data": "level", "render": function(data)
+					{
+						if(data == 'green')
+							{return '<div class="label label-success">綠燈</div>'}
+						else if(data == 'yellow')
+							{return '<div class="label label-warning">黃燈</div>'}
+						else if(data == 'red')
+							{return '<div class="label label-danger">紅燈</div>'}
+						else if(data == null)
+							{return '<div class="label label-success">綠燈</div>'}		
+					}
+				},
+				{"data": "title", "width": "150px", "render": function(data, type, row)
+					{
+						if(row.attachment)
+							{
+								return data+' <i class="fa fa-paperclip"></i>'
+							}
+						else
+							{
+								return data
+							}
+					}},
+				{"data": "create_user_id__nick_name"},
+				{"data": "ticket_createtime", "width": "90px", "render": function(data)
+					{
+						if(data)
+							{return data.slice(0,-15)}
+						else
+							{return data}
+					}
+				},
+				{"data": "createtime", "width": "90px", "render": function(data)
+					{
+						if(data)
+							{return data.slice(0,-15)}
+						else
+							{return data}
+					}
+				},
+				{"data": "assign_group_id__display_name",},
+				{"data": "assignee_id__nick_name"},
+				{"data": "status"},
+			],
+			"rowCallback": function(row, data){
+				$("td:not(:last)", row).attr("onclick", 'history_browser(\''+data.flow_uuid+'\', \''+data.data_id+'\')');
+			}
+		});
+		currentmission_select_time = date.getFullYear() +'-'+('0'+(date.getMonth()+1)).substr(-2)+'-'+('0'+date.getDate()).substr(-2);
+		currentmission_table = $('#currentmission_table').DataTable({
+			"autoWidth": false,
+			"order": [[ 5 , "dsc "]],
+			"dom":"<<t>'row'<'col-sm-5'i><'col-sm-7'p>>",
+			"serverSide": true,							
+			"language": __const_language__,
+			"ajax": {
+				"url": "{% url 'listHistoryMissionCurrentStateAjax'%}",
+				"type": "POST",
+	            	"data":	function ( d ) {
+						return $.extend( {}, d, {
+					        csrfmiddlewaretoken : csrfmiddlewaretoken,
+					        ticket_createtime	: currentmission_select_time,
+					    }); 
+					},
+					"dataSrc": function(data){
+						var currentmission_compare = dataCompare(data,currentmission_data_tmp,currentmission_data_len,currentmission_data_page,currentmission_table);
+						currentmission_data_tmp = currentmission_compare['data_tmp']
+						currentmission_data_len = currentmission_compare['data_len']
+						currentmission_data_page = currentmission_compare['data_page']
+						data.data = currentmission_compare['data.data']
+						return data.data;
+					},
+					"error": function(xhr,status,error){
+							clearInterval(table_routine);
+					}
+			},
+			"columns":[
+				{"data": "flow_name"},
+				{"data": "data_no", "render": function(data)
+					{
+						return paddingLeft(data,8)
+					}
+				},
+				{"data": "level", "render": function(data)
+					{
+						if(data == 'green')
+							{return '<div class="label label-success">綠燈</div>'}
+						else if(data == 'yellow')
+							{return '<div class="label label-warning">黃燈</div>'}
+						else if(data == 'red')
+							{return '<div class="label label-danger">紅燈</div>'}
+						else if(data == null)
+							{return '<div class="label label-success">綠燈</div>'}		
+					}
+				},
+				{"data": "title"},
+				{"data": "create_user_id__nick_name"},
+				{"data": "ticket_createtime", "width": "90px", "render": function(data)
+					{
+						if(data)
+							{return data.slice(0,-15)}
+						else
+							{return data}
+					}
+				},
+				{"data": "createtime", "width": "90px", "render": function(data)
+					{
+						if(data)
+							{return data.slice(0,-15)}
+						else
+							{return data}
+					}
+				},
+				{"data": "assign_group_id__display_name",},
+				{"data": "assignee_id__nick_name"},
+				{"data": "status"},
+			],
+			"rowCallback": function(row, data){
+				$("td:not(:last)", row).attr("onclick", 'fp_show_browser(\''+data.flow_uuid+'\', \''+data.data_no+'\', \''+data.stop_uuid+'\')');
+			}
+		});
+		function locationHashChanged() {
+		    var tab = window.location.hash.replace('#','');
+			$('.nav-tabs a[data-name="'+tab+'"]').tab('show');
+		}
+		
+		window.onhashchange = locationHashChanged;
+		locationHashChanged();
+		$('.nav-tabs:first a').on('shown.bs.tab', function(event){
+	    	window.location.hash = $(event.target).data('name');
+	    });
+	});
+ 
+	function quick_action(action, flow_uuid, data_id){
+	 	var postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, 
+								flow_uuid: flow_uuid,
+								data_id	 : data_id,
+								action	 : 'update',
+								quick_action: action,
+				}
+		omflowJsonAjax(postbody, '{% url "editOmDataAjax"%}', actions)
+ 	}
+ 	
+ 	var omdata_history_formcontent = new omformeng('omdata_history_formcontent');
+	omdata_history_formcontent.init(false);
+ 	function history_browser(flow_uuid, data_id)
+    {	
+		var postbody = {csrfmiddlewaretoken: '{{ csrf_token }}', flow_uuid: flow_uuid, data_id: data_id}
+		omflowJsonAjax(postbody, '{% url "loadOmDataAjax"%}', callback);
+		
+		function callback(data)
+		{
+			if (data.status == 200)
+			{
+				$('#modal_omdata_history .modal-title').text(data.result.flow_name)
+				$('#omdata_history_formcontent').empty();
+				omdata_history_formcontent.event_group_list(load_group_list);
+				omdata_history_formcontent.event_user_list(load_user_list);
+				omdata_history_formcontent.load(JSON.stringify(data.result.formobject));
+				omdata_history_formcontent.setData(data.result.formdata);
+				$('#omdata_history_formcontent input').prop('readonly', true);
+				$('#omdata_history_formcontent select').prop('disabled', true);
+				$('#omdata_history_formcontent input[type="radio"]').prop('disabled', true);
+				$('#omdata_history_formcontent input[type="checkbox"]').prop('disabled', true);
+				$('#attach_box').remove();
+				if (data.result.files.length != 0)
+				{
+					$('#modal_omdata_history > .modal-dialog > .modal-content > .modal-body').append('<div class="box-body" id="attach_box"><div class="col-md-12"><div class="box"><div class="box-body">'
+						+'<ul class="mailbox-attachments clearfix" id="attach_upload"></ul>'
+						+'</div></div></div></div>');
+					$.each(data.result.files, function(index, item){
+						var delete_mes = '';
+			    		var file_href = 'href="/api/history-files/download/'+item.file+'"';
+			    		if (item.delete)
+						{
+							delete_mes = '<br>({% trans "此附件已刪除" %})'
+							file_href = '';
+						}
+						$('#attach_upload').append('<li name="'+item.file_name+'"><div class="mailbox-attachment-info">'
+				        	+'<a '+file_href+' class="mailbox-attachment-name" title="'+item.file_name+'&#10;'
+				        	+'上傳者: '+item.upload_user_id__nick_name+'&#10;'
+				        	+'大小: '+omflowSizeUnit(item.size)+'&#10;'
+				        	+'修改日期: '+item.createtime.replace(/T/g,' ').slice(0,-7)+'" style="word-break: break-all;overflow: hidden;display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 2;"><i class="fa fa-paperclip"></i>&nbsp;&nbsp;'+item.file_name+delete_mes+'</a>'
+				            +'<span class="mailbox-attachment-size">'+item.upload_user_id__nick_name+'</span>'
+				            +'<span class="mailbox-attachment-size">'+omflowSizeUnit(item.size)+'</span>'
+				            +'<span class="mailbox-attachment-size">'+item.createtime.replace(/T/g,' ').slice(0,-7)+'</span>'
+				      		+'</div></li>')
+						});
+				}
+				$('#modal_omdata_history').modal('show');
+			}
+			else
+			{
+				omflowAlert('red', data.message)
+			}
+		}
+    }
+    
+	
+	function load_group_list()
+	{
+		var grouplist=[];
+		var postbody = {csrfmiddlewaretoken: "{{ csrf_token }}", 'functional_flag_%B': 'False', 'ad_flag_%B': ['0']};
+		$.ajax({
+			url	: '{% url 'listGroupAjax' %}',
+			type: 'post',
+	        data: postbody,
+	        async:false,
+	        dataType: 'json',
+	        success: function (data) {
+	            grouplist = data.result;
+	        },
+	        error: function(req, status, err) {
+				$('#modal_error').modal('show');
+	        	console.log('Something went wrong', status, err);
+	    	}
+		});
+		return grouplist;
+	}
+    
+    
+	function load_user_list(group_id)
+	{
+		var userlist = []
+		$.ajax({
+			url: "{% url 'searchGroupUserAjax' %}",
+			type: 'post',
+			async:false,
+			data: { csrfmiddlewaretoken: '{{ csrf_token }}' , searchkey: group_id},
+			success: function (data) {
+				userlist = data.result;
+			},
+			error: function(req, status, err) {
+				$('#modal_error').modal('show');
+	        	console.log('Something went wrong', status, err);
+	    	}
+		});
+		return userlist;
+	}
+	
+
+	var flowcontent = new omfloweng('flowcontent');
+	flowcontent.init(false);
+	function fp_show_browser(flow_uuid, data_no, stop_uuid){
+		$('#modal_flow_browser #flowcontent').empty();
+    	var level = 1;
+    	var postdata = { 
+    			csrfmiddlewaretoken: csrfmiddlewaretoken,
+    			flow_uuid: flow_uuid,
+    			data_no	 : data_no,
+    			flow_level	 : level
+    	}
+    	omflowJsonAjax(postdata, '{% url "loadFlowObjectAjax" %}', callback)
+    	
+    	function callback(data)
+    	{
+    		if (data.status == 200)
+    		{
+	    		$('#modal_flow_browser .modal-title').text(data.result.flow_name)
+		      	flowcontent.load(data.result.flowobject);
+		      	flowcontent.setFocus(stop_uuid);
+		      	$('#flowcontent div').off('click');
+			}
+			else
+			{
+				omflowAlert('red', data.message)
+			}
+	    }
+      	$('#modal_flow_browser').modal('show');
+    }
+    
+    
+    function filter_mymission()
+    {
+    	omflowFilter(['filter_search','filter_length']);
+    	$('#modal-default-filter-confirm').off("click").on("click",function(){
+			var searchkey = $.trim($('#modal-default-filter #search').val());
+			var page_length = $('#modal-default-filter #page_length').val();
+ 			mymission_table.page.len(page_length);
+			mymission_table.search(searchkey).draw();
+		});
+    }
+    
+    function filter_mymission_default()
+	{
+		mymission_table.page.len(10);
+		mymission_table.search('');
+    	mymission_table.draw();	
+	}
+    
+    function filter_currentmission()
+    {
+    	omflowFilter(['filter_search','filter_length']);
+    	$('#modal-default-filter-confirm').off("click").on("click",function(){
+			var searchkey = $.trim($('#modal-default-filter #search').val());
+			var page_length = $('#modal-default-filter #page_length').val();
+ 			currentmission_table.page.len(page_length);
+			currentmission_table.search(searchkey).draw();
+		});
+    }
+    
+    function filter_currentmission_default()
+	{
+		currentmission_table.page.len(10);
+		mymission_table.search('');
+    	currentmission_table.draw();	
+	}
+    
+    function filter_historymission()
+    {
+    	omflowFilter(['filter_search','filter_length']);
+    	$('#modal-default-filter-confirm').off("click").on("click",function(){
+			var searchkey = $.trim($('#modal-default-filter #search').val());
+			var page_length = $('#modal-default-filter #page_length').val();
+ 			historymission_table.page.len(page_length);
+			historymission_table.search(searchkey).draw();
+		});
+    }
+    
+    function filter_historymission_default()
+	{
+		historymission_table.page.len(10);
+		historymission_table.search('');
+    	historymission_table.draw();	
+	}
+	
+	
+	function actions(data)
+	{
+		if (data.status == 200)
+		{
+			mymission_table.draw(); 
+			historymission_table.draw(); 
+			currentmission_table.draw(); 
+		}
+		else
+		{
+			omflowAlert('red', data.message);
+		}
+	}
+	var table_routine = setInterval(function(){ mymission_table.draw();historymission_table.draw();currentmission_table.draw();}, {{user.frequency}}*1000);
+
+</script>
+{% endblock %}

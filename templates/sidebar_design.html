@@ -1,0 +1,321 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %} 
+{% block content %}
+<!-- 
+flow_manage.html flowManagePage
+author : Pen Lin, Pei lin
+-->
+
+	<!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+       	 {% trans '主選單管理'%}
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i> {% trans '首頁'%}</a></li>
+		<li >{% trans '系統設定'%}</li>
+        <li class="active"><a>{% trans '主選單管理'%}</a></li>
+      </ol>
+    </section>
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-12">
+      	  <div class="box box-primary">
+      	    <div class="box-header with-border">
+      	      <button type="button" title="{% trans '儲存設定' %}" class="btn btn-default " onclick="store()" style="margin:1px 0px;"><i class="fa fa-save"></i> {% trans ' 儲存' %}</button>
+      	      <button type="button" title="{% trans '新增' %}" class="btn btn-default " onclick="create_folder('basic')" style="margin:1px 0px;"><i class="fa fa-plus"></i> {% trans ' 新增' %}</button>
+      	    </div>
+      	    <div class="box-body">
+      	      <ul class="defaultconnect" name="auto" style="list-style-type:none;padding:0px;">
+      	      </ul>
+      	    </div>
+      	  </div>
+      	</div>
+      </div>
+    </section>
+    <style>
+	  li.mysort{
+	    margin: 5px 0px 5px 15px;
+	    padding: 5px 0px 5px 5px;
+	    font-size: 15px;
+	    width: auto;
+    	background: #f6f6f6;
+    	font-weight: normal;
+    	color: #454545;
+	  }
+	  .defaultconnect>li.mysort{
+	  	margin: 5px 0px 5px 0px;
+	    padding: 5px;
+	    font-size: 15px;
+	    width: 100%;
+    	background: #E0E0E0;
+    	font-weight: normal;
+    	color: #454545;
+	  }
+	  li.myflow{
+	    margin: 5px 0px 5px 15px;
+	    padding: 5px 0px 5px 5px;
+	    font-size: 15px;
+	    width: auto;
+    	background: #D3D3D3;
+    	font-weight: normal;
+    	color: #454545;
+	  }
+	  .defaultconnect>li.myflow{
+	  	margin: 5px 0px 5px 0px;
+	    padding: 5px;
+	    font-size: 15px;
+	    width: 100%;
+    	background: #E0E0E0;
+    	font-weight: normal;
+    	color: #454545;
+	  }
+	  li.defaultlist{
+	    margin: 5px 0px 5px 0px;
+	    padding: 5px;
+	    font-size: 15px;
+	    width: 100%;
+    	background: #E0E0E0;
+    	font-weight: normal;
+    	color: #454545;
+    		
+	  }
+	  ul.cusconnect{
+			
+	  }	
+	  ul.defaultconnect{
+	  }	
+	  .ui-state-highlight{
+	    width: 100%;
+	    height: 31px;
+	    border: 1px solid #c5c5c5;
+	  	background: #7B7B7B;
+    	font-weight: normal;
+    	z-index:1;
+	  }
+	  .myflow > li > .fa,
+	  .cusconnect > li > .fa, 
+	  .defaultconnect > li > .fa {
+		width: 20px;
+	  }
+	  </style>
+	    
+    <script>
+    var csrfmiddlewaretoken="{{ csrf_token }}";
+    var listcount = '';
+    	$(function(){
+    		var postdata = {csrfmiddlewaretoken:csrfmiddlewaretoken};
+    		omflowJsonAjax(postdata, '{% url "loadSidebarDesignAjax" %}', load_actions)
+		});
+		
+		function load_actions(data){
+			if (data.status == 200)
+			{
+				listcount = data.result.count;
+				$.each(data.result.sidebar_design, function(index, value){
+					if (value.flow_uuid == 'default')
+					{
+						$('ul.defaultconnect').append('<li class="defaultlist" id="'+value.id+'" data-pid="" data-flowuuid="default"><i class="fa fa-'+value.icon+'"></i>&nbsp;<span>'+value.name+'</span></li>')
+					}
+					else if(value.flow_uuid == 'custom' && (value.p_id == null | value.p_id.length == 0))
+					{
+						$('ul.defaultconnect').append('<li class="mysort" id="'+value.id+'" data-pid="" data-flowuuid="custom"><i class="fa fa-'+value.icon+'"></i>&nbsp;<span>'+value.name+'</span>'
+								+'<button class="btn btn-box-tool pull-right" onclick="delete_folder(this)"><i class="fa fa-remove"></i></button>'
+								+'<button class="btn btn-box-tool pull-right" onclick="manage_folder(this)"><i class="fa fa-gear"></i></button>'
+								+'<button class="btn btn-box-tool pull-right" onclick="create_folder(this)"><i class="fa fa-plus"></i></button>'
+								+'<ul class="cusconnect" style="list-style-type:none;padding:10px 0px;"></ul>'
+								+'</li>')
+					}
+					else if(value.flow_uuid == 'custom' && (value.p_id != null | value.p_id.length != 0))
+					{
+						$('.box-body #'+value.p_id+'>ul').append('<li class="mysort" id="'+value.id+'" data-pid="'+value.p_id+'" data-flowuuid="'+value.flow_uuid+'"><i class="fa fa-'+value.icon+'"></i>&nbsp;<span>'+value.name+'</span>'
+								+'<button class="btn btn-box-tool pull-right" onclick="delete_folder(this)"><i class="fa fa-remove"></i></button>'
+								+'<button class="btn btn-box-tool pull-right" onclick="manage_folder(this)"><i class="fa fa-gear"></i></button>'
+								+'<button class="btn btn-box-tool pull-right" onclick="create_folder(this)"><i class="fa fa-plus"></i></button>'
+								+'<ul class="cusconnect" style="list-style-type:none;padding:10px 0px;"></ul>'
+								+'</li>')
+					}
+					else if(value.p_id == null | value.p_id.length == 0)
+					{
+						$('ul.defaultconnect').append('<li class="myflow" id="'+value.id+'" data-pid="'+value.p_id+'" data-flowuuid="'+value.flow_uuid+'"><i class="fa fa-'+value.icon+'"></i>&nbsp;<span>'+value.name+'</span></li>')					
+					}
+					else
+					{
+						$('.box-body #'+value.p_id+'>ul').append('<li class="myflow" id="'+value.id+'" data-pid="'+value.p_id+'" data-flowuuid="'+value.flow_uuid+'"><i class="fa fa-'+value.icon+'"></i>&nbsp;<span>'+value.name+'</span></li>')
+					}
+				});
+				$( "ul.defaultconnect").sortable({
+			    	connectWith: [".defaultconnect",".cusconnect"],
+			      	placeholder: "ui-state-highlight",
+			     	opacity: 0.9,
+			     	receive: function(event, ui) {
+			      		ui.item.attr('data-pid','') ;
+			      	}
+			    }).disableSelection();
+	  			$( "ul.cusconnect").sortable({
+	  				connectWith: [".defaultconnect",".cusconnect"],
+			      	placeholder: "ui-state-highlight",
+			      	opacity: 0.9,
+			      	receive: function(event, ui) {
+		            	if(ui.item.hasClass("defaultlist"))
+		            	{
+		              		ui.sender.sortable("cancel");
+		              	}
+		              	else
+			            {
+			        		ui.item.attr('data-pid',$(this).parent().attr('id')) ;
+			        	}
+		        	}
+	  			});
+			}
+			else
+			{
+				omflowAlert('red', data.message);
+			}
+		}
+		
+		function create_folder(d){
+			$('#modal-folder .modal-title').empty();
+			$('#modal-folder input[name="folder_name"]').val('');
+			$('#modal-folder input[name="folder_icon"]:first').prop('checked','true');
+			
+			var pos = '';
+			var pid = '';
+			if (d == 'basic')
+			{ 
+				pos = $('.box-body');
+				pid = '';
+			}
+			else
+			{
+				pos = $(d).closest('li');
+				pid = $(d).closest('li').attr('id'); 
+			}
+			$('#modal-folder .modal-title').append('<i class="fa fa-plus"></i>&nbsp;新增資料夾')
+			$('#modal-folder').modal('show');
+			$('#modal-folder button:eq(2)').off('click').on('click', function(){
+				var name = $('#modal-folder input[name="folder_name"]').val();
+				if (name == null | name.length != 0)
+				{
+					listcount++;
+					var icon = $('#modal-folder input[name="folder_icon"]:checked').val();
+					pos.find('ul:first').append(
+						 '<li class="mysort" id="custom_'+listcount+'" data-pid="'+pid+'" data-flowuuid="custom"><i class="fa fa-'+icon+'"></i>&nbsp;<span>'+name+'</span>' 
+						 +'<button class="btn btn-box-tool pull-right" onclick="delete_folder(this)"><i class="fa fa-remove"></i></button>'
+						 +'<button class="btn btn-box-tool pull-right" onclick="manage_folder(this)"><i class="fa fa-gear"></i></button>'
+						 +'<button class="btn btn-box-tool pull-right" onclick="create_folder(this)"><i class="fa fa-plus"></i></button>'
+						 +'<ul class="cusconnect" style="list-style-type:none;padding:10px 0px;"></ul>'
+						 +'</li>');
+					$( "ul.cusconnect").sortable({
+		  				connectWith: [".defaultconnect",".cusconnect"],
+				      	placeholder: "ui-state-highlight",
+				      	opacity: 0.9,
+				      	receive: function(event, ui) {
+				            if(ui.item.hasClass("defaultlist"))
+				            {
+				            	ui.sender.sortable("cancel");
+				            }
+				            else
+				            {
+				        		ui.item.attr('data-pid',$(this).parent().attr('id')) ;
+				        	}
+			        	}
+			        	
+	  				});
+	  				$( "ul.defaultconnect").sortable({
+	  					connectWith: [".defaultconnect",".cusconnect"],
+				      	placeholder: "ui-state-highlight",
+				      	opacity: 0.9,
+				      	receive: function(event, ui) {
+				      		ui.item.attr('data-pid','') ;
+				      	}
+	  				});
+	  			}
+	  			else
+	  			{
+	  				omflowAlert('yellow', '請輸入資料夾名稱',nothing,' ');
+	  				function nothing(){};
+	  			}
+			});
+		}
+		
+		function manage_folder(d){
+			var icon = $(d).closest('li').children('i').attr('class').replace(/fa fa-/,'');
+			var name = $(d).closest('li').children('span').text();
+			$('#modal-folder .modal-title').empty().append('<i class="fa fa-'+icon+'"></i>&nbsp;'+name+'')
+			$('#modal-folder input[name="folder_name"]').val(name);
+			$('#modal-folder input[value="'+icon+'"]').prop('checked','true');
+			
+			$('#modal-folder').modal('show');
+			$('#modal-folder button:eq(2)').off('click').on('click', function(){
+				var newname = $('#modal-folder input[name="folder_name"]').val();
+				var newicon = $('#modal-folder input[name="folder_icon"]:checked').val();
+				
+				$(d).closest('li').children('span').text(newname);
+				$(d).closest('li').children('i').attr('class','fa fa-'+newicon);
+			});
+		}
+		
+		function delete_folder(d){
+			if ($(d).closest('li').find('li').hasClass('myflow'))
+			{
+				omflowAlert('blue', ' 資料夾中尚有表單/流程，請移出流程後再刪除資料夾', '','')
+			}
+			else
+			{
+				$(d).closest('li').remove();
+			}
+		}
+		
+		function store(){
+			Swal.fire({
+			  title: '處理中...',
+			  toast: true,
+			  position: 'bottom-start',
+			  showConfirmButton: false,
+			});
+			Swal.showLoading();
+			designArr = [];
+			$.each($('ul.defaultconnect li'),function(index,value){
+				designJson = {};
+				designJson['id'] = $(value).attr('id');
+				designJson['p_id'] = $(value).attr('data-pid');
+				designJson['name'] = $(value).children('span').text().trim();
+				designJson['flow_uuid'] = $(value).data('flowuuid');
+				designJson['icon'] = $(value).children().attr('class').replace(/fa fa-/,'');
+				designArr.push(designJson)
+			})
+			var postdata = {csrfmiddlewaretoken:csrfmiddlewaretoken, format: JSON.stringify(designArr)}
+			omflowJsonAjax(postdata, '{% url "updateSidebarDesignAjax" %}', actions)
+		}
+		function actions(data)
+		{
+			Swal.close();
+			if(data.status == 200)
+			{
+				Swal.fire({
+		      	  icon : 'success',
+		      	  title: data.message,
+		      	  toast: true,
+			  	  position: 'bottom-start',
+			  	  showConfirmButton: false,
+		      	  timer: 2000,
+	  		    });
+	  		    LSide();
+			}	
+			else if (data.status == 404)
+			{
+				omflowAlert('yellow', data.message);
+			}
+			else if (data.status == 500)
+			{
+				omflowAlert('blue', data.message);
+			}
+			else if (data.status == 403)
+			{
+				omflowAlert('red', data.message);
+			}
+		}
+	</script>
+{% endblock%}

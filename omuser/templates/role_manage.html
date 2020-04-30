@@ -1,0 +1,218 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %} 
+{% block content %}
+<!-- 
+	role_manage.html roleManagePage
+	author : Pei lin
+-->
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        {% trans '權限角色管理' %}
+        <small id="tt"></small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="{% url 'homePage' %}"><i class="fa fa-dashboard"></i>{% trans '首頁' %}</a></li>
+        <li><a href="#">{% trans '人員管理' %}</a></li>
+        <li><a href="/accounts/page/role-management/">{% trans '權限角色管理' %}</a></li>
+      </ol>
+    </section>
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+       <!-- column -->
+        <div class="col-xs-12">
+	      <div class="box box-primary">
+	        <div class="box-header with-border">
+	          <!-- Check all button -->
+	          <button type="button" title="建立新角色" class="btn btn-default" onclick="create_role()" aria-label="建立新角色" style="margin:1px 0px;display:None;" id="create_role_button"><i class="fa fa-plus"></i> {% trans '建立' %}</button>
+			  <button type="button" title="刪除選擇角色"class="btn btn-default" onclick="delete_role()" style="margin:1px 0px;display:None;" id="delete_role_button"><i class="fa fa-trash-o"></i> {% trans '刪除' %}</button>
+			  <button type="button" title="{% trans '篩選腳色' %}" class="btn btn-default " onclick="filter_role()" id="filter_role" style="margin:1px 0px;"><i class="fa fa-filter"></i>{% trans ' 篩選' %}</button>
+			  <button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default " onclick="filter_default()" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
+	        </div>
+	        <!-- /.box-header -->
+	        <div class="box-body">
+              <table id="rolelist" class="table table-bordered table-striped table-hover">
+                <thead>
+                  <tr>
+                  	<th></th>
+                  	<th>{% trans '編號' %}</th>
+                  	<th>{% trans '權限角色' %}</th>
+                  	<th>{% trans '說明' %}</th>
+{#                  	<th></th>#}
+	              </tr>
+                </thead>
+              </table>
+            </div>
+            <!-- /.box-body -->
+	      </div>
+	      <!-- /.box -->
+        </div>
+        <!--/.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    
+    <style>
+		table tr{
+		  cursor:pointer;
+		}
+	</style>
+    <script>
+    var rolename = [];
+    var csrfmiddlewaretoken = "{{ csrf_token }}"
+    var table;
+    var data_tmp;
+	var data_len;
+	var data_page;
+    $(function(){
+    	table = $('#rolelist').DataTable({
+    		"autoWidth": false,
+    		"order": [[ 1, "asc" ]], 
+    		"dom":"<<t>'row'<'col-sm-5'i><'col-sm-7'p>>",
+    		"serverSide": true,
+    		"ajax": {
+           		"url": "{% url 'listGroupAjax' %}",
+            	"type": "POST",
+            	"data": {"csrfmiddlewaretoken": "{{ csrf_token }}", "datatable": "True", "functional_flag": "True"},
+            	"dataSrc": function(data){
+						a = dataCompare(data,data_tmp,data_len,data_page,table);
+						data_tmp = a['data_tmp']
+						data_len = a['data_len']
+						data_page = a['data_page']
+						data.data = a['data.data']
+						return data.data;
+					},
+				"error": function(xhr,status,error){
+							clearInterval(table_routine);
+					}
+        	}, 
+        	"columns": [
+        		{"data": "display_name", "width": "15px", "orderable": false, "render": function(data)
+        			{return '<input type="checkbox" data-name="checkbox" class="icheckbox_minimal-blue" id="'+data+'" value="'+data+'" data-value="'+data+'" disabled="disabled"><label for="'+data+'"></label>'}
+        		},
+        		{"data": "id", "width": "30px"},
+                {"data": "display_name", "width": "30%"},
+        		{"data": "description", "orderable": false},
+{#        		{"data": "id", "width": "15px", "orderable": false, "render": function(data, type, row)#}
+{#                	{return '<a href="/accounts/page/role-detail/'+data+'/" title="編輯'+row.name+'" style="color:black;"><i class="fa fa-fw fa-edit" style="color:SteelBlue"></i></a>'}#}
+{#                }#}
+        	],
+        	"language": __const_language__,
+        	rowCallback: function( row, data ) {
+			      $('td:not(:eq(0))', row).attr('onclick', 'javascript:location.href="/accounts/page/role-detail/'+data.id+'"')
+			},
+        	drawCallback: function (data) {
+        		$.each(data.aoData, function(index, value){
+        			rolename.push(value._aData);
+        		});
+    			check_permission();
+    		}
+    	});    
+    	$('.select2').select2({
+  			theme: "classic"
+  		});
+    
+    });
+    
+    function check_permission()
+    {
+    	{#如果沒OmGroup_Add權限，將隱藏新增角色按鈕#}
+      	{% if perms.omuser.OmGroup_Add %}
+			$('#create_role_button').show();
+		{% endif %}
+		{#如果沒OmGroup_Delete權限，將隱藏刪除角色按鈕#}
+		{% if perms.omuser.OmGroup_Delete %}
+			$('#delete_role_button').show();
+		{% endif %}
+    }
+    function filter_role()		
+	{
+		omflowFilter(['filter_search','filter_length']);
+		$('#modal-default-filter-confirm').off("click").on("click",function(){
+			var searchkey = $.trim($('#modal-default-filter #search').val());
+			var page_length = $('#modal-default-filter #page_length').val();
+			table.page.len(page_length);
+			table.search(searchkey).draw();	
+		});
+	}
+	function filter_default()
+	{
+		table.page.len(10);
+		table.search('');
+		table.draw();
+	}
+    function create_role()
+	{
+		$('#create_role').val('');
+		$('#create_role_description').val('');
+		$('#modal-create-role').modal('show');
+		$('#modal-create-role button:eq(2)').off("click").on("click",function(){
+			var postdata = {};
+			postdata['csrfmiddlewaretoken']="{{ csrf_token}}";
+			postdata['group_name']=$('#create_role').val();
+			postdata['functional_flag_%B']="True";
+			postdata['p_id']="";
+			postdata['description']=$('#create_role_description').val();
+			$('#modal-create-role').on('hidden.bs.modal', function () {
+				omflowJsonAjax(postdata, '{% url 'addGroupAjax'%}', actions);
+				Swal.fire({
+				  title: '處理中...',
+				  toast: true,
+				  position: 'bottom-start',
+				  showConfirmButton: false,
+				});
+				Swal.showLoading();
+				$('#modal-create-role').off('hidden.bs.modal');
+			});
+		});
+	}
+	function delete_role()
+	{
+		omflowListDialogue("delete", "{% trans '下列角色將被刪除' %}")
+		$('#modal-default-list button:eq(2)').off("click").on("click",function(){
+			var postdata = {
+				csrfmiddlewaretoken : csrfmiddlewaretoken,
+				group_name			: []
+			};
+			$.each($('.table input:checkbox:checked'), function(){
+				postdata.group_name.push($(this).val());
+			});
+			$('#modal-default-list').on('hidden.bs.modal', function () {
+				omflowJsonAjax(postdata, '{% url 'deleteGroupAjax'%}', actions);
+				Swal.fire({
+				  title: '處理中...',
+				  toast: true,
+				  position: 'bottom-start',
+				  showConfirmButton: false,
+				});
+				Swal.showLoading();
+				$('#modal-default-list').off('hidden.bs.modal');
+			});
+		});
+	}
+	function actions(data)
+	{
+		Swal.close();
+		if(data.status == 200)
+		{	
+			table.draw();
+			Swal.fire({
+	      	  icon : 'success',
+	      	  title: data.message,
+	      	  toast: true,
+		  	  position: 'bottom-start',
+		  	  showConfirmButton: false,
+	      	  timer: 2000,
+  		    });
+		}	
+		else
+		{	
+			omflowAlert('yellow', data.message);
+		}
+	}
+	var table_routine = setInterval(function(){ table.draw();}, {{user.frequency}}*1000);
+    </script>
+
+{% endblock %}
