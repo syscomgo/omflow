@@ -55,6 +55,7 @@ omflow的流程引擎是使用Python+Django開發,這代表除了方便的流程
 *  Django 2.2 以上的版本
 
 *  至少需要 1 Core 的 CPU , 1G的RAM , 和至少1GB以上的硬碟空間.
+*  若您的 Python 為 3.5 或以下版本，Django 請使用2.X版.
 
 安裝及啟用
 ===========
@@ -62,17 +63,12 @@ omflow的流程引擎是使用Python+Django開發,這代表除了方便的流程
 下載檔案後,解壓縮到指定的資料夾
 
 <pre><code>
+#安裝Python
 #安裝Django  
 pip install django  
 
-#安裝ldap3(非必要)  
-pip install ldap3  
-
-#建立omflow專案
-django-admin.py startproject omflow  
-
-#將解壓縮的omflow檔案貼到資料夾內,然後啟動omflow  
-manage.py runserver  
+#使用解壓縮的omflow檔案內的manage.py啟動omflow  
+python manage.py runserver  
 
 </code></pre>
 
