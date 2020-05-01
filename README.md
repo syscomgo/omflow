@@ -25,7 +25,7 @@ omflow的流程引擎是使用Python+Django開發,這代表除了方便的流程
 *  系統設定 `system config`
 
 
-畫面截圖
+畫面截圖(screenshot)
 =================
 
 <img width="594" src="https://raw.githubusercontent.com/syscomgo/omlib/master/screenshot/dashboard.png">
@@ -37,7 +37,7 @@ omflow的流程引擎是使用Python+Django開發,這代表除了方便的流程
 
 
 
-軟硬體需求
+軟硬體需求(Hardware and Software Requirement)
 =================
 
 *  支援Windows以及Linux系統 `support windows and linux system`
@@ -91,7 +91,7 @@ omflow是由`凌群電腦股份有限公司 <https://www.syscom.com.tw>`開發�
    `You can distribute and modify the source code, provided that you distribute all modifications under the GPLv3 as well.`   
 *  免費版本(Free License)  
    免費版本非GPL授權,包含資料收集以及服務管理等更多的功能，個人及學術機構與評估用途免費使用.  
-   `Complete functions , free license for personal, educational or evaluation use.`  
+   `Complete functions , installer package version download from syscomgo website , free license for personal, educational or evaluation use.`  
 *  商業版本(Enterprise License)
    用於商業目的或企業，組織，政府或教育機構  
    `for commercial purposes or to operate or run a business, organization, governmental organization, or education institution`  
