@@ -92,7 +92,7 @@ omflow是由`凌群電腦股份有限公司 <https://www.syscom.com.tw>`開發�
 *  免費版本(Free License)  
    免費版本非GPL授權,包含資料收集以及服務管理等更多的功能，個人及學術機構與評估用途免費使用.  
    `Complete functions , installer package version download from syscomgo website , free license for personal, educational or evaluation use.`  
-*  商業版本(Enterprise License)
+*  企業版本(Enterprise License)
    用於商業目的或企業，組織，政府或教育機構  
    `for commercial purposes or to operate or run a business, organization, governmental organization, or education institution`  
   
