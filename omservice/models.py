@@ -30,5 +30,5 @@ class OmServiceDesign(models.Model):
     class Meta:
         default_permissions = ()
         permissions = (
-            ("OmServiceDesign_Manage", _('管理服務請求')),
+            ("OmServiceDesign_Manage", _('服務請求管理')),
         )

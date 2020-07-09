@@ -45,6 +45,25 @@
 	</div>
     <!-- /.modal -->
     
+    <!-- Confirm-Modal -->
+    <div class="modal fade" id="modal-default-confirm" data-backdrop="static">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title"><i></i>&nbsp;<span></span></h4>
+		  </div>
+		  <div class="modal-body" style="padding:20px;"></div>
+		  <div class="modal-footer">
+			<button type="button" data-dismiss="modal" class="btn btn-default pull-left">{% trans '取消' %}</button>
+			<button type="button" data-dismiss="modal" class="btn btn-primary">{% trans '確認' %}</button>
+		  </div>
+		</div>
+	  </div><!-- /.modal-content -->
+	</div>
+    <!-- /.modal -->
+    
     <!-- filter-Modal -->
 	<div class="modal fade" id="modal-default-filter" data-backdrop="static">
 	  <div class="modal-dialog">
@@ -66,74 +85,6 @@
 	  </div><!-- /.modal-content -->
 	</div>
 	
-	<!-- create-Modal -->
-	<div class="modal fade" id="modal-create-group" data-backdrop="static">
-	  <div class="modal-dialog">
-		<div class="modal-content">
-		  <div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-			  <span aria-hidden="true">&times;</span></button>
-			<h4 class="modal-title" id="modal-create-group-title"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增組織</h4>
-		  </div>
-		  <div class="modal-body">
-		    <div class="form-group">
-              <label>選擇所屬組織</label>
-              <select class="form-control select2" style="width: 100%;" id="modal-create-group-text">
-	              </select>
-            </div>
-            <!-- /.form-group -->
-            <div class="form-group">
-          	  <label>{% trans '新建組織名稱' %}</label>
-          	  <input type="text" name="group" id="create_group" class="form-control" placeholder="{%trans '組織名稱'%}" required="true"/>
-            </div>
-            <!-- /.form-group -->
-            <div class="form-group">
-          	  <label>{% trans '組織說明' %}</label>
-          	  <input type="text" name="description" id="create_group_description" class="form-control" placeholder="{%trans '組織說明'%}"/>
-            </div>
-            <!-- /.form-group -->
-		  </div>
-		  <div class="modal-footer">
-			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
-			<button type="button" class="btn btn-primary" data-dismiss="modal">確定</button>
-		  </div>
-		</div>
-	  </div><!-- /.modal-content -->
-	</div>
-	
-	<!-- create-role-Modal -->
-	<div class="modal fade" id="modal-create-role" data-backdrop="static">
-	  <div class="modal-dialog">
-		<div class="modal-content">
-		  <div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-			  <span aria-hidden="true">&times;</span></button>
-			<h4 class="modal-title" id="modal-create-role-title"><i class="fa fa-plus"></i>&nbsp;&nbsp;建立權限角色</h4>
-		  </div>
-		  <div class="modal-body">
-			  <div class="row">
-	            <div class="col-md-12">
-	              <div class="form-group">
-	              	<label>角色名稱</label>
-	              	<input type="text" name="create_role" id="create_role" class="form-control" placeholder="{%trans '角色名稱'%}" required="true"/>
-	              </div>
-	              <div class="form-group">
-	              	<label>說明</label>
-	              	<input type="text" name="create_role_description" id="create_role_description" class="form-control" placeholder="{%trans '說明'%}" required="true"/>
-	              </div>
-	              <!-- /.form-group -->
-	            </div>
-	            <!-- /.col -->
-	          </div>
-	          <!-- /.row -->
-		  </div>
-		  <div class="modal-footer">
-			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
-			<button type="button" class="btn btn-primary" data-dismiss="modal">確定</button>
-		  </div>
-		</div>
-	  </div><!-- /.modal-content -->
-	</div>
 	
 	<!-- user-group-list-Modal -->
 	<div class="modal fade" id="modal-user-group-list" data-backdrop="static">
@@ -322,51 +273,6 @@
       </div>
 	</div>
 	
-	<div class="modal fade" id="modal-flow-edit">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-            <h4 class="modal-title"></h4>
-          </div>
-          <div class="modal-body">
-			<ul class="list-group list-group-unbordered">
-			  <li class="list-group-item" name="select_version">
-				<div class="form-group">
-		          <label class="text-light-blue">選擇版本 :</label>
-		          <br>
-				  <select id="flow_version" class="form-control">
-				  </select>
-				</div>
-			  </li>
-			  <li class="list-group-item">
-				<div class="form-group">
-				  <label >流程名稱</label>
-				  <br>
-				  <input type="text" name="flow_name" class="form-control" readonly>
-				</div>
-				<div class="form-group">
-				  <label>說明</label>
-				  <br>
-				  <textarea rows="3" name="description" class="form-control" style="resize:none;" readonly></textarea>
-				</div>
-				<div class="form-group">
-				  <label>備註</label>
-				  <br>
-				  <textarea rows="3" name="notes" class="form-control" style="resize:none;" readonly></textarea>
-				</div>
-			  </li>
-			</ul>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
-            <button type="button" class="btn btn-primary" data-dismiss="modal">確定</button>
-          </div>
-		</div>
-      </div>
-	</div>
 	
 	<div class="modal fade" id="modal-note">
       <div class="modal-dialog">

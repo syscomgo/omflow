@@ -42,9 +42,7 @@
 	                    </span>
 	            </div>
 	            <div class="col-md-2" style="padding: 0px 0px 0px 5px;">
-	            	<ul id="ServiceList">
-	            		<li id='ID_0' data-idx=0 onclick="ServiceRoot_input(0)"><label>{% trans '全部'%}</label></li>
-	            	</ul>
+	            	<ul id="ServiceList"></ul>
 	            </div>
 	      	    <div class="col-md-10" style="padding: 0px 30px 0px 0px;">
 	      	    	<div id="ServiceRoot" class="omflow-box-body" style="overflow:auto;padding-top:5px;"></div>
@@ -66,6 +64,7 @@
 	 */
 	//18N_translation
     var const_home = "{% trans '首頁'%}",
+    	const_all = "{% trans '全部'%}",
     	const_service = "{% trans '服務請求'%}",
     	const_folder = "{% trans '資料夾'%}",
     	const_hr = "{% trans '分隔線'%}",
@@ -96,12 +95,16 @@
 		const_choice_file = "{% trans '選擇檔案'%}",
 		const_remind_tip = "{% trans '輸入提示說明'%}",
 		const_none_user = "{% trans '不預選受派人'%}",
-		const_none_column = "{% trans '已新增所有欄位'%}";
+		const_none_column = "{% trans '已新增所有欄位'%}",
+		const_delete_service = "{% trans '移除服務' %}",
+		const_deleting_1 = "{% trans '即將移除「 '%}",
+		const_deleting_2 = "{% trans ' 」，是否繼續？ '%}";
     
     //global_parameters
 	var box_container = 0; //action container id
 	var box_object = box_object();
 	var form_object = null;
+	var form_list = null;
 	var column_object = {};
 	var old_box_object = "";
 	var textFile = null; //設計檔案
@@ -271,10 +274,11 @@
 	
 	$(function(){
 		ServiceRoot_load();
+		Grid_listForm();
+		//console.log($('.content-wrapper').height()-$('.content-header').height()-50+'px');
 		$('.box-primary').css('min-height', $('.content-wrapper').height()-$('.content-header').height()-50+'px');
 		//檢查容量
 		$('body').change(' #attachment_input',function(evt){
-			//console.log('attachment_input');
 			if(evt.target.files==undefined)
 				return;
 			var output = [];
@@ -336,38 +340,19 @@
     //產生初始儀表板物件
 	function box_object(){
 		var output = {};
-		//output["width"] = 500;
-		//output["height"] = 500;
 		output["index"] = 1;
 		output["list"] = {};
 		output["tree"] = {0:[]};
+		output["sort"] = [0];
 		return output;
 	}
 	
-    //根據現況重組tree物件
-	function build_object_tree(){
-		thisTree = searchfloor([],'ServiceRoot');
-		function searchfloor(tree,id){
-			$('#'+id+'>[id^=ID_]').each(function(i){
-				var item = {};
-				item["id"] = $(this).attr('id').substr(3,$(this).attr('id').length);
-				if($(this).find('[id^=ID_]').length>0){
-					subtree = searchfloor([],"CONTENT_"+item["id"]);
-					item["tree"] = subtree;
-				}
-				tree.push(item);
-			});
-			return tree;
-		}
-		box_object.tree = thisTree;
-	}
-    
     function ServiceRoot_input(item_id){
     	if(item_id!=0 && typeof(box_object.list[item_id])=="undefined")
     		return;
 		$('#ServiceRoot').empty();
 		box_container = item_id;
-		var keyword = arguments[1]? $("#service_keyword").val() : false;
+		var keyword = arguments[1]? $("#service_keyword").val().toLowerCase() : false;
 		//重設路徑
 		setPath(item_id);
 		//設定active
@@ -379,7 +364,7 @@
 			$.each(box_object.tree[box_container],function(idx,thisID){
 				$.each(box_object.list,function(key,thisObj){
 					if(thisObj.id==thisID && thisObj.type!="folder" 
-					&& ( thisObj.setting.setTitle.indexOf(keyword)>=0 || thisObj.setting.setTip.indexOf(keyword)>=0))
+					&& ( thisObj.setting.setTitle.toLowerCase().indexOf(keyword)>=0 || thisObj.setting.setTip.toLowerCase().indexOf(keyword)>=0))
 						box_new_item(thisObj,'ServiceRoot');
 				});
 			});
@@ -410,16 +395,17 @@
 		read_mode = false;
 		$(".readHide").show();
 		$(".borderHide").removeClass("no-border-top");
-		$('#ServiceRoot [id^=ID_]').prop( "draggable" , true );
+		$('#ServiceRoot div[id^=ID_]').prop( "draggable" , true );
+		$('#ServiceList li[id^=ID_]').prop( "draggable" , true );
 		$("#ServiceRoot .btn-box-tool").show();
 		$("#ServiceList .btn-box-tool").show();
 		//$(".box-header .pull-left").visible();
 		//$(".box-header").show();
 		$("#read-mode_edit").hide();
-		$("#edit-mode_save").show('fade');
-		$("#edit-mode_cancel").show('fade');
-		$("#edit-mode_addS").show('fade');
-		$("#edit-mode_addF").show('fade');
+		$("#edit-mode_save").show();
+		$("#edit-mode_cancel").show();
+		$("#edit-mode_addS").show();
+		$("#edit-mode_addF").show();
 		//$("#edit-mode_import").show();
 		//$("#edit-mode_export").show();
 	}
@@ -428,10 +414,11 @@
 		$(".readHide").hide();
 		$(".borderHide").addClass("no-border-top");
 		$('#ServiceRoot div[id^=ID_]').prop( "draggable" , false );
+		$('#ServiceList li[id^=ID_]').prop( "draggable" , false );
 		$("#ServiceRoot .btn-box-tool").hide();
 		$("#ServiceList .btn-box-tool").hide();
 		//$(".box-header .pull-left").invisible();
-		$("#read-mode_edit").show('fade');
+		$("#read-mode_edit").show();
 		$("#edit-mode_save").hide();
 		$("#edit-mode_cancel").hide();
 		$("#edit-mode_addS").hide();
@@ -440,55 +427,64 @@
 		//$("#edit-mode_export").hide();
 	}
     function ServiceRoot_load(){
-		var postbody = {csrfmiddlewaretoken:csrfmiddlewaretoken};
+		var postbody = {};
 		var callback = function(){
 			data = arguments[0];
 			if (data.status==200){
 				box_object = data.result[0]?JSON.parse(data.result[0].content):box_object;
-				$.each(box_object.list,function(item_id,thisSer){
-					//thisSer.flow_uuid = thisSer.flow_uuid.replace('-','');
-					if(item_id!=0 && thisSer.type=="folder"){
-						box_new_item(thisSer,'ServiceList');
-					}
-					else{
-						//thisSer.role = [];
-						//thisSer.default_value = [];
-						//thisSer.flow_uuid = "021c1e7bb46d4833a88b8fffdb688164";
-						//thisSer.setting.setRole=[-1];
-						
-					}
+				//console.log(box_object);
+				try{
+					ServiceRoot_build();
+				}catch(e){
+					$("#ServiceList").empty();
+					$("#ServiceRoot").empty();
+					box_object = {};
+                    box_object["index"] = 1;
+                    box_object["list"] = {};
+                    box_object["tree"] = {0:[]};
+                    box_object["sort"] = [0];
+                    ServiceRoot_build();
+				}
+				$(document).on('keypress',function(e) {
+				    if(e.which == 13 && $("#service_keyword").is(':focus') ) {
+				        Service_Search();
+				    }
 				});
-				
-				ServiceRoot_input(0);
-				old_box_object = JSON.stringify(box_object);
 			}
 			else
 			{actions(data)}
 		};
 		omflowJsonAjax(postbody,"{% url 'loadServiceAjax'%}",callback);
 	}
-	function ServiceRoot_save(){
-		old_box_object = JSON.stringify(box_object);
-		//console.log(box_object);
-		var postdata = {  csrfmiddlewaretoken: csrfmiddlewaretoken, content: JSON.stringify(box_object) };
-		$.ajax({
-			url: "{% url 'saveServiceAjax' %}",
-			type: 'post',
-			data: postdata,
-			success: function (data) {
-				if (data.status==200){
+	
+	function ServiceRoot_build(){
+		
+		//box_object.sort = [0,2,3];
+		if(typeof(box_object.sort)=='undefined'){
+			box_object.sort = [];
+			$.each(box_object.tree,function(key,list){
+				box_object.sort.push(key);
+			});
+		}
+		
+		$.each(box_object.sort,function(idx,item_id){
+			if(item_id==0){
+				$('#ServiceList').append('<li id="ID_0" data-idx=0 onclick="ServiceRoot_input(0)" draggable="true" ondragstart="boxdrag(event)" ondragover="boxAllowDrop(event)" ondrop="boxdrop(event,this)"><label>'+const_all+'</label></li>');
+			}else{
+				thisSer = box_object.list[item_id];
+				if(thisSer.type=="folder"){
+					box_new_item(thisSer,'ServiceList');
 				}
-				else
-				{actions(data)}
-			},
-			error: function(req, status, err) {
-				$('#modal_error').modal('show');
-				console.log('Something went wrong', status, err);
-			},
-			complete: function(){
-			    
 			}
 		});
+		ServiceRoot_input(0);
+		old_box_object = JSON.stringify(box_object);
+	}
+	function ServiceRoot_save(){
+		old_box_object = JSON.stringify(box_object);
+		var postdata = { content: JSON.stringify(box_object) }
+		var callback = function(){};
+		omflowJsonAjax(postdata,"{% url 'saveServiceAjax'%}",callback);
 		DO_readmode();
 	}
 	function ServiceRoot_cancel(){
@@ -520,9 +516,13 @@
 		$.each($(".omflow-board"),function(idx,thisDom){
 			box_object.tree[box_container].push(parseInt($(thisDom).attr("id").substring(3)));
 		});
+		
+		box_object.sort = [];
+		$.each($("#ServiceList li"),function(idx,thisDom){
+			box_object.sort.push(parseInt($(thisDom).attr("id").substring(3)));
+		});
 	}
 	
-	//
 	function add_service(){
 		Grid_listForm();
 		$("#modal-service-new").modal('show');
@@ -530,16 +530,17 @@
     //區塊-新增區塊
     function add_object(){
     	var type = arguments[0];
+    	var flow_uuid = $("#modal-service-new select").val();
     	switch(type){
 	    	case "service":
-	    		item = {
+	    		var item = {
 					id:box_object.index++,
 					type:type,
 					available:1,
 					belong:box_container,
-					flow_uuid:$("#modal-service-new select").val(),
+					flow_uuid:flow_uuid,
 					setting:{
-						setTitle:const_service,
+						setTitle:$("#modal-service-new option[value="+flow_uuid+"]").text(),
 						setTip:const_tip,
 						setIcon:"fas fa-edit",
 						setColor:0,
@@ -559,11 +560,12 @@
 					},
 					default_value:[]
 				}
+				
 			box_new_item(item,'ServiceRoot');
 			$("#modal-service-new").modal("hide");
 	    	break;
 	    	case "folder":
-	    		item = {
+	    		var item = {
 					id:box_object.index++,
 					type:type,
 					belong:0,
@@ -574,7 +576,103 @@
 			box_new_item(item,'ServiceList');
 	    	break;
     	}
+	}
+	
+	//窗格-判斷為刪除或移動
+	function box_button_remove_item_confirm(item_id){
+		var item = box_object.list[item_id];
+		if( $('#ID_0').hasClass('active') ){
+			var callback = function(){
+				box_button_remove_item(item_id);
+			};
+			var icon = "fa fa-trash-o";
+			var title = const_delete_service;
+			var content = const_deleting_1+item.setting.setTitle+const_deleting_2;
+			omflowConfirmDialogue(icon,title,content,callback);
+		}else{
+			$('#ID_' + item_id).remove();
+			box_resetGroup(item,0,true);
+		}
+	}
+	
+	//窗格-移除 NEWTYPE //待整理  刪除物件 要在兩個tree跟list
+	function box_button_remove_item(item_id){
+		var item = box_object.list[item_id];
+		function delObj(this_id){
+			//移除list
+			delete box_object.list[this_id];
+			//移除tree[0]
+			var idx = $.inArray( parseInt(this_id), box_object.tree[0]);
+		    if( idx!=-1 ){
+		    	box_object.tree[0].splice(idx,1);
+		    }
+		    //移除Dom
+			$('#ID_' + item_id).remove();
+		}
 		
+		
+		//如果是資料夾
+		//if(typeof(box_object.tree[item_id])!='undefined'){
+		console.log(item.type);
+		if( item.type=='folder'){
+    		//console.log('tree');
+    		//移除sort
+    		var sortIdx = $.inArray( parseInt(item_id), box_object.sort);
+    		if(sortIdx!=-1){
+	    		//console.log('sort');
+			    box_object.sort.splice(sortIdx,1);
+    		}
+    		
+    		//$.each( box_object.tree[item_id], function(idx,thisIdx){
+    			//delObj(thisIdx);
+    		//});
+    		delete box_object.tree[item_id];
+    		delObj(item_id);
+    		ServiceRoot_input(0);
+    	}else{
+    		delObj(item_id);
+			//每個tree刪除該物件
+	    	$.each( box_object.tree, function(tree_id,thisList){
+	    		var idx = $.inArray( parseInt(item_id), thisList);
+			    if( idx!=-1 ){
+			    	thisList.splice(idx,1);
+			    }
+	    	});
+    	}
+	}
+	
+	function box_move_item(item,target_id){
+		if( $('#ID_'+target_id).hasClass('active') ){
+		
+		}else if($('#ID_0').hasClass('active')){
+			box_resetGroup(item,target_id,false);
+		}else{
+			$('#ID_' + item.id).remove();
+			box_resetGroup(item,target_id,true);
+		}
+	}
+	
+	function box_resetGroup(item,target_id,leave){
+		//當前資料夾移除該服務
+		if(leave){
+			var idx = $.inArray( parseInt(item.id), box_object.tree[box_container]);
+		    if( idx!=-1 ){
+		    	box_object.tree[box_container].splice(idx,1);
+		    }
+		}
+		if(typeof(box_object.tree[target_id])!="undefined"){
+			if($.inArray(item.id,box_object.tree[target_id])==-1)
+				box_object.tree[target_id].push(item.id);
+		}else{
+			box_object.tree[target_id]=[item.id];
+		}
+		//判斷root有沒有
+		if(typeof(box_object.tree[0])!="undefined"){
+			if($.inArray(item.id,box_object.tree[0])==-1)
+				box_object.tree[0].push(item.id);
+		}else{
+			box_object.tree[0]=[item.id];
+		}
 	}
 	
 	//區塊-新增窗格-執行 NEWTYPE
@@ -599,20 +697,32 @@
 	    var drag = ' draggable="true" ondragstart="boxdrag(event)" ondragover="boxAllowDrop(event) "';
 	    var drop = ' ondrop="boxdrop(event,this)" ';
 	    var display_mode = '';
-	    var config_button = '<button type="button" class="btn btn-box-tool pull-right" style="z-index:51;" onclick="box_active_item(\'_p_id_\',\'_item_type_\')" '+display_mode+'><i class="fa fa-gear"></i></button>';
-	    var	remove_button = '<button type="button" class="btn btn-box-tool pull-right" style="z-index:51;" onclick="box_button_remove_item(\'_p_id_\')" '+display_mode+'><i class="fa fa-remove"></i></button>';
+	    var config_button = '<button type="button" class="btn btn-box-tool pull-right" style="z-index:51; padding:0px 5px;" onclick="box_active_item(\'_p_id_\',\'_item_type_\')" '+display_mode+'><i class="fa fa-gear"></i></button>';
+	    var	remove_button = '<button type="button" class="btn btn-box-tool pull-right" style="z-index:51; padding:0px 5px;" onclick="box_button_remove_item_confirm(\'_p_id_\')" '+display_mode+'><i class="fa fa-remove"></i></button>';
 	    var	add_button = '<button type="button" class="btn btn-box-tool pull-right" style="z-index:51;" onclick="box_button_add_item(\'_p_id_\',\'_item_type_\')" '+display_mode+'><i class="fa fa-plus"></i></button>';
 	    
 	    switch(item.type)
 	    {
 	        case 'folder':
-	        	var li_config_button = '<button type="button" class="btn btn-box-tool pull-right move-in" style="z-index:51;" onclick="box_button_config_item(\'_p_id_\',\'_item_type_\')" '+display_mode+'><i class="fa fa-gear"></i></button>';
-	    		var	li_remove_button = '<button type="button" class="btn btn-box-tool pull-right move-in" style="z-index:51;" onclick="box_button_remove_item(\'_p_id_\')" '+display_mode+'><i class="fa fa-remove"></i></button>';
-		    	content = '<li id="ID__p_id_" data-idx=_p_id_ onclick="ServiceRoot_input('+item.id+')"><label id="TITLE__p_id_">'+item.setting.setTitle+'</label>'+li_remove_button+li_config_button+'</li>'
+	        	var li_config_button = '<button type="button" class="btn btn-box-tool move-in pull-right" style="z-index:51;" onclick="box_button_config_item(\'_p_id_\',\'_item_type_\')" '+display_mode+'><i class="fa fa-gear"></i></button>';
+	    		var	li_remove_button = '<button type="button" class="btn btn-box-tool move-in pull-right" style="z-index:51;" onclick="box_button_remove_item(\'_p_id_\')" '+display_mode+'><i class="fa fa-remove"></i></button>';
+		    	content = '<li id="ID__p_id_" data-idx=_p_id_ ' + drag + drop + ' onclick="ServiceRoot_input('+item.id+')">'
+			    			+'<div class="omflow-box-header readHide move-in">&nbsp;'
+		                    + li_remove_button + li_config_button
+		                    +'</div>'
+		                    +'<label id="TITLE__p_id_">'+item.setting.setTitle+'</label>'
+		                    +'</li>';
+	        	//判斷有沒有
+				if(typeof(box_object.sort)!="undefined"){
+					if($.inArray(item.id,box_object.sort)==-1)
+						box_object.sort.push(item.id);
+				}else{
+					box_object.sort=[item.id];
+				}
 	        break;
 	        case 'service':
 	        	var width = 4;
-	            content ='<div id="ID__p_id_" class="col-md-'+width+' omflow-board move-down"' + drag + drop + ' style="margin-bottom: 0px;">'
+	            content ='<div id="ID__p_id_" data-idx=_p_id_ class="col-md-'+width+' omflow-board move-down"' + drag + drop + ' style="margin-bottom: 0px;">'
 						+'<div class="omflow-box-header readHide move-in"><p id="TITLE__p_id_"></p>'
 	                    + remove_button + config_button
 	                    +'</div>'
@@ -645,36 +755,6 @@
 		    	);
 	    	break;
 	    }
-	}
-    //窗格-移除 NEWTYPE //待整理  刪除物件 要在兩個tree跟list
-	function box_button_remove_item(item_id){
-		
-		var item = box_object.list[item_id];
-		
-		function delObj(this_id){
-			//移除list
-			delete box_object.list[this_id];
-			//移除tree[0]
-			var idx = $.inArray( parseInt(this_id), box_object.tree[0]);
-		    if( idx!=-1 ){
-		    	box_object.tree[0].splice(idx,1);
-		    }
-		    //移除Dom
-			$('#ID_' + item_id).remove();
-		}
-		//刪除tree
-		if(typeof(box_object.tree[item_id])!='undefined'){
-    		$.each( box_object.tree[item_id], function(idx,thisIdx){
-    			delObj(thisIdx);
-    		});
-    		delete box_object.tree[item_id];
-    		delObj(item_id);
-    		ServiceRoot_input(0);
-    	}else{
-    		delObj(item_id);
-    	}
-    	
-    	return false;
 	}
 	
 	//窗格-窗格互動
@@ -761,19 +841,26 @@
 		thisSetting = undefined;
 	}
 	function Grid_listForm(){
-		var postbody = {csrfmiddlewaretoken:csrfmiddlewaretoken};
-		var callback = function(){
-			data = arguments[0];
-			if (data.status==200){
-				thisSelect=$("#modal-service-new select[name=setForm]").empty();
-				$.each(data.result,function(key,value){
-					thisSelect.append($('<option value="'+key+'">'+value+'</option>'))
-				});
-			}
-			else
-			{actions(data)}
-		};
-		omflowJsonAjax(postbody,"{% url 'formServiceAjax'%}",callback);
+		if(form_list==null){
+			var callback = function(){
+				data = arguments[0];
+				if (data.status==200){
+					form_list = data.result;
+					thisSelect=$("#modal-service-new select[name=setForm]").empty();
+					$.each(form_list,function(key,value){
+						thisSelect.append($('<option value="'+key+'">'+value+'</option>'))
+					});
+				}
+				else
+				{actions(data)}
+			};
+			omflowJsonAjax({},"{% url 'formServiceAjax'%}",callback);
+		}else{
+			thisSelect=$("#modal-service-new select[name=setForm]").empty();
+			$.each(form_list,function(key,value){
+				thisSelect.append($('<option value="'+key+'">'+value+'</option>'))
+			});
+		}	
 	}
 	
 	
@@ -783,28 +870,42 @@
 		var thatDialog = $('#service-grid-config');
 		$.each(form_object.items,function(idx,thisCol){
 			if(thisCol.type.indexOf('box')!=0 && thatDialog.find('li[data-id='+thisCol.id+']').length==0){
-				if(thisCol.type=="h_group")
-					thisSelect.find('select').append('<option value='+thisCol.id+'>'+thisCol.config.group_title+'</option>');
-				else
-					thisSelect.find('select').append('<option value='+thisCol.id+'>'+thisCol.config.title+'</option>');
+				if(thisCol.type=="h_group"){
+					var require = thisCol.config.require ? true: thisCol.config.user_require ? true : false;
+					if(require)
+						thisSelect.find('select').append('<option style="color:red;" value='+thisCol.id+'>'+thisCol.config.group_title+'(必填)</option>');
+					else
+						thisSelect.find('select').append('<option value='+thisCol.id+'>'+thisCol.config.group_title+'</option>');
+				}else{
+					var require = thisCol.config.require ? true: false;
+					if(require)
+						thisSelect.find('select').append('<option style="color:red;" value='+thisCol.id+'>'+thisCol.config.title+'(必填)</option>');
+					else
+						thisSelect.find('select').append('<option value='+thisCol.id+'>'+thisCol.config.title+'</option>');
+				}
 			}
 		});
-		
+				
 		if(type=="default"){
 			thisSelect.find("button[name=normal-col]:eq(0)").hide();
 			thisSelect.find("button[name=default-col]:eq(0)").show();
 		}else{
 			if(form_object.attachment && thatDialog.find('li[data-id^="COL_UPLOAD"]').length==0)//表單允許上傳
 				thisSelect.find('select').append(
-					'<option value="COL_UPLOAD1" >'+const_upload_file+"("+const_require+")"+'</option>'+
+					'<option value="COL_UPLOAD1" >'+'強制上傳檔案'+'</option>'+
 					'<option value="COL_UPLOAD0" >'+const_upload_file+'</option>'
 					);
 			thisSelect.find("button[name=default-col]:eq(0)").hide();
 			thisSelect.find("button[name=normal-col]:eq(0)").show();
 		}
-		if(thisSelect.find('select option').length)
+		if(thisSelect.find('select option').length){
 			thisSelect.modal('show');
-		else
+			thisSelect.off('hidden.bs.modal');
+			thisSelect.on('hidden.bs.modal', function () {
+				thisSelect.off('hidden.bs.modal');
+			    $('.modal:visible').css('overflow','auto');
+			});
+		}else
 			actions({status:500, message:const_none_column});
 		//BindSwitchModal(thatDialog,thisSelect);
 		//BindSwitchModal(thisSelect,thatDialog);
@@ -816,8 +917,6 @@
 	
 		var thisItem = box_object.list[item_id];
 		var thisDialog = $('#service-grid-config').attr('name',item_id);
-		
-		thisDialog.find("#service-grid-title").text(thisItem.setting.setTitle);
 		thisDialog.find(".td-tab").empty();
 		thisDialog.find(".td-content").empty();
 		
@@ -825,24 +924,27 @@
 		var display="";
 		var readOnly="";
 		if(read_mode){
+			thisDialog.find("#service-grid-title").text(thisItem.setting.setTitle);
+		
 			readOnly = "readOnly"; //for步驟
 			display = "display:none;"; //for步驟
 			thisDialog.find(".cls_edit").hide();
 			thisDialog.find("#service-tab>ul").hide();
 			thisDialog.find("#service-tab").removeClass("nav-tabs-custom");
 		}else{
+			thisDialog.find("#service-grid-title").text(thisItem.setting.setTitle+" ( "+form_list[thisItem.flow_uuid]+" )");
+		
 			thisDialog.find(".cls_edit").show();
 			thisDialog.find("#service-tab>ul").show();
 			thisDialog.find("#service-tab").addClass("nav-tabs-custom");
 		}
 		//讀取formObj
-		var postbody = {csrfmiddlewaretoken:csrfmiddlewaretoken,flow_uuid:box_object.list[item_id].flow_uuid};
+		var postdata = { flow_uuid:box_object.list[item_id].flow_uuid };
 		var callback = function(){
 			data = arguments[0];
 			if (data.status==200 && data.result.formobject){
 				form_object = JSON.parse(data.result.formobject);
 				form_object.attachment = data.result.attachment;
-				//console.log(form_object);
 				column_object = {};
 				$.each(form_object.items,function(idx,thisCol){
 					if(thisCol.type.indexOf('box')!=0){
@@ -877,7 +979,7 @@
 					//thisDialog.find("#tab-step .td-content").append($('<div data-step="'+step_id+'" class="tabcontent"><textarea type="text" spellcheck="false" class="syscom-tip"'+readOnly+'></textarea><ul></ul></div>'));
 					thisDialog.find("#tab-step .td-content").append($('<div data-step="'+step_id+'" class="tabcontent"><ul class="tabcontent-ul"></ul><textarea type="text" placeholder="'+const_remind_tip+'" spellcheck="false" style="height:'+thisHeight+'px" class="syscom-tip"'+readOnly+'></textarea></div>'));
 					
-					Step_addCol(thisStep.column_list,step_id,null,thisTip);
+					Step_addCol(thisStep.column_list,step_id,null);
 					
 					thisRows = undefined;
 					thisHeight = undefined;
@@ -911,15 +1013,14 @@
 					$("#service-tab>ul>li:eq(0)").addClass("active");
 					$("#service-tab").tabs("option", "active", 0);
 				}
-					
-				thisDialog.modal('show');
+				HideBodyScrollModal(thisDialog);
 			}
 			else
 			{//actions(data)
 			}
 		};
 		
-		omflowJsonAjax(postbody,"{% url 'columnServiceAjax'%}",callback);
+		omflowJsonAjax(postdata,"{% url 'columnServiceAjax'%}",callback);
 	}
 	
 	//新增步驟
@@ -953,16 +1054,9 @@
 		var thisDialog = $("#service-grid-config");
 		var step_id = null!=arguments[1]? arguments[1]:thisDialog.find(".tablinks.active:eq(0)").data('step');
 		var thisTabContent = thisDialog.find('.tabcontent[data-step='+step_id+']:eq(0) .tabcontent-ul');
-		var thisTxtarea = thisDialog.find('.tabcontent[data-step='+step_id+']:eq(0) .syscom-tip');
 		var thisCol_List = arguments[0]? arguments[0] : [$("#modal-service-add-column select").val()];
 		var thisValue_List = arguments[2];
-		var thisTip = arguments[3];
 		
-		if(read_mode && !thisTip){
-			thisTxtarea.hide();
-		}else{
-			thisTxtarea.val(thisTip).show();
-		}
 		var moveable = read_mode?'':'cursor: move;';
 		$.each(thisCol_List,function(idx,Col_id){
 			if( Col_id=="level" || Col_id=="title" || Col_id=="status" || Col_id=="group")
@@ -986,7 +1080,7 @@
 		        );
 		        thisTabContent.after('<ul class="clearfix" id="attach_upload"></ul>');
 				
-			}else{
+			}else if(column_object[Col_id]){
 				var thisCol = column_object[Col_id];
 				var thisI = read_mode?'':'<i class="fa fa-remove column-remove" onclick="Remove_Column(\''+thisCol.id+'\')"></i>';
 				var require = thisCol.config.require ? '<font color="red"> *</font>':'';
@@ -1000,7 +1094,7 @@
 							'<li class="form-group" style="'+moveable+'" id="COL_'+thisCol.id+'" data-id="'+thisCol.id+'" data-type="'+thisCol.type+'">'+
 				                '<label class="text-light-blue">'+ thisCol.config.title + require +'</label>'+
 				                thisI+
-				                '<input name="setValue" type="text" value="'+thisValue+'" class="form-control" '+readonly+'>'+
+				                '<input name="setValue" type="text" value="'+thisValue+'" placeholder="'+thisCol.config.placeholder+'" class="form-control" '+readonly+'>'+
 				            '</li>'
 				            );
 					break;
@@ -1014,11 +1108,12 @@
 						thisTabContent.append(content);
 					break;
 					case "inputbox":
+						var thisInputType = thisCol.config.type;
 						thisTabContent.append(
 							'<li class="form-group" style="'+moveable+'" id="COL_'+thisCol.id+'" data-id="'+thisCol.id+'" data-type="'+thisCol.type+'">'+
 				                '<label class="text-light-blue">'+ thisCol.config.title + require +'</label>'+
 				                thisI+
-				                '<input name="setValue" type="text" value="'+thisValue+'" class="form-control" '+readonly+'>'+
+				                '<input name="setValue" type="'+thisInputType+'" value="'+thisValue+'" placeholder="'+thisCol.config.placeholder+'" class="form-control" '+readonly+'>'+
 				            '</li>'
 						);
 					break;
@@ -1051,7 +1146,7 @@
 					break;
 					case 'h_group':
 						var user_require = thisCol.config.user_require ? '<font color="red"> *</font>':'';
-						//console.log(thisValue);
+						
 						thisTabContent.append(
 							'<li class="form-group" style="'+moveable+'" id="COL_'+thisCol.id+'" data-id="'+thisCol.id+'" data-type="'+thisCol.type+'" >'+
 				                '<label class="text-light-blue">'+ thisCol.config.group_title + require +'</label>'+
@@ -1063,25 +1158,36 @@
 				                '<select name="setValue2" class="form-control " '+readonly+'>' + '</select>'+
 				            '</li>'
 				        );
-				        thisTabContent.find("[name=setValue1]").val(thisValue.group).change(function(){
+				        var thisGroup = "";
+				        var thisUser = "";
+				        if(step_id=="default"){
+				        	thisGroup = thisValue.group;
+				        	thisUser = thisValue.user;
+				        }else if(thisValue.length){
+				        	thisGroup = thisValue.split(',')[0];
+				        	thisUser = thisValue.split(',')[1];
+				        }
+				        
+				        thisTabContent.find("[name=setValue1]").val(thisGroup).change(function(){
 				        	thisTabContent.find("[name=setValue2]").empty().append(
 				        		GroupUserArray_to_Option(thisTabContent.find("[name=setValue1]").val())
 				        	);
 				        }).trigger('change').select2ToTree();
 				        thisTabContent.find("[name=setValue1]").next().css("display","block");
-				        thisTabContent.find("[name=setValue2]").val(thisValue.user);
+				        thisTabContent.find("[name=setValue2]").val(thisUser);
 					break;
 					case 'checkbox':
-						//thisValue = thisValue.split(",");
+						thisValue = thisValue.split(",");
 						thisTabContent.append(
 							'<li class="form-group" style="'+moveable+'" id="COL_'+thisCol.id+'" data-id="'+thisCol.id+'" data-type="'+thisCol.type+'" >'+
-				                '<label class="text-light-blue">'+ thisCol.config.title + '<font color="red"> *</font>' +'</label>'+
+				                '<label class="text-light-blue">'+ thisCol.config.title + require +'</label>'+
 				                thisI+
 				                '<div>' + Array_to_CheckBox(thisCol) + '</div>'+
 				            '</li>'
 				        );
 				        for(i=0;i<thisValue.length;i++){
-				        	thisTabContent.find('input[value='+thisValue[i]+']').prop('checked',true);
+				        	if(thisValue!="" && thisValue.length)
+				        		thisTabContent.find('input[value='+thisValue[i]+']').prop('checked',true);
 				        }
 					break;
 				}
@@ -1099,14 +1205,21 @@
 	//切換步驟
 	function Step_Switch(item_id,step_id){
 		var thisDialog = $('#service-grid-config');
-		var thisTextarea = thisDialog.find(".syscom-tip:eq(0)");
+		var thisTxtarea = thisDialog.find('.tabcontent[data-step='+step_id+']:eq(0) .syscom-tip');
 		var thisDom = thisDialog.find('.tablinks[data-step='+step_id+']');
 		if(thisDom.length==0)
 			return;
 		var thisItem = box_object.list[item_id];
 		var thisStep = thisItem.service.list[step_id];
 		
-		
+		if(thisStep){
+			var thisTip = thisStep.tip?thisStep.tip:null;
+			if(read_mode && !thisTip){
+				thisTxtarea.hide();
+			}else{
+				thisTxtarea.val(thisTip).show();
+			}
+		} 
 		thisDialog.find('#tab-step .tabcontent').hide();
 		thisDialog.find('.tablinks').removeClass("active");
 		thisDialog.find('.tabcontent[data-step='+step_id+']').show();
@@ -1183,13 +1296,13 @@
 						thisValue= $('input[name="' + thisID + '"]:checked').map(function() { return $(this).val(); }).get();
 					}else{
 						thisValue= [];
-						thisValue.push($('input[name="' + thisID + '"]:checked').val());
+						if($('input[name="' + thisID + '"]:checked').length)
+							thisValue.push($('input[name="' + thisID + '"]:checked').val());
 					}
 					//檢查必填
-					//console.log(thisValue);
-					if(thisDom.find('font[color=red]').length && thisValue==[])
+					if(thisDom.find('font[color=red]').length && thisValue.length==0 ){
 						RequireWarning = true;
-					else{
+					}else{
 						var item_data = {};
 						item_data['id'] = thisID;
 						item_data['type'] = thisType;
@@ -1282,8 +1395,7 @@
 					}
 					break;
 				case 'file':
-					var thisValue=thisDom.find('.file').val();
-					if(thisDom.find('font[color=red]').length && (null==thisValue || thisValue.length==0))
+					if(thisDom.find('font[color=red]').length && thisDom.find('.mailbox-attachment-name').length)
 						RequireWarning = true;
 					break;
 			}
@@ -1304,7 +1416,8 @@
 		var flow_uuid = box_object.list[thisDialog.attr('name')].flow_uuid;
 
 		var data = getFormdata(thisDialog.find("#tab-step"));
-		if(data==false){
+		
+		if( typeof(data.length)=="undefined" && data==false){
 			thisDialog.off('hidden.bs.modal');
 			thisDialog.on('hidden.bs.modal', function () {
 				thisDialog.off('hidden.bs.modal');
@@ -1350,7 +1463,6 @@
 			},
 			success: function (data) {
 				//$('button[name="file_upload"]').hide();
-				//console.log(data);
 				$("#modal-progress").modal("hide");
 				$('#attach_upload').empty();
 				fileIdCounter = 0;
@@ -1387,7 +1499,7 @@
 		item.service.tree = [];
 		item.service.list = {};
 		var data = getFormdata(thisDialog.find("#tab-default"));
-		if(data.length && data==false){
+		if( typeof(data.length)=="undefined" && data==false){
 			thisDialog.off('hidden.bs.modal');
 			thisDialog.on('hidden.bs.modal', function () {
 				thisDialog.off('hidden.bs.modal');
@@ -1476,16 +1588,15 @@
 	
 	//讀取組織清單
 	function GroupArray_to_Option(){
-		var postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken};
 		var output = '';
 		$.ajax({
 			url	: '{% url 'listGroupAjax' %}',
 			type: 'post',
-	        data: postbody,
+			headers: { "X-CSRFToken": csrfmiddlewaretoken },
+	        data: JSON.stringify({}),
 	        async:false,
 	        dataType: 'json',
 	        success: function (data) {
-	        	//console.log(data);
 	            var group_tree_data_uuid = [];
 				var list_count = 0;
 				var uuid_mode = false;
@@ -1588,16 +1699,17 @@
 	function GroupUserArray_to_Option(group_id){
 		if(!group_id)
 			return "";
-			
 		var userlist = '<option value="">'+const_none_user+'</option>';
 		$.ajax({
 			url: "{% url 'searchGroupUserAjax' %}",
 			type: 'post',
-			async:false,
-			data: { csrfmiddlewaretoken: '{{ csrf_token }}' , searchkey: group_id},
+			headers: { "X-CSRFToken": csrfmiddlewaretoken },
+			data: JSON.stringify({ searchkey: group_id }),
+	        async:false,
+			contentType: "application/json;charset=utf-8;",
 			success: function (data) {
 	            $.each(data.result,function(idx,thisObj){
-	            	userlist += '<option value='+thisObj.id+'>'+thisObj.username+'</option>';
+	            	userlist += '<option value='+thisObj.id+'>'+thisObj.nick_name+'</option>';
 	            });
 			},
 			error: function(req, status, err) {
@@ -1614,11 +1726,12 @@
 		$.ajax({
 			url: "{% url 'listGroupAjax' %}",
 			type: 'post',
+			headers: { "X-CSRFToken": csrfmiddlewaretoken },
+			data: JSON.stringify({ functional_flag: 1 }),
 			async:false,
-			data: {  csrfmiddlewaretoken: csrfmiddlewaretoken, functional_flag: 1 },
+			contentType: "application/json;charset=utf-8;",
 			success: function (data) {
 	            $.each(data.result,function(idx,thisObj){
-	            	//console.log(thisObj.id);
 	            	rolelist += '<option value='+thisObj.id+'>'+thisObj.display_name+'</option>';
 	            });
 			},
@@ -1681,7 +1794,7 @@
 	
 	function check_disk()
 	{
-		var postbody = { csrfmiddlewaretoken: '{{ csrf_token }}', file_size: fileTotalSize };
+		var postbody = { file_size: fileTotalSize };
 		omflowJsonAjax(postbody, '{% url "getDiskStatusAjax" %}', actions_upload)
 		
 		function actions_upload(data){
@@ -1706,17 +1819,22 @@
 	function boxdrop(ev, target_object){
 	    ev.preventDefault();
 	    ev.stopPropagation();
+	    
 	    var target = $('#'+target_object.id);
 	    var source = $('#'+ev.dataTransfer.getData("boxid"));
-		
-	    if(source.attr('class').startsWith('omflow-form-group'))
-	    {
-	        source.prependTo(target.find('div[id^=CONTENT_]:eq(0)'));
-	    }
-	    else
-	    {
-	        if(target != source){
-		        var targetSpot = $('<span></span>');
+        if(target != source){
+        	if(target.is('li') && source.is('div')){
+		        box_move_item(box_object.list[source.data('idx')],target.data('idx'));
+				Swal.fire({
+		      	  icon : 'success',
+		      	  title: '成功',
+		      	  toast: true,
+			  	  position: 'bottom-start',
+			  	  showConfirmButton: false,
+		      	  timer: 2000,
+	  		    });
+			}else if(target.is('div') && source.is('div') || target.is('li') && source.is('li')){
+				var targetSpot = $('<span></span>');
 				var sourceSpot = $('<span></span>');
 				targetSpot.insertBefore(target);
 				sourceSpot.insertBefore(source);
@@ -1725,12 +1843,11 @@
 				targetSpot.remove();
 				sourceSpot.remove();
 			}
-	    }
+		}
 	    setTree();
 	}
 	function boxAllowDrop(ev){
 	    ev.preventDefault();
 	}
-
     </script>
 {% endblock %}

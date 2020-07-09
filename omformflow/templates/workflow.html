@@ -18,13 +18,17 @@
     <section class="content">
   	<div class="box box-default">
   	  <div class="box-header with-border">
+  	  	{% if 'omformmodel.Omdata_'|add:flow_uuid|add:'_Add' in perms %}
   	    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-create_ticket"><i class="fa fa-plus"></i> 新增</button>
+  	    {% endif %}
+  	    {% if 'omformmodel.Omdata_'|add:flow_uuid|add:'_Delete' in perms %}
 	    <button type="button" class="btn btn-default" onclick="delete_omdata()" id="delete_omdata" disabled="disabled" style="margin:1px 0px;"><i class="fa fa-trash-o"></i> 刪除</button>
+	    {% endif %}
 	    <button type="button" class="btn btn-default" onclick="filter_omdata()" style="margin:1px 0px;"><i class="fa fa-filter"></i> 篩選</button>
         <button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default" onclick="filter_default()" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
   	  </div>
   	  <div class="box-body">
-  	    <table class="table table-bordered table-striped table-hover" id="omdata_table">
+  	    <table class="table table-bordered table-striped table-hover" id="omdata_table" width="100%">
   	   	  <thead>
   	  	    <tr>
   	  	      
@@ -50,33 +54,13 @@
 		  </div>
 		  <div class="modal-footer">
 			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
-			<button type="button" class="btn btn-primary" id="modal-create_ticket-confirm" data-dismiss="modal">確定</button>
+			<button type="button" class="btn btn-primary" id="modal-create_ticket-confirm">確定</button>
 		  </div>
 		</div>
 	  </div><!-- /.modal-content -->
 	</div>
 	
 	
-	<div class="modal fade" id="modal-update_ticket" data-backdrop="static">
-	  <div class="modal-dialog modal-lg">
-		<div class="modal-content">
-		  <div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-			  <span aria-hidden="true">&times;</span></button>
-			<h4 class="modal-title"></h4>
-		  </div>
-		  <div class="modal-body">
-	        <div id="updateformcontent"></div>
-		  </div>
-		  <div class="modal-footer">
-			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
-			<button type="button" class="btn btn-primary" id="modal-update_ticket-confirm" data-dismiss="modal">確定</button>
-		  </div>
-		</div>
-	  </div><!-- /.modal-content -->
-	</div>
-    
-    
     </section>
     <style>
 		table tr{
@@ -89,22 +73,20 @@
     var date = new Date();
 	date.setDate(date.getDate() + 1);
 	var select_time;
-	var is_closed = [];
+	var is_closed = [0];
     var table;
     var data_tmp;
 	var data_len;
 	var data_page;
+	var checkbox_status = [];
 	var formcontent = new omformeng('formcontent');
-	var updateformcontent = new omformeng('updateformcontent')
-	updateformcontent.init(false);
     $(function(){
     	formmodal();		//讀取  formdesign 做好 modal
-    	listomdata();		//列表  ticket
     });
     
     
     function listomdata(){
-    	var postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, a_flow_uuid: '{{ flow_uuid }}'};
+    	var postbody = {a_flow_uuid: '{{ flow_uuid }}'};
     	omflowJsonAjax(postbody, '{% url "getApplicationFlowNameAjax" %}', getname_action);
     	omflowJsonAjax(postbody, '{% url "getFlowActiveDisplayFieldAjax"%}', table_callback);
     	
@@ -115,11 +97,22 @@
     {
     	if (data.status == 200)
     	{
+    		var formobject = formcontent.getObject();
+    		var items_in_list = [];
+    		if (formtype == 'formobject')
+    		{
+	    		$.each(formobject.items, function(index, value){
+	    			if (value.type == 'list' | value.type == 'h_status')
+	    			{
+	    				items_in_list[value.id] = value.config.lists;
+	    			}
+	    		});
+	    	}
 	    	var table_column = [];
 			var display_field = JSON.parse(data.result.display_field);
 			$('#omdata_table thead tr').append('<th></th>');
 			table_column.push({"data": "id", "width": "15px", "orderable": false, "render": function(data, type, row)
-				{return '<input type="checkbox" class="icheckbox_minimal-blue" value="'+data+'" data-value="'+row.data_no+'" id="omdata_'+data+'"><label for=omdata_'+data+'></label>'}
+				{return '<input type="checkbox" class="icheckbox_minimal-blue" value="'+data+'" data-no="'+row.data_no+'" data-value="資料編號 : '+paddingLeft(row.data_no,8)+'" id="omdata_'+data+'"><label for=omdata_'+data+'></label>'}
 			});
 			$.each(display_field, function(index, value){
 				$('#omdata_table thead tr').append('<th>'+value+'</th>');
@@ -168,12 +161,12 @@
 				{	
 					table_column.push({"data": index, "render": function(data)
 						{
-							if(data == 'green')
-								{return '<div class="label label-success">綠燈</div>'}
-							else if(data == 'yellow')
+							if(data == 'yellow')
 								{return '<div class="label label-warning">黃燈</div>'}
 							else if(data == 'red')
-								{return '<div class="label label-danger">紅燈</div>'}		
+								{return '<div class="label label-danger">紅燈</div>'}
+							else
+								{return '<div class="label label-success">綠燈</div>'}		
 						}
 					});
 				}
@@ -188,6 +181,44 @@
 						}
 					});
 				}
+				else if(index.toUpperCase() in items_in_list)
+				{
+					table_column.push({"data": index, "render": function(data)
+						{
+							var thisdata = ''
+							$.each(items_in_list[index.toUpperCase()], function(index, value){
+								if (value.value == data)
+								 {thisdata = value.text}
+							});
+							return thisdata
+						}
+					});
+				}
+				else if(index.indexOf('-group') > 0)
+				{
+					table_column.push({"data": index.replace('-group', ''), "width": "150px", "render": function(data)
+						{
+							data = JSON.parse(unescapeHtml(data));
+							if(data)
+								{return data.group}
+							else
+								{return data.group}
+						}
+					});
+				}
+				else if(index.indexOf('-user') > 0)
+				{
+					//console.log(index.replace('-user', ''))
+					table_column.push({"data": index.replace('-user', ''), "width": "150px", "render": function(data)
+						{
+							data = JSON.parse(unescapeHtml(data));
+							if(data)
+								{return data.user}
+							else
+								{return data.user}
+						}
+					});
+				}
 				else
 				{
 					table_column.push({"data": index});
@@ -196,20 +227,23 @@
 	    	select_time = date.getFullYear() +'-'+('0'+(date.getMonth()+1)).substr(-2)+'-'+('0'+date.getDate()).substr(-2);
 	    	table = $('#omdata_table').DataTable({
 				"autoWidth"	: false,
-				"order"		: [[ 0, "dsc" ]], 					//	default order column[1]
+				"order"		: [[ 1, "desc" ]], 					//	default order column[1]
 				"serverSide": true,							//	serverside data loading
 				"dom"		:"<<t>'row'<'col-sm-5'i><'col-sm-7'p>>",
+				"scrollX": true,
 				"language"	: __const_language__,
 				"ajax": {
 	           		"url": "{% url 'listOmDataAjax' %}",
 	            	"type": "POST",
+	            	"headers": { "X-CSRFToken": getCookie("csrftoken") },
+            		"contentType": "application/json;charset=utf-8;",
 	            	"data":	function ( d ) {
-								return $.extend( {}, d, {
+								return JSON.stringify($.extend( {}, d, {
 							        csrfmiddlewaretoken: csrfmiddlewaretoken,
 							        flow_uuid	: '{{flow_uuid}}',
 							        updatetime	: select_time,
 							        "closed"	: is_closed
-							    }); 
+							    }));
 							},
 					"dataSrc": function(data){
 						a = dataCompare(data,data_tmp,data_len,data_page,table);
@@ -239,6 +273,18 @@
 					$('#omdata_table input[type="checkbox"]').change(function(){
 				    	enablebtt();
 				    });
+				    $.each(checkbox_status, function(){
+						$('.table input[type="checkbox"]#'+this).prop('checked', true);
+					});
+				},
+				preDrawCallback: function(settings) {
+					checkbox_status = []
+					$.each($('.table input[type="checkbox"]'), function(){
+						if (this.checked)
+						{	
+							checkbox_status.push(this.id)
+						}
+					});
 				}
 			});
 		}
@@ -266,79 +312,68 @@
 	var fileTotalSize = 0;
 	var isAttachment  = false;
 	var formtype = 'formobject';
+	var default_formobject = '';
     function formmodal(){
-    	var postdata = {csrfmiddlewaretoken: csrfmiddlewaretoken, flow_uuid: '{{flow_uuid}}'};
+    	var postdata = {flow_uuid: '{{flow_uuid}}'};
     	omflowJsonAjax(postdata, '{% url "loadFormDesignAjax"%}', loadFormDesign_callback);
     	
     	function loadFormDesign_callback(data){
     		if(data.status == 200)
 			{
-				if (data.result.start_input.length != 0)
-				{
-					formtype = 'startinput'
-					$.each(data.result.start_input, function(index, value){
-						var haswarning ='';
-						var thisvalue = '';
-						if (value.require)
-							{haswarning = 'has-warning'}
-						$('#modal-create_ticket .modal-body').append('<div class="form-group '+haswarning+'">'
-						  +'<label>'+ value.name +'</label>'
-							+'<input type="text" name="'+ value.name +'" class="form-control" placeholder="'+ value.name +'" value="'+ thisvalue +'" style="width:100%"/>'					
-						+'</div>');
-						if(value.value = null)
-							{$('input[nmae="'+value.name+'"]').val('')}
-					});
-				}
-				else
+				
+				listomdata();		//列表  ticket
+				if (data.result.use_form)
 				{
 					formcontent.init(false);
 					formcontent.event_group_list(load_group_list);
 					formcontent.event_user_list(load_user_list);
 					formcontent.load(data.result.formobject);
+					default_formobject = data.result.formobject;
+				}
+				else
+				{
+					formtype = 'startinput'
+					$.each(data.result.start_input, function(index, value){
+						var haswarning ='';
+						if (value.require)
+							{haswarning = 'has-warning'}
+						$('#modal-create_ticket .modal-body').append('<div class="form-group '+haswarning+'">'
+						  +'<label>'+ value.name +'</label>'
+							+'<input type="text" name="'+ value.name +'" class="form-control" placeholder="'+ value.name +'" value="'+ value.value +'" style="width:100%"/>'					
+						+'</div>');
+					});
 				}
 				if (data.result.attachment)
 				{
 					isAttachment = true;
-					$('#modal-create_ticket > .modal-dialog > .modal-content > .modal-body').append('<div class="box-body"><div class="col-md-12"><div class="box"><div class="form-group"><div class="box-header">'
-					    +'<div class="btn btn-default btn-file">'
-						  +'<i class="fa fa-plus"></i> {% trans '新增檔案'%}'
-						  +'<input type="file" class="file" id="attachment_input" name="attachment_input" multiple="multiple" style="disply:none;">'
-					    +'</div>'
-						+'<label name="fileWarning" class="text-red" style="display:none;">{% trans '硬碟容量不足，請移除部分檔案再上傳或聯絡系統管理員'%}</label>'
-					  +'</div></div><div class="box-body">'
-					  +'<ul class="mailbox-attachments clearfix" id="attach_upload">'
-					  +'</ul></div></div></div></div>');
+					put_upload_btt()
 				}
     			$('#modal-create_ticket .modal-title').html('<i class="fa fa-plus"></i>&nbsp;&nbsp;'+data.result.flow_name+'-開單');
-    			$('#attachment_input').change(function(evt){
-					var output = [];
-					
-					for (var i = 0; i < evt.target.files.length; i++) {
-						fileIdCounter++;
-						var file = evt.target.files[i];
-						var fileId = fileIdCounter;
-						var file_size = omflowSizeUnit(file.size);
-						
-						fileTotalSize += Math.ceil(file.size/Math.pow(2, 20));
-						filesToUpload.push({
-							id: fileId,
-							file: file
+    			
+    			$('#modal-create_ticket').on('hidden.bs.modal', function(){
+					if (formtype == 'startinput')
+					{
+						$('#modal-create_ticket .modal-body').empty();
+						$.each(data.result.start_input, function(index, value){
+							var haswarning ='';
+							if (value.require)
+								{haswarning = 'has-warning'}
+							$('#modal-create_ticket .modal-body').append('<div class="form-group '+haswarning+'">'
+							  +'<label>'+ value.name +'</label>'
+								+'<input type="text" name="'+ value.name +'" class="form-control" placeholder="'+ value.name +'" value="'+ value.value +'" style="width:100%"/>'					
+							+'</div>');
 						});
-						
-						output.push('<li><div class="mailbox-attachment-info">'
-							+'<p class="mailbox-attachment-name" style="word-break: break-all;"><i class="fa fa-paperclip"></i>&nbsp;&nbsp;'+file.name+'</p>'
-							+'<span class="mailbox-attachment-size">'+file_size
-							+'<button type="button" class="close pull-right" onclick="remove_upload(this,'+fileId+')">'
-							+'<span aria-hidden="true">&times;</span></button></span>'
-							+'</div></li>');
-					}
-					
-					$('#attach_upload').append(output.join(""));
-					  
-					evt.target.value = null;
-					check_disk();
-					
-				});
+						if (isAttachment)
+						{
+							put_upload_btt()
+						}
+    			 	}
+    			 	else
+    			 	{
+	    				$('#formcontent').empty();
+		  		    	formcontent.load(default_formobject);
+		  		    }
+	  		    });
     			
     			$('#modal-create_ticket-confirm').off('click').on('click', createOmdata)
     		}
@@ -366,15 +401,19 @@
 			});
 			Swal.showLoading() ;
 			var postbody = {	
-								csrfmiddlewaretoken: csrfmiddlewaretoken, 
 								flow_uuid: '{{flow_uuid}}',
 								action	 : 'create',
 							}
 			var formdata = {checker:[], values:{} };
+			var form_data = new FormData();
+			form_data.append("csrfmiddlewaretoken", csrfmiddlewaretoken);
+			form_data.append("flow_uuid", '{{flow_uuid}}');
+			form_data.append("action", 'create');
 			if (formtype == 'formobject')
 			{	
 				formdata = formcontent.getData();
-				postbody['formdata'] = JSON.stringify(formdata.values)
+				postbody['formdata'] = formdata.values
+				form_data.append("formdata", JSON.stringify(formdata.values));
 			}
 			else 
 			{
@@ -382,75 +421,137 @@
 				$.each($('#modal-create_ticket .modal-body input[type="text"]'), function(){
 					formdata['values'][this.name] = this.value
 				});
-				postbody['start_input'] = JSON.stringify(formdata.values)
+				postbody['start_input'] = formdata.values
+				form_data.append("start_input", JSON.stringify(formdata.values));
 			}
 			if (formdata.checker.length == 0)
 			{
 				if( filesToUpload.length == 0)
 				{
 					omflowJsonAjax(postbody, '{% url "editOmDataAjax"%}', actions)
+					$('#modal-create_ticket').modal('hide');
 				}
 				else
 				{
-					var form_data = new FormData();
-					form_data.append("csrfmiddlewaretoken", csrfmiddlewaretoken);
-					form_data.append("flow_uuid", '{{flow_uuid}}');
-					form_data.append("action", 'create');
-					form_data.append("formdata", JSON.stringify(formdata.values));
+					//BUG
 					for (var i = 0, len = filesToUpload.length; i < len; i++) {
 					    form_data.append("files", filesToUpload[i].file);
 					}
 					$.ajax({
-					url: '{% url "editOmDataAjax"%}',
-					type: 'post',
-			        data: form_data,
-			        cache:false,
-			        processData: false,
-			        contentType: false,
-			        dataType: 'json',
-			        xhr : function () {
-			        	var myXhr = $.ajaxSettings.xhr();
-			        	if(myXhr.upload)
-			        	{
-			        		myXhr.upload.addEventListener('progress',progressHandlingFunction, false);
-			        		return myXhr;
-			        	}
-			      	},
-			        success: function (data) {
-			        	$("#modal-progress").modal("hide");
-			        	if(data.status == 200)
-			        	{
-				            $('#attach_upload').empty();
-				            fileIdCounter = 0;
-				            filesToUpload = [];
-				            fileTotalSize = 0;
-				            Swal.fire({
-					      	  icon : 'success',
-					      	  title: '檔案上傳成功',
-					      	  toast: true,
-						  	  position: 'bottom-start',
-						  	  showConfirmButton: false,
-					      	  timer: 2000,
-				  		    });
-				  		 }
-				  		 else
-				  		 {
-				  		 	omflowAlert('red', data.messge);
-				  		 }
-			        },
-			        error: function(req, status, err) {
-			        	$("#modal-progress").modal("hide");
-						$('#modal_error').modal('show');
-			        	console.log('Something went wrong', status, err);
-			    	}
-				});
+						url: '{% url "editOmDataAjax"%}',
+						type: 'post',
+				        data: form_data,
+				        cache:false,
+				        processData: false,
+				        contentType: false,
+				        dataType: 'json',
+				        xhr : function () {
+				        	var myXhr = $.ajaxSettings.xhr();
+				        	if(myXhr.upload)
+				        	{
+				        		myXhr.upload.addEventListener('progress',progressHandlingFunction, false);
+				        		return myXhr;
+				        	}
+				      	},
+				        success: function (data) {
+				        	$("#modal-progress").modal("hide");
+				        	if(data.status == 200)
+				        	{
+					            $('#attach_upload').empty();
+					            fileIdCounter = 0;
+					            filesToUpload = [];
+					            fileTotalSize = 0;
+					            Swal.fire({
+						      	  icon : 'success',
+						      	  title: '檔案上傳成功',
+						      	  toast: true,
+							  	  position: 'bottom-start',
+							  	  showConfirmButton: false,
+						      	  timer: 2000,
+					  		    });
+					  		 }
+					  		 else
+					  		 {
+					  		 	Swal.close();
+					  		 	omflowAlert('red', data.messge);
+					  		 }
+				        },
+				        error: function(req, status, err) {
+				        	Swal.close();
+				        	$("#modal-progress").modal("hide");
+							$('#modal_error').modal('show');
+				        	console.log('Something went wrong', status, err);
+				    	}
+					});
+					$('#modal-create_ticket').modal('hide');
 				}
 			}
 			else
 			{
-				omflowAlert('blue', formdata.checker);
+				Swal.close();
+				Swal.fire({
+		      	  icon : 'info',
+		      	  title: '請檢查必填欄位',
+		      	  toast: true,
+			  	  position: 'bottom-start',
+			  	  showConfirmButton: false,
+		      	  timer: 2000,
+	  		    });
+				$('.has-error').removeClass('has-error');
+				formdata.checker.forEach(function(item){
+					$('#formcontent_'+item).addClass('has-error');
+				});
 			}
 		}
+    }
+    
+    
+    function put_upload_btt()
+    {
+    	$('#modal-create_ticket > .modal-dialog > .modal-content > .modal-body').append('<div class="box-body" id="file_box"><div class="col-md-12"><div class="box"><div class="form-group"><div class="box-header">'
+		    +'<div class="btn btn-default btn-file">'
+			  +'<i class="fa fa-plus"></i> {% trans '新增檔案'%}'
+			  +'<input type="file" class="file" id="attachment_input" name="attachment_input" multiple="multiple" style="disply:none;">'
+		    +'</div>'
+			+'<label name="fileWarning" class="text-red" style="display:none;">{% trans '硬碟容量不足，請移除部分檔案再上傳或聯絡系統管理員'%}</label>'
+		  +'</div></div><div class="box-body">'
+		  +'<ul class="mailbox-attachments clearfix" id="attach_upload">'
+		  +'</ul></div></div></div></div>');
+		$('#attachment_input').change(function(evt){
+			var output = [];
+			
+			for (var i = 0; i < evt.target.files.length; i++) {
+				fileIdCounter++;
+				var file = evt.target.files[i];
+				var fileId = fileIdCounter;
+				var file_size = omflowSizeUnit(file.size);
+				
+				filesToUpload.forEach(function(item){
+					if (item.file.name == file.name)
+					{
+						$('button[onclick="remove_upload(this,'+item.id+')"]').trigger('click');
+					}
+				})
+						
+				fileTotalSize += Math.ceil(file.size/Math.pow(2, 20));
+				filesToUpload.push({
+					id: fileId,
+					file: file
+				});
+				
+				output.push('<li><div class="mailbox-attachment-info">'
+					+'<p class="mailbox-attachment-name" style="word-break: break-all;"><i class="fa fa-paperclip"></i>&nbsp;&nbsp;'+file.name+'</p>'
+					+'<span class="mailbox-attachment-size">'+file_size
+					+'<button type="button" class="close pull-right" onclick="remove_upload(this,'+fileId+')">'
+					+'<span aria-hidden="true">&times;</span></button></span>'
+					+'</div></li>');
+			}
+			
+			$('#attach_upload').append(output.join(""));
+			  
+			evt.target.value = null;
+			check_disk();
+		});
     }
     
     
@@ -464,14 +565,12 @@
 		$(th).closest('li').remove();
 		if (filesToUpload.length != 0)
 			{check_disk();}
-		else
-			{$('button[name="file_upload"]').hide();}
 	}
 	
 	
 	function check_disk()
 	{
-		var postbody = { csrfmiddlewaretoken: '{{ csrf_token }}', file_size: fileTotalSize };
+		var postbody = {file_size: fileTotalSize };
 		omflowJsonAjax(postbody, '{% url "getDiskStatusAjax" %}', actions_upload)
 		
 		function actions_upload(data){
@@ -480,12 +579,10 @@
 				if (data.result)
 				{
 					$('label[name="fileWarning"]').hide();
-					$('button[name="file_upload"]').show();
 				} 
 				else
 				{
 					$('label[name="fileWarning"]').show();
-					$('button[name="file_upload"]').hide();
 				}
 			}
 			else
@@ -525,10 +622,10 @@
 			  showConfirmButton: false,
 			});
 			Swal.showLoading() ;
-			var postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, 
+			var postbody = {
 							flow_uuid:  '{{flow_uuid}}',
-							data_no  :	$('#omdata_table input[type="checkbox"]').data('value'),
-							data_id	 :	$('#omdata_table input[type="checkbox"]').val(),
+							data_no  :	$('#omdata_table input[type="checkbox"]:checked').data('no'),
+							data_id	 :	$('#omdata_table input[type="checkbox"]:checked').val(),
 							action	 : 	'delete'
 				}
 			omflowJsonAjax(postbody, '{% url "editOmDataAjax"%}', actions)
@@ -539,13 +636,15 @@
     function load_group_list()
 	{
 		var grouplist=[];
-		var postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, 'functional_flag': 'False', 'ad_flag': ['0']};
+		var postbody = {'functional_flag': 'False', 'ad_flag': ['1', '0']};
 		$.ajax({
 			url	: '{% url 'listGroupAjax' %}',
 			type: 'post',
-	        data: postbody,
+			headers: { "X-CSRFToken": csrfmiddlewaretoken },
+	        data: JSON.stringify(postbody),
 	        async:false,
 	        dataType: 'json',
+	        contentType: "application/json;charset=utf-8;",
 	        success: function (data) {
 	            grouplist = data.result;
 	        },
@@ -564,8 +663,11 @@
 		$.ajax({
 			url: "{% url 'searchGroupUserAjax' %}",
 			type: 'post',
+			headers: { "X-CSRFToken": csrfmiddlewaretoken },
+			data: JSON.stringify({searchkey: group_id}),
 			async:false,
-			data: { csrfmiddlewaretoken: '{{ csrf_token }}' , searchkey: group_id},
+			dataType: 'json',
+			contentType: "application/json;charset=utf-8;",
 			success: function (data) {
 				userlist = data.result;
 			},
@@ -590,7 +692,7 @@
 		  	  showConfirmButton: false,
 	      	  timer: 2000,
   		    });
-  		    table.draw();
+  		    table.draw(false);
   		    LSide();
 		}
 		else if (data.status == 404)
@@ -616,49 +718,6 @@
     }
     
     
-    function readform(data_id, close)
-    {
-    	var postdata = {csrfmiddlewaretoken: csrfmiddlewaretoken, flow_uuid: '{{flow_uuid}}', data_id: data_id};
-    	omflowJsonAjax(postdata, '{% url "loadOmDataAjax"%}', readFormDesign_callback);
-    	function readFormDesign_callback(data)
-    	{	
-    		if (data.status == 200)
-    		{
-	    		$('#updateformcontent').empty();
-	    		updateformcontent.event_group_list(load_group_list);
-				updateformcontent.event_user_list(load_user_list);
-	    		updateformcontent.load(JSON.stringify(data.result.formobject));
-	    		
-	    		updateformcontent.setData(data.result.formdata);
-	    		$('#modal-update_ticket .modal-title').html('&nbsp;&nbsp;表單');
-	    		if (!close)
-	    		{$('#modal-update_ticket-confirm').off('click').on('click', updateOmdata)}
-	    		$('#modal-update_ticket').modal('show');
-	    	}
-	    	else
-	    	{
-	    		omflowAlert('red', data.message);
-	    	}
-    	}
-    	
-    	function updateOmdata(){
-			Swal.fire({
-			  title: '處理中...',
-			  toast: true,
-			  position: 'bottom-start',
-			  showConfirmButton: false,
-			});
-			Swal.showLoading() ;
-			var postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, 
-							flow_uuid: '{{flow_uuid}}',
-							data_id	 : data_id,
-							action	 : 'update',
-							formdata : JSON.stringify(updateformcontent.getData())}
-			omflowJsonAjax(postbody, '{% url "editOmDataAjax"%}', actions)
-		}
-    }
-    
-    
     function filter_omdata()
     {
     	omflowFilter(['filter_search','filter_closed','filter_length']);
@@ -675,12 +734,12 @@
     }
     
     function filter_default(){
-		is_closed = [];
+		is_closed = [0];
     	table.page.len(10);
 		table.search('');
-    	table.draw();
+    	table.draw(false);
     }
     
-    var table_routine = setInterval(function(){ table.draw();}, {{user.frequency}}*1000);
+    var table_routine = setInterval(function(){ table.draw(false);}, {{user.frequency}}*1000);
     </script>
 {% endblock%}

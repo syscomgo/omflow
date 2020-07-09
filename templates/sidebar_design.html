@@ -3,8 +3,8 @@
 {% load i18n %} 
 {% block content %}
 <!-- 
-flow_manage.html flowManagePage
-author : Pen Lin, Pei lin
+sidebar_design.html
+author : Pei lin
 -->
 
 	<!-- Content Header (Page header) -->
@@ -105,8 +105,7 @@ author : Pen Lin, Pei lin
     var csrfmiddlewaretoken="{{ csrf_token }}";
     var listcount = '';
     	$(function(){
-    		var postdata = {csrfmiddlewaretoken:csrfmiddlewaretoken};
-    		omflowJsonAjax(postdata, '{% url "loadSidebarDesignAjax" %}', load_actions)
+    		omflowJsonAjax({}, '{% url "loadSidebarDesignAjax" %}', load_actions)
 		});
 		
 		function load_actions(data){
@@ -286,7 +285,7 @@ author : Pen Lin, Pei lin
 				designJson['icon'] = $(value).children().attr('class').replace(/fa fa-/,'');
 				designArr.push(designJson)
 			})
-			var postdata = {csrfmiddlewaretoken:csrfmiddlewaretoken, format: JSON.stringify(designArr)}
+			var postdata = {format: JSON.stringify(designArr)}
 			omflowJsonAjax(postdata, '{% url "updateSidebarDesignAjax" %}', actions)
 		}
 		function actions(data)

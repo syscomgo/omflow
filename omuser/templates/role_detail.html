@@ -39,14 +39,14 @@
 				  	<div class="row">
 					  <div class="col-md-6">
 					    <div class="form-group has-warning">
-					      <label>{% trans '群組名稱'%}</label>
-							<input type="text" name="group_name" id="group_name" class="form-control" placeholder="{% trans '群組名稱'%}" readonly="true"/>					
+					      <label>{% trans '角色名稱'%}</label>
+							<input type="text" name="group_name" id="group_name" class="form-control" placeholder="{% trans '角色名稱'%}" readonly="true"/>					
 						</div>
 					  </div>
 					  <div class="col-md-6">
 						<div class="form-group">
-						  <label>{% trans '群組說明'%}</label>
-							<input type="text" name="group_descript" id="group_descript" class="form-control" placeholder="{% trans '群組說明'%}" readonly="true"/>					
+						  <label>{% trans '角色說明'%}</label>
+							<input type="text" name="group_descript" id="group_descript" class="form-control" placeholder="{% trans '角色說明'%}" readonly="true"/>					
 						</div>
 					  </div>
 					  <!-- /.col -->
@@ -145,11 +145,13 @@
 	<script>
 	var role_edit = location.pathname.split('/')[4];
 	$(function (){
-		var postdata = {  csrfmiddlewaretoken: '{{ csrf_token }}' , group_id: role_edit, 'functional_flag_%B': 'True', 'ad_flag_%B':'False'};
+		var postdata = {group_id: role_edit, 'functional_flag': 'True', 'ad_flag':'False'};
 		$.ajax({
 			url: "{% url 'loadGroupAjax' %}",
 			type: 'post',
-			data: postdata,
+			headers: { "X-CSRFToken": "{{csrf_token}}" },
+			data: JSON.stringify(postdata),
+			contentType: "application/json;charset=utf-8;",
 			success: function (data) {
 				var all_user_list = data.result.all_user_list;
 				var role_user_list = data.result.group_user_list;
@@ -177,7 +179,7 @@
 				});
 				$.each(all_permission_list, function(index, value){
 					$('#permission_table_body').prepend('<tr><td><input type="checkbox" data-name="checkbox" class="icheckbox_minimal-blue" id="'+value.codename+'" value="'+value.codename+'"><label for="'+value.codename+'"></label></td>'+
-												 '<td>&nbsp;&nbsp;'+value.codename+'</td>'+'<td>&nbsp;&nbsp;'+value.name+'</td></tr>');
+												 '<td>&nbsp;&nbsp;'+value.name+'</td>'+'<td>&nbsp;&nbsp;'+value.codename+'</td></tr>');
 				});
 				$.each(role_permission_list, function(index, value){
 					$('#'+value).prop('checked', true);
@@ -224,7 +226,7 @@
 	{
 		var group_name = $('#group_name').val();
 		var group_descript = $('#group_descript').val();
-		var postbody = {'csrfmiddlewaretoken':"{{ csrf_token}}", 'group_id': role_edit, 'name': group_name, 'description': group_descript}
+		var postbody = {'group_id': role_edit, 'name': group_name, 'description': group_descript}
 		omflowJsonAjax(postbody, "{% url 'updateGroupAjax'%}", store_action);
 		Swal.fire({
 		  title: '處理中...',
@@ -241,7 +243,7 @@
 		$.each($('#user_table input:checkbox:checked'), function(){
 			this_check.push($(this).val());
 		});
-		var postbody = {'csrfmiddlewaretoken':"{{ csrf_token}}", 'group_id': role_edit, 'user_list': this_check} 
+		var postbody = {'group_id': role_edit, 'user_list': this_check} 
 		omflowJsonAjax(postbody, "{% url 'groupUsersAjax'%}", store_action);
 		Swal.fire({
 		  title: '處理中...',
@@ -258,7 +260,7 @@
 		$.each($('#permission_table input:checkbox:checked'), function(){
 			this_check.push($(this).val());
 		});
-		var postbody = {'csrfmiddlewaretoken':"{{ csrf_token}}", 'group_id': role_edit, 'per_list': this_check} 
+		var postbody = {'group_id': role_edit, 'per_list': this_check} 
 		omflowJsonAjax(postbody, "{% url 'rolePermissionAjax'%}", store_action);
 		Swal.fire({
 		  title: '處理中...',

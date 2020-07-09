@@ -6,8 +6,8 @@ from django.shortcuts import render
 from django.contrib import auth
 from django.utils.translation import gettext as _
 from omflow.syscom.message import ResponseAjax, statusEnum
-from omflow.syscom.common import checkEmailFormat, DatatableBuilder, try_except, DataChecker, check_ldap_app, DataFormat
-from omflow.syscom.license import getUsers
+from omflow.syscom.common import checkEmailFormat, DatatableBuilder, try_except, DataChecker, check_app, DataFormat, getPostdata
+from omflow.views import checkLicense
 from omuser.models import OmUser, OmGroup
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import authenticate
@@ -25,7 +25,7 @@ from django.conf import settings
 from django.contrib.sessions.models import Session
 from distutils.util import strtobool
 from omflow.models import SystemSetting
-if check_ldap_app():
+if check_app('omldap'):
     from omldap.ldap_config import check_LDAP_auth
 
 
@@ -47,23 +47,23 @@ def loginPage(request):
 def loginAjax(request):
     '''
     login to omflow , using post
-    input: request.headers['Authorization']
+    input: request.META['HTTP_AUTHORIZATION']
     return: json
     author: Kolin Hsu
     ''' 
     try:
         #get request headers
-        basic_auth_str = request.headers['Authorization'][6:]
+        basic_auth_str = request.META['HTTP_AUTHORIZATION'][6:]
         username, password = base64.b64decode(basic_auth_str).decode('utf-8').split(':')
         #Server Side Rule Check
         if checkEmailFormat(username):
             usersearch = OmUser.objects.get(email=username)
         else:
-            usersearch = OmUser.objects.get(username__icontains=username)
+            usersearch = OmUser.objects.get(username=username)
         username_db = usersearch.username
         ad_flag = usersearch.ad_flag
         if ad_flag:
-            if check_LDAP_auth(username_db, password) and check_ldap_app():
+            if check_LDAP_auth(username_db, password) and check_app('omldap'):
                 user = OmUser.objects.get(username=username_db)
             else:
                 return ResponseAjax(statusEnum.no_permission ,  _('登入失敗')).returnJSON()
@@ -95,7 +95,7 @@ def loginAjax(request):
 def checkMultipleLoginAjax(request):
     '''
     check this username has already logged in or not
-    input: request.headers['Authorization']
+    input: request.META['HTTP_AUTHORIZATION']
     return: json
     author: Kolin Hsu
     ''' 
@@ -104,17 +104,17 @@ def checkMultipleLoginAjax(request):
         already_login = False
         already_login_message = ''
         #get request headers
-        basic_auth_str = request.headers['Authorization'][6:]
+        basic_auth_str = request.META['HTTP_AUTHORIZATION'][6:]
         username, password = base64.b64decode(basic_auth_str).decode('utf-8').split(':')
         #Server Side Rule Check
         if checkEmailFormat(username):
             usersearch = OmUser.objects.get(email=username)
         else:
-            usersearch = OmUser.objects.get(username__icontains=username)
+            usersearch = OmUser.objects.get(username=username)
         username_db = usersearch.username
         ad_flag = usersearch.ad_flag
         if ad_flag:
-            if check_LDAP_auth(username_db, password) and check_ldap_app():
+            if check_LDAP_auth(username_db, password) and check_app('omldap'):
                 user = OmUser.objects.get(username=username_db)
             else:
                 return ResponseAjax(statusEnum.no_permission ,  _('登入失敗')).returnJSON()
@@ -180,23 +180,17 @@ def registerAjax(request):
     return: json
     author:Pen Lin, Kolin Hsu
     ''' 
-    license_user_num = getUsers('')
-    now_users_num = OmUser.objects.filter(delete=False,is_active=False).exclude(username='system').count()
-    if now_users_num < license_user_num:
+    omlicense = checkLicense('user')
+    if omlicense:
         #function variable
         error_message = _('註冊失敗：')
         #Server Side Rule Check
         require_field = ['username', 'email_@', 'token', 'token2']
-        postdata = request.POST
+        postdata = getPostdata(request)
         checker = DataChecker(postdata, require_field)
         if checker.get('status') == 'success':
             #get data
             requestJson = {}
-            if request.POST.get('username') is not None:
-                postdata = request.POST
-            else:
-                postdata = json.loads(request.body.decode("utf-8"))
-            
             requestJson['username'] = postdata.get('username', '')
             requestJson['email'] = postdata.get('email_@', '')
             requestJson['password'] = postdata.get('token', '')
@@ -212,7 +206,7 @@ def registerAjax(request):
                         user = None
                 else:
                     try:
-                        OmUser.objects.get(username__icontains=requestJson['username'])
+                        OmUser.objects.get(username=requestJson['username'])
                         user = None
                         error_message += _('使用者名稱已被註冊。')
                     except:
@@ -232,7 +226,7 @@ def registerAjax(request):
         else:
             return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
     else:
-        return ResponseAjax(statusEnum.not_found, _('使用者數量已達上限，請向原廠購買授權。')).returnJSON()
+        return ResponseAjax(statusEnum.not_found, _('使用者數量已達上限。')).returnJSON()
 
 
 @login_required
@@ -261,28 +255,32 @@ def loadUserAjax(request):
     return: user jsonArray
     author: Kolin Hsu
     '''
-    username = request.POST.get('username_click', '')
+    postdata = getPostdata(request)
+    username = postdata.get('username_click', '')
     result = {}
     if  request.user.username == username or request.user.has_perm('omuser.OmUser_View'):
         #Server Side Rule Check
         require_field = ['username_click']
-        postdata = request.POST
         checker = DataChecker(postdata, require_field)
         if checker.get('status') == 'success':
-            user_now = list(OmUser.objects.filter(username=username).values('username','password','company','nick_name','email','department','birthday','gender','phone1','phone2','frequency','ad_flag'))[0]
+            user_now = list(OmUser.objects.filter(username=username).values('username','password','company','nick_name','email','department','birthday','gender','phone1','phone2','frequency','ad_flag','default_group','substitute'))[0]
             if user_now['birthday']:
                 user_now['birthday'] = str(user_now['birthday'].strftime(settings.DATE_FORMAT))
             user = OmUser.objects.get(username=username)
-            user_group_list = list(user.groups.filter(omgroup__functional_flag=False,omgroup__ad_flag=False).values_list('name',flat=True))
-            user_role_list = list(user.groups.filter(omgroup__functional_flag=True,omgroup__ad_flag=False).values_list('name',flat=True))
-            user_adgroup_list = list(user.groups.filter(omgroup__functional_flag=False,omgroup__ad_flag=True).values_list('omgroup__display_name',flat=True))
+            user_group_list = list(user.groups.filter(omgroup__functional_flag=False,omgroup__ad_flag=False).values('id','name'))
+            user_role_list = list(user.groups.filter(omgroup__functional_flag=True,omgroup__ad_flag=False).values('id','name'))
+            user_adgroup_list = list(user.groups.filter(omgroup__functional_flag=False,omgroup__ad_flag=True).values('id','omgroup__display_name'))
             result['user'] = user_now
             result['user_group_list'] = user_group_list
             result['user_role_list'] = user_role_list
             result['user_adgroup_list'] = user_adgroup_list
             if request.user.has_perm('omuser.OmGroup_View'):
-                group_list = list(OmGroup.objects.filter(ad_flag=False).values('id','name','parent_group','functional_flag','description').order_by('parent_group', '-id'))
+                group_list_parent = list(OmGroup.objects.filter(functional_flag=False,ad_flag=False,parent_group_id=None).values('id','display_name','parent_group','description').order_by('-id'))
+                group_list_childs = list(OmGroup.objects.filter(functional_flag=False,ad_flag=False).exclude(parent_group_id=None).values('id','display_name','parent_group','description').order_by('parent_group','-id'))
+                group_list = group_list_parent + group_list_childs
+                role_list = list(OmGroup.objects.filter(functional_flag=True,ad_flag=False).values('id','display_name','parent_group','description').order_by('id'))
                 result['group_list'] = group_list
+                result['role_list'] = role_list
             info(request ,'%s load user success' % request.user.username)
             return ResponseAjax(statusEnum.success , _('讀取成功'), result).returnJSON()
         else:
@@ -302,7 +300,7 @@ def updateUserAjax(request):
     return: json
     author: Kolin Hsu
     ''' 
-    postdata = request.POST
+    postdata = getPostdata(request)
     username = postdata.get('username', '')
     token = postdata.get('token','')
     if  username == request.user.username or request.user.has_perm('omuser.OmUser_Modify'):
@@ -312,8 +310,8 @@ def updateUserAjax(request):
         if checker.get('status') == 'success':
             user = OmUser.objects.get(username=username)
             user.nick_name = postdata.get('nick_name', '')
-            if postdata.get('birthday_%Y', ''):
-                user.birthday = postdata.get('birthday_%Y', '')
+            if postdata.get('birthday', ''):
+                user.birthday = postdata.get('birthday', '')
             else:
                 user.birthday = None
             user.gender = postdata.get('gender', '')
@@ -322,7 +320,9 @@ def updateUserAjax(request):
             user.phone2 = postdata.get('phone2', '')
             user.department = postdata.get('department', '')
             user.company = postdata.get('company', '')
+            user.default_group = postdata.get('default_group', '')
             user.frequency = postdata.get('refresh_rate_$', '')
+            user.substitute = postdata.get('substitute', '')
             if request.user.username != username and token != user.password and user.ad_flag == False and token:
                 user.set_password(postdata.get('token', ''))
             user.save()
@@ -353,7 +353,6 @@ def userManagementPage(request):
 
 
 @login_required
-@permission_required('omuser.OmUser_View','/api/permission/denied/')
 @try_except
 def listUserAjax(request):
     '''
@@ -362,14 +361,26 @@ def listUserAjax(request):
     return: user object
     author: Kolin Hsu, Pei lin
     '''
-    is_active = request.POST.getlist('is_active[]',['1','0'])
-    ad_flag = request.POST.getlist('ad_flag[]',['1','0'])
-    filed_list=['username__icontains','nick_name__icontains','email__icontains','company__icontains','department__icontains']
-    display_field = ['username','email','nick_name','company','is_active','department','ad_flag','last_login','id','is_superuser']
-    userquery = OmUser.objects.filter(is_active__in=is_active, ad_flag__in=ad_flag, delete=False).exclude(id=1).values(*display_field)
-    result = DatatableBuilder(request, userquery, filed_list)
-    info(request ,'%s list user success' % request.user.username)
-    return JsonResponse(result)
+    postdata = getPostdata(request)
+    is_active = postdata.get('is_active',['1','0'])
+    ad_flag = postdata.get('ad_flag',['1','0'])
+    datatable = postdata.get('datatable', None)
+    if datatable:
+        if request.user.has_perm('omuser.OmUser_View'):
+            filed_list=['username__icontains','nick_name__icontains','email__icontains','company__icontains','department__icontains']
+            display_field = ['username','email','nick_name','company','is_active','department','ad_flag','last_login','id','is_superuser']
+            userquery = OmUser.objects.filter(is_active__in=is_active, ad_flag__in=ad_flag, delete=False).exclude(id=1).values(*display_field)
+            result = DatatableBuilder(request, userquery, filed_list)
+            info(request ,'%s list user success' % request.user.username)
+            return JsonResponse(result)
+        else:
+            info(request ,'%s has no permission.' % request.user.username)
+            return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
+    else:
+        display_field = ['id','username','nick_name']
+        result = list(OmUser.objects.filter(is_active=True,delete=False).exclude(id=1).values(*display_field))
+        info(request ,'%s list user success.' % request.user.username)
+        return ResponseAjax(statusEnum.success, _('讀取成功'), result).returnJSON()
 
 
 @login_required
@@ -382,10 +393,9 @@ def addUserAjax(request):
     return: json
     author: Kolin Hsu
     '''
-    license_user_num = getUsers('')
-    now_users_num = OmUser.objects.filter(delete=False,is_active=False).exclude(username='system').count()
-    if now_users_num < license_user_num:
-        postdata = request.POST
+    omlicense = checkLicense('user')
+    if omlicense:
+        postdata = getPostdata(request)
         #Server Side Rule Check
         require_field = ['username','nick_name','email_@','refresh_rate_$','token']
         checker = DataChecker(postdata, require_field)
@@ -395,8 +405,8 @@ def addUserAjax(request):
             password = postdata.get('token', '')
             nick_name = postdata.get('nick_name', '')
             birthday = None
-            if postdata.get('birthday_%Y', ''):
-                birthday = postdata.get('birthday_%Y')
+            if postdata.get('birthday', ''):
+                birthday = postdata.get('birthday')
             gender = postdata.get('gender', '')
             phone1 = postdata.get('phone1', '')
             phone2 = postdata.get('phone2', '')
@@ -405,9 +415,9 @@ def addUserAjax(request):
             if not OmUser.objects.filter(username=username).exists():
                 try:
                     OmUser.objects.create_user(username=username, email=email, password=password, nick_name=nick_name, birthday=birthday, gender=gender, phone1=phone1, phone2=phone2, department=department, company=company)
-                except:
+                except Exception as e:
                     info(request ,'%s add user error' % request.user.username)
-                    return ResponseAjax(statusEnum.no_permission,  _('新增使用者失敗')).returnJSON()
+                    return ResponseAjax(statusEnum.no_permission,  _('新增使用者失敗: ') + e.__str__()).returnJSON()
             else:
                 info(request ,'%s add user error' % request.user.username)
                 return ResponseAjax(statusEnum.no_permission ,  _('該使用者名稱已經被使用')).returnJSON()
@@ -415,10 +425,10 @@ def addUserAjax(request):
             return ResponseAjax(statusEnum.success,  _('新增使用者成功')).returnJSON()
         else:
             info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
-            return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
+            return ResponseAjax(statusEnum.not_found, checker.get('message',''), checker).returnJSON()
     else:
         info(request ,'%s the license error.' % request.user.username)
-        return ResponseAjax(statusEnum.not_found, _('使用者數量已達上限，請向原廠購買授權。')).returnJSON()
+        return ResponseAjax(statusEnum.not_found, _('使用者數量已達上限。')).returnJSON()
 
 
 @login_required
@@ -432,12 +442,12 @@ def deleteUserAjax(request):
     author: Kolin Hsu
     '''
     #Server Side Rule Check
-    require_field = ['username[]']
-    postdata = request.POST
+    require_field = ['username']
+    postdata = getPostdata(request)
     checker = DataChecker(postdata, require_field)
     if checker.get('status') == 'success':
         try:
-            user_arr = request.POST.getlist('username[]', '')
+            user_arr = postdata.get('username', '')
             for username in user_arr:
                 user = OmUser.objects.get(username=username)
                 if user.is_superuser:
@@ -475,12 +485,12 @@ def activeUserAjax(request):
     return: json
     author: Kolin Hsu
     '''
-    postdata = request.POST
+    postdata = getPostdata(request)
     #Server Side Rule Check
-    require_field = ['username[]', 'status']
+    require_field = ['username', 'status']
     checker = DataChecker(postdata, require_field)
     status = postdata.get('status', '')
-    user_arr = postdata.getlist('username[]', '')
+    user_arr = postdata.get('username', '')
     superuser_name_list = list(OmUser.objects.filter(is_superuser=True).values_list('username',flat=True))
     if checker.get('status') == 'success':
         for superuser_name in superuser_name_list:
@@ -488,15 +498,14 @@ def activeUserAjax(request):
                 info(request ,'%s cannot inactive superuser.' % request.user.username)
                 return ResponseAjax(statusEnum.error,  _('無法停用系統管理員')).returnJSON()
         if status == 'active':
-            license_user_num = getUsers('')
-            now_users_num = OmUser.objects.filter(delete=False,is_active=False).exclude(username='system').count()
-            if now_users_num < license_user_num:
+            omlicense = checkLicense('user')
+            if omlicense:
                 OmUser.objects.filter(username__in=user_arr).update(is_active=True)
                 info(request ,'%s active user success' % request.user.username)
                 return ResponseAjax(statusEnum.success,  _('啟用使用者成功'), user_arr).returnJSON()
             else:
                 info(request ,'%s the license error.' % request.user.username)
-                return ResponseAjax(statusEnum.not_found, _('使用者數量已達上限，請向原廠購買授權。')).returnJSON()
+                return ResponseAjax(statusEnum.not_found, _('使用者數量已達上限。')).returnJSON()
         elif status == 'inactive':
             OmUser.objects.filter(username__in=user_arr).update(is_active=False)
             info(request ,'%s inactive user success' % request.user.username)
@@ -522,13 +531,13 @@ def addGroupAjax(request):
     #function variable
     p_group = None
     #get postdata
-    postdata = request.POST
+    postdata = getPostdata(request)
     group_name = postdata.get('group_name','')
     parent_group_id = postdata.get('p_id','')
-    functional_flag = strtobool(postdata.get('functional_flag_%B','False'))
+    functional_flag = strtobool(postdata.get('functional_flag','False'))
     description = postdata.get('description','')
     #Server Side Rule Check
-    require_field = ['group_name','functional_flag_%B']
+    require_field = ['group_name','functional_flag']
     checker = DataChecker(postdata, require_field)
     if checker.get('status') == 'success':
         if parent_group_id:
@@ -559,10 +568,10 @@ def deleteGroupAjax(request):
     return: json
     author: Kolin Hsu
     '''
-    postdata = request.POST
-    group_name_list = postdata.getlist('group_name[]','')
+    postdata = getPostdata(request)
+    group_name_list = postdata.get('group_name','')
     #Server Side Rule Check
-    require_field = ['group_name[]']
+    require_field = ['group_name']
     checker = DataChecker(postdata, require_field)
     if checker.get('status') == 'success':
         OmGroup.objects.filter(name__in=group_name_list,ad_flag=False).delete()
@@ -584,12 +593,12 @@ def groupUserAjax(request):
     author: Kolin Hsu
     '''
     #get postdata
-    postdata = request.POST
-    group_list = postdata.getlist('group_list[]','')
+    postdata = getPostdata(request)
+    group_list = postdata.get('group_list','')
     username = postdata.get('username','')
-    functional_flag = strtobool(postdata.get('functional_flag_%B','False'))
+    functional_flag = strtobool(postdata.get('functional_flag','False'))
     #Server Side Rule Check
-    require_field = ['username', 'functional_flag_%B']
+    require_field = ['username', 'functional_flag']
     checker = DataChecker(postdata, require_field)
     if checker.get('status') == 'success':
         try:
@@ -638,9 +647,9 @@ def listGroupAjax(request):
     author: Kolin Hsu
     '''
     #get postdata
-    postdata = request.POST
+    postdata = getPostdata(request)
     functional_flag = postdata.get('functional_flag',False)
-    ad_flag = postdata.getlist('ad_flag[]',['1','0'])
+    ad_flag = postdata.get('ad_flag',['1','0'])
     datatable = postdata.get('datatable',False)
     #function variable
     if datatable:
@@ -650,7 +659,9 @@ def listGroupAjax(request):
         info(request ,'%s list group success' % request.user.username)
         return JsonResponse(result)
     else:
-        group_list = list(OmGroup.objects.filter(functional_flag=functional_flag,ad_flag__in=ad_flag).values('id','group_uuid','display_name','parent_group','description').order_by('parent_group', '-id'))
+        group_list_parent = list(OmGroup.objects.filter(functional_flag=functional_flag,ad_flag__in=ad_flag,parent_group_id=None).values('id','group_uuid','display_name','parent_group','description').order_by('id'))
+        group_list_childs = list(OmGroup.objects.filter(functional_flag=functional_flag,ad_flag__in=ad_flag).exclude(parent_group_id=None).values('id','group_uuid','display_name','parent_group','description').order_by('parent_group','id'))
+        group_list = group_list_parent + group_list_childs
         group_list = DataFormat(group_list)
         info(request ,'%s list group success' % request.user.username)
         return ResponseAjax(statusEnum.success, _('讀取成功'), group_list).returnJSON()
@@ -679,19 +690,19 @@ def loadGroupAjax(request):
     author: Kolin Hsu
     '''
     #function variable
-    group_id = request.POST.get('group_id', '')
     result = {}
     role_permission_list=[]
     #Server Side Rule Check
     require_field = ['group_id']
-    postdata = request.POST
+    postdata = getPostdata(request)
     checker = DataChecker(postdata, require_field)
     #get postdata
-    functional_flag = strtobool(postdata.get('functional_flag_%B','Flase'))
-    ad_flag = strtobool(postdata.get('ad_flag_%B','False'))
+    group_id = postdata.get('group_id','')
+    functional_flag = strtobool(postdata.get('functional_flag','Flase'))
+    ad_flag = strtobool(postdata.get('ad_flag','False'))
     if checker.get('status') == 'success':
         group_obj = OmGroup.objects.get(id=group_id)
-        all_user_list = list(OmUser.objects.all().values('username','nick_name','company','is_active'))
+        all_user_list = list(OmUser.objects.filter(delete=False).exclude(id=1).values('username','nick_name','company','is_active'))
         group_user_list = list(group_obj.user_set.all().values_list('username',flat=True))
         #role data
         if functional_flag:
@@ -726,12 +737,12 @@ def updateGroupAjax(request):
     author: Kolin Hsu
     '''
     #function variable
-    group_id = request.POST.get('group_id', '')
     #Server Side Rule Check
     require_field = ['group_id']
-    postdata = request.POST
+    postdata = getPostdata(request)
     checker = DataChecker(postdata, require_field)
     #get postdata
+    group_id = postdata.get('group_id','')
     name = postdata.get('name','')
     description = postdata.get('description','')
     if checker.get('status') == 'success':
@@ -766,8 +777,8 @@ def groupUsersAjax(request):
     return: json
     author: Kolin Hsu
     '''
-    postdata = request.POST
-    user_list = postdata.getlist('user_list[]',[])
+    postdata = getPostdata(request)
+    user_list = postdata.get('user_list',[])
     group_id = postdata.get('group_id','')
     try:
         group = OmGroup.objects.get(id=group_id)
@@ -806,8 +817,8 @@ def rolePermissionAjax(request):
     return: json
     author: Kolin Hsu
     '''
-    postdata = request.POST
-    per_list = postdata.getlist('per_list[]',[])
+    postdata = getPostdata(request)
+    per_list = postdata.get('per_list',[])
     group_id = postdata.get('group_id','')
     #Server Side Rule Check
     require_field = ['group_id']
@@ -875,7 +886,7 @@ def changePasswordAjax(request):
     author: Kolin Hsu
     '''
     this_user = request.user
-    postdata = request.POST
+    postdata = getPostdata(request)
     input_old = postdata.get('org_token')
     input_new = postdata.get('token')
     input_new1 = postdata.get('token2')
@@ -906,19 +917,19 @@ def changePasswordAjax(request):
 def getSecurityAjax(request):
     '''
     api get security
-    input: request.headers['Authorization']
+    input: request.META['HTTP_AUTHORIZATION']
     return: json
     author: Kolin Hsu
     ''' 
     #get request headers
-    basic_auth_str = request.headers['Authorization'][6:]
+    basic_auth_str = request.META['HTTP_AUTHORIZATION'][6:]
     username, password = base64.b64decode(basic_auth_str).decode('utf-8').split(':')
     #Server Side Rule Check
     if checkEmailFormat(username):
         usersearch = OmUser.objects.get(email=username)
         user = auth.authenticate(username=usersearch.username, password=password)
     else:
-        username_db = OmUser.objects.get(username__icontains=username).username
+        username_db = OmUser.objects.get(username=username).username
         user = auth.authenticate(username=username_db, password=password)
        
     if user is not None and user.is_active:
@@ -986,7 +997,7 @@ def adGroupPage(request):
     return: AD page
     author: Kolin Hsu
     '''
-    if check_ldap_app():
+    if check_app('omldap'):
         return render(request,'adgroup_list.html')
     else:
         return render(request,'home.html')
@@ -1000,7 +1011,7 @@ def adGroupDetailPage(request, group_id):
     return: group detail page
     author: Kolin Hsu
     '''
-    if check_ldap_app():
+    if check_app('omldap'):
         return render(request, "adgroup_detail.html", locals())
     else:
         return render(request,'home.html')
@@ -1013,6 +1024,7 @@ def getAgreeAjax(request):
     return: agree detail
     author: pei lin
     '''
-    agree_type = request.POST.get('agree_type', '')
+    postdata = getPostdata(request)
+    agree_type = postdata.get('agree_type', '')
     agree_detail = SystemSetting.objects.get(name=agree_type).value
     return ResponseAjax(statusEnum.success,  _('取得成功'), agree_detail).returnJSON()

@@ -5,16 +5,19 @@ Created on 2019年12月25日
 import json, re, datetime
 from omflow.models import QueueData, TempFiles
 from omflow.syscom.q_monitor import FormFlowMonitor
-from omflow.syscom.common import DataChecker, getModel, FormatToFormdataList
-from omflow.global_obj import FlowActiveGlobalObject
+from omflow.syscom.common import DataChecker, getModel, FormatToFormdataList, check_app, getUserName, getGroupName, License
+from omflow.global_obj import FlowActiveGlobalObject, GlobalObject
 from django.utils.translation import gettext as _
 from omflow.models import Scheduler
 from omflow.syscom.schedule_monitor import schedule_Execute
-from omflow.syscom.license import getVersion
 from ommission.views import createMission, setMission
 from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import UploadedFile
-from omflow.syscom.default_logger import debug
+from omflow.syscom.default_logger import debug, error
+from omuser.models import OmUser
+
+if check_app('omorganization'):
+    from omorganization.views import checkOrgGlobal, getRootPosition, getDeptPosition
 
 
 
@@ -31,16 +34,14 @@ class OmEngine():
         self.data = data
         self.next_chart_item = None
         self.last_chart_item = None
-        self.version = None
         self.flow_value = data.get('flow_value','')
         self.data_no = data.get('data_no','')
         self.data_id = data.get('data_id','')
         self.error_pass = None
-        self.flowobject = None
+#         self.flowobject = None
+        self.flowactive = None
         self.table_uuid = data.get('table_uuid',None)
         self.flowlog = data.get('flowlog',None)
-        self.app_id = None
-        self.action = None
     
     def checkActive(self):
         '''
@@ -62,30 +63,17 @@ class OmEngine():
                 flowactive = FlowActiveGlobalObject.UUIDSearch(self.flow_uuid)
                 #檢查流程使否啟用
                 if flowactive.is_active:
-                    self.app_id = flowactive.flow_app_id
-                    self.version = flowactive.version
-                    self.flowobject = json.loads(flowactive.flowobject)
+#                     self.flowobject = json.loads(flowactive.flowobject)
+                    flowobject = json.loads(flowactive.flowobject)
+                    self.flowactive = flowactive
                     #找出上一個點以及下一個點
-                    flowobject_items = self.flowobject['items']
+#                     flowobject_items = self.flowobject['items']
+                    flowobject_items = flowobject['items']
                     for f_item in flowobject_items:
                         if f_item['id'] == chart_id_to:
                             self.next_chart_item = f_item
                         elif f_item['id'] == chart_id_from:
                             self.last_chart_item = f_item
-                    #找出快速操作設定
-                    if self.next_chart_item:
-                        if self.next_chart_item['type'] == 'form':
-                            action1_text = ''
-                            action2_text = ''
-                            if flowactive.action1:
-                                action1 = json.loads(flowactive.action1).get(chart_id_to,'')
-                                if action1:
-                                    action1_text = action1['text']
-                            if flowactive.action2:
-                                action2 = json.loads(flowactive.action2).get(chart_id_to,'')
-                                if action2:
-                                    action2_text = action2['text']
-                            self.action = action1_text + ',' + action2_text
                     #取得錯誤是否通過
                     if self.last_chart_item:
                         self.error_pass = self.last_chart_item['config'].get('error_pass',False)
@@ -97,7 +85,7 @@ class OmEngine():
                     self.markError(chart_id_from, '', ms)
                     return ms
             except Exception as e:
-                debug('OME CheckActive error:     %s' % e.__str__())
+                error('','OME CheckActive error:     %s' % e.__str__())
                 ms = _('該流程沒有已部署的版本')
                 self.markError(chart_id_from, '', ms)
                 return ms
@@ -137,6 +125,10 @@ class OmEngine():
                 return self.setformPoint(flag)
             elif chart_type == 'inflow':
                 return self.inflowPoint(flag)
+            elif chart_type == 'org1':
+                return self.org1Point(flag)
+            elif chart_type == 'org2':
+                return self.org2Point(flag)
         else:
             return self.differentiateNextType()
     
@@ -179,11 +171,11 @@ class OmEngine():
                     name = config_input['name'] #建立變數名稱
                     value = config_input['value'] #值/欄位
                     require = config_input['require']
-                    if not start_input:
+                    if not start_input and name:
                         #確認value是要取得table還是本身
                         if value == None:
                             c_input_value = ''
-                        elif '#' in value: 
+                        elif re.match(r'#[A-Z]*[0-9]*\(.+\)', value): 
                             if not formdata:
                                 omdata_model = getModel('omformmodel','Omdata_' + self.table_uuid)
                                 formdata = list(omdata_model.objects.filterformat(id=self.data_id))[0]
@@ -219,21 +211,34 @@ class OmEngine():
                                 m = omdata_model.objects.create(**formdata)
                                 m.init_data_id = m.id
                                 m.save()
+                                self.data_id = m.id
+                                #檢查sla
+                                from omformflow.views import checkSLARule
+                                checkSLARule(self.table_uuid, self.data_id, m)
                                 #create mymission
-                                mission_param = {}
-                                mission_param['flow_uuid'] = m.flow_uuid
-                                mission_param['flow_name'] = omdata_model.table_name
-                                mission_param['status'] = m.status
-                                mission_param['level'] = m.level
-                                mission_param['title'] = m.title
-                                mission_param['data_no'] = m.data_no
-                                mission_param['data_id'] = m.id
-                                mission_param['stop_uuid'] = chart_id
-                                mission_param['stop_chart_text'] = chart_text
-                                mission_param['history'] = True
-                                mission_param['create_user_id'] = m.create_user_id
-                                mission_param['ticket_createtime'] = m.init_data.createtime
-                                createMission(mission_param)
+                                fa = FlowActiveGlobalObject.UUIDSearch(self.table_uuid)
+                                if fa:
+                                    if fa.mission:
+                                        mission_param = {}
+                                        mission_param['flow_uuid'] = m.flow_uuid
+                                        mission_param['flow_name'] = omdata_model.table_name
+                                        mission_param['status'] = m.status
+                                        mission_param['level'] = m.level
+                                        mission_param['title'] = m.title
+                                        mission_param['data_no'] = m.data_no
+                                        mission_param['data_id'] = m.id
+                                        mission_param['stop_uuid'] = chart_id
+                                        mission_param['stop_chart_text'] = chart_text
+                                        mission_param['history'] = True
+                                        mission_param['create_user_id'] = m.create_user_id
+                                        mission_param['update_user_id'] = m.create_user_id
+                                        mission_param['ticket_createtime'] = m.init_data.createtime
+                                        group_str = m.group
+                                        if group_str:
+                                            group = json.loads(group_str)
+                                            mission_param['assignee_id'] = group.get('user','')
+                                            mission_param['assign_group_id']= group.get('group','')
+                                        createMission(mission_param)
                                 self.data_id = m.id
                                 self.data['data_id'] = m.id
                                 self.data.pop('formdata')
@@ -264,18 +269,20 @@ class OmEngine():
                                 value = subflow_input['value'] #值/變數/欄位
                                 name = subflow_input['name'] #變數
                                 require = subflow_input['require']
-                                #確認name是要取得table還是flow value還是本身
-                                if value == None or not value:
-                                    input_obj[name] = ''
-                                elif '$' in value:
-                                    input_obj[name] = self.flow_value.get(value[2:-1],'')
-                                elif '#' in value:
-                                    if not formdata:
-                                        omdata_model = getModel('omformmodel','Omdata_' + self.table_uuid)
-                                        formdata = list(omdata_model.objects.filterformat(id=self.data_id))[0]
-                                    input_obj[name] = self.regexInOutputValue(formdata, value)
-                                else:
-                                    input_obj[name] = value
+                                if name:
+                                    #確認name是要取得table還是flow value還是本身
+                                    if value == None or not value:
+                                        input_obj[name] = ''
+                                    elif re.match(r'\$\(.+\)', value):
+                                        re.match(r'$[A-Z][0-9]+\(.+\)', value)
+                                        input_obj[name] = self.flow_value.get(value[2:-1],'')
+                                    elif re.match(r'#[A-Z]*[0-9]*\(.+\)', value):
+                                        if not formdata:
+                                            omdata_model = getModel('omformmodel','Omdata_' + self.table_uuid)
+                                            formdata = list(omdata_model.objects.filterformat(id=self.data_id))[0]
+                                        input_obj[name] = self.regexInOutputValue(formdata, value)
+                                    else:
+                                        input_obj[name] = value
                                 if require == True or require == 'true' or require == 'True':
                                     require_list.append(name)
                             #確認是否為必填欄位
@@ -294,7 +301,7 @@ class OmEngine():
                                 self.__init__(preflow_uuid, new_data)
                                 return self.checkActive()
                             else:
-                                return _('缺少必填變數：' + require_check)
+                                return _('缺少必填變數：') + require_check
                         except Exception as e:
                             debug('OME StartPoint error:     %s' % e.__str__())
                     elif hp_result['status'] in ['E','F']:
@@ -306,7 +313,7 @@ class OmEngine():
                 else:
                     return _('缺少必填變數：'+ require_check)
         except Exception as e:
-            self.markError(chart_id, chart_text, _('OME系統錯誤(開始點)，請通知系統管理員。<br>') + e.__str__())
+            self.markError(chart_id, chart_text, _('OME系統錯誤(開始點)，請通知系統管理員。') + '<br>' + e.__str__())
     
     
     def endPoint(self,flag):
@@ -337,25 +344,28 @@ class OmEngine():
                     if calculate_list:
                         calculate_temp_dict = self.calculate(calculate_list, formdata)
                     for config_output in config_output_list:
-                        name = config_output['name'][2:-1] #輸出參數名稱
-                        value = config_output['value'] #flow_value變數名稱
-                        #組裝寫入value history db的變數
-                        if value == None:
-                            output_obj[name] = ''
-                        elif '$' in value:
-                            value = value[2:-1]
-                            if calculate_temp_dict.get(value,None) == None:
-                                output_obj[name] = self.flow_value[value]
-                            else:
-                                output_obj[name] = calculate_temp_dict[value]
-                        
-                        elif '#' in value:
-                            if not formdata:
-                                omdata_model = getModel('omformmodel','Omdata_' + self.table_uuid)
-                                formdata = list(omdata_model.objects.filterformat(id=self.data_id))[0]
-                            output_obj[name] = self.regexInOutputValue(formdata, value)
-                        else:
-                            output_obj[name] = value
+                        if config_output['name']:
+                            name = config_output['name'] #輸出參數名稱
+                            value = config_output['value'] #flow_value變數名稱
+                            if name:
+                                name = name[2:-1]
+                                #組裝寫入value history db的變數
+                                if value == None:
+                                    output_obj[name] = ''
+                                elif re.match(r'\$\(.+\)', value):
+                                    value = value[2:-1]
+                                    if calculate_temp_dict.get(value,None) == None:
+                                        output_obj[name] = self.flow_value.get(value,'')
+                                    else:
+                                        output_obj[name] = calculate_temp_dict.get(value,'')
+                                
+                                elif re.match(r'#[A-Z]*[0-9]*\(.+\)', value):
+                                    if not formdata:
+                                        omdata_model = getModel('omformmodel','Omdata_' + self.table_uuid)
+                                        formdata = list(omdata_model.objects.filterformat(id=self.data_id))[0]
+                                    output_obj[name] = self.regexInOutputValue(formdata, value)
+                                else:
+                                    output_obj[name] = value
                 #log output
                 self.outputLog(log, chart_id, output_obj)
                 if self.data.get('error','') and (not self.error_pass):
@@ -368,6 +378,11 @@ class OmEngine():
                         QueueData.objects.get(queue_id=queue_id).delete()
                     except:
                         pass
+                    fa = FlowActiveGlobalObject.UUIDSearch(self.table_uuid)
+                    if fa:
+                        create_or_set_mission = fa.mission
+                    else:
+                        create_or_set_mission = False
                     #get ommodel
                     model_name = 'Omdata_' + self.table_uuid
                     model = getModel('omformmodel', model_name)
@@ -387,6 +402,7 @@ class OmEngine():
                         #update flow value
                         model.objects.filter(id=self.data_id).update(data_param=data_dumps)
                         content['chart_input'] = output_obj
+                        content['data_id'] = self.data_id
                         self.__init__(content['flow_uuid'], content)
                         return self.checkActive()
                     elif outflow_content:
@@ -394,7 +410,11 @@ class OmEngine():
                         #set outside flow's ticket closed
                         model.objects.filter(id=self.data_id).update(running=False,closed=True,stop_uuid=chart_id,stop_chart_text=chart_text,stoptime=stoptime,data_param=data_dumps)
                         #set mission closed
-                        setMission('closed', self.flow_uuid, self.data_no, None, None)
+                        if create_or_set_mission:
+                            setMission('closed', self.flow_uuid, self.data_no, None, None)
+                        #close sla
+                        from omformflow.views import closeSLAData
+                        closeSLAData(self.flow_uuid, self.data_no)
                         #get outflow content
                         outflow_content['outflow_done'] = True
                         #把外部流程的單號跟流程編號拋給父流程
@@ -410,7 +430,17 @@ class OmEngine():
                         #set ticket closed
                         model.objects.filter(id=self.data_id).update(running=False,closed=True,stop_uuid=chart_id,stop_chart_text=chart_text,stoptime=stoptime,data_param=data_dumps)
                         #set mission closed
-                        setMission('closed', self.flow_uuid, self.data_no, None, None)
+                        if create_or_set_mission:
+                            setMission('closed', self.flow_uuid, self.data_no, None, None)
+                        #close sla
+                        from omformflow.views import closeSLAData
+                        closeSLAData(self.flow_uuid, self.data_no)
+                        #if flow type is sch or api
+                        #send policy data to server
+                        flow_attr = self.flowactive.attr
+                        if flow_attr in ['sch','api']:
+                            from ommonitor.views import sendPolicyDataToServer
+                            sendPolicyDataToServer(self.flowactive.flow_name, output_obj)
                         debug('close ticket, %s   no. %s  endpoint-output:      %s' % (self.flow_uuid, self.data_no, output_obj))
             elif flag == 'to':
                 #log input
@@ -422,7 +452,7 @@ class OmEngine():
                 self.inputLog(log, chart_id, input_value, chart_text, chart_type)
                 return self.replaceFromTo()
         except Exception as e:
-            self.markError(chart_id, chart_text, _('OME系統錯誤(結束點)，請通知系統管理員。<br>') + e.__str__())
+            self.markError(chart_id, chart_text, _('OME系統錯誤(結束點)，請通知系統管理員。') + '<br>' + e.__str__())
         
     
     def pythonPoint(self,flag):
@@ -447,12 +477,13 @@ class OmEngine():
                 if config_output_list:
                     #get last chart's output
                     for config_output in config_output_list:
-                        name = config_output['name'][2:-1] #flow_value變數名稱
-                        value = config_output['value'][2:-1] #chart變數名稱
-                        #回寫flow_value
-                        self.flow_value[name] = in_output[value]
-                        #組裝寫入value history db的變數
-                        output_obj[name] = in_output[value]
+                        if config_output['name'] and config_output['value']:
+                            name = config_output['name'][2:-1] #flow_value變數名稱
+                            value = config_output['value'][2:-1] #chart變數名稱
+                            #回寫flow_value
+                            self.flow_value[name] = in_output.get(value,'')
+                            #組裝寫入value history db的變數
+                            output_obj[name] = in_output.get(value,'')
                     self.outputLog(log, chart_id, output_obj)
                 return self.checkError(chart_id,chart_text)
             elif flag == 'to':
@@ -463,10 +494,13 @@ class OmEngine():
                 config = chart['config']
                 log = config.get('log',False)
                 autoinstall = config.get('autoinstall',False)
+                load_balance = config.get('load_balance',False)
+                version = License().getVersionType()
                 self.data['autoinstall'] = autoinstall
+                self.data['load_balance'] = load_balance and version != 'C'
                 return self.inputProcess(log)
         except Exception as e:
-            self.markError(chart_id, chart_text, _('OME系統錯誤(程式碼點)，請通知系統管理員。<br>') + e.__str__())
+            self.markError(chart_id, chart_text, _('OME系統錯誤(程式碼點)，請通知系統管理員。') + '<br>' + e.__str__())
     
     
     def formPoint(self,flag):
@@ -487,15 +521,21 @@ class OmEngine():
                 table_dict = model.objects.getdictformat(id=self.data_id)
                 output_dict = {}
                 for config_output in config_output_list:
-                    name = config_output['name'][2:-1]  #flow_value變數
+                    name = config_output['name']  #flow_value變數
                     value = config_output['value']  #欄位
-                    c_output_value = self.regexInOutputValue(table_dict, value)
-                    #寫入flow value
-                    self.flow_value[name] = c_output_value
-                    #寫入output dict
-                    output_dict[name] = c_output_value
+                    if name and value:
+                        name = name[2:-1]
+                        c_output_value = self.regexInOutputValue(table_dict, value)
+                        #寫入flow value
+                        self.flow_value[name] = c_output_value
+                        #寫入output dict
+                        output_dict[name] = c_output_value
                 #log output
-                self.outputLog(log, chart_id, output_dict)
+                try:
+                    ex_data_id = self.data.pop('ex_data_id')
+                except:
+                    ex_data_id = None
+                self.outputLog(log, chart_id, output_dict, ex_data_id)
                 return self.checkError(chart_id,chart_text)
             elif flag == 'to':
                 chart = self.next_chart_item
@@ -520,49 +560,54 @@ class OmEngine():
                     for config_input in config_input_list:
                         name = config_input['name'] #欄位名稱
                         value = config_input['value'] #變數/值
-                        #確認value是要取得flow value還是本身
-                        if value == None or not value:
-                            c_input_value = ''
-                        elif '$' in value:
-                            value = value[2:-1]
-                            if calculate_temp_dict.get(value,None) == None:
-                                c_input_value = self.flow_value[value]
-                            else:
-                                c_input_value = calculate_temp_dict[value]
-                        else:
-                            c_input_value = value
-                        #放入暫存dict
-                        if re.match(r'#[A-Z][0-9]+\(.+\)', name):
-                            num = int(re.findall(r'#[A-Z]([0-9]+)\(.+\)', name)[0])
-                            name = re.findall(r'#[A-Z][0-9]+\((.+)\)', name)[0]
-                            l_index = num - 1
-                            l = temp_dict.get(name,[])
-                            for i in range(l_index):
-                                if len(l)-i:
-                                    pass
+                        if name:
+                            #確認value是要取得flow value還是本身
+                            if value == None or not value:
+                                c_input_value = ''
+                            elif re.match(r'\$\(.+\)', value):
+                                value = value[2:-1]
+                                if calculate_temp_dict.get(value,None) == None:
+                                    c_input_value = self.flow_value.get(value,'')
                                 else:
-                                    l.append('')
-                            l.append(c_input_value)
-                            temp_dict[name] = l
-                        elif re.match(r'#\(.+\)', name):
-                            name = re.findall(r'#\((.+)\)', name)[0]
-                            temp_dict[name] = c_input_value
-                        else:
-                            temp_dict[name] = c_input_value
+                                    c_input_value = calculate_temp_dict.get(value,'')
+                            else:
+                                c_input_value = value
+                            #放入暫存dict
+                            if re.match(r'#[A-Z][0-9]+\(.+\)', name):
+                                num = int(re.findall(r'#[A-Z]([0-9]+)\(.+\)', name)[0])
+                                name = re.findall(r'#[A-Z][0-9]+\((.+)\)', name)[0]
+                                l_index = num - 1
+                                l = temp_dict.get(name,[])
+                                for i in range(l_index):
+                                    if len(l)-i:
+                                        pass
+                                    else:
+                                        l.append('')
+                                l.append(c_input_value)
+                                temp_dict[name] = l
+                            elif re.match(r'#\(.+\)', name):
+                                name = re.findall(r'#\((.+)\)', name)[0]
+                                temp_dict[name] = c_input_value
+                            else:
+                                temp_dict[name] = c_input_value
                         #確認該欄位是否為必填
                         require = config_input['require']
                         if require == True or require == 'true' or require == 'True':
                             require_list.append(name.lower())
                     #組成寫回資料庫的dict
                     formdata_list = []
-                    formobject_items = self.flowobject['form_object']['items']
+#                     formobject_items = self.flowobject['form_object']['items']
+                    formobject_items = json.loads(self.flowactive.merge_formobject)
                     for key in temp_dict:
                         name = key
                         value = temp_dict[key]
-                        for item in formobject_items:
-                            if item['id'] == name:
-                                FormatToFormdataList(item, value, formdata_list)
-                                break
+                        item = formobject_items.get(name,'')
+                        if item:
+                            FormatToFormdataList(item, value, formdata_list)
+#                         for item in formobject_items:
+#                             if item['id'] == name:
+#                                 FormatToFormdataList(item, value, formdata_list)
+#                                 break
                     if formdata_list:
                         for item in formdata_list:
                             item_id = item['id'].lower()
@@ -594,39 +639,44 @@ class OmEngine():
                         write_from_dict['history'] = True
                         write_from_dict['data_param'] = json.dumps(self.data)
                         model.objects.filter(id=self.data_id).update(**write_from_dict)
+                        #檢查sla
+                        from omformflow.views import checkSLARule
+                        checkSLARule(self.table_uuid, self.data_id)
+                        #
                         o_m = list(model.objects.filter(id=self.data_id).values())[0]
-                        o_m.pop('id')
+                        #保留前一個data的id，之後提供給logoutput使用
+                        ex_data_id = o_m.pop('id')
+                        self.data['ex_data_id'] = ex_data_id
+                        o_m['data_param'] = json.dumps(self.data)
                         o_m.pop('history')
                         #create new omdata
                         m = model.objects.create(**o_m)
-                        if m.group:
-                            #create mymission
-                            mission_param = {}
-                            mission_param['flow_uuid'] = m.flow_uuid
-                            mission_param['flow_name'] = model.table_name
-                            mission_param['status'] = m.status
-                            mission_param['level'] = m.level
-                            mission_param['title'] = m.title
-                            mission_param['data_no'] = m.data_no
-                            mission_param['data_id'] = m.id
-                            mission_param['stop_uuid'] = stop_uuid
-                            mission_param['stop_chart_text'] = chart_text
-                            mission_param['create_user_id'] = m.create_user_id
-                            mission_param['ticket_createtime'] = m.init_data.createtime
-                            mission_param['action'] = self.action
-                            group = json.loads(m.group)
-                            mission_param['assignee_id'] = group['user']
-                            mission_param['assign_group_id'] = group['group']
-                            createMission(mission_param)
+                        #create mymission
+                        fa = FlowActiveGlobalObject.UUIDSearch(self.table_uuid)
+                        if m.group and fa:
+                            if fa.mission:
+                                mission_param = {}
+                                mission_param['flow_uuid'] = m.flow_uuid
+                                mission_param['flow_name'] = model.table_name
+                                mission_param['status'] = m.status
+                                mission_param['level'] = m.level
+                                mission_param['title'] = m.title
+                                mission_param['data_no'] = m.data_no
+                                mission_param['data_id'] = m.id
+                                mission_param['stop_uuid'] = stop_uuid
+                                mission_param['stop_chart_text'] = chart_text
+                                mission_param['create_user_id'] = m.create_user_id
+                                mission_param['ticket_createtime'] = m.init_data.createtime
+                                action = self.getQuickAction(chart_id)
+                                mission_param['action'] = action
+                                group = json.loads(m.group)
+                                mission_param['assignee_id'] = group.get('user','')
+                                mission_param['assign_group_id'] = group.get('group','')
+                                createMission(mission_param)
                         #remove queue db
-                        last_chart_id = self.data.get('chart_id_from','')
-                        ex_queue_id = self.flow_uuid + str(self.data_id) + str(last_chart_id)
-                        try:
-                            QueueData.objects.get(queue_id=ex_queue_id).delete()
-                        except:
-                            pass
+                        self.removeQueueDB()
                     else:
-                        return self.markError(chart_id,chart_text,_('缺少必填變數：' + require_check))
+                        return self.markError(chart_id,chart_text,_('缺少必填變數：') + require_check)
                 else:
                     check_preflow = True
                 if check_preflow:
@@ -646,23 +696,24 @@ class OmEngine():
                         for subflow_input in subflow_input_list:
                             value = subflow_input['value'] #變數/欄位/字串
                             name = subflow_input['name'] #變數名稱
-                            #確認name是要取得table還是flow value還是本身
-                            if value == None or not value:
-                                input_obj[name] = ''
-                            elif '$' in value:
-                                input_obj[name] = self.flow_value.get(value[2:-1],'')
-                            elif '#' in value:
-                                if table_dict == None:
-                                    model = getModel('omformmodel', 'Omdata_' + self.table_uuid)
-                                    table_dict = model.objects.getdictformat(id=self.data_id)
-                                input_obj[name] = self.regexInOutputValue(table_dict, value)
-                            else:
-                                input_obj[name] = value
-                            #確認是否為必填欄位
-                            if not input_obj[name]:
-                                require = subflow_input['require']
-                                if require == True or require == 'true' or require == 'True':
-                                    return _('缺少必填變數：'+name)
+                            if name:
+                                #確認name是要取得table還是flow value還是本身
+                                if value == None or not value:
+                                    input_obj[name] = ''
+                                elif re.match(r'\$\(.+\)', value):
+                                    input_obj[name] = self.flow_value.get(value[2:-1],'')
+                                elif re.match(r'#[A-Z]*[0-9]*\(.+\)', value):
+                                    if table_dict == None:
+                                        model = getModel('omformmodel', 'Omdata_' + self.table_uuid)
+                                        table_dict = model.objects.getdictformat(id=self.data_id)
+                                    input_obj[name] = self.regexInOutputValue(table_dict, value)
+                                else:
+                                    input_obj[name] = value
+                                #確認是否為必填欄位
+                                if not input_obj[name]:
+                                    require = subflow_input['require']
+                                    if require == True or require == 'true' or require == 'True':
+                                        return _('缺少必填變數：'+name)
                         self.data['chart_input'] = input_obj
                         #set preflow data
                         preflow_uuid = self.has_preflow(chart)['value']
@@ -679,7 +730,7 @@ class OmEngine():
                         #找不到資料驗證的流程
                         return self.markError(chart_id, chart_text, hp_result['value'])
         except Exception as e:
-            self.markError(chart_id, chart_text, _('OME系統錯誤(人工點)，請通知系統管理員。<br>') + e.__str__())
+            self.markError(chart_id, chart_text, _('OME系統錯誤(人工點)，請通知系統管理員。') + '<br>' + e.__str__())
     
     
     def asyncPoint(self,flag):
@@ -699,10 +750,11 @@ class OmEngine():
                 model_name = 'Omdata_' + self.table_uuid
                 omdata_model = getModel('omformmodel', model_name)
                 main_ticket = list(omdata_model.objects.filter(id=self.data_id).values())[0]
-                main_ticket.pop('id')
+                async_main_ticket_id = main_ticket.pop('id')
                 m = omdata_model.objects.create(**main_ticket)
                 self.data_id = m.id
                 self.data['data_id'] = m.id
+                self.data['async_main_ticket_id'] = async_main_ticket_id
                 self.outputLog(log, chart_id, '')
                 return self.checkError(chart_id,chart_text)
             elif flag == 'to':
@@ -717,11 +769,11 @@ class OmEngine():
                 stop_uuid = self.getchartpath(chart_id)
                 model_name = 'Omdata_' + self.table_uuid
                 model = getModel('omformmodel', model_name)
-                model.objects.filter(id=self.data_id).update(running=False,stop_uuid=stop_uuid,stop_chart_text=chart_text,stoptime=stoptime)
+                model.objects.filter(id=self.data_id).update(running=False,stop_uuid=stop_uuid,stop_chart_text=chart_text,stoptime=stoptime,history=True)
                 self.inputLog(log, chart_id, self.next_chart_item['id'], chart_text, chart_type)
                 return self.replaceFromTo()
         except Exception as e:
-            self.markError(chart_id, chart_text, _('OME系統錯誤(並行點)，請通知系統管理員。<br>') + e.__str__())
+            self.markError(chart_id, chart_text, _('OME系統錯誤(並行點)，請通知系統管理員。') + '<br>' + e.__str__())
     
     
     def collectionPoint(self,flag):
@@ -747,12 +799,17 @@ class OmEngine():
                 chart_text = chart['text']
                 chart_type = chart['type']
                 stop_uuid = self.getchartpath(chart_id)
+                #將data_id和chart_id保留
+                collection_ex_data_id = self.data_id
+                collection_ex_chart_id = self.data.get('chart_id_from','')
                 model_name = 'Omdata_' + self.table_uuid
                 omdata_model = getModel('omformmodel', model_name)
                 omdata_model.objects.filter(id=self.data_id).update(running=False,history=True,stop_uuid=stop_uuid,stop_chart_text=chart_text,stoptime=stoptime)
                 #取得flow design確認非同步作業是否都已經完成
                 config = chart['config']
                 main_chart_id = config['main']
+                if not main_chart_id:
+                    main_chart_id = self.data.get('chart_id_from','')
                 count = len(config['rules'])
                 #取得回來的參數與數量
                 minor_flow_value_list = []
@@ -767,6 +824,8 @@ class OmEngine():
                 if return_num == count:
                     for flow_dict in flow_list:
                         data_param = json.loads(flow_dict['data_param'])
+                        if not main_chart_id:
+                            main_chart_id = data_param['chart_id_from']
                         if data_param['chart_id_from'] == main_chart_id:
                             self.data = data_param
                             self.flow_value = self.data['flow_value']
@@ -784,26 +843,23 @@ class OmEngine():
                     #組合新的主線流程，並建立資料
                     main_flow_dict.pop('id')
                     main_flow_dict.pop('stop_uuid')
+                    main_flow_dict.pop('history')
                     main_flow_dict.pop('stop_chart_text')
                     main_flow_dict['running'] = True
                     main_flow_dict['data_param'] = self.data
                     m = omdata_model.objects.create(**main_flow_dict)
                     self.data_id = m.id
                     self.data['data_id'] = m.id
+                    self.data['collection_ex_data_id'] = collection_ex_data_id
+                    self.data['collection_ex_chart_id'] = collection_ex_chart_id
                     #log input
                     log = config.get('log',False)
                     self.inputLog(log, chart_id, self.flow_value, chart_text, chart_type)
                     return self.replaceFromTo()
                 else:
-                    try:
-                        #remove queue db
-                        last_chart_id = self.data.get('chart_id_from','')
-                        ex_queue_id = self.flow_uuid + str(self.data_id) + last_chart_id
-                        QueueData.objects.get(queue_id=ex_queue_id).delete()
-                    except:
-                        pass
+                    self.removeQueueDB()
         except Exception as e:
-            self.markError(chart_id, chart_text, _('OME系統錯誤(集合點)，請通知系統管理員。<br>') + e.__str__())
+            self.markError(chart_id, chart_text, _('OME系統錯誤(集合點)，請通知系統管理員。') + '<br>' + e.__str__())
     
     
     def switchPoint(self,flag):
@@ -845,13 +901,13 @@ class OmEngine():
                     for switch_rule in rules_list:
                         value1 = switch_rule['value1']
                         value2 = switch_rule['value2']
-                        if '$' in value1:
+                        if re.match(r'\$\(.+\)', value1):
                             value1 = value1[2:-1]
                             if calculate_temp_dict.get(value1,None) == None:
                                 input_obj[value1] = self.flow_value.get(value1,'')
                             else:
                                 input_obj[value1] = calculate_temp_dict.get(value1,'')
-                        elif '#' in value1:
+                        elif re.match(r'#[A-Z]*[0-9]*\(.+\)', value1):
                             if not formdata:
                                 omdata_model = getModel('omformmodel','Omdata_' + self.table_uuid)
                                 formdata = list(omdata_model.objects.filterformat(id=self.data_id))[0]
@@ -865,13 +921,13 @@ class OmEngine():
                             pass
                         else:
                             input_obj[value1] = value1
-                        if '$' in value2:
+                        if re.match(r'\$\(.+\)', value2):
                             value2 = value2[2:-1]
                             if calculate_temp_dict.get(value1,None) == None:
                                 input_obj[value2] = self.flow_value.get(value2,'')
                             else:
                                 input_obj[value2] = calculate_temp_dict.get(value2,'')
-                        elif '#' in value2:
+                        elif re.match(r'#[A-Z]*[0-9]*\(.+\)', value2):
                             if not formdata:
                                 omdata_model = getModel('omformmodel','Omdata_' + self.table_uuid)
                                 formdata = list(omdata_model.objects.filterformat(id=self.data_id))[0]
@@ -889,7 +945,7 @@ class OmEngine():
                 self.inputLog(log, chart_id, last_chart_id, chart_text, chart_type)
                 return self.replaceFromTo()
         except Exception as e:
-            self.markError(chart_id, chart_text, _('OME系統錯誤(判斷點)，請通知系統管理員。<br>') + e.__str__())
+            self.markError(chart_id, chart_text, _('OME系統錯誤(判斷點)，請通知系統管理員。') + '<br>' + e.__str__())
     
     
     def subflowPoint(self,flag):
@@ -912,12 +968,14 @@ class OmEngine():
                 if subflow_output_list:
                     #get last chart's output
                     for subflow_output in subflow_output_list:
-                        name = subflow_output['name'][2:-1] #flow_value變數名稱
+                        name = subflow_output['name'] #flow_value變數名稱
                         value = subflow_output['value'] #chart變數名稱
-                        #回寫flow_value
-                        self.flow_value[name] = in_output[value]
-                        #組裝寫入value history db的變數
-                        output_obj[name] = in_output[value]
+                        if name:
+                            name = name[2:-1]
+                            #回寫flow_value
+                            self.flow_value[name] = in_output.get(value,'')
+                            #組裝寫入value history db的變數
+                            output_obj[name] = in_output.get(value,'')
                     self.outputLog(log, chart_id, output_obj)
                 return self.checkError(chart_id,chart_text)
             elif flag == 'to':
@@ -932,24 +990,25 @@ class OmEngine():
                 require_list = []
                 #get chart's input
                 for subflow_input in subflow_input_list:
-                    value = subflow_input['value']
-                    name = subflow_input['name']
+                    value = subflow_input['value'] #變數/值/欄位
+                    name = subflow_input['name']   #chart變數
                     require = subflow_input['require']
-                    #確認name是要取得table還是flow value還是本身
-                    if value == None or not value:
-                        input_obj[name] = ''
-                    elif '$' in value:
-                        input_obj[name] = self.flow_value.get(value[2:-1],'')
-                    elif '#' in value:
-                        if not formdata:
-                            omdata_model = getModel('omformmodel','Omdata_' + self.table_uuid)
-                            formdata = list(omdata_model.objects.filterformat(id=self.data_id))[0]
-                        input_obj[name] = self.regexInOutputValue(formdata, value)
-                    else:
-                        input_obj[name] = value
-                    #確認是否為必填欄位
-                    if require == True or require == 'true' or require == 'True':
-                        require_list.append(name)
+                    if name:
+                        #確認name是要取得table還是flow value還是本身
+                        if value == None or not value:
+                            input_obj[name] = ''
+                        elif re.match(r'\$\(.+\)', value):
+                            input_obj[name] = self.flow_value.get(value[2:-1],'')
+                        elif re.match(r'#[A-Z]*[0-9]*\(.+\)', value):
+                            if not formdata:
+                                omdata_model = getModel('omformmodel','Omdata_' + self.table_uuid)
+                                formdata = list(omdata_model.objects.filterformat(id=self.data_id))[0]
+                            input_obj[name] = self.regexInOutputValue(formdata, value)
+                        else:
+                            input_obj[name] = value
+                        #確認是否為必填欄位
+                        if require == True or require == 'true' or require == 'True':
+                            require_list.append(name)
                 #檢查必填
                 require_check = self.inputRequireCheck(require_list, input_obj)
                 if require_check == None:
@@ -958,9 +1017,9 @@ class OmEngine():
                     self.inputLog(log, chart_id, input_obj, chart_text, chart_type)
                     return self.replaceFromTo()
                 else:
-                    return self.markError(chart_id,chart_text,_('缺少必填變數：' + require_check))
+                    return self.markError(chart_id,chart_text,_('缺少必填變數：') + require_check)
         except Exception as e:
-            self.markError(chart_id, chart_text, _('OME系統錯誤(子流程點)，請通知系統管理員。<br>') + e.__str__())
+            self.markError(chart_id, chart_text, _('OME系統錯誤(子流程點)，請通知系統管理員。') + '<br>' + e.__str__())
     
     
     def outflowPoint(self,flag):
@@ -984,12 +1043,15 @@ class OmEngine():
                 if subflow_output_list:
                     #get last chart's output
                     for subflow_output in subflow_output_list:
-                        name = subflow_output['name'][2:-1] #flow_value變數名稱
-                        value = subflow_output['value'][2:-1] #chart變數名稱
-                        #回寫flow_value
-                        self.flow_value[name] = in_output[value]
-                        #組裝寫入value history db的變數
-                        output_obj[name] = in_output[value]
+                        name = subflow_output['name'] #flow_value變數名稱
+                        value = subflow_output['value'] #chart變數名稱
+                        if name and value:
+                            name = name[2:-1]
+                            value = value[2:-1]
+                            #回寫flow_value
+                            self.flow_value[name] = in_output.get(value,'')
+                            #組裝寫入value history db的變數
+                            output_obj[name] = in_output.get(value,'')
                     #把外部流程的單號跟流程編號拋放入output log
                     output_obj['outflow_uuid'] = in_output['outflow_uuid']
                     output_obj['outflow_data_no'] = in_output['outflow_data_no']
@@ -999,7 +1061,8 @@ class OmEngine():
                 #function variable
                 chart = self.next_chart_item
                 config = chart['config']
-                outside_flow_uuid = config.get('flow_uuid','')
+                outside_app_name = config.get('app_name','')
+                outside_flow_name = config.get('flow_name','')
                 subflow_input_list = config['subflow_input']
                 chart_id = chart['id']
                 chart_text = chart['text']
@@ -1008,7 +1071,7 @@ class OmEngine():
                 start_input_dict = {}
                 form_input_dict = {}
                 both_input_dict = {}
-                if not outside_flow_uuid:
+                if not outside_flow_name:
                     self.inputLog(log, chart_id, '', chart_text, chart_type)
                     return self.replaceFromTo()
                 elif outflow_done:
@@ -1019,18 +1082,19 @@ class OmEngine():
                     #get chart's input
                     for subflow_input in subflow_input_list:
                         value = subflow_input['value']
-                        name = subflow_input['name'][2:-1]
+                        name = subflow_input['name']
                         require = subflow_input['require']
-                        if '$' in subflow_input['name']:
+                        if re.match(r'\$\(.+\)', name):
                             input_obj = start_input_dict
+                            name = name[2:-1]
                         else:
                             input_obj = form_input_dict
                         #確認name是要取得table還是flow value還是本身
                         if value == None:
                             input_value = ''
-                        elif '$' in value:
+                        elif re.match(r'\$\(.+\)', value):
                             input_value = self.flow_value.get(value[2:-1],'')
-                        elif '#' in value:
+                        elif re.match(r'#[A-Z]*[0-9]*\(.+\)', value):
                             if not formdata:
                                 omdata_model = getModel('omformmodel','Omdata_' + self.table_uuid)
                                 formdata = list(omdata_model.objects.filterformat(id=self.data_id))[0]
@@ -1066,27 +1130,26 @@ class OmEngine():
                     if require_check == None:
                         log = chart['config'].get('log',False)
                         self.inputLog(log, chart_id, both_input_dict, chart_text, chart_type)
-                        data_str = json.dumps(self.data)
-                        outflow_content = json.loads(data_str)
-                        outflow_content['chart_id_from'] = None
+                        outflow_content = json.dumps(self.data)
                         #組合外部流程的必要參數並呼叫開單
-                        outside_flow_formobject = json.loads(FlowActiveGlobalObject.UUIDSearch(outside_flow_uuid).formobject).get('items',[])
+                        outside_flow = FlowActiveGlobalObject.NameSearch(outside_flow_name, None, outside_app_name)
+                        outside_flow_uuid = outside_flow.flow_uuid.hex
+                        outside_flow_formobject = json.loads(outside_flow.merge_formobject)
                         from omformflow.views import createOmData
-                        start_input = json.dumps(start_input_dict)
                         formdata_list = []
                         if form_input_dict:
-                            for item in outside_flow_formobject:
-                                if item['id'][:8] == 'FORMITM_':
-                                    FormatToFormdataList(item, form_input_dict[item['id']], formdata_list)
-                        formdata_list = json.dumps(formdata_list)
-                        param = {'flow_uuid':outside_flow_uuid,'formdata':formdata_list,'start_input':start_input,'outflow_content':json.dumps(outflow_content)}
+                            for key in form_input_dict:
+                                FormatToFormdataList(outside_flow_formobject[key], form_input_dict[key], formdata_list)
+                        param = {'flow_uuid':outside_flow_uuid,'formdata':formdata_list,'start_input':start_input_dict,'outflow_content':outflow_content}
                         createomdata_result = createOmData(param)
                         if not createomdata_result['status']:
                             return self.markError(chart_id, chart_text, createomdata_result['message'])
                     else:
-                        return self.markError(chart_id,chart_text,_('缺少必填變數：' + require_check))
+                        return self.markError(chart_id,chart_text,_('缺少必填變數：') + require_check)
         except Exception as e:
-            self.markError(chart_id, chart_text, _('OME系統錯誤(外部流程點)，請通知系統管理員。<br>') + e.__str__())
+            if self.last_chart_item:
+                chart_id = self.last_chart_item.get('id','')
+            self.markError(chart_id, chart_text, _('OME系統錯誤(外部流程點)，請通知系統管理員。') + '<br>' + e.__str__())
         
         
     def inflowPoint(self,flag):
@@ -1110,12 +1173,15 @@ class OmEngine():
                 if subflow_output_list:
                     #get last chart's output
                     for subflow_output in subflow_output_list:
-                        name = subflow_output['name'][2:-1] #flow_value變數名稱
-                        value = subflow_output['value'][2:-1] #chart變數名稱
-                        #回寫flow_value
-                        self.flow_value[name] = in_output[value]
-                        #組裝寫入value history db的變數
-                        output_obj[name] = in_output[value]
+                        name = subflow_output['name'] #flow_value變數名稱
+                        value = subflow_output['value'] #chart變數名稱
+                        if name:
+                            name = name[2:-1]
+                            value = value[2:-1]
+                            #回寫flow_value
+                            self.flow_value[name] = in_output.get(value,'')
+                            #組裝寫入value history db的變數
+                            output_obj[name] = in_output.get(value,'')
                     #把外部流程的單號跟流程編號拋放入output log
                     output_obj['outflow_uuid'] = in_output['outflow_uuid']
                     output_obj['outflow_data_no'] = in_output['outflow_data_no']
@@ -1145,18 +1211,19 @@ class OmEngine():
                     #get chart's input
                     for subflow_input in subflow_input_list:
                         value = subflow_input['value']
-                        name = subflow_input['name'][2:-1]
+                        name = subflow_input['name']
                         require = subflow_input['require']
-                        if '$' in subflow_input['name']:
+                        if re.match(r'\$\(.+\)', name):
                             input_obj = start_input_dict
+                            name = name[2:-1]
                         else:
                             input_obj = form_input_dict
                         #確認name是要取得table還是flow value還是本身
                         if value == None or not value:
                             input_value = ''
-                        elif '$' in value:
+                        elif re.match(r'\$\(.+\)', value):
                             input_value = self.flow_value.get(value[2:-1],'')
-                        elif '#' in value:
+                        elif re.match(r'#[A-Z]*[0-9]*\(.+\)', value):
                             if not formdata:
                                 omdata_model = getModel('omformmodel','Omdata_' + self.table_uuid)
                                 formdata = list(omdata_model.objects.filterformat(id=self.data_id))[0]
@@ -1192,32 +1259,27 @@ class OmEngine():
                     if require_check == None:
                         log = chart['config'].get('log',False)
                         self.inputLog(log, chart_id, both_input_dict, chart_text, chart_type)
-                        data_str = json.dumps(self.data)
-                        outflow_content = json.loads(data_str)
-                        outflow_content['chart_id_from'] = None
+                        outflow_content = json.dumps(self.data)
                         #組合外部流程的必要參數並呼叫開單
                         try:
-                            outside_flow_fa = FlowActiveGlobalObject.NameSearch(outside_flow_name, self.app_id, None)
+                            outside_flow_fa = FlowActiveGlobalObject.NameSearch(outside_flow_name, self.flowactive.flow_app_id, None)
                         except:
                             self.markError(chart_id, chart_text, _('應用內找不到此流程：' + outside_flow_name))
                         outside_flow_uuid = outside_flow_fa.flow_uuid.hex
-                        outside_flow_formobject = json.loads(outside_flow_fa.formobject).get('items',[])
+                        outside_flow_formobject = json.loads(outside_flow_fa.merge_formobject)
                         from omformflow.views import createOmData
-                        start_input = json.dumps(start_input_dict)
                         formdata_list = []
                         if form_input_dict:
-                            for item in outside_flow_formobject:
-                                if item['id'][:8] == 'FORMITM_':
-                                    FormatToFormdataList(item, form_input_dict[item['id']], formdata_list)
-                        formdata_list = json.dumps(formdata_list)
-                        param = {'flow_uuid':outside_flow_uuid,'formdata':formdata_list,'start_input':start_input,'outflow_content':json.dumps(outflow_content)}
+                            for key in form_input_dict:
+                                FormatToFormdataList(outside_flow_formobject[key], form_input_dict[key], formdata_list)
+                        param = {'flow_uuid':outside_flow_uuid,'formdata':formdata_list,'start_input':start_input_dict,'outflow_content':outflow_content}
                         createomdata_result = createOmData(param)
                         if not createomdata_result['status']:
                             return self.markError(chart_id, chart_text, createomdata_result['message'])
                     else:
-                        return self.markError(chart_id,chart_text,_('缺少必填變數：' + require_check))
+                        return self.markError(chart_id,chart_text,_('缺少必填變數：') + require_check)
         except Exception as e:
-            self.markError(chart_id, chart_text, _('OME系統錯誤(呼叫流程點)，請通知系統管理員。<br>') + e.__str__())
+            self.markError(chart_id, chart_text, _('OME系統錯誤(呼叫流程點)，請通知系統管理員。') + '<br>' + e.__str__())
     
     
     def sleepPoint(self,flag):
@@ -1247,38 +1309,25 @@ class OmEngine():
                         sleep_time = int(self.flow_value.get(sleep_value[2:-1]))
                     else:
                         sleep_time = int(config['msec'])
-                    input_param = {}
-                    module_name = 'omformflow.views'
-                    method_name = 'pushSleepPoint'
-                    data_str = json.dumps(self.data)
-                    param = json.loads(data_str)
                     exec_time = datetime.datetime.now() + datetime.timedelta(milliseconds=sleep_time)
                     every = '1'
                     cycle = 'Once'
                     cycle_date = '[]'
+                    input_param = {'module_name':'omformflow.views','method_name':'pushSleepPoint','flow_uuid':self.table_uuid,'formdata':self.data}
                     exec_fun = {'module_name':'omflow.syscom.schedule_monitor','method_name':'put_flow_job'}
-                    input_param['module_name'] = module_name
-                    input_param['method_name'] = method_name
-                    input_param['flow_uuid'] = self.table_uuid
-                    input_param['formdata'] = param
-                    exec_fun_dict = json.dumps(exec_fun)
-                    input_param_dict = json.dumps(input_param)
-                    scheduler = Scheduler.objects.create(exec_time=exec_time,every=every,cycle=cycle,cycle_date=cycle_date,exec_fun=exec_fun_dict,input_param=input_param_dict,flowactive_id=None)
+                    exec_fun_str = json.dumps(exec_fun)
+                    input_param_str = json.dumps(input_param)
+                    scheduler = Scheduler.objects.create(exec_time=exec_time,every=every,cycle=cycle,cycle_date=cycle_date,exec_fun=exec_fun_str,input_param=input_param_str,flowactive_id=None)
                     schedule_Execute(scheduler)
                     #remove last queue db
-                    try:
-                        last_chart_id = self.data.get('chart_id_from','')
-                        ex_queue_id = self.flow_uuid + str(self.data_id) + str(last_chart_id)
-                        QueueData.objects.get(queue_id=ex_queue_id).delete()
-                    except:
-                        pass
+                    self.removeQueueDB()
                 else:
                     #log input
                     log = config.get('log',False)
                     self.inputLog(log, chart_id, '', chart_text, chart_type)
                     return self.replaceFromTo()
         except Exception as e:
-            self.markError(chart_id, chart_text, _('OME系統錯誤(暫停點)，請通知系統管理員。<br>') + e.__str__())
+            self.markError(chart_id, chart_text, _('OME系統錯誤(暫停點)，請通知系統管理員。') + '<br>' + e.__str__())
         
     
     def setformPoint(self,flag):
@@ -1299,20 +1348,22 @@ class OmEngine():
                 table_dict = model.objects.getdictformat(id=self.data_id)
                 output_dict = {}
                 for config_output in config_output_list:
-                    name = config_output['name'][2:-1]  #flow_value變數
+                    name = config_output['name']  #flow_value變數
                     value = config_output['value']  #欄位
-                    c_output_value = self.regexInOutputValue(table_dict, value)
-                    #寫入flow value
-                    self.flow_value[name] = c_output_value
-                    #寫入output dict
-                    output_dict[name] = c_output_value
+                    if name:
+                        name = name[2:-1]
+                        c_output_value = self.regexInOutputValue(table_dict, value)
+                        #寫入flow value
+                        self.flow_value[name] = c_output_value
+                        #寫入output dict
+                        output_dict[name] = c_output_value
                 #log output
                 self.outputLog(log, chart_id, output_dict)
                 return self.checkError(chart_id,chart_text)
             elif flag == 'to':
                 chart = self.next_chart_item
                 config = chart['config']
-                log = chart.get('log',False)
+                log = config.get('log',False)
                 chart_id = chart['id']
                 chart_text = chart['text']
                 chart_type = chart['type']
@@ -1330,49 +1381,57 @@ class OmEngine():
                 for config_input in config_input_list:
                     name = config_input['name'] #欄位名稱
                     value = config_input['value'] #變數/值
-                    #確認value是要取得flow value還是本身
-                    if value == None or not value:
-                        c_input_value = ''
-                    elif '$' in value:
-                        value = value[2:-1]
-                        if calculate_temp_dict.get(value,None) == None:
-                            c_input_value = self.flow_value[value]
-                        else:
-                            c_input_value = calculate_temp_dict[value]
-                    else:
-                        c_input_value = value
-                    #放入暫存dict
-                    if re.match(r'#[A-Z][0-9]+\(.+\)', name):
-                        num = int(re.findall(r'#[A-Z]([0-9]+)\(.+\)', name)[0])
-                        name = re.findall(r'#[A-Z][0-9]+\((.+)\)', name)[0]
-                        l_index = num - 1
-                        l = temp_dict.get(name,[])
-                        for i in range(l_index):
-                            if len(l)-i:
-                                pass
+                    if name:
+                        #確認value是要取得flow value還是本身
+                        if value == None or not value:
+                            c_input_value = ''
+                        elif re.match(r'\$\(.+\)', value):
+                            value = value[2:-1]
+                            if calculate_temp_dict.get(value,None) == None:
+                                c_input_value = self.flow_value.get(value,'')
                             else:
-                                l.append('')
-                        l.append(c_input_value)
-                        temp_dict[name] = l
-                    elif re.match(r'#\(.+\)', name):
-                        name = re.findall(r'#\((.+)\)', name)[0]
-                        temp_dict[name] = c_input_value
-                    else:
-                        temp_dict[name] = c_input_value
+                                c_input_value = calculate_temp_dict.get(value,'')
+                        else:
+                            c_input_value = value
+                        #放入暫存dict
+                        if re.match(r'#[A-Z][0-9]+\(.+\)', name):
+                            num = int(re.findall(r'#[A-Z]([0-9]+)\(.+\)', name)[0])
+                            name = re.findall(r'#[A-Z][0-9]+\((.+)\)', name)[0]
+                            l_index = num - 1
+                            l = temp_dict.get(name,[])
+                            for i in range(l_index):
+                                if len(l)-i:
+                                    pass
+                                else:
+                                    l.append('')
+                            l.append(c_input_value)
+                            temp_dict[name] = l
+                        elif re.match(r'#\(.+\)', name):
+                            name = re.findall(r'#\((.+)\)', name)[0]
+                            temp_dict[name] = c_input_value
+                        else:
+                            temp_dict[name] = c_input_value
                     #確認該欄位是否為必填
                     require = config_input['require']
                     if require == True or require == 'true' or require == 'True':
                         require_list.append(name.lower())
                 #組成寫回資料庫的dict
-                formobject_items = self.flowobject['form_object']['items']
                 formdata_list = []
+#                 formobject_items = self.flowobject['form_object']['items']
+                formobject_items = json.loads(self.flowactive.merge_formobject)
                 for key in temp_dict:
                     name = key
                     value = temp_dict[key]
-                    for item in formobject_items:
-                        if item['id'] == name:
-                            FormatToFormdataList(item, c_input_value, formdata_list)
-                            break
+                    item = formobject_items.get(name,'')
+                    if item:
+                        FormatToFormdataList(item, value, formdata_list)
+#                 for key in temp_dict:
+#                     name = key
+#                     value = temp_dict[key]
+#                     for item in formobject_items:
+#                         if item['id'] == name:
+#                             FormatToFormdataList(item, value, formdata_list)
+#                             break
                 if formdata_list:
                     for item in formdata_list:
                         item_id = item['id'].lower()
@@ -1394,12 +1453,200 @@ class OmEngine():
                     model_name = 'Omdata_' + self.table_uuid
                     model = getModel('omformmodel', model_name)
                     model.objects.filter(id=self.data_id).update(**write_from_dict)
+                    #檢查sla
+                    from omformflow.views import checkSLARule
+                    checkSLARule(self.table_uuid, self.data_id)
                     self.inputLog(log, chart_id, write_from_dict, chart_text, chart_type)
                     return self.replaceFromTo()
                 else:
-                    return self.markError(chart_id,chart_text,_('缺少必填變數：' + require_check))
+                    return self.markError(chart_id,chart_text,_('缺少必填變數：') + require_check)
         except Exception as e:
-            self.markError(chart_id, chart_text, _('OME系統錯誤(自動輸入點)，請通知系統管理員。<br>') + e.__str__())
+            self.markError(chart_id, chart_text, _('OME系統錯誤(自動輸入點)，請通知系統管理員。') + '<br>' + e.__str__())
+        
+    
+    def org1Point(self,flag):
+        '''
+        同系角色功能點
+        '''
+        chart_id = ''
+        chart_text = ''
+        try:
+            if flag == 'from':
+                chart = self.last_chart_item
+                chart_id = chart['id']
+                chart_text = chart['text']
+                config = chart['config']
+                #log output
+                log = config.get('log','')
+                output_obj = {}
+                if check_app('omorganization'):
+                    config_output_list = config.get('output','')
+                    in_output = self.data['chart_input']
+                    if config_output_list:
+                        #get last chart's output
+                        for config_output in config_output_list:
+                            if config_output['name'] and config_output['value']:
+                                name = config_output['name'][2:-1] #flow_value變數名稱
+                                value = config_output['value'][2:-1] #chart變數名稱
+                                #回寫flow_value
+                                self.flow_value[name] = in_output.get(value,'')
+                                #組裝寫入value history db的變數
+                                output_obj[name] = in_output.get(value,'')
+                self.outputLog(log, chart_id, output_obj)
+                return self.checkError(chart_id,chart_text)
+            elif flag == 'to':
+                #log input
+                chart = self.next_chart_item
+                chart_id = chart['id']
+                chart_text = chart['text']
+                chart_type = chart['type']
+                config = chart['config']
+                input_obj = {}
+                require_list = []
+                log = config.get('log',False)
+                if check_app('omorganization'):
+                    config_input_list = config.get('input','')
+                    if config_input_list:
+                        formdata = None
+                        for config_input in config_input_list:
+                            name = config_input['name'] #變數名稱
+                            value = config_input['value'] #變數/欄位/值
+                            if name:
+                                #確認name是要取得table還是flow value還是本身
+                                if value == None or not value:
+                                    c_input_value = ''
+                                elif re.match(r'#[A-Z]*[0-9]*\(.+\)', value):
+                                    if not formdata:
+                                        omdata_model = getModel('omformmodel','Omdata_' + self.table_uuid)
+                                        formdata = list(omdata_model.objects.filterformat(id=self.data_id))[0]
+                                    c_input_value = self.regexInOutputValue(formdata, value)
+                                elif re.match(r'\$\(.+\)', value):
+                                    value = value[2:-1]
+                                    c_input_value = self.flow_value.get(value,'')
+                                else:
+                                    c_input_value = value
+                                #確認該欄位是否為必填
+                                require = config_input['require']
+                                if require == True or require == 'true' or require == 'True':
+                                    require_list.append(name)
+                                #組裝寫入value history db的變數
+                                input_obj[name] = c_input_value
+                    #檢查必填欄位
+                    require_check = self.inputRequireCheck(require_list, input_obj)
+                    if require_check == None:
+                        cog = checkOrgGlobal()
+                        if cog:
+                            user_id = input_obj.get('user_no','')
+                            default_group_id = self.getUserDefaultGroup(user_id)
+                            grp_res = getRootPosition(default_group_id, input_obj.get('role',''))
+                            role_user_id = grp_res['user_id']
+                            role_default_group_id = self.getUserDefaultGroup(role_user_id)
+                            input_obj['dept_no'] = role_default_group_id
+                            input_obj['user_no'] = role_user_id
+                            self.inputLog(log, chart_id, input_obj, chart_text, chart_type)
+                            self.data['chart_input'] = input_obj
+                            return self.replaceFromTo()
+                        else:
+                            return self.markError(chart_id,chart_text,_('取得組織圖錯誤。'))
+                    else:
+                        return self.markError(chart_id,chart_text,_('缺少必填變數：') + require_check)
+                else:
+                    self.inputLog(log, chart_id, {}, chart_text, chart_type)
+                    return self.replaceFromTo()
+        except Exception as e:
+            self.markError(chart_id, chart_text, _('OME系統錯誤(同系角色點)，請通知系統管理員。') + '<br>' + e.__str__())
+        
+    
+    def org2Point(self,flag):
+        '''
+        部門角色功能點
+        '''
+        chart_id = ''
+        chart_text = ''
+        try:
+            if flag == 'from':
+                chart = self.last_chart_item
+                chart_id = chart['id']
+                chart_text = chart['text']
+                config = chart['config']
+                #log output
+                log = config.get('log','')
+                output_obj = {}
+                if check_app('omorganization'):
+                    config_output_list = config.get('output','')
+                    in_output = self.data['chart_input']
+                    if config_output_list:
+                        #get last chart's output
+                        for config_output in config_output_list:
+                            if config_output['name'] and config_output['value']:
+                                name = config_output['name'][2:-1] #flow_value變數名稱
+                                value = config_output['value'][2:-1] #chart變數名稱
+                                #回寫flow_value
+                                self.flow_value[name] = in_output.get(value,'')
+                                #組裝寫入value history db的變數
+                                output_obj[name] = in_output.get(value,'')
+                self.outputLog(log, chart_id, output_obj)
+                return self.checkError(chart_id,chart_text)
+            elif flag == 'to':
+                #log input
+                chart = self.next_chart_item
+                chart_id = chart['id']
+                chart_text = chart['text']
+                chart_type = chart['type']
+                config = chart['config']
+                input_obj = {}
+                require_list = []
+                log = config.get('log',False)
+                if check_app('omorganization'):
+                    config_input_list = config.get('input','')
+                    if config_input_list:
+                        formdata = None
+                        for config_input in config_input_list:
+                            name = config_input['name'] #變數名稱
+                            value = config_input['value'] #變數/欄位/值
+                            if name:
+                                #確認name是要取得table還是flow value還是本身
+                                if value == None or not value:
+                                    c_input_value = ''
+                                elif re.match(r'#[A-Z]*[0-9]*\(.+\)', value):
+                                    if not formdata:
+                                        omdata_model = getModel('omformmodel','Omdata_' + self.table_uuid)
+                                        formdata = list(omdata_model.objects.filterformat(id=self.data_id))[0]
+                                    c_input_value = self.regexInOutputValue(formdata, value)
+                                elif re.match(r'\$\(.+\)', value):
+                                    value = value[2:-1]
+                                    c_input_value = self.flow_value.get(value,'')
+                                else:
+                                    c_input_value = value
+                                #確認該欄位是否為必填
+                                require = config_input['require']
+                                if require == True or require == 'true' or require == 'True':
+                                    require_list.append(name)
+                                #組裝寫入value history db的變數
+                                input_obj[name] = c_input_value
+                    #檢查必填欄位
+                    require_check = self.inputRequireCheck(require_list, input_obj)
+                    if require_check == None:
+                        cog = checkOrgGlobal()
+                        if cog:
+                            dept_no = input_obj.get('dept_no','')
+                            grp_res = getDeptPosition(dept_no, input_obj.get('role_name',''))
+                            role_user_id = grp_res['user_id']
+                            role_default_group_id = self.getUserDefaultGroup(role_user_id)
+                            input_obj['dept_no'] = role_default_group_id
+                            input_obj['user_no'] = role_user_id
+                            self.inputLog(log, chart_id, input_obj, chart_text, chart_type)
+                            self.data['chart_input'] = input_obj
+                            return self.replaceFromTo()
+                        else:
+                            return self.markError(chart_id,chart_text,_('取得組織圖錯誤。'))
+                    else:
+                        return self.markError(chart_id,chart_text,_('缺少必填變數：') + require_check)
+                else:
+                    self.inputLog(log, chart_id, {}, chart_text, chart_type)
+                    return self.replaceFromTo()
+        except Exception as e:
+            self.markError(chart_id, chart_text, _('OME系統錯誤(部門角色點)，請通知系統管理員。') + '<br>' + e.__str__())
         
             
     
@@ -1436,7 +1683,7 @@ class OmEngine():
             return result
     
     
-    def outputLog(self,log,chart_id,output_value):
+    def outputLog(self,log,chart_id,output_value,ex_data_id=None):
         '''
         紀錄上一個點的輸出
         '''
@@ -1450,7 +1697,11 @@ class OmEngine():
                 else:
                     output_data = output_value
                 stop_uuid = self.getchartpath(chart_id)
-                valuehistory = valuehistory_model.objects.get(flow_uuid=self.flow_uuid,data_no=self.data_no,data_id=self.data_id,chart_id=stop_uuid)
+                if ex_data_id:
+                    data_id = ex_data_id
+                else:
+                    data_id = self.data_id
+                valuehistory = valuehistory_model.objects.get(flow_uuid=self.flow_uuid,data_no=self.data_no,data_id=data_id,chart_id=stop_uuid)
                 valuehistory.error=self.data.get('error',False)
                 valuehistory.output_data = output_data
                 valuehistory.save()
@@ -1489,6 +1740,10 @@ class OmEngine():
                 return self.setformPoint(flag)
             elif chart_type == 'inflow':
                 return self.inflowPoint(flag)
+            elif chart_type == 'org1':
+                return self.org1Point(flag)
+            elif chart_type == 'org2':
+                return self.org2Point(flag)
         else:
             return self.closeTicket()
     
@@ -1523,17 +1778,22 @@ class OmEngine():
                 if f in ['from','para1','para2']:
                     if c_row[f] == None:
                         var_dict[f] = ''
-                    elif '$' in c_row[f]:
+                    elif re.match(r'\$\(.+\)', c_row[f]):
                         if temp_dict_for_calculate.get(c_row[f][2:-1],''):
                             var_dict[f] = temp_dict_for_calculate.get(c_row[f][2:-1],'')
                         else:
                             var_dict[f] = flow_value.get(c_row[f][2:-1],'')
-                    elif '#' in c_row[f]:
+                    elif re.match(r'#[A-Z]*[0-9]*\(.+\)', c_row[f]):
                         var_dict[f] = self.regexInOutputValue(formdata, c_row[f])
                     else:
                         var_dict[f] = c_row[f]
                 elif f == 'to':
-                    var_dict[f] = c_row[f][2:-1]
+                    if c_row[f] == None:
+                        var_dict[f] = ''
+                    elif re.match(r'\$\(.+\)', c_row[f]):
+                        var_dict[f] = c_row[f][2:-1]
+                    else:
+                        var_dict[f] = ''
             return var_dict
         
         #function variable
@@ -1543,6 +1803,7 @@ class OmEngine():
                 if not formdata:
                     omdata_model = getModel('omformmodel','Omdata_' + self.table_uuid)
                     formdata = list(omdata_model.objects.filterformat(id=self.data_id))[0]
+                    create_user = None
                 for c_row in calculate_list:
                     c_type = c_row['type']
                     var_dict = getVariable(self.flow_value, result, c_row, formdata)
@@ -1609,32 +1870,103 @@ class OmEngine():
                             result[var_dict['to']] = ''
                     elif c_type == 'num+':
                         try:
-                            result[var_dict['to']] = str(float(var_dict['from']) + float(var_dict['para1']))
+                            c_res = str(float(var_dict['from']) + float(var_dict['para1']))
+                            if re.match(r'[0-9]+\.0',c_res):
+                                result[var_dict['to']] = re.findall(r'([0-9]+)\.0', c_res)[0]
+                            else:
+                                result[var_dict['to']] = c_res
                         except:
                             result[var_dict['to']] = ''
                     elif c_type == 'num-':
                         try:
-                            result[var_dict['to']] = str(float(var_dict['from']) - float(var_dict['para1']))
+                            c_res = str(float(var_dict['from']) - float(var_dict['para1']))
+                            if re.match(r'[0-9]+\.0',c_res):
+                                result[var_dict['to']] = re.findall(r'([0-9]+)\.0', c_res)[0]
+                            else:
+                                result[var_dict['to']] = c_res
                         except:
                             result[var_dict['to']] = ''
                     elif c_type == 'num*':
                         try:
-                            result[var_dict['to']] = str(float(var_dict['from']) * float(var_dict['para1']))
+                            c_res = str(float(var_dict['from']) * float(var_dict['para1']))
+                            if re.match(r'[0-9]+\.0',c_res):
+                                result[var_dict['to']] = re.findall(r'([0-9]+)\.0', c_res)[0]
+                            else:
+                                result[var_dict['to']] = c_res
                         except:
                             result[var_dict['to']] = ''
                     elif c_type == 'num/':
                         try:
-                            result[var_dict['to']] = str(float(var_dict['from']) / float(var_dict['para1']))
+                            c_res = str(float(var_dict['from']) / float(var_dict['para1']))
+                            if re.match(r'[0-9]+\.0',c_res):
+                                result[var_dict['to']] = re.findall(r'([0-9]+)\.0', c_res)[0]
+                            else:
+                                result[var_dict['to']] = c_res
                         except:
                             result[var_dict['to']] = ''
                     elif c_type == 'num_mod':
                         try:
-                            result[var_dict['to']] = str(float(var_dict['from']) % float(var_dict['para1']))
+                            c_res = str(float(var_dict['from']) % float(var_dict['para1']))
+                            if re.match(r'[0-9]+\.0',c_res):
+                                result[var_dict['to']] = re.findall(r'([0-9]+)\.0', c_res)[0]
+                            else:
+                                result[var_dict['to']] = c_res
                         except:
                             result[var_dict['to']] = ''
                     elif c_type == 'write':
                         try:
                             self.flow_value[var_dict['to']] = str(var_dict['from'])
+                        except:
+                            result[var_dict['to']] = ''
+                    elif c_type == 'form_creater':
+                        try:
+                            if create_user:
+                                create_user_id = str(create_user.id)
+                            else:
+                                create_user_username = formdata['create_user_id']
+                                create_user = OmUser.objects.get(username=create_user_username)
+                                create_user_id = str(create_user.id)
+                            self.flow_value[var_dict['to']] = create_user_id
+                        except:
+                            result[var_dict['to']] = ''
+                    elif c_type == 'form_creater_group':
+                        try:
+                            if create_user:
+                                default_group_id = str(create_user.default_group)
+                            else:
+                                create_user_username = formdata['create_user_id']
+                                create_user = OmUser.objects.get(username=create_user_username)
+                                default_group_id = str(create_user.default_group)
+                            if default_group_id == 'None':
+                                default_group_id = ''
+                            if not default_group_id:
+                                default_group_id_list = list(create_user.groups.all().values_list('id',flat=True))
+                                if default_group_id_list:
+                                    default_group_id = str(default_group_id_list[0])
+                                else:
+                                    default_group_id = ''
+                            self.flow_value[var_dict['to']] = default_group_id
+                        except:
+                            result[var_dict['to']] = ''
+                    elif c_type == 'get_user_group':
+                        try:
+                            default_group_id = self.getUserDefaultGroup(var_dict['from'])
+                            self.flow_value[var_dict['to']] = default_group_id
+                        except:
+                            result[var_dict['to']] = ''
+                    elif c_type == 'sys_parameter':
+                        try:
+                            self.flow_value[var_dict['to']] = GlobalObject.__OmParameter__.get(str(var_dict['para1']),'')
+                        except:
+                            result[var_dict['to']] = ''
+                    elif c_type == 'get_user_name':
+                        try:
+                            self.flow_value[var_dict['to']] = getUserName(var_dict['from'])
+                        except:
+                            result[var_dict['to']] = ''
+                    elif c_type == 'get_group_name':
+                        try:
+                            self.flow_value[var_dict['to']] = getGroupName(var_dict['from'])
                         except:
                             result[var_dict['to']] = ''
         except:
@@ -1676,12 +2008,7 @@ class OmEngine():
         當錯誤發生時，將該筆資料標記為錯誤
         '''
         try:
-            #remove queue db
-            ex_queue_id = self.flow_uuid + str(self.data_id) + chart_id
-            QueueData.objects.get(queue_id=ex_queue_id).delete()
-        except:
-            pass
-        try:
+            self.removeQueueDB()
             if self.data_id:
                 stop_uuid = self.getchartpath(chart_id)
                 stoptime = datetime.datetime.now()
@@ -1702,25 +2029,26 @@ class OmEngine():
                 omdata_dict.pop('history')
                 m = model.objects.create(**omdata_dict)
                 if create_mission:
-                    pass
-                    #create mymission
-                    mission_param = {}
-                    mission_param['flow_uuid'] = m.flow_uuid
-                    mission_param['flow_name'] = model.table_name
-                    mission_param['status'] = m.status
-                    mission_param['level'] = m.level
-                    mission_param['title'] = m.title
-                    mission_param['data_no'] = m.data_no
-                    mission_param['data_id'] = m.id
-                    mission_param['stop_uuid'] = stop_uuid
-                    mission_param['stop_chart_text'] = stop_chart_text
-                    mission_param['create_user_id'] = m.create_user_id
-                    mission_param['ticket_createtime'] = m.init_data.createtime
-                    mission_param['action'] = self.action
-                    group = json.loads(m.group)
-                    mission_param['assignee_id'] = group['user']
-                    mission_param['assign_group_id'] = group['group']
-                    createMission(mission_param)
+                    fa = FlowActiveGlobalObject.UUIDSearch(self.table_uuid)
+                    if fa:
+                        if fa.mission:
+                            #create mymission
+                            mission_param = {}
+                            mission_param['flow_uuid'] = m.flow_uuid
+                            mission_param['flow_name'] = model.table_name
+                            mission_param['status'] = m.status
+                            mission_param['level'] = m.level
+                            mission_param['title'] = m.title
+                            mission_param['data_no'] = m.data_no
+                            mission_param['data_id'] = m.id
+                            mission_param['stop_uuid'] = stop_uuid
+                            mission_param['stop_chart_text'] = stop_chart_text
+                            mission_param['create_user_id'] = m.create_user_id
+                            mission_param['ticket_createtime'] = m.init_data.createtime
+                            group = json.loads(m.group)
+                            mission_param['assignee_id'] = group.get('user','')
+                            mission_param['assign_group_id'] = group.get('group','')
+                            createMission(mission_param)
         except Exception as e:
             debug('OME MarkError error:     %s' % e.__str__())
     
@@ -1782,28 +2110,29 @@ class OmEngine():
             for config_input in config_input_list:
                 name = config_input['name'] #變數名稱
                 value = config_input['value'] #變數/欄位/值
-                #確認name是要取得table還是flow value還是本身
-                if value == None or not value:
-                    c_input_value = ''
-                elif '$' in value:
-                    value = value[2:-1]
-                    if calculate_temp_dict.get(value,None) == None:
-                        c_input_value = self.flow_value[value]
+                if name:
+                    #確認name是要取得table還是flow value還是本身
+                    if value == None or not value:
+                        c_input_value = ''
+                    elif re.match(r'\$\(.+\)', value):
+                        value = value[2:-1]
+                        if calculate_temp_dict.get(value,None) == None:
+                            c_input_value = self.flow_value.get(value,'')
+                        else:
+                            c_input_value = calculate_temp_dict.get(value,'')
+                    elif re.match(r'#[A-Z]*[0-9]*\(.+\)', value):
+                        if not formdata:
+                            omdata_model = getModel('omformmodel','Omdata_' + self.table_uuid)
+                            formdata = list(omdata_model.objects.filterformat(id=self.data_id))[0]
+                        c_input_value = self.regexInOutputValue(formdata, value)
                     else:
-                        c_input_value = calculate_temp_dict[value]
-                elif '#' in value:
-                    if not formdata:
-                        omdata_model = getModel('omformmodel','Omdata_' + self.table_uuid)
-                        formdata = list(omdata_model.objects.filterformat(id=self.data_id))[0]
-                    c_input_value = self.regexInOutputValue(formdata, value)
-                else:
-                    c_input_value = value
-                #確認該欄位是否為必填
-                require = config_input['require']
-                if require == True or require == 'true' or require == 'True':
-                    require_list.append(name)
-                #組裝寫入value history db的變數
-                input_obj[name] = c_input_value
+                        c_input_value = value
+                    #確認該欄位是否為必填
+                    require = config_input['require']
+                    if require == True or require == 'true' or require == 'True':
+                        require_list.append(name)
+                    #組裝寫入value history db的變數
+                    input_obj[name] = c_input_value
         #檢查必填欄位
         require_check = self.inputRequireCheck(require_list, input_obj)
         if require_check == None:
@@ -1842,61 +2171,67 @@ class OmEngine():
         return self.do(chart_id,last_chart_id)
     
     
+    def removeQueueDB(self):
+        try:
+            #remove queue db
+            chart_id = self.data.get('chart_id_from','')
+            ex_queue_id = self.flow_uuid + str(self.data_id) + str(chart_id)
+            if self.data.get('async_main_ticket_id',''):
+                async_main_ticket_id = self.data.pop('async_main_ticket_id')
+                ex_queue_id = self.flow_uuid + str(async_main_ticket_id) + str(chart_id)
+            QueueData.objects.get(queue_id=ex_queue_id).delete()
+        except:
+            pass
+    
+    
     def do(self,chart_id,last_chart_id):
         '''
         put data in queue.
         '''
         chart = self.next_chart_item
-        config = chart['config']
         chart_type = chart['type']
         content = self.data.get('content','')
         preflow_content = self.data.get('preflow_content','')
         outflow_content = self.data.get('outflow_content','')
-        load_balance = config.get('load_balance',False)
-        if load_balance:
-            self.doLoadBalance()
+        module_name = 'omformflow.production.' + self.flow_uuid +'.' + str(self.flowactive.version) + '.main'
+        method_name = 'main'
+        name = 'FormFlow'
+        input_param = json.dumps(self.data)
+        queue_id = self.flow_uuid + str(self.data_id) + str(chart_id)
+        if content and chart_type == 'start':
+            parent_flow_uuid = content.get('flow_uuid','')
+            parent_data_id = content.get('data_id','')
+            parent_chart_id = content.get('chart_id_from','')
+            ex_queue_id = parent_flow_uuid + str(parent_data_id) + str(parent_chart_id)
+        elif preflow_content and chart_type == 'start':
+            parent_flow_uuid = preflow_content.get('flow_uuid','')
+            parent_data_id = preflow_content.get('data_id','')
+            parent_chart_id = preflow_content.get('chart_id_to','')
+            ex_queue_id = parent_flow_uuid + str(parent_data_id) + str(parent_chart_id)
+        elif outflow_content and chart_type == 'start':
+            parent_flow_uuid = outflow_content.get('flow_uuid','')
+            parent_data_id = outflow_content.get('data_id','')
+            parent_chart_id = outflow_content.get('chart_id_from','')
+            outflow_content['chart_id_from'] = None
+            ex_queue_id = parent_flow_uuid + str(parent_data_id) + str(parent_chart_id)
+        elif self.data.get('async_main_ticket_id',''):
+            async_main_ticket_id = self.data.pop('async_main_ticket_id')
+            ex_queue_id = self.flow_uuid + str(async_main_ticket_id) + str(last_chart_id)
+        elif self.data.get('collection_ex_data_id',''):
+            collection_ex_data_id = self.data.pop('collection_ex_data_id')
+            collection_ex_chart_id = self.data.pop('collection_ex_chart_id')
+            ex_queue_id = self.flow_uuid + str(collection_ex_data_id) + str(collection_ex_chart_id)
         else:
-            module_name = 'omformflow.production.' + self.flow_uuid +'.' + str(self.version) + '.main'
-            method_name = 'main'
-            name = 'FormFlow'
-            input_param = json.dumps(self.data)
-            queue_id = self.flow_uuid + str(self.data_id) + str(chart_id)
-            if content and chart_type == 'start':
-                parent_flow_uuid = content.get('flow_uuid','')
-                parent_data_id = content.get('data_id','')
-                parent_chart_id = content.get('chart_id_from','')
-                ex_queue_id = parent_flow_uuid + str(parent_data_id) + str(parent_chart_id)
-            elif preflow_content and chart_type == 'start':
-                parent_flow_uuid = preflow_content.get('flow_uuid','')
-                parent_data_id = preflow_content.get('data_id','')
-                parent_chart_id = preflow_content.get('chart_id_to','')
-                ex_queue_id = parent_flow_uuid + str(parent_data_id) + str(parent_chart_id)
-            elif outflow_content and chart_type == 'start':
-                parent_flow_uuid = outflow_content.get('flow_uuid','')
-                parent_data_id = outflow_content.get('data_id','')
-                parent_chart_id = outflow_content.get('chart_id_to','')
-                ex_queue_id = parent_flow_uuid + str(parent_data_id) + str(parent_chart_id)
-            else:
-                ex_queue_id = self.flow_uuid + str(self.data_id) + str(last_chart_id)
-            #remove last and write new queue db
-            try:
-                QueueData.objects.get(queue_id=ex_queue_id).delete()
-            except:
-                pass
-            QueueData.objects.create(queue_id=queue_id,name=name,input_param=input_param,module_name=module_name,method_name=method_name)
-            #put queue
-            FormFlowMonitor.putQueue(module_name, method_name, self.data)
-        
-    
-    def doLoadBalance(self):
-        '''
-        分散式運算預留
-        '''
-        version = getVersion('')
-        if version == 0:
+            ex_queue_id = self.flow_uuid + str(self.data_id) + str(last_chart_id)
+        #remove last and write new queue db
+        try:
+            QueueData.objects.get(queue_id=ex_queue_id).delete()
+        except:
             pass
-        else:
-            pass
+        QueueData.objects.create(queue_id=queue_id,name=name,input_param=input_param,module_name=module_name,method_name=method_name)
+        #put queue
+        FormFlowMonitor.putQueue(module_name, method_name, self.data)
+        return {'data_no':self.data_no}
 
     
     def closeTicket(self):
@@ -1950,7 +2285,40 @@ class OmEngine():
             return value
     
     
+    def getQuickAction(self, chart_id):
+        try:
+            #找出快速操作設定
+            action = ''
+            action1_text = ''
+            action2_text = ''
+            if self.flowactive.action1:
+                action1 = json.loads(self.flowactive.action1).get(chart_id,'')
+                if action1:
+                    action1_text = action1['text']
+            if self.flowactive.action2:
+                action2 = json.loads(self.flowactive.action2).get(chart_id,'')
+                if action2:
+                    action2_text = action2['text']
+            action = action1_text + ',' + action2_text
+        except:
+            pass
+        finally:
+            return action
     
     
-    
-    
+    def getUserDefaultGroup(self, user_id):
+        try:
+            search_user = OmUser.objects.get(id=user_id)
+            default_group_id = search_user.default_group
+            if default_group_id:
+                default_group_id = str(default_group_id)
+            else:
+                default_group_id_list = list(search_user.groups.all().values_list('id',flat=True))
+                if default_group_id_list:
+                    default_group_id = str(default_group_id_list[0])
+                else:
+                    default_group_id = ''
+        except:
+            default_group_id = ''
+        finally:
+            return default_group_id

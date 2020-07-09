@@ -1,0 +1,999 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %} 
+{% load omflow_tags %}
+{% block content %}
+<!-- 
+	SLA_manage.html SLAManagePage
+	author : Pei lin
+-->
+    <!-- Content Header (Page header) -->
+    <script src="/static/js/workflow.js"></script>
+    <section class="content-header">
+      <h1>
+      	{% trans "服務水準管理"%}
+      	<small>{% trans "應用管理"%}</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i> {% trans "首頁"%}</a></li>
+		<li>{% trans "應用管理"%}</li>
+        <li><a href="/flowmanage/page/SLA-manage/">{% trans "服務水準管理"%}</a></li>
+      </ol>
+    </section>
+    
+     <section class="content">
+      <div class="row">
+       <!-- column -->
+        <div class="col-md-12">
+          <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+              <li class="active"><a href="#p1" data-toggle="tab">{% trans "數值量測"%}</a></li>
+              <li><a href="#p2" data-toggle="tab">{% trans "時間量測"%}</a></li>
+            </ul>
+            <div class="tab-content">
+              <div class="tab-pane active" id="p1">
+                <div class="box box-default">
+                  <div class="box-header with-border">
+                    <button type="button" class="btn btn-default" onclick="SLA_edit('create', 'num')"><i class="fa fa-plus"></i> {% trans "新增"%}</button>
+                    <button type="button" id="num_delete" class="btn btn-default" onclick="SLA_edit('delete', 'num')" disabled="disabled"><i class="fa fa-trash-o"></i> {% trans "刪除"%}</button>
+                  </div>
+                  <!-- /.box-header -->
+                  <div class="box-body">
+                    <table class="table table-bordered table-striped table-hover" id="num_table">
+	                  <thead>
+	                    <tr>
+	                      <th style="width:15px"><a><i class="fa fa-lg fa-check-square-o checkbox-toggle" style="color:SteelBlue"></i></a></th>
+	                      <th>{% trans "服務水準名稱"%}</th>
+	                      <th>{% trans "應用名稱"%}</th>
+	                      <th>{% trans "流程名稱"%}</th>
+	                      <th>{% trans "提醒規則"%}</th>
+	                      <th>{% trans "違反規則"%}</th>
+	                      <th></th>
+	                    </tr>
+	                  </thead>
+	                  <tbody>
+	                  </tbody>
+	                </table>
+                  </div>
+                  <!-- /.box-body -->
+                </div>
+                <!-- /.box -->
+              </div>
+              <!-- /.tab-pane p1 -->
+              <div class="tab-pane" id="p2">
+                <div class="box box-default">
+                  <div class="box-header with-border">
+                    <button type="button" class="btn btn-default" onclick="SLA_edit('create', 'time')"><i class="fa fa-plus"></i> {% trans "新增"%}</button>
+                    <button type="button" id="time_delete" class="btn btn-default" onclick="SLA_edit('delete', 'time')" disabled="disabled"><i class="fa fa-trash-o"></i> {% trans "刪除"%}</button>
+                  </div>
+                  <!-- /.box-header -->
+                  <div class="box-body">
+                    <table class="table table-bordered table-striped table-hover" id="time_table">
+	                  <thead>
+	                    <tr>
+	                      <th style="width:15px"><a><i class="fa fa-lg fa-check-square-o checkbox-toggle" style="color:SteelBlue"></i></a></th>
+	                      <th>{% trans "服務水準名稱"%}</th>
+	                      <th>{% trans "應用名稱"%}</th>
+	                      <th>{% trans "流程名稱"%}</th>
+	                      <th>{% trans "提醒規則"%}</th>
+	                      <th>{% trans "違反規則"%}</th>
+	                      <th></th>
+	                    </tr>
+	                  </thead>
+	                  <tbody>
+	                  </tbody>
+	                </table>
+                  </div>
+                  <!-- /.box-body -->
+                </div>
+                <!-- /.box -->
+              </div>
+              <!-- /.tab-pane p2 -->
+            </div>
+            <!-- /.tab-content -->
+          </div>
+          <!-- /.nav-tabs-custom -->        
+        </div>
+        <!--/.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+    
+    
+    <div class="modal fade" id="modal-SLA" data-backdrop="static">
+	  <div class="modal-dialog modal-lg">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span>
+			</button>
+	        <h4 class="modal-title"></h4>
+		  </div>
+		  <div class="modal-body">
+		    <div class="container-fluid">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="box box-warning">
+                    <div class="box-body">
+                      <div class="row">
+                        <div class="col-md-4">
+                          <div class="form-group">
+		                    <label>{% trans '服務水準名稱'%}</label><font color="red">*</font>
+		                    <input id="sla_name" type="text" class="form-control" placeholder="{% trans '服務水準名稱'%}">
+		                  </div>
+		                  <div class="form-group">
+		                    <label>{% trans '說明'%}</label><font color="red">*</font>
+		                    <textarea id="description" class="form-control" placeholder="{% trans '說明'%}"  style="height:108px;resize:none;"></textarea>
+		                  </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="form-group">
+			                <label>{% trans '通知主旨'%}</label><font color="red">*</font>
+			                <input id="title" type="text" class="form-control" placeholder="{% trans '通知主旨'%}">
+			              </div>
+			              <div class="form-group">
+		                    <label>{% trans '通知內容'%}</label><font color="red">*</font>
+		                    <textarea id="content" class="form-control" placeholder="{% trans '通知內容'%}" style="height:108px;resize:none;"></textarea>
+		                  </div>
+                        </div>
+                        <!--/.col -->
+                        <div class="col-md-4">
+                          <div class="form-group">
+		                    <label>{% trans '通知角色'%}</label>
+		                    <select id="notify_group" type="text" class="form-control" style="width:100%" multiple>
+		                    </select>
+		                  </div>
+		                  <div class="form-group">
+		                    <label>{% trans '通知人'%}</label>
+		                    <select id="notify_user" type="text" class="form-control" style="width:100%" multiple>
+		                    </select>
+		                  </div>
+		                  <div class="form-group">
+		                  	<label>{% trans '通知開單人'%}</label></br>
+		                    <input id="notify_createuser" type="checkbox" class="icheckbox_minimal-blue"><label for="notify_createuser"></label>
+		                  </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!--/.box-body -->
+                  </div>
+                  <!--/.box -->
+                </div>
+                <!--/.col -->
+                <div class="col-md-12">
+                  <div class="box box-success">
+                    <div class="box-body">
+                      <div class="row">
+	                  	<div class="col-md-6">
+	                  	  <div class="form-group">
+		                    <label>{% trans '應用名稱'%}</label>
+		                    <select id="app_name" class="form-control" style="width:100%">
+		                    </select>
+		                  </div>
+		                </div>
+	                  	<div class="col-md-6">
+		                  <div class="form-group">
+		                    <label>{% trans '流程名稱'%}</label>
+		                    <select id="flow_name" class="form-control" style="width:100%">
+		                    </select>
+		                  </div>
+	                  	</div>
+	                  	<div class="col-md-4">
+	                  	  <div class="form-group">
+		                    <label>{% trans '欄位'%}</label>
+		                    <select id="target" type="text" class="form-control" style="width:100%">
+		                    </select>
+		                  </div>
+		                </div>
+	                  	<div class="col-md-4">
+	                  	  <div class="form-group">
+		                    <label>{% trans '提醒規則'%}</label>
+		                    <div class="row">
+		                      <div class="col-xs-4" style="padding-right:0;">
+		                        <select id="remind_rule" class="form-control" style="width:100%">
+		                          <option>></option>
+		                          <option>>=</option>
+		                          <option>=</option>
+		                          <option><=</option>
+		                          <option><</option>
+		                        </select>
+		                      </div>
+		                      <div class="col-xs-8" style="padding-left:0;">
+		                        <input id="remind_value" type="text" class="form-control" placeholder="{% trans '數字、字串...'%}">
+		                      </div>
+		                    </div>
+		                  </div>
+		                </div>
+	                  	<div class="col-md-4">
+			              <div class="form-group">
+		                    <label>{% trans '違反規則'%}</label>
+		                    <div class="row">
+			                  <div class="col-xs-4" style="padding-right:0;">
+		                        <select id="violation_rule" class="form-control" style="width:100%">
+		                          <option>></option>
+		                          <option>>=</option>
+		                          <option>=</option>
+		                          <option><=</option>
+		                          <option><</option>
+		                        </select>
+		                      </div>
+		                      <div class="col-xs-8" style="padding-left:0;">
+		                        <input id="violation_value" type="text" class="form-control" placeholder="{% trans '數字、字串...'%}">
+		                      </div>
+		                      <!--/.col -->
+		                    </div>
+		                    <!--/.row -->
+		                  </div>
+		                  <!--/.form-group -->
+	                    </div>
+	                    <!--/.col -->
+	                    <div class="col-md-6" id="advanced_start" style="margin-bottom: 15px;">
+	                      <div class="form-group">
+	                          <div class="sep-line"></div>
+		                      <label>{% trans '觸發條件'%}</label>
+		                      <button class="btn btn-default" onclick="advanced_add('start')"><i class="fa fa-plus"></i> {% trans "新增"%}</button>
+		                  </div>
+		                  <div class="row">
+		                    <div class="col-xs-12" id="advanced_start_list">
+	                      
+	                        </div>
+	                      </div>
+	                    </div>
+	                    <div class="col-md-6" id="advanced_end">
+	                      <div class="form-group">
+	                        <div class="sep-line"></div>
+		                    <label>{% trans '終止條件'%}</label>
+		                    <button class="btn btn-default" onclick="advanced_add('end')"><i class="fa fa-plus"></i> {% trans "新增"%}</button>
+		                  </div>
+		                  <div class="row">
+		                  	<div class="col-xs-12" id="advanced_end_list">
+	                      
+	                    	</div>
+		                  </div>
+	                    </div>
+	                  </div>
+	                  <!--/.row -->
+                  	</div>
+                  	<!--/.box-body -->
+                  </div>
+                  <!--/.box -->
+                </div>
+                <!--/.col -->
+              </div>
+              <!--/.row -->
+            </div>
+            <!--/.container-fluid -->
+		  </div>
+		   <!--/.modal-body -->
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">{% trans '取消'%}</button>
+			<button type="button" class="btn btn-primary" id="modal-SLA_check">{% trans '確定'%}</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+    
+    
+    <script>
+    	var csrfmiddlewaretoken = '{{ csrf_token }}'
+    	var num_table;
+    	var num_data_tmp;
+		var num_data_len;
+		var num_data_page;
+		var num_checkbox_status = [];
+		
+		var time_table;
+    	var time_data_tmp;
+		var time_data_len;
+		var time_data_page;
+		var time_checkbox_status = [];
+		
+		var target_option = '';
+		
+		var num_list = [];
+		var time_list = [];
+    	$(function(){
+    		num_table = $('#num_table').DataTable({
+				"autoWidth": false,
+				"order": [[ 0, "desc" ]], 
+				"dom":"<<t>'row'<'col-sm-5'i><'col-sm-7'p>>",
+				"language": __const_language__,
+				"serverSide": true,							//	serverside data loading
+				"deferRender": true,
+				"processing": true,
+				"ajax": {
+	           		"url": "{% url 'listSLARuleAjax' %}",
+	            	"type": "POST",
+	            	"headers": { "X-CSRFToken": csrfmiddlewaretoken },
+					"contentType": "application/json;charset=utf-8;",
+	            	"data": function ( d ) {
+								return JSON.stringify($.extend( {}, d, {
+									type: 'num',
+									datatable: 'True'
+								}));
+							},
+					"dataSrc": function(data){
+							a = dataCompare(data,num_data_tmp,num_data_len,num_data_page,num_table);
+							num_data_tmp = a['data_tmp']
+							num_data_len = a['data_len']
+							num_data_page = a['data_page']
+							data.data = a['data.data']
+							return data.data;
+						},
+					"error": function(xhr,status,error){
+								clearInterval(table_routine);
+						}
+	        	},   
+				"columns":[
+					{"width": "15px", "data": "id", "orderable": false, "render": function (data, type, row)
+	                	{return '<input type="checkbox" class="icheckbox_minimal-blue" id="'+data+'" data-value="'+row.sla_name+'"><label for='+data+'></label>'}
+	                },
+	                {"data":　"sla_name"},
+	                {"data": "app_name"},
+	                {"data": "flow_name"},
+	                {"data": "remind", "render": function(data, type, row)
+	                	{ 
+	                		return (row.target.name+' '+data.rule+' '+data.value)
+	                	}
+	                },
+	                {"data": "violation", "render": function(data, type, row)
+	                	{ 
+	                		return (row.target.name+' '+data.rule+' '+data.value)
+						}
+	                },
+	                {"data": "id", "render": function(data, type, row)
+	                	{ return '<button class="btn btn-xs btn-default" data-id="'+data+'" onclick="SLA_edit(\'update\', \'num\', this)">編輯</button>'}
+	                }
+	            ],
+	            "rowCallback": function(row, data){
+	            	num_list.push(data);
+	            },
+	            "preDrawCallback": function(){
+	            	num_list = [];
+	            },
+				"drawCallback": function(){
+					$('#num_table input:checkbox').change(function(){
+						enablebtt();
+					});
+				}
+	        });
+	        
+	        time_table = $('#time_table').DataTable({
+				"autoWidth": false,
+				"order": [[ 0, "desc" ]], 
+				"dom":"<<t>'row'<'col-sm-5'i><'col-sm-7'p>>",
+				"language": __const_language__,
+				"serverSide": true,							//	serverside data loading
+				"deferRender": true,
+				"processing": true,
+				"ajax": {
+	           		"url": "{% url 'listSLARuleAjax' %}",
+	            	"type": "POST",
+	            	"headers": { "X-CSRFToken": csrfmiddlewaretoken },
+					"contentType": "application/json;charset=utf-8;",
+	            	"data": function ( d ) {
+								return JSON.stringify($.extend( {}, d, {
+									type: 'time',
+									datatable: 'True'
+								}));
+							},
+					"dataSrc": function(data){
+							a = dataCompare(data,time_data_tmp,time_data_len,time_data_page,time_table);
+							time_data_tmp = a['data_tmp']
+							time_data_len = a['data_len']
+							time_data_page = a['data_page']
+							data.data = a['data.data']
+							return data.data;
+						},
+					"error": function(xhr,status,error){
+						}
+	        	},   
+				"columns":[
+					{"width": "15px", "data": "id", "orderable": false, "render": function (data, type, row)
+	                	{return '<input type="checkbox" class="icheckbox_minimal-blue" id="'+data+'" data-value="'+row.sla_name+'"><label for='+data+'></label>'}
+	                },
+	                {"data":　"sla_name"},
+	                {"data": "app_name"},
+	                {"data": "flow_name"},
+	                {"data": "remind", "render": function(data, type, row)
+	                	{
+	                		return ('超過 '+data.value+' 分') 
+						}
+	                },
+	                {"data": "violation", "render": function(data, type, row)
+	                	{
+	                		return ('超過 '+data.value+' 分')
+	                	}
+	                },
+	                {"data": "id", "render": function(data, type, row)
+	                	{ return '<button class="btn btn-xs btn-default" data-id="'+data+'" onclick="SLA_edit(\'update\', \'time\', this)">編輯</button>'}
+	                }
+	            ],
+	            "rowCallback": function(row, data){
+	            	time_list.push(data);
+	            },
+	            "preDrawCallback": function(){
+	            	time_list = [];
+	            },
+				"drawCallback": function(){
+					$('#time_table input:checkbox').change(function(){
+						enablebtt();
+					});
+				}
+	        });
+			
+			omflowCheckAll();
+			load_group_list();
+			load_user_list();
+			load_app_list();
+    	});
+    	
+    	function SLA_edit(action, type, obj)
+    	{
+    		if (action == 'create')
+    		{
+    			$('#modal-SLA .modal-title').empty().append('<i class="fa fa-plus"></i>&nbsp;&nbsp;{% trans "新增服務水準"%}')
+    			$('#sla_name, #description, #title, #content, #target_value, #remind_value, #violation_value').val('');
+    			$('#notify_group, #notify_user, #app_name, #flow_name, #target').val('').trigger('change');
+    			$('#target_rule, #remind_rule, #violation_rule').val('>').trigger('change');
+    			$('#advanced_start_list, #advanced_end_list').empty();
+    			
+    			if (type == 'num')
+    			{
+    				$('#remind_rule, #violation_rule').prop('disabled', '');
+    				$('#remind_rule').closest('label').html('{% trans "提醒規則"%}');
+    				$('#violation_rule').closest('label').html('{% trans "違反規則"%}');
+    				$('#remind_value, #violation_value').prop('placeholder', '{% trans "數字、字串..."%}').attr('type', 'text').attr('onkeyup', '').attr('onafterpast', '');
+    				$('#target').prop('disabled', 'disabled').closest('.col-md-4').show();
+    				$('#advanced_start label').html('{% trans "進階觸發條件"%}');
+    				$('#advanced_end').hide();
+    			}
+    			else
+    			{
+    				$('#remind_rule, #violation_rule').prop('disabled', 'disabled');
+    				$('#remind_rule').closest('label').html('{% trans "提醒時間(分)"%}');
+    				$('#violation_rule').closest('label').html('{% trans "違反時間(分)"%}');
+    				$('#remind_value, #violation_value').prop('placeholder', '{% trans "分"%}').attr('type', 'number').attr('onkeyup',"if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}").attr('onafterpast', "if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}");
+    				$('#target').prop('disabled', 'disabled').closest('.col-md-4').hide();
+    				$('#advanced_start label').html('{% trans "觸發條件"%}');
+    				$('#advanced_end').show();
+    			}
+    			
+    			$('#modal-SLA_check').off('click').on('click', SLA_submit);
+    			$('#modal-SLA').modal('show')
+    		}
+    		else if (action == 'update')
+    		{
+    			$('#modal-SLA .modal-title').empty().append('<i class="fa fa-edit"></i>&nbsp;&nbsp;{% trans "編輯服務水準"%}')
+    			$('#advanced_start_list, #advanced_end_list').empty();
+    			
+    			var sla_list;
+    			if (type == 'num')
+    			{	
+    				sla_list = num_data_tmp;
+    				$('#remind_rule, #violation_rule').prop('disabled', '');
+    				$('#remind_rule').closest('label').html('{% trans "提醒規則"%}');
+    				$('#violation_rule').closest('label').html('{% trans "違反規則"%}');
+    				$('#remind_value, #violation_value').prop('placeholder', '{% trans "數字、字串..."%}').attr('type', 'text').attr('onkeyup', '').attr('onafterpast', '');
+    				$('#target').prop('disabled', 'disabled').closest('.col-md-4').show();
+    				$('#advanced_start label').html('{% trans "進階觸發條件"%}');
+    				$('#advanced_end').hide();
+    			}
+    			else
+    			{
+    				sla_list = time_data_tmp;
+    				$('#remind_rule, #violation_rule').prop('disabled', 'disabled');
+    				$('#remind_rule').closest('label').html('{% trans "提醒時間(分)"%}');
+    				$('#violation_rule').closest('label').html('{% trans "違反時間(分)"%}');
+    				$('#remind_value, #violation_value').prop('placeholder', '{% trans "分"%}').attr('type', 'number').attr('onkeyup',"if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}").attr('onafterpast', "if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}");
+    				$('#target').prop('disabled', 'disabled').closest('.col-md-4').hide();
+    				$('#advanced_start label').html('{% trans "觸發條件"%}');
+    				$('#advanced_end').show();
+    			}
+    			
+    			sla_list.forEach(function(num_item){
+					if ($(obj).data('id') == num_item.id)
+					{
+						$('#sla_name').val(num_item.sla_name)
+						$('#description').val(num_item.description)
+						$('#title').val(num_item.title)
+						$('#content').val(num_item.content)
+						$('#target_value').val(num_item.target.value)
+						$('#remind_value').val(num_item.remind.value)
+						$('#violation_value').val(num_item.violation.value)
+						$('#target_rule').val(num_item.target.rule).trigger('change');
+						$('#remind_rule').val(num_item.remind.rule).trigger('change');
+						$('#violation_rule').val(num_item.violation.rule).trigger('change');
+						$('#notify_group').val(num_item.notify_group).trigger('change');
+						$('#notify_user').val(num_item.notify_user).trigger('change');
+						$('#app_name').val(num_item.app_name).trigger('change');
+						$('#notify_createuser').prop('checked', num_item.notify_createuser);
+						$('#flow_name').val((num_item.app_name+'-'+num_item.flow_name+'-'+num_item.flow_uuid)).trigger('change');
+						$('#target').val(num_item.target.id).trigger('change');
+						if (type == 'num')
+		    			{
+		    				(num_item.advanced).forEach(function(advanced_item ,index){
+								advanced_add('start');
+								$('select[name="advanced_start_name"]:eq('+index+')').val(advanced_item.id).trigger('change');
+								$('select[name="advanced_start_rule"]:eq('+index+')').val(advanced_item.rule).trigger('change');
+								$('input[name="advanced_start_value"]:eq('+index+')').val(advanced_item.value);
+							});	
+		    			}
+		    			else
+		    			{
+		    				(num_item.timer_start).forEach(function(start_item ,index){
+								advanced_add('start');
+								$('select[name="advanced_start_name"]:eq('+index+')').val(start_item.id).trigger('change');
+								$('select[name="advanced_start_rule"]:eq('+index+')').val(start_item.rule).trigger('change');
+								$('input[name="advanced_start_value"]:eq('+index+')').val(start_item.value);
+							});
+							(num_item.timer_end).forEach(function(end_item ,index){
+								advanced_add('end');
+								$('select[name="advanced_end_name"]:eq('+index+')').val(end_item.id).trigger('change');
+								$('select[name="advanced_end_rule"]:eq('+index+')').val(end_item.rule).trigger('change');
+								$('input[name="advanced_end_value"]:eq('+index+')').val(end_item.value);
+							});
+		    			}
+					}
+				});
+    			
+    			$('#modal-SLA_check').off('click').on('click', SLA_submit);
+    			$('#modal-SLA').modal('show')
+    		}
+    		else if (action == 'delete')
+    		{
+    			omflowListDialogue('delete', '{% trans "刪除下列服務水準"%}', SLA_submit, '', $("#"+type+"_table"));
+    		}
+    		
+    		function SLA_submit()
+    		{
+    			if (action == 'create' | action == 'update')
+    			{
+    				var SLA_data = {};
+    				SLA_data['type'] = type; 
+					SLA_data['sla_name'] = $('#sla_name').val();
+					SLA_data['description'] = $('#description').val();
+					SLA_data['app_name'] = $('#app_name').val();  
+					SLA_data['flow_name'] = $('#flow_name').val().split('-')[1]; 
+					SLA_data['flow_uuid'] = $('#flow_name').val().split('-')[2];
+					SLA_data['title'] = $('#title').val();
+					SLA_data['content'] = $('#content').val();  
+					SLA_data['notify_createuser'] = $('#notify_createuser').prop('checked');  
+					SLA_data['notify_group'] = $('#notify_group').val();
+					SLA_data['notify_user'] = $('#notify_user').val();
+					SLA_data['target'] = {
+						name: $('#target option:selected').text(),
+						id: $('#target').val(),
+					};
+					SLA_data['remind'] = {
+						rule: $('#remind_rule').val(),
+						value: $('#remind_value').val(),
+					};
+					SLA_data['violation'] = {
+						rule: $('#violation_rule').val(),
+						value: $('#violation_value').val(),
+					};
+					SLA_data['advanced'] = [];
+					SLA_data['timer_start'] = [];
+					SLA_data['timer_end'] = [];
+	    			if (action == 'create')
+	    			{
+						if (type == 'num')
+		    			{
+							$.each($('#advanced_start_list .form-group'), function(index, item){
+								SLA_data['advanced'].push({
+									name	: $('select[name="advanced_start_name"]:eq('+index+') option:selected').text(),
+									id		: $('select[name="advanced_start_name"]:eq('+index+')').val(),
+									rule	: $('select[name="advanced_start_rule"]:eq('+index+')').val(),
+									value	: $('input[name="advanced_start_value"]:eq('+index+')').val(),
+								});
+							});
+						}
+						else
+						{
+							$.each($('#advanced_start_list .form-group'), function(index, item){
+							SLA_data['timer_start'].push({
+								name	: $('select[name="advanced_start_name"]:eq('+index+') option:selected').text(),
+								id		: $('select[name="advanced_start_name"]:eq('+index+')').val(),
+								rule	: $('select[name="advanced_start_rule"]:eq('+index+')').val(),
+								value	: $('input[name="advanced_start_value"]:eq('+index+')').val(),
+							});
+							});
+							$.each($('#advanced_end_list .form-group'), function(index, item){
+								SLA_data['timer_end'].push({
+									name	: $('select[name="advanced_end_name"]:eq('+index+') option:selected').text(),
+									id		: $('select[name="advanced_end_name"]:eq('+index+')').val(),
+									rule	: $('select[name="advanced_end_rule"]:eq('+index+')').val(),
+									value	: $('input[name="advanced_end_value"]:eq('+index+')').val(),
+								});
+							});
+						}
+	    				var postdata = {
+		    				SLA_data	: JSON.stringify(SLA_data)
+		    			}
+	    				omflowJsonAjax(postdata, '{% url "createSLARuleAjax"%}', actions)
+	    			}
+	    			else
+	    			{	
+						if (type == 'num')
+		    			{
+							$.each($('#advanced_start_list .form-group'), function(index, item){
+								SLA_data['advanced'].push({
+									name	: $('select[name="advanced_start_name"]:eq('+index+') option:selected').text(),
+									id		: $('select[name="advanced_start_name"]:eq('+index+')').val(),
+									rule	: $('select[name="advanced_start_rule"]:eq('+index+')').val(),
+									value	: $('input[name="advanced_start_value"]:eq('+index+')').val(),
+								});
+							});
+						}
+						else
+						{
+							$.each($('#advanced_start_list .form-group'), function(index, item){
+								SLA_data['timer_start'].push({
+									name	: $('select[name="advanced_start_name"]:eq('+index+') option:selected').text(),
+									id		: $('select[name="advanced_start_name"]:eq('+index+')').val(),
+									rule	: $('select[name="advanced_start_rule"]:eq('+index+')').val(),
+									value	: $('input[name="advanced_start_value"]:eq('+index+')').val(),
+								});
+							});
+							$.each($('#advanced_end_list .form-group'), function(index, item){
+								SLA_data['timer_end'].push({
+									name	: $('select[name="advanced_end_name"]:eq('+index+') option:selected').text(),
+									id		: $('select[name="advanced_end_name"]:eq('+index+')').val(),
+									rule	: $('select[name="advanced_end_rule"]:eq('+index+')').val(),
+									value	: $('input[name="advanced_end_value"]:eq('+index+')').val(),
+								});
+							});
+						}
+	    				SLA_data['sla_id'] = $(obj).data('id');
+	    				var postdata = {
+		    				SLA_data	: JSON.stringify(SLA_data)
+		    			}
+	    				omflowJsonAjax(postdata, '{% url "updateSLARuleAjax"%}', actions)
+	    			}
+	    			$('#modal-SLA').modal('hide')
+    			}
+				else if (action == 'delete')
+				{
+					var id_list = []
+					$.each($('#'+type+'_table input:checkbox:checked'), function(){
+						id_list.push(this.id)
+					});
+					var postdata = {
+						sla_id: id_list
+					}
+					omflowJsonAjax(postdata, '{% url "deleteSLARuleAjax"%}', actions)
+				}    			
+    		}
+    		
+    	}
+    	
+    	
+    	function advanced_add(type)
+    	{
+    		$('#advanced_'+type+'_list').append('<div class="form-group" style="margin-bottom:0px">'
+				            +'<div class="row">'
+				              +'<div class="col-xs-4" style="padding-right:0;">'
+				                +'<select name="advanced_'+type+'_name" class="form-control" style="width:100%">'
+				                + target_option
+				                +'</select>'
+				              +'</div>'
+				              +'<div class="col-xs-2" style="padding-right:0;padding-left:0;">'
+				                +'<select name="advanced_'+type+'_rule" class="form-control" style="width:100%">'
+				                  +'<option>></option>'
+				                  +'<option>>=</option>'
+				                  +'<option>=</option>'
+				                  +'<option><=</option>'
+				                  +'<option><</option>'
+				                +'</select>'
+				              +'</div>'
+				              +'<div class="col-xs-4" style="padding-right:0;padding-left:0;">'
+				                +'<input name="advanced_'+type+'_value" type="text" class="form-control" placeholder="{% trans '數字、字串...'%}">'
+				              +'</div>'
+				              +'<div class="col-xs-1">'
+				                +'<i class="far fa-trash-alt" onclick="advanced_delete(this)" style="margin-top:10px;margin-bottom:10px;"></i>'
+				              +'</div>'
+				            +'</div>'
+				          +'</div>')
+			$('select[name="advanced_name"]').select2({placeholder: "{% trans '選擇欄位'%}", language: {noResults: function (params) {return " "}}})
+			$('select[name="advanced_rule"]').select2({minimumResultsForSearch: Infinity});
+    	}
+    	
+    	
+    	function advanced_delete(obj)
+    	{
+    		$(obj).closest('.form-group').remove();
+    	}
+    	
+    	
+    	function load_group_list()
+		{
+			var grouplist=[];
+			var postbody = {'functional_flag': 'True', 'ad_flag': ['1', '0']};
+			$.ajax({
+				url	: '{% url 'listGroupAjax' %}',
+				type: 'post',
+				headers: { "X-CSRFToken": csrfmiddlewaretoken },
+		        data: JSON.stringify(postbody),
+		        async: false,
+		        dataType: 'json',
+		        contentType: "application/json;charset=utf-8;",
+		        success: function (data) {
+		            callback(data)
+		        },
+		        error: function(req, status, err) {
+					$('#modal_error').modal('show');
+		        	console.log('Something went wrong', status, err);
+		    	}
+			});
+			function callback(data)
+			{
+				if (data.status == 200)
+				{
+					var grouplist = data.result;
+					var option = '';
+					grouplist.forEach( function(group_item){
+						option += '<option value="' + group_item.id + '">' + group_item.display_name + '</option>';
+					})
+					$('#notify_group').html(option).val(null).trigger('change');
+					$('#notify_group').select2({placeholder: "{% trans '通知角色'%}", allowClear: "true", language: {noResults: function (params) {return " "}}}); 
+					
+				}
+			}
+		}
+		
+		
+		function load_user_list()
+		{
+			$.ajax({
+				url	: '{% url 'searchGroupUserAjax' %}',
+				type: 'post',
+				headers: { "X-CSRFToken": csrfmiddlewaretoken },
+		        data: JSON.stringify({}),
+		        async:false,
+		        dataType: 'json',
+		        contentType: "application/json;charset=utf-8;",
+		        success: function (data) {
+		            callback(data)
+		        },
+		        error: function(req, status, err) {
+					$('#modal_error').modal('show');
+		        	console.log('Something went wrong', status, err);
+		    	}
+			});
+			function callback(data)
+			{
+				if (data.status == 200)
+				{
+					var userlist = data.result;
+					var option = '';
+					userlist.forEach(function(item){
+						option += '<option value="'+item.id+'">'+item.nick_name+'</option>'
+					});
+					$('#notify_user').html(option).val(null).trigger('change');
+					$('#notify_user').select2({placeholder: "{% trans '通知人'%}", allowClear: "true", language: {noResults: function (params) {return " "}}}); 
+				}
+				else
+				{
+					console.log(data)
+				}
+			}
+		}
+		
+		
+		function load_app_list()
+		{
+			$.ajax({
+				url	: '{% url 'listActiveApplicationAjax' %}',
+				type: 'post',
+				headers: { "X-CSRFToken": csrfmiddlewaretoken },
+		        data: JSON.stringify({}),
+		        async:false,
+		        dataType: 'json',
+		        contentType: "application/json;charset=utf-8;",
+		        success: function (data) {
+		            callback(data)
+		        },
+		        error: function(req, status, err) {
+					$('#modal_error').modal('show');
+		        	console.log('Something went wrong', status, err);
+		    	}
+			});
+			function callback(data)
+			{
+				if (data.status == 200)
+				{
+					var applist = data.result;
+					var option = '';
+					applist.forEach(function(item){
+						option += '<option value="'+item.app_name+'">'+item.app_name+'</option>'
+					});
+					$('#app_name').html(option);
+					$('#app_name').change(function(){
+						load_flow_list($(this).val())
+					});
+					$('#app_name').val(null).trigger('change'); 
+					$('#app_name').select2({placeholder: "{% trans '選擇應用'%}", allowClear: "true", language: {noResults: function (params) {return " "}}});
+					$('#flow_name').select2({placeholder: "{% trans '選擇流程'%}", allowClear: "true", language: {noResults: function (params) {return " "}}});
+					$('#flow_name').change(function(){
+						load_flowIO_list($(this).val())
+					});
+					$('#target').select2({placeholder: "{% trans '選擇欄位'%}", allowClear: "true", language: {noResults: function (params) {return " "}}});
+					$('#target_rule, #remind_rule, #violation_rule').select2({minimumResultsForSearch: Infinity});
+				}
+				else
+				{
+					console.log(data)
+				}
+			}
+		}
+		
+		function load_flow_list(app_name)
+		{
+			if (app_name)
+			{
+				$('#flow_name').prop('disabled', '');
+				var postbody = {app_name: app_name};
+				$.ajax({
+					url	: '{% url 'listFlowActiveAjax' %}',
+					type: 'post',
+					headers: { "X-CSRFToken": csrfmiddlewaretoken },
+			        data: JSON.stringify(postbody),
+			        async:false,
+			        dataType: 'json',
+			        contentType: "application/json;charset=utf-8;",
+			        success: function (data) {
+			            callback(data)
+			        },
+			        error: function(req, status, err) {
+						$('#modal_error').modal('show');
+			        	console.log('Something went wrong', status, err);
+			    	}
+				});
+				function callback(data)
+				{
+					if (data.status == 200)
+					{
+						var flowlist = data.result;
+						var option = '';
+						flowlist.forEach(function(item){
+							option += '<option value="'+app_name+'-'+item.flow_name+'-'+item.flow_uuid+'">'+item.flow_name+'</option>'
+						});
+						$('#flow_name').html(option);
+						$('#flow_name').val(null).trigger('change'); 
+						$('#flow_name').select2({placeholder: "{% trans '選擇流程'%}", allowClear: "true", language: {noResults: function (params) {return " "}}});
+					}
+					else
+					{
+						console.log(data)
+					}
+				}
+			}
+			else
+			{
+				$('#flow_name, #target').prop('disabled', 'disabled');
+				$('#flow_name').html('');
+				$('#flow_name').val(null).trigger('change'); 
+				$('#flow_name').select2({placeholder: "{% trans '選擇流程'%}", allowClear: "true", language: {noResults: function (params) {return " "}}});
+			}
+			
+		}
+		
+		function load_flowIO_list(app_flow_name)
+		{	
+			if (app_flow_name)
+			{
+				var app_name = app_flow_name.split('-')[0]
+				var flow_name = app_flow_name.split('-')[1]
+				$('#target').prop('disabled', '');
+				var postbody = {app_name: app_name, flow_name: flow_name, need_default_field: 'False'};
+				$.ajax({
+					url	: '{% url 'getFlowFieldNameAjax' %}',
+					type: 'post',
+					headers: { "X-CSRFToken": csrfmiddlewaretoken },
+			        data: JSON.stringify(postbody),
+			        async:false,
+			        dataType: 'json',
+			        contentType: "application/json;charset=utf-8;",
+			        success: function (data) {
+			            callback(data)
+			        },
+			        error: function(req, status, err) {
+						$('#modal_error').modal('show');
+			        	console.log('Something went wrong', status, err);
+			    	}
+				});
+				function callback(data)
+				{
+					if (data.status == 200)
+					{
+						var fitemlist = data.result;
+						var option = '';
+						$.each(fitemlist, function(index, item){
+							if (index.indexOf('formitm') >= 0)
+							{
+								option += '<option value="'+index+'">'+item+'</option>'
+							}
+						});
+						target_option = option;
+						$('#target').html(option);
+						$('#target').val(null).trigger('change');
+						$('#target').select2({placeholder: "{% trans '選擇欄位'%}", language: {noResults: function (params) {return " "}}});
+						
+						$('select[name="advanced_name"]').html(option);
+						$('select[name="advanced_name"]').val(null).trigger('change');
+						$('select[name="advanced_name"]').select2({placeholder: "{% trans '選擇欄位'%}", language: {noResults: function (params) {return " "}}}); 
+					}
+					else
+					{
+						console.log(data)
+					}
+				}
+			}
+			else
+			{
+				$('#target').prop('disabled', 'disabled');
+				$('#target').html('');
+				$('#target').val(null).trigger('change');
+				$('#target').select2({placeholder: "{% trans '選擇欄位'%}", language: {noResults: function (params) {return " "}}});
+			}
+			
+		}
+		
+		
+		function enablebtt()
+		{
+			var num_count = $('#num_table input:checkbox:checked').length;
+	    	if (num_count == 0)
+	    	{
+	    		$('#num_delete').prop('disabled', 'disabled');
+	    	}
+	    	else
+	    	{
+	    		
+	    		$('#num_delete').prop('disabled','');
+	    	}
+	    	var time_count = $('#time_table input:checkbox:checked').length;
+	    	if (time_count == 0)
+	    	{
+	    		$('#time_delete').prop('disabled', 'disabled');
+	    	}
+	    	else
+	    	{
+	    		$('#time_delete').prop('disabled','');
+	    	}
+		}
+		
+		
+		function actions(data)
+		{
+			Swal.close();
+			if(data.status == 200)
+			{
+				num_table.ajax.reload();
+				time_table.ajax.reload();
+				Swal.fire({
+		      	  icon : 'success',
+		      	  title: '成功',
+		      	  toast: true,
+			  	  position: 'bottom-start',
+			  	  showConfirmButton: false,
+		      	  timer: 2000,
+	  		    });
+			}	
+			else if (data.status == 404)
+			{
+				omflowAlert('yellow', data.message+data.result);
+			}
+			else if (data.status == 500)
+			{
+				omflowAlert('blue', data.message+data.result);
+			}
+			else if (data.status == 403)
+			{
+				omflowAlert('red', data.message+data.result);
+			}
+		}
+    </script>
+{% endblock %}

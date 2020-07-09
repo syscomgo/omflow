@@ -122,14 +122,14 @@ function progressHandlingFunction(event) {
  * author:Arthur
  */
 function omflowJsonAjax(postbody,url,callback){
-	
 	var postbody = arguments[0]? arguments[0]: {};
 	var url = arguments[1];
 	var callback = arguments[2];
 	$.ajax({
 		url: url,
-		type: 'post',
-        data:postbody,
+		type: 'POST',
+		headers: { "X-CSRFToken": getCookie("csrftoken") },
+        data: JSON.stringify(postbody),
         dataType: 'json',
         success: function (data) {
             callback(data);
@@ -229,6 +229,28 @@ function omflowConfirm(){
 }
 
 /**
+ * Show Confirm Dialogue
+ * input: type, title, callback, callbackdata
+ * author: Arthur
+ */
+function omflowConfirmDialogue(){
+	var icon = arguments[0];
+	var title = arguments[1];
+	var content = arguments[2];
+	var callback = arguments[3];
+	var thisDialoge = $("#modal-default-confirm");
+	
+	thisDialoge.find('.modal-title i').removeClass().addClass(icon);
+	thisDialoge.find('.modal-title span').text(title);
+	thisDialoge.find('.modal-body').text(content);
+	thisDialoge.find('.btn-primary').off('click').on('click',function(){
+		callback();
+	});
+	thisDialoge.modal('show');
+}
+
+
+/**
  * Show List Dialogue
  * input: type, title, callback, callbackdata
  * author: Arthur
@@ -240,6 +262,7 @@ function omflowListDialogue(){
 	var title = arguments[1];
 	var callback = arguments[2];
 	var callbackdata = arguments[3];
+	var table = arguments[4]? $(arguments[4]): $('.table');
 	
 	switch(type){
 	case "enable":
@@ -257,12 +280,22 @@ function omflowListDialogue(){
 	case "output":
 		tag_i = '<i class="fa fa-upload"></i>&nbsp;&nbsp;';
 		break;
+	case "relation":
+		tag_i = '<i class="fas fa-link"></i>&nbsp;&nbsp;';
+		break;
+	case "remove":
+		tag_i = '<i class="far fa-calendar-minus"></i>&nbsp;&nbsp;';
+		break;
 	}
-
-	$('#modal-default-list-text,  #modal-default-list-title').empty();
+	
+  	
+  	$('#modal-default-list').find('.modal-body').empty().append(
+  		'<ul class="list-group list-group-unbordered" id="modal-default-list-text"></ul>'	
+  	);
+	$('#modal-default-list-title').empty();
 	$('#modal-default-list-title').append(tag_i+title);
 	var this_check = '';
-	$.each($('.table input:checkbox:checked'), function(){
+	$.each( table.find('input:checkbox:checked'), function(){
 		this_check = $(this).data('value');
 		if (this_check == null )
 		{
@@ -326,6 +359,54 @@ function paddingLeft(str,lenght){
 	return paddingLeft("0" +str,lenght);
 }
 
+
+/**
+ * show B modal until A hided
+ * input: A modal,B modal
+ * return: none
+ * author: Arthur
+ */
+function BindSwitchModal(thisModal,nextModal){
+	thisModal = $(thisModal);
+	nextModal = $(nextModal);
+	thisModal.off('hidden.bs.modal');
+	thisModal.on('hidden.bs.modal', function () {
+		thisModal.off('hidden.bs.modal');
+	    nextModal.modal('show');
+	});
+}
+
+/**
+ * prevent bodyscroll show until A modal hided
+ * input: A modal
+ * return: none
+ * author: Arthur
+ */
+function HideBodyScrollModal(thisModal){
+	$('body').css('overflow','hidden');
+	thisModal = $(thisModal);
+	thisModal.modal('show');
+	thisModal.off('hidden.bs.modal');
+	thisModal.on('hidden.bs.modal', function () {
+		thisModal.off('hidden.bs.modal');
+	    	$('body').css('overflow','auto');
+	});
+}
+
+/**
+ * trans string 'aaaa' to '****'
+ * input: String
+ * return: String
+ * author: Pei lin
+ */
+
+function paddingMark(str){
+	var newstr = ''
+	for (var i=0; i < str.length; i++)
+		newstr += '*'
+	return newstr;
+}
+
 /**
  * Check all checkbox in current page
  * input: none
@@ -368,6 +449,7 @@ function omflowFilter(){
 						'<label class="text-light-blue">屬性 ：</label>'+
 						'<br>'+
            				'<input type="checkbox" class="icheckbox_minimal-blue" name="filter_type" data-value="lib" id="filter_lib" checked><label for="filter_lib"></label>&nbsp;&nbsp;&nbsp;lib&nbsp;&nbsp;&nbsp;'+
+           				'<input type="checkbox" class="icheckbox_minimal-blue" name="filter_type" data-value="sys" id="filter_sys" checked><label for="filter_sys"></label>&nbsp;&nbsp;&nbsp;sys&nbsp;&nbsp;&nbsp;'+
            				'<input type="checkbox" class="icheckbox_minimal-blue" name="filter_type" data-value="user" id="filter_user" checked><label for="filter_user"></label>&nbsp;&nbsp;&nbsp;user&nbsp;&nbsp;&nbsp;'+
            				'<input type="checkbox" class="icheckbox_minimal-blue" name="filter_type" data-value="cloud" id="filter_cloud" checked><label for="filter_cloud"></label>&nbsp;&nbsp;&nbsp;cloud&nbsp;&nbsp;&nbsp;'+
            				'</div>'+
@@ -395,7 +477,7 @@ function omflowFilter(){
 						'<div class="form-group" style="margin:0px;">'+
 						'<label class="text-light-blue">已關單/未關單 ：</label>'+
 						'<br>'+
-					    '<input type="checkbox" class="icheckbox_minimal-blue" name="filter_closed" data-value="1" id="filter_closed_1" checked><label for="filter_closed_1"></label>&nbsp;&nbsp;&nbsp;已關單&nbsp;&nbsp;&nbsp;'+
+					    '<input type="checkbox" class="icheckbox_minimal-blue" name="filter_closed" data-value="1" id="filter_closed_1"><label for="filter_closed_1"></label>&nbsp;&nbsp;&nbsp;已關單&nbsp;&nbsp;&nbsp;'+
 					    '<input type="checkbox" class="icheckbox_minimal-blue" name="filter_closed" data-value="0" id="filter_closed_0" checked><label for="filter_closed_0"></label>&nbsp;&nbsp;&nbsp;未關單&nbsp;&nbsp;&nbsp;'+
 					  	'</div>'+
 					    '</li>';
@@ -426,14 +508,37 @@ function omflowFilter(){
 						'</div>'+
 						'</li>';
 	
+	var filter_drange = '<li class="list-group-item" name="filter_date">'+
+						'<div class="form-group" style="margin:0px;">'+
+					    '<label class="text-light-blue">選擇日期範圍:</label>(測試中)'+
+					    '<div class="input-group">'+
+					    '<button type="button" class="btn btn-default pull-right" id="daterange-btn">'+
+					    '<span><i class="fa fa-calendar"></i> 選擇日期範圍</span>'+
+					    '<i class="fa fa-caret-down"></i>'+
+					    '</button>'+
+					    '</div>'+
+					    '</div>'+
+					    '</li>'
+	
+	var filter_flow = 	'<li class="list-group-item" name="filter_flow">'+
+						'<div class="form-group" style="margin:0px;">'+
+						'<label class="text-light-blue">查詢特定流程 :</label>'+
+						'<br>'+
+						'<select id="select_flow_uuid" class="form-control" style="width:100%; margin-bottom:10px;">'+                  		
+						'</select>'+
+						'</div>'+
+						'</li>';
+	
 	var filter_tag ={ 
-		  				'filter_search'	: filter_search ,
+		  				'filter_search'	: filter_search , 
+						'filter_flow'	: filter_flow,
 						'filter_type'	: filter_type,
 						'filter_utype'	: filter_utype,
 						'filter_status'	: filter_status, 
 						'filter_closed' : filter_closed,
 						'filter_length'	: filter_length, 
 						'filter_date'	: filter_date,
+						'filter_drange' : filter_drange
 		}
 	$('#modal-default-filter .list-group-unbordered').empty();
 	$.each(filter_tag, function(index, value){
@@ -463,6 +568,29 @@ function omflowFilter(){
 			}
 		);
 	}
+	
+	if(filter_item.indexOf('filter_drange')　>= 0){
+		$('#daterange-btn').daterangepicker(
+			{
+				ranges   : 
+				{
+					'今天'       : [moment(), moment()],
+					'昨天'   		: [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+					'最近一周' 	: [moment().subtract(6, 'days'), moment()],
+					'最近30天'	: [moment().subtract(29, 'days'), moment()],
+					'本月'  		: [moment().startOf('month'), moment().endOf('month')],
+					'上個月'  	: [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+				},
+				startDate: moment().subtract(29, 'days'),
+				endDate  : moment()
+			},
+			function (start, end) {
+				$('#daterange-btn span').html(start.format('Y-MM-DD') + ' - ' + end.format('Y-MM-DD') + ' ')
+				select_range = start.format('Y-MM-DD') + ',' + end.format('Y-MM-DD');
+			}
+	    );
+	}
+	
 	$('#modal-default-filter').on('shown.bs.modal', function () {
 	    $('#modal-default-filter #search').focus();
 	})
@@ -484,7 +612,7 @@ function getCookie(name) {
 function setCookie(name, value, days) {
     var d = new Date;
     d.setTime(d.getTime() + 24*60*60*1000*days);
-    document.cookie = name + "=" + value + ";path=/;expires=" + d.toGMTString();
+    document.cookie = name + "=" + value + ";SameSite=Strict;path=/;expires=" + d.toGMTString();
 }
 
 /**
@@ -516,7 +644,11 @@ function dataCompare(data,data_tmp,data_len,data_page,table){
 			if (data_len == data.recordsNum && data.data == 'same')		//If show data length not change and data.data == 'same' do nothing 
 			{
 				
-			}		
+			}
+			else if (data.data == 'page_null')
+			{
+				table.page('previous').draw();
+			}
 			else if (data_len <= data.recordsNum)		//If data_len <= data.recordsNum overwrite data_tmp from data.data by row
 			{
 				$.each(data.data, function(i,v){		//overwrite data_tmp
@@ -539,7 +671,7 @@ function dataCompare(data,data_tmp,data_len,data_page,table){
 			data_len = data.recordsNum;					//overwrite data_len
 			data.data = data_tmp;
 		}
-		return {'data.data': data.data, 'data_len': data_len, 'data_page':　data_page, 'data_tmp': data_tmp};
+		return {'data.data': escapeHtml(data.data), 'data_len': data_len, 'data_page':　data_page, 'data_tmp': data_tmp};
 	}
 }
 
@@ -579,4 +711,57 @@ if (!String.prototype.startsWith) {
       position = position || 0;
       return this.substr(position, searchString.length) === searchString;
   };
+}
+
+
+function escapeHtml(text) {
+	var map = 
+	{
+//		'&': '&amp;',
+		'<': '&lt;',
+		'>': '&gt;',
+		'"': '&quot;',
+		"'": '&#039;'
+	};
+	if (typeof text == 'object')
+		{
+			$.each(text, function(I, V){
+				text[I] = escapeHtml(V);
+			});
+			return text;
+		}
+	else if (typeof text == 'string' )
+		{
+			return text.replace(/[<>"']/g, function(m) { return map[m]; });
+		}
+	else
+		{
+			return text;
+		}
+}
+
+function unescapeHtml(text) {
+	var map = 
+	{
+//		'&amp;': '&',
+		'&lt;': '<',
+		'&gt;': '>',
+		'&quot;': '"',
+		"&#039;": "'"
+	};
+	if (typeof text == 'object')
+		{
+			$.each(text, function(I, V){
+				text[I] = escapeHtml(V);
+			});
+			return text;
+		}
+	else if (typeof text == 'string' )
+		{
+			return text.replace(/&#039;|&quot;|&gt;|&lt;/g, function(m) { return map[m]; });
+		}
+	else
+		{
+			return text;
+		}
 }

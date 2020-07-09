@@ -63,14 +63,10 @@ def put_flow_job(omobjects):
         exec_formdata = json.loads(omobjects.input_param) 
     elif isinstance(omobjects.input_param, dict):
         exec_formdata = omobjects.input_param
-    exec_function = exec_formdata['module_name']
-    exec_method = exec_formdata['method_name']
-    exec_input_param = {}
-    exec_input_param['formdata'] = exec_formdata['formdata']
-    exec_input_param['flow_uuid'] = exec_formdata['flow_uuid']
-    
+    exec_function = exec_formdata.pop('module_name')
+    exec_method = exec_formdata.pop('method_name')
     if omobjects.cycle == "Once":
-        SchedulerMonitor.putQueue(exec_function,exec_method,exec_input_param)
+        SchedulerMonitor.putQueue(exec_function,exec_method,exec_formdata)
         last_run_time_dict = {}
         last_run_time_dict[str(omobjects.id)] = str(OmSchedule.last_run(str(omobjects.id)))
         omobjects.last_exec_time = json.dumps(last_run_time_dict)
@@ -92,7 +88,7 @@ def put_flow_job(omobjects):
         next_run_time_dict[get_tag_id] = str(OmSchedule.next_run(str(get_tag_id)))
         omobjects.last_exec_time = json.dumps(last_run_time_dict)
         omobjects.next_exec_time = json.dumps(next_run_time_dict)
-        SchedulerMonitor.putQueue(exec_function,exec_method,exec_input_param)
+        SchedulerMonitor.putQueue(exec_function,exec_method,exec_formdata)
         omobjects.save()
     elif omobjects.cycle == "Monthly" :
         if omobjects.last_exec_time != None and omobjects.next_exec_time != None:
@@ -109,7 +105,7 @@ def put_flow_job(omobjects):
         next_run_time_dict[get_tag_id] = str(OmSchedule.next_run(str(get_tag_id)))
         omobjects.last_exec_time = json.dumps(last_run_time_dict)
         omobjects.next_exec_time = json.dumps(next_run_time_dict)
-        SchedulerMonitor.putQueue(exec_function,exec_method,exec_input_param)
+        SchedulerMonitor.putQueue(exec_function,exec_method,exec_formdata)
         omobjects.save()
     else:
         last_run_time_dict = {}
@@ -118,7 +114,7 @@ def put_flow_job(omobjects):
         next_run_time_dict[str(omobjects.id)] = str(OmSchedule.next_run(str(omobjects.id)))
         omobjects.last_exec_time = json.dumps(last_run_time_dict)
         omobjects.next_exec_time = json.dumps(next_run_time_dict)
-        SchedulerMonitor.putQueue(exec_function,exec_method,exec_input_param)
+        SchedulerMonitor.putQueue(exec_function,exec_method,exec_formdata)
         omobjects.save()
 
 @try_except        
@@ -150,7 +146,6 @@ def schedule_Execute(omobjects):
         OmSchedule.every(int(sched_every)).cycle(sched_cycle).exec_time(sched_exec_time).do(specific_Method,omobjects).tag(str(sched_id))
     elif sched_cycle == "Weekly":
         for cycle_date in sched_cycle_date:
-#             print(cycle_date)
             tag_id = sched_id + "_" + cycle_date
             OmSchedule.every(int(sched_every)).cycle(sched_cycle).cycle_date(cycle_date).exec_time(sched_exec_time).do(specific_Method,omobjects).tag(tag_id)
 

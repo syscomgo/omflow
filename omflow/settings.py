@@ -39,7 +39,10 @@ INSTALLED_APPS = [
     'omformmodel',
     'omservice',
     'ommission',
-    #'omldap',
+#    'omldap',
+#    'ommonitor',
+#    'ompolicymodel',
+#    'omorganization',
     #default
     #'django.contrib.admin',
     'django.contrib.auth',
@@ -87,16 +90,7 @@ WSGI_APPLICATION = 'omflow.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.omflow'),
-        'OPTIONS': {
-            'timeout': 300,
-            }
-    }
-}
-
+DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3","NAME": os.path.join(BASE_DIR, "db.omflow"),"OPTIONS": {"timeout": 300,}}}
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -124,8 +118,8 @@ LOCALE_PATHS = (
 )
 
 LANGUAGES = [
-#     ('en', "英文"),
-    ('zh-hant', "繁體中文"),
+#     ('en', "English"),
+    ('zh-hant', "Traditional_Chinese"),
 ]
 
 
@@ -140,11 +134,10 @@ USE_I18N = True
 
 USE_L10N = False
 
-#USE_TZ = True
+# USE_TZ = True
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 # SESSION_COOKIE_AGE = 3600
-# 如果開啟 TimeOut 自登入開始計時，時間到會強制登出，任何操作皆不會重新計時
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
 FILE_UPLOAD_TEMP_DIR = BASE_DIR
@@ -155,78 +148,89 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 52428800
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
-#定義 static url Mapping 的 folder
+# static url Mapping folder
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'staticfiles'),
     os.path.join(BASE_DIR, 'omuser', 'staticfiles'),
 )
-#佈署時可透過指令將staticfiles_dirs目錄下的檔案同步到指定的資料夾
+# staticfiles_dirs Mapping folder
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 LOG_DIR = os.path.join(BASE_DIR, 'logs')
-LOG_LEVEL = 'INFO'
+LOG_LEVEL = 'ERROR'
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': False,  #如果值為False則對已存在的loggers保持啟動狀態
-    'formatters': { #format格式
+    'disable_existing_loggers': False,  
+    'formatters': { 
         'simple': {
             'format': '[%(asctime)s] - %(levelname)-8s - %(message)s',
             'datefmt': DATETIME_FORMAT,
         },     
     },
     "filters": {   
-        "infofilter": {  #LOG等級在INFO以下印出STDERR
+        "infofilter": {  
           "()": "omflow.syscom.default_logger.LowLevelFilter",
           "level": 20
         },
-        "warnfilter": {  #LOG等級在WARN以下印出STDOUT
+        "warnfilter": {  
           "()": "omflow.syscom.default_logger.HighLevelFilter",
           "level": 30
         }
     },
-    'handlers': {  #處理器配置
-        'consoleInfo': {  #INFO以下處理器 
+    'handlers': {  
+        'consoleInfo': { 
             'class': 'logging.StreamHandler',
             'formatter': 'simple',
             "filters": ["infofilter"]
         },
-        'consoleError': { #WARNING以上處理器
+        'consoleError': { 
             'class': 'logging.StreamHandler',
             'formatter': 'simple',
             "stream": "ext://sys.stdout",
             "filters": ["warnfilter"]
         },
-        'omlogfile': { #OMFLOWLOG 檔案配置
+        'omlogfile': { 
             'class': 'logging.handlers.TimedRotatingFileHandler',
             'filename': os.path.join(LOG_DIR, 'omflow.log'),
             'encoding':'utf-8',
             'formatter': 'simple',
-            'when': 'midnight',  #以天來做備份
-            'backupCount': 10, #備份10個LOG檔案
+            'when': 'midnight', 
+            'backupCount': 10,
             'delay': True
        },
-        'djangolog': { #DJANGO 檔案配置
+        'djangolog': { 
             'class': 'logging.handlers.TimedRotatingFileHandler',
             'filename': os.path.join(LOG_DIR, 'djangolog.log'),
             'encoding':'utf-8',
             'formatter': 'simple',
-            'when': 'midnight', #以天來做備份
-            'backupCount': 10, #備份10個LOG檔案
+            'when': 'midnight', 
+            'backupCount': 10, 
             'delay': True
        },
     },
-    'loggers': { #設置Logger收集器
-        'django': { # Console上呈現於所有資訊，記錄到Djangolog檔案
+    'loggers': { 
+        'django': { 
             'handlers': ['consoleInfo','consoleError','djangolog'],
-            'level': LOG_LEVEL, #設定LOG等級
+            'level': LOG_LEVEL, 
             'propagate': False 
         },
-        'omflowlog': { #儲存客製log訊息
+        'omflowlog': { 
             'handlers': ['omlogfile'],
-            'level': LOG_LEVEL, #設定LOG等級
+            'level': LOG_LEVEL, 
             'propagate': False 
         },
     },
       
 }
 
+#omflow type(server/collector)
+OMFLOW_TYPE = "server"
+#local info
+LOCAL_IP = ""
+LOCAL_PORT = ""
+UNIQUE_ID = ""
+#server info
+SERVER_IP = ""
+SERVER_PORT = ""
+#python.exe filepath
+PYTHON_PATH = ""

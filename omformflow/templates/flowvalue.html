@@ -27,7 +27,7 @@
         <button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default" onclick="filter_default()" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
   	  </div>
   	  <div class="box-body">
-  	    <table class="table table-bordered table-striped" id="omdata_table">
+  	    <table class="table table-bordered table-striped" id="omdata_table" width="100%">
   	   	  <thead>
   	  	    <tr>
   	  	  	  <th>表單編號</th>
@@ -79,13 +79,15 @@
     var data_tmp;
 	var data_len;
 	var data_page;
+	var checkbox_status = [];
+	var is_closed = [0];
     $(function(){
     	listomdata();		//列表  ticket
     });
     
     
     function listomdata(){
-    	var postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, a_flow_uuid: '{{ flow_uuid }}'};
+    	var postbody = {a_flow_uuid: '{{ flow_uuid }}'};
     	omflowJsonAjax(postbody, '{% url "getApplicationFlowNameAjax" %}', getname_action);
     	select_time = date.getFullYear() +'-'+('0'+(date.getMonth()+1)).substr(-2)+'-'+('0'+date.getDate()).substr(-2);
     	table = $('#omdata_table').DataTable({
@@ -97,14 +99,15 @@
 				"ajax": {
 	           		"url": "{% url 'listOmDataHistoryAjax' %}",
 	            	"type": "POST",
+	            	"headers": { "X-CSRFToken": csrfmiddlewaretoken },
+					"contentType": "application/json;charset=utf-8;",
 	            	"data":	function ( d ) {
-						return $.extend( {}, d, {
-					        csrfmiddlewaretoken: csrfmiddlewaretoken,
+						return JSON.stringify($.extend( {}, d, {
 					        flow_uuid	: '{{flow_uuid}}',
 					        createtime	: select_time,
-					        "closed"	: [1,0],
+					        "closed"	: is_closed,
 					        manage		: 1
-					    }); 
+					    })); 
 					},
 					"dataSrc": function(data){
 						a = dataCompare(data,data_tmp,data_len,data_page,table);
@@ -140,7 +143,16 @@
 						}
 					},
     				{"data": "data_no", "width": "15px", "orderable": false, "render": function(data,type,row)
-    					{return '<button class="btn btn-xs btn-default" onclick="loadflowvalue(\''+data+'\',\''+row.id+'\')">編輯</button>'}
+    					{
+    						if (row.history)
+    						{
+    							return ''
+    						}
+    						else
+    						{
+    							return '<button class="btn btn-xs btn-default" onclick="loadflowvalue(\''+data+'\',\''+row.id+'\')">編輯</button>'
+    						}
+    					}
     				}
     	 		],
     	 		"rowCallback": function(row, data)
@@ -150,7 +162,21 @@
     	 				$('td:eq(6) button',row).attr('disabled', 'disabled');
     	 				$(row).css('color','#b5bbc8');
     	 			}
-    	 		}
+    	 		},
+    	 		drawCallback: function(){
+				    $.each(checkbox_status, function(){
+						$('.table input[type="checkbox"]#'+this).prop('checked', true);
+					});
+				},
+    	 		preDrawCallback: function(settings) {
+	    			checkbox_status = []
+	    			$.each($('.table input[type="checkbox"]'), function(){
+	    				if (this.checked)
+	    				{	
+	    					checkbox_status.push(this.id)
+	    				}
+	    			});
+	    		} 
 	        });
     }
     
@@ -172,7 +198,7 @@
     
     
     function loadflowvalue(data_no, data_id){
-    	var postdata = {csrfmiddlewaretoken:csrfmiddlewaretoken, flow_uuid: '{{flow_uuid}}', data_no:data_no, data_id: data_id}
+    	var postdata = {flow_uuid: '{{flow_uuid}}', data_no:data_no, data_id: data_id}
     	omflowJsonAjax(postdata,'{% url "getFlowValueAjax"%}', callback);
     	function callback(data){
     		if (data.status = 200)
@@ -194,7 +220,6 @@
 				});
 	    		$('#modal-flowvalue-confirm').off('click').on('click', function(){
 	    			var postbody = {
-	    				csrfmiddlewaretoken: csrfmiddlewaretoken, 
 	    				flow_uuid	: '{{flow_uuid}}',
 	    				data_no		: data_no,
 	    				data_id		: data_id,
@@ -212,6 +237,28 @@
     	}
     }
     
+    function filter_flowdesign()
+    {
+    	omflowFilter(['filter_search','filter_closed','filter_length']);
+		$('#modal-default-filter-confirm').off("click").on("click",function(){
+			is_closed = [];
+			var searchkey = $.trim($('#modal-default-filter #search').val());
+			var page_length = $('#modal-default-filter #page_length').val();
+			$.each($('[name="filter_closed"] input:checkbox:checked'), function(){
+				is_closed.push($(this).data('value'));
+			});
+			table.page.len(page_length);
+			table.search(searchkey).draw();
+		});
+    }
+    
+    function filter_default(){
+    	is_closed = [0];
+    	table.page.len(10);
+		table.search('');
+    	table.draw(false);
+    }
+    
     function actions(data){
     	Swal.close();
 		if(data.status == 200)
@@ -224,7 +271,7 @@
 		  	  showConfirmButton: false,
 	      	  timer: 2000,
   		    });
-  		    table.draw();
+  		    table.draw(false);
 		}
 		else if (data.status == 404)
 		{
@@ -240,6 +287,6 @@
 		}
     }
     
-    var table_routine = setInterval(function(){ table.draw();}, {{user.frequency}}*1000);
+    var table_routine = setInterval(function(){ table.draw(false);}, {{user.frequency}}*1000);
     </script>
 {% endblock %}

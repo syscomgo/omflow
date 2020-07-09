@@ -1,16 +1,14 @@
-import uuid, os, re, operator, json
+import json
 from omformflow.views import createOmData
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.translation import gettext as _
-from django.apps import apps
 from omflow.syscom.default_logger import info,error
-from omflow.syscom.common import try_except, DataChecker
+from omflow.syscom.common import try_except, DataChecker, getPostdata
 from omflow.syscom.message import ResponseAjax, statusEnum
 from omservice.models import OmService, OmServiceDesign
 from omformflow.models import FlowActive
-from pickle import FALSE
-
+from django.db.models import Max
 
 @login_required
 def servicePage(request):
@@ -29,7 +27,7 @@ def saveServiceAjax(request):
     '''
     #Server Side Rule Check
     username = request.user.username
-    postdata = request.POST
+    postdata = getPostdata(request)
 
     if username:
         require_field = ['content']
@@ -40,9 +38,11 @@ def saveServiceAjax(request):
             #static variable
             box_object = json.loads(postdata.get('content', ''))
             
-            service_design = OmServiceDesign.objects.get_or_create(id=1)[0]
-            setattr(service_design,"content",json.dumps(box_object))
-            service_design.save()
+            #service_design = OmServiceDesign.objects.get_or_create(id=1)[0]
+            #setattr(service_design,"content",json.dumps(box_object))
+            #service_design.save()
+            
+            OmServiceDesign.objects.create(content=json.dumps(box_object))
             
             OmService.objects.all().delete();
             
@@ -72,6 +72,7 @@ def loadServiceAjax(request):
     return: json
     author: Arthur
     '''
+    
     #Server Side Rule Check
     username = request.user.username
     result = {}
@@ -89,8 +90,9 @@ def loadServiceAjax(request):
 #                     result['objects'].append(service_obj)
         #print(OmServiceDesign.objects.all().count())
         if OmServiceDesign.objects.all().count()>0:
-            
-            result = list(OmServiceDesign.objects.filter(id=1).values('content'))
+            max = OmServiceDesign.objects.all().aggregate(Max('id')).get('id__max')
+            result = list(OmServiceDesign.objects.filter(id=max).values('content'))
+
             box_object = json.loads(result[0]["content"])
             
             if request.user.has_perm('omservice.OmServiceDesign_Manage'):
@@ -125,7 +127,7 @@ def loadServiceAjax(request):
         return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
 
 
-@permission_required('omservice.OmServiceDesign_Manage','/page/403/')         
+#@permission_required('omservice.OmServiceDesign_Manage','/page/403/')         
 @login_required
 @try_except
 def getFormListAjax(request):
@@ -159,7 +161,7 @@ def getFormObjAjax(request):
     author: Arthur
     '''
     username = request.user.username
-    postdata = request.POST
+    postdata = getPostdata(request)
     result = {}
     #print(postdata)
     

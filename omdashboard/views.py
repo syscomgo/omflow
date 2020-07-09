@@ -4,8 +4,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Permission
 from django.utils.translation import gettext as _
 from omflow.syscom.default_logger import info,error
-from omflow.syscom.common import try_except, DataChecker
+from omflow.syscom.common import try_except, DataChecker, getPostdata, checkMigrate
 from omflow.syscom.message import ResponseAjax, statusEnum
+from omflow.global_obj import FlowActiveGlobalObject
 from django.apps import apps
 #APP
 from omdashboard.models import OmDashboard
@@ -28,7 +29,7 @@ def saveDashboardAjax(request):
     '''
     #Server Side Rule Check
     username = request.user.username
-    postdata = request.POST
+    postdata = getPostdata(request)
     
     if username:
         require_field = ['content']
@@ -56,6 +57,7 @@ def loadDashboardAjax(request):
     author: Arthur
     '''
     #Server Side Rule Check
+    checkMigrate()
     username = request.user.username
     result = {}
     if username:
@@ -81,7 +83,7 @@ def updateGridAjax(request):
     author: Arthur
     '''
     username = request.user.username
-    postdata = request.POST
+    postdata = getPostdata(request)
     
     #判斷必填
     require_field = ['content']
@@ -427,7 +429,7 @@ def getColumnListAjax(request):
     author: Arthur
     ''' 
     username = request.user.username
-    postdata = request.POST
+    postdata = getPostdata(request)
     
     if username:
         require_field = ['model']
@@ -435,11 +437,25 @@ def getColumnListAjax(request):
         if checker.get('status') == 'success':
             permission = postdata.get('model', '')
             this_model = list(filter(lambda x: x.__name__==re.findall("^(.+)_View", permission)[0],apps.get_models()))
-
             if len(this_model) and request.user.has_perm(str(this_model[0]._meta.app_label)+"."+permission):
                 result={}
-                for field in this_model[0]._meta.fields:
-                    result[field.name] = field.verbose_name
+                if re.match('Omdata_.+_View', permission) :
+                    flow_uuid = re.findall("Omdata_(.+)_View", permission)[0]#Omdata_5d3c2cbdcf4145c3a05affaf4a74345b_View
+                    fa = FlowActiveGlobalObject.UUIDSearch(flow_uuid).merge_formobject
+                    fa = json.loads(fa)
+                    for field in this_model[0]._meta.fields:
+                        if 'formitm' in field.verbose_name:
+                            if field.name.upper() in fa:
+                                if fa[field.name.upper()]["type"] == 'h_group':
+                                    #result[field.name] = fa[field.name.upper]
+                                    result[field.name] = fa[field.name.upper()]["config"]["group_title"]
+                                else:
+                                    result[field.name] = fa[field.name.upper()]["config"]["title"]
+                        else:
+                            result[field.name] = field.verbose_name
+                else:
+                    for field in this_model[0]._meta.fields:
+                        result[field.name] = field.verbose_name
                     
                 info(request,'%s get Column-List success' % username)
                 return ResponseAjax(statusEnum.success, _('讀取成功'),result).returnJSON()

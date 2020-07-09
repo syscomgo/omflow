@@ -58,6 +58,38 @@
 	    </div>
 	  </div>
 	</section>
+	
+	
+	<!-- create-Modal -->
+	<div class="modal fade" id="modal-create-group" data-backdrop="static">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title" id="modal-create-group-title"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增組織</h4>
+		  </div>
+		  <div class="modal-body">
+		    <div class="form-group">
+              <label>選擇所屬組織</label>
+              <select class="form-control select2" style="width: 100%;" id="modal-create-group-text">
+	              </select>
+            </div>
+            <!-- /.form-group -->
+            <div class="form-group">
+          	  <label>{% trans '新建組織名稱' %}</label>
+          	  <input type="text" name="group" id="create_group" class="form-control" placeholder="{%trans '組織名稱'%}" required="true"/>
+            </div>
+            <!-- /.form-group -->
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
+			<button type="button" class="btn btn-primary" data-dismiss="modal">確定</button>
+		  </div>
+		</div>
+	  </div><!-- /.modal-content -->
+	</div>
+	
 	<script>
 	var grouplist;
 	var csrfmiddlewaretoken = '{{ csrf_token }}'
@@ -66,7 +98,7 @@
 	});
 	
 	function listgroup(){
-		postdata = {csrfmiddlewaretoken: csrfmiddlewaretoken, 'functional_flag': 'False', 'ad_flag': ['0']};
+		postdata = {'functional_flag': 'False', 'ad_flag': ['0']};
 		omflowJsonAjax(postdata, '{% url 'listGroupAjax' %}', callback);
 		function callback(data){
 			if (data.status == 200)
@@ -133,25 +165,59 @@
 	{	
 		$('#modal-create-group-text').empty();
 		$('#create_group').val('');
-		$('#create_group_description').val('');
 		$('#modal-create-group-text').removeAttr('disabled');
-		if (choice==null){
-			$('#modal-create-group-text').append('<option value=""></option>')
-			$.each(grouplist,function(index, value){
-				$('#modal-create-group-text').append('<option value="'+value.id+'">'+value.display_name+'</option>')
-			});
-		}else{
-			$('#modal-create-group-text').append('<option value='+choice+'>'+choice+'</option>');
-			$('#modal-create-group-text').attr('disabled','disabled');
-		}
+		
+		var option = []
+		var output = '';
+		grouplist.forEach( function(option_item){
+			if(option_item.parent_group == null)
+			{
+				option.push({'id': option_item.id, 'value':option_item.id, 'text': option_item.display_name, 'parent': null, 'level': 1 ,'nonleaf': 'non-leaf'})
+			}
+			else
+			{
+				var new_class = 0;
+				var parent_id = '';
+				option.forEach(function(parent_item)
+				{
+					if(parent_item.id == option_item.parent_group)
+					{
+						new_class = parent_item.level + 1;
+						parent_id = parent_item.id;
+					}
+				});
+				var nonleaf = '';
+				grouplist.forEach(function(find_item)
+				{
+					if(find_item.parent_group == option_item.id)
+					{
+						nonleaf = 'non-leaf';
+					}
+				});
+				option.push({'id': option_item.id, 'value':option_item.id,'text': option_item.display_name , 'parent_group': option_item.parent_group ,'parent':parent_id, 'level':new_class,'nonleaf':nonleaf });
+				
+			}
+		});
+		option.forEach(function (group_item){
+			if (group_item.parent==null)
+			{
+				output += '<option value="' + group_item.id + '" class="l' + group_item.level + ' ' + group_item.nonleaf + '" >' + group_item.text + '</option><!--' + group_item.value + '-->';
+			}
+			else
+			{
+				output = output.replace('<!--' + group_item.parent + '-->','<option value="' + group_item.id + '" data-pup="' + group_item.parent + '" class="l' + group_item.level + ' ' + group_item.nonleaf + '" >' + group_item.text + '</option><!--' + group_item.value + '--><!--' + group_item.parent + '-->'); 
+			}
+		});
+		$('#modal-create-group-text').append(output);
+		$('#modal-create-group-text').val('').trigger('change');
+		$('#modal-create-group-text').select2ToTree();
+		
 		$('#modal-create-group').modal('show');
 		$('#modal-create-group button:eq(2)').off("click").on("click",function(){
 			var postdata = {};
-			postdata['csrfmiddlewaretoken']=csrfmiddlewaretoken;
 			postdata['p_id']=$('#modal-create-group-text').val();
 			postdata['group_name']=$('#create_group').val();
-			postdata['functional_flag_%B']="False";
-			postdata['description']=$('#create_group_description').val();
+			postdata['functional_flag']="False";
 			omflowJsonAjax(postdata, '{% url 'addGroupAjax'%}', actions);
 			Swal.fire({
 			  title: '處理中...',
@@ -168,7 +234,6 @@
 		omflowListDialogue("delete", "{% trans '下列組織將被刪除' %}")
 		$('#modal-default-list button:eq(2)').off("click").on("click",function(){
 			var postdata = {
-				csrfmiddlewaretoken : csrfmiddlewaretoken,
 				group_name			: []
 			};
 			$.each($('.table input:checkbox:checked'), function(){

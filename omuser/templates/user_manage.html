@@ -71,30 +71,31 @@
 	<script>
 	var csrfmiddlewaretoken="{{ csrf_token }}";
 	var table;
-	var is_active=[];
-	var ad_flag=[];
+	var is_active=[1,0];
+	var ad_flag=[1,0];
 	var data_tmp;
 	var data_len;
 	var data_page;
+	var checkbox_status = [];
 	$(function () {
 		table = $('#userlist').DataTable({
 				"autoWidth": false,
-				"order": [[ 4, "asc" ]], 					//	default order column[1]
+				"order": [[ 4, "asc" ],[1, "desc"]], 					//	default order column[1]
 				"serverSide": true,							//	serverside data loading
 				"deferRender": true,
 				"processing": true,
-				//"searching":false,
-				//"lengthChange":false,
 				"dom":"<<t>'row'<'col-sm-5'i><'col-sm-7'p>>",
 	        	"ajax": {
 	           		"url": "{% url 'listUserAjax' %}",
 	            	"type": "POST",
+	            	"headers": { "X-CSRFToken": csrfmiddlewaretoken },
+					"contentType": "application/json;charset=utf-8;",
 	            	"data": function ( d ) {
-								return $.extend( {}, d, {
-									"csrfmiddlewaretoken": "{{ csrf_token }}", 
+								return JSON.stringify($.extend( {}, d, {
 									is_active: is_active,
-									ad_flag: ad_flag
-								});
+									ad_flag: ad_flag,
+									datatable: 'True'
+								}));
 							},
 					"dataSrc": function(data){
 							a = dataCompare(data,data_tmp,data_len,data_page,table);
@@ -117,9 +118,9 @@
 	        		{"data": "is_active" ,"orderable": false,"width": "30px", "render": function(data, type, row)
 		        		{
 		        			if(data)
-		        				{return '<button class="btn btn-xs btn-success" onclick="active_user(this,\'inactive\',\''+row.username+'\')" style="width:36px">啟用</button>'}
+		        				{return '<button class="btn btn-xs btn-success" onclick="active_user(this,\'inactive\',\''+row.username+'\')">啟用</button>'}
 		        			else	
-		        				{return '<button class="btn btn-xs btn-warning" onclick="active_user(this,\'active\',\''+row.username+'\')" style="width:36px">停用</button>'}
+		        				{return '<button class="btn btn-xs btn-warning" onclick="active_user(this,\'active\',\''+row.username+'\')">停用</button>'}
 		        		}
 	        		},
 	        		{"data": "ad_flag" , "orderable": false, "width": "30px", "render": function(data, type, row)
@@ -162,7 +163,19 @@
 					check_permission();
 					$('.table input[type="checkbox"]').change(function(){
 						enablebtt()
-					})
+					});
+					$.each(checkbox_status, function(){
+						$('.table input[type="checkbox"]#'+this).prop('checked', true);
+					});
+	    		},
+	    		preDrawCallback: function(settings) {
+	    			checkbox_status = []
+	    			$.each($('.table input[type="checkbox"]'), function(){
+	    				if (this.checked)
+	    				{	
+	    					checkbox_status.push(this.id)
+	    				}
+	    			})
 	    		}        	     	
 		});
 	});
@@ -196,7 +209,6 @@
 		
 		$('#modal-default-list button:eq(2)').off("click").on("click",function(){
 			postbody = {
-				csrfmiddlewaretoken : csrfmiddlewaretoken,
 				username			: [],
 			}
 			$.each($('.table input:checkbox:checked'), function(){
@@ -220,7 +232,6 @@
 	
 	function active_user(thisbt,status,username){
 		var postbody = {
-			csrfmiddlewaretoken : csrfmiddlewaretoken,
 			username			: [],
 			status: status
 		}
@@ -294,17 +305,17 @@
 		});
 	}
 	function filter_default(){
-		is_active = [];
-		ad_flag = [];
+		is_active = [1,0];
+		ad_flag = [1,0];
 		table.page.len(10);
 		table.search('');
-		table.draw();
+		table.draw(false);
 	}
 	function actions(data){
 		Swal.close();
 		if(data.status == 200)
 		{
-			table.draw();
+			table.draw(false);
 			Swal.fire({
 	      	  icon : 'success',
 	      	  title: data.message,
@@ -328,6 +339,6 @@
 		}
 	}
 	
-	var table_routine = setInterval(function(){ table.draw();}, {{user.frequency}}*1000);
+	var table_routine = setInterval(function(){ table.draw(false);}, {{user.frequency}}*1000);
 	</script>
 {% endblock %}

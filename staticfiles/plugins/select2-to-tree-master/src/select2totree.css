@@ -54,6 +54,7 @@
 	left: -0.35em;
 	top: 0.1em;
 	font-size: larger;
+	margin-left:0.5em;
 }
 .s2-to-tree li.select2-results__option.non-leaf.opened .expand-collapse:before {
 	content: "\f068";
@@ -66,9 +67,9 @@
 
 .s2-to-tree .item-label {
 	display: inline-block;
-	margin-left: 1em;
+	margin-left: 1.5em;
 	padding: 3px;
-	width: calc(100% - 16px); /* IE8 will fit the content */
+	width: calc(100% - 26px); /* IE8 will fit the content */
 }
 
 .s2-to-tree li.select2-results__option {

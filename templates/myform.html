@@ -1,9 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load i18n %} 
+{% load omflow_tags %}
 {% block content %}
 <!-- 
-	flow_design.html flowdesignPage
+	myform.html 
 	author : Pei lin
 -->
     <!-- Content Header (Page header) -->
@@ -25,12 +26,19 @@
         <div class="col-xs-12">
           <div class="box box-primary">
           	<div class="box-header with-border">
-          	  <button type="button" class="btn btn-default" onclick="updateOmdata()" style="margin:1px 0px;"><i class="fa fa-paper-plane"></i> {% trans '送出'%}</button>
+          	  {% omform_update_perms user flow_uuid data_no data_id '_Modify' as check%}
+          	  {% if 'omformmodel.Omdata_'|add:flow_uuid|add:'_Modify' in perms or check%}
+          	  <button type="button" class="btn btn-default" onclick="updateOmdata()" id="updateOmdata" style="margin:1px 0px;"><i class="fa fa-paper-plane"></i> {% trans '送出'%}</button>
+          	  {% endif %}
           	  <button type="button" class="btn btn-default" onclick="history_browser()" id="history" style="margin:1px 0px;display:none;"><i class="fa fa-history"></i> {% trans '歷程'%}</button>
-{#          	  <button type="button" class="btn btn-default" onclick="relation_browser()" id="relation" style="margin:1px 0px;"><i class="fa fa-cogs"></i> {% trans '關聯'%}</button>#}
-          	  <button type="button" class="btn btn-default" onclick="fp_show_browser()" id="fp_show" style="margin:1px 0px;display:none;"><i class="fa fa-stack-overflow"></i> {% trans '流程檢視'%}</button>
-          	  <button type="button" class="btn btn-default" onclick="attachment_browser()" id="attachment" style="margin:1px 0px;display:none;"><i class="fas fa-file-archive"></i> {% trans '附加檔案'%}</button>
-{#          	  <button type="button" class="btn btn-default" onclick="worklog_browser()" id="worklog" style="margin:1px 0px;"><i class="far fa-calendar-alt"></i> {% trans '工作日誌'%}</button>#}
+          	  <button type="button" class="btn btn-default" onclick="fp_show_browser()" id="fp_show" style="margin:1px 0px;display:none;width:96px;"><i class="fas fa-project-diagram"></i> {% trans '流程檢視'%}</button>
+			  <button type="button" class="btn btn-default" onclick="relation_browser()" id="relation" style="margin:1px 0px;display:none;width:96px;"><i class="fas fa-link"></i> {% trans '關聯操作'%}</button>
+          	  <button type="button" class="btn btn-default" onclick="attachment_browser()" id="attachment" style="margin:1px 0px;display:none;width:96px;"><i class="fas fa-file-archive"></i> {% trans '附加檔案'%}</button>
+          	  <button type="button" class="btn btn-default" onclick="worklog_browser()" id="worklog" style="margin:1px 0px;display:none;width:96px;"><i class="far fa-calendar-alt"></i> {% trans '工作日誌'%}</button>
+          	  {%omflow_version_type as version_type%}
+          	  {%if version_type != "C"%}
+          	  <button type="button" class="btn btn-default" onclick="SLA_view_browser()" id="SLA_view_show" style="margin:1px 0px;width:96px;"><i class="fas fa-exclamation-circle"></i> {% trans '服務水準'%}</button>
+          	  {% endif %}
 			 <div class="pull-right">
 			 </div>
           	</div>
@@ -50,26 +58,28 @@
       </div>
     </section>
     
-    
     <div class="modal fade" id="modal_flow_browser" data-backdrop="static">
       <div class="modal-dialog" style="width:90%;">
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title"></h4>
+            <h4 class="modal-title"><i class="fas fa-project-diagram"></i>&nbsp;&nbsp;{% trans '流程檢視'%}</h4>
           </div>
-          <div class="modal-body" >
+          <div class="modal-body">
             <div class="container-fluid">
               <div class="row">
-              	<div class="col-md-8">
-              	  <div id="flowcontent" style="width:100%;height:430px"></div>
+              	<div class="col-lg-8">
+              	  <div class="box box-default">
+              	    <div class="box-header">
+              	    </div>
+              	    <div class="box-body">
+              	  	  <div id="flowcontent" style="width:100%;height:430px"></div>
+              	  	</div>
+              	  </div>
               	</div>
-              	<div class="col-md-4">
-	              <table id="flow_history_table" class="table table-striped table-bordered table-hover">
-	              	<col width="50%"></col>
-	              	<col width="35%"></col>
-	              	<col width="15%"></col>
+              	<div class="col-lg-4">
+	              <table id="flow_history_table" class="table table-striped table-bordered table-hover" width="100%">
 				   	<thead>
 				      <tr>
 				      	<th>時間</th>
@@ -85,7 +95,7 @@
             </div>   
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary pull-right" data-dismiss="modal">{% trans '關閉' %}</button>
+            <button type="button" class="btn btn-default pull-right" data-dismiss="modal">{% trans '關閉' %}</button>
           </div>
         </div>
         <!-- /.modal-content -->
@@ -93,7 +103,6 @@
       <!-- /.modal-dialog -->
     </div>
     <!-- /.modal -->
-    
     
     <div class="modal fade" id="modal-inoutput" data-backdrop="static">
 	  <div class="modal-dialog modal-lg">
@@ -116,12 +125,11 @@
 		  	</div>
 		  </div>
 		  <div class="modal-footer">
-			<button type="button" id="modal-inoutput-close"  class="btn btn-primary" data-dismiss="modal">關閉</button>
+			<button type="button" id="modal-inoutput-close"  class="btn btn-default" data-dismiss="modal">{% trans '關閉'%}</button>
 		  </div>
 		</div>
 	  </div><!-- /.modal-content -->
 	</div> 
-    
     
     <div class="modal fade" id="modal_attachment_browser" data-backdrop="static">
       <div class="modal-dialog modal-lg modal-dialog-scrollable">
@@ -139,22 +147,25 @@
           </div>
           <div class="modal-body">
           	<ul class="list-group list-group-unbordered">
-			  <li class="list-group-item">
-			  	<div class="form-group">
-		          <div class="btn btn-default btn-file">
-		            <i class="fa fa-plus"></i> {% trans '新增檔案'%}
-		            <input type="file" class="file" id="attachment_input" name="attachment_input" multiple="multiple">
-		          </div>
-		          <button type="button" class="btn btn-default" name="file_upload" onclick="file_upload()" style="margin:1px 0px;display:none;"><i class="fas fa-file-upload"></i> {% trans '上傳'%}</button>
-		          <label name="fileWarning" class="text-red" style="display:none;">※※※{% trans '硬碟容量不足，請移除部分檔案再上傳或聯絡系統管理員'%}※※※</label>
-		          <label name="uploadWarning" class="text-red" style="display:none;">※※※{% trans '檔案上傳中，請勿離開此頁面'%}※※※</label>
-		        </div>
-		        <ul class="mailbox-attachments clearfix" id="attach_upload">
-		      	</ul>
-		      	<div class="progress" style="display:none;">
-		          <div class="progress-bar" role="progressbar" style="width:0%;">0%</div>
-		        </div>
-			  </li>
+          	  {% if 'omformmodel.Omdata_'|add:flow_uuid|add:'_Modify' in perms or check %}
+				  <li class="list-group-item">
+				  	<div class="form-group">
+			          <div class="btn btn-default btn-file">
+			            <i class="fa fa-plus"></i> {% trans '新增檔案'%}
+			            <input type="file" class="file" id="attachment_input" name="attachment_input" multiple="multiple">
+			          </div>
+			          <button type="button" class="btn btn-default" name="file_upload" onclick="file_upload()" style="margin:1px 0px;display:none;"><i class="fas fa-file-upload"></i> {% trans '上傳'%}</button>
+			          <label name="fileWarning" class="text-red" style="display:none;">※※※{% trans '硬碟容量不足，請移除部分檔案再上傳或聯絡系統管理員'%}※※※</label>
+			          <label name="duplicateWarning" class="text-red" style="display:none;">※※※{% trans '重複名稱的檔案上傳後將覆蓋現有檔案'%}※※※</label>
+			          <label name="uploadWarning" class="text-yellow" style="display:none;">※※※{% trans '檔案上傳中，請勿離開此頁面'%}※※※</label>
+			        </div>
+			        <ul class="mailbox-attachments clearfix" id="attach_upload">
+			      	</ul>
+			      	<div class="progress" style="display:none;">
+			          <div class="progress-bar" role="progressbar" style="width:0%;">0%</div>
+			        </div>
+				  </li>
+			  {% endif %}
 			  <li class="list-group-item">
 			  	<label class="text-light-blue">{% trans '已上傳檔案'%}</label>
 			  	<ul class="mailbox-attachments clearfix" id="attach_list">
@@ -163,7 +174,7 @@
 			</ul>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary pull-right" data-dismiss="modal">{% trans '關閉' %}</button>
+            <button type="button" class="btn btn-default pull-right" data-dismiss="modal">{% trans '關閉' %}</button>
           </div>
         </div>
         <!-- /.modal-content -->
@@ -172,6 +183,187 @@
     </div>
     <!-- /.modal -->
     
+    <div class="modal fade" id="modal_worklog_browser" data-backdrop="static">
+      <div class="modal-dialog" style="width:90%;">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title"><i class="far fa-calendar-alt"></i>&nbsp;&nbsp;{% trans "工作日誌"%}</h4>
+          </div>
+          <div class="modal-body" >
+            <div class="container-fluid">
+              <div class="row">
+              	<div class="col-md-7">
+              	  <div class="box box-default" style="margin:6px 0px;">
+              	  	<div class="box-header with-border">
+              	  	  {% if 'omformmodel.Omdata_'|add:flow_uuid|add:'_Modify' in perms or check %}
+              	  	  <button type="button" class="btn btn-default" id="worklog_new_btt" onclick="create_worklog('new')" style="margin:1px 0px;"><i class="fa fa-plus"></i> {% trans '新增'%}</button>
+              	  	  <button type="button" class="btn btn-default" id="worklog_save_btt" onclick="create_worklog('save')" style="margin:1px 0px;display:none;"><i class="fa fa-save"></i> {% trans '儲存'%}</button>
+              	  	  <button type="button" class="btn btn-default" id="worklog_cancel_btt" onclick="create_worklog('cancel')" style="margin:1px 0px;display:none;"><i class="fas fa-ban"></i> {% trans '取消'%}</button>
+              	  	  {% endif %}
+              	  	</div>
+              	  	<div class="box-body">
+              	  	  <div class="form-group">
+	              	    <textarea id="worklog_text" class="form-control" style="resize:none;height:200px;" readonly></textarea>
+	              	  </div>
+              	  	</div>
+              	  </div>
+              	</div>
+              	<div class="col-md-5">
+              	  <table id="worklog_table" class="table table-striped table-bordered table-hover dataTable">
+              	  	<col width="45%"></col>
+              	  	<col width="20%"></col>
+              	  	<col width="35%"></col>
+	          	    <thead>
+	          	      <tr>
+	          	  	    <th>內容</th>
+	          	  	    <th>使用者</th>
+	          	  	    <th>時間</th>
+	          	      </tr>
+	          	    </thead>
+	          	    <tbody>
+	          	    </tbody>
+	          	  </table>
+              	</div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">{% trans '關閉' %}</button>
+          </div>
+        </div>
+        <!-- /.modal-content -->
+      </div>
+      <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+    
+	<div class="modal fade" id="OMD_relationList_modal" data-backdrop="static">
+      <div class="modal-dialog" style="width:90%;">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title"><i class="fas fa-link"></i>&nbsp;{% trans '關聯操作'%}</h4>
+          </div>
+          <div class="modal-body" >
+          	<!--<div class="container-fluid">-->
+          	  <div class="row">
+              	<div class="col-md-12 omdata_relation_tabs">
+	          	  <div id="tab-list" style="padding:10px;"><!--tab-setting-->
+	          	  	<button type="button" class="btn btn-default" onclick="filter_relation()" id="search_relation" style="margin:1px 0px;"><i class="fa fa-filter"></i> {% trans '篩選'%}</button>
+					<button type="button" class="btn btn-default" onclick="filter_relation_default()" id="refresh_relation" style="margin:1px 0px;"><i class="fa fa-undo"></i> {% trans '還原'%}</button>
+		          	<button type="button" class="btn btn-default" onclick="delete_relation()" id="delete_relation" style="margin:1px 0px;" disabled><i class="fa fa-trash-o"></i> {% trans '刪除關聯'%}</button>
+		          	<button type="button" class="btn btn-default pull-right" onclick="select_relation()" id="select_relation" style="margin:1px 0px;"><i class="fas fa-link"></i> {% trans '建立關聯'%}</button>
+		          	<div style="margin-top:10px;"></div>
+		          	<table id="OMD_relationList_table" class="table table-striped table-bordered table-hover">
+					  <thead>
+					    <tr>
+				      	  <th align="center" class="sorting_disabled" rowspan="1" colspan="1" style="width: 15px;" aria-label=""><a><i class="fa fa-lg fa-check-square-o checkbox-toggle" style="color:SteelBlue"></i></a></th>
+				      	  <th>{% trans '關聯類型'%}</th>
+				      	  <th>{% trans '表單編號'%}</th>
+				      	  <th>{% trans '流程名稱'%}</th>
+				      	  <th>{% trans '標題'%}</th>
+				      	  <th>{% trans '已關單'%}</th>
+				      	  <th style="text-align: center;">{% trans '檢視'%}</th>
+				      	  <th style="text-align: center;">{% trans '編輯'%}</th>
+					    </tr>
+					  </thead>
+					  <tbody>
+					  </tbody>
+				    </table>
+	          	  </div><!--tab-list-->
+              	</div>
+              </div>
+            <!--</div><div class="container-fluid">--> 
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">{% trans '關閉' %}</button>
+          </div>
+        </div>
+        <!-- /.modal-content -->
+      </div>
+      <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+    
+	<div class="modal fade" id="OMD_relationData_modal" data-backdrop="static">
+      <div class="modal-dialog" style="width:90%;">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title"><i class="fas fa-link"></i>&nbsp;<span></span></h4>
+          </div>
+          <div class="modal-body" >
+          	<!--<div class="container-fluid">-->
+          	  <div class="row">
+              	<div class="col-md-12 omdata_relation_tabs">
+              	  <div id="tab-create" style="padding:10px;"><!--tab-step-->
+		          	<span class="pull-left" style="height:34px; line-height:34px; padding-right:10px; font-weight:bold;">選擇表單流程</span>
+		          	<select id="OMD_relationObject_flow" class="form-control select2 pull-left" style="width: 30%;" ></select>
+		          	<button type="button" class="btn btn-default" onclick="filter_omdata()" id="search_relation" style="margin-left:5px;"><i class="fa fa-filter"></i> {% trans '篩選'%}</button>
+					<button type="button" class="btn btn-default" onclick="filter_default()" id="refresh_relation" ><i class="fa fa-undo"></i> {% trans '還原'%}</button>
+		          	<div style="margin-top:10px;"></div>
+		          	<table class="table table-bordered table-striped table-hover" id="OMD_relationData_table">
+			  	   	  <thead><tr></tr></thead>
+			  	  	  <tbody></tbody>
+			  	    </table>
+	          	  </div><!--tab-create-->
+              	</div>
+              </div>
+            <!--</div><div class="container-fluid">--> 
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">{% trans '關閉' %}</button>
+            <button type="button" class="btn btn-primary " onclick="send_relation()" data-dismiss="modal">{% trans '確認' %}</button>
+          </div>
+        </div>
+        <!-- /.modal-content -->
+      </div>
+      <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+    
+	<div class="modal fade" id="OMD_relationCreate_modal" data-backdrop="static">
+      <div class="modal-dialog" >
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title"><i class="fas fa-link"></i>&nbsp;{% trans '選擇關聯'%}</h4>
+          </div>
+          <div class="modal-body" >
+          	<!--<div class="container-fluid">-->
+          	<div class="form-group">
+    		<label>{% trans '關聯類型'%}</label>
+    		<select class="form-control select2" id="OMD_relationObject_type" disabled>
+    			<option value="normal">{% trans '資料連結'%}</option>
+    			<!--<option value="child">{% trans '建立子單'%}</option>
+    			<option value="parent">{% trans '成為子單'%}</option>
+    			<option value="affect">{% trans '關聯類型'%}</option>
+    			<option value="affected">{% trans '關聯類型'%}</option>
+    			<option value="own">{% trans '關聯類型'%}</option>
+    			<option value="belong">{% trans '關聯類型'%}</option>-->
+    		</select>
+    		</div>
+    		<div class="form-group">
+    			<label>{% trans '影響百分比'%}</label>
+    			<input type="number" class="form-control select2" value=0 id="OMD_relationObject_percentage" >
+    		</div>
+            <!--</div><div class="container-fluid">--> 
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">{% trans '取消' %}</button>
+            <button type="button" class="btn btn-primary" onclick="create_relation()" data-dismiss="modal">{% trans '確認' %}</button>
+          </div>
+        </div>
+        <!-- /.modal-content -->
+      </div>
+      <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
     
     <div class="modal fade" id="modal_omdata_history" data-backdrop="static">
       <div class="modal-dialog" style="width:90%;">
@@ -179,15 +371,15 @@
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title"></h4>
+            <h4 class="modal-title"><i class="fa fa-history"></i>&nbsp;&nbsp;歷程</h4>
           </div>
           <div class="modal-body" >
           	<div class="container-fluid">
               <div class="row">
-              	<div class="col-md-8">
+              	<div class="col-lg-8">
               	  <div id="omdata_history_formcontent"></div>
               	</div>
-              	<div class="col-md-4">
+              	<div class="col-lg-4">
               	  <table id="omdata_history_table" class="table table-striped table-bordered table-hover">
 				   	<thead>
 				      <tr>
@@ -213,6 +405,43 @@
     </div>
     <!-- /.modal -->
     
+    
+    <div class="modal fade" id="modal_SLA_view_browser" data-backdrop="static">
+      <div class="modal-dialog modal-lg" >
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title"><i class="fas fa-exclamation-circle"></i>&nbsp;&nbsp;{% trans "服務水準狀態" %}</h4>
+          </div>
+          <div class="modal-body" >
+            <table id="SLA_view_table" class="table table-striped table-bordered" width="100%">
+              <col width="25%"></col>
+              <col width="45%"></col>
+              <col width="20%"></col>
+              <col width="10%"></col>
+              <thead>
+                <tr style="cursor:default">
+                  <th>{% trans "標題" %}</th>
+                  <th>{% trans "描述" %}</th>
+                  <th>{% trans "起算時間" %}</th>
+                  <th>{% trans "燈號" %}</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary pull-right" data-dismiss="modal">{% trans '關閉' %}</button>
+          </div>
+        </div>
+        <!-- /.modal-content -->
+      </div>
+      <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+    
     <style>
 		table td {
 			max-width: 120px;
@@ -221,7 +450,7 @@
 			word-break: break-all;
 			overflow: hidden;
 			}
-		table tr{
+		table tbody tr{
 			cursor:pointer;
 		}
 		.btn.btn-file:disabled{
@@ -229,6 +458,14 @@
 		}
 		.btn.btn-file > input[type="file"]:disabled{
 			cursor:not-allowed;
+		}
+		.pointer{
+			cursor:pointer;
+		}
+		.table-striped > tbody > tr:nth-of-type(2n),
+		.table-striped > thead > tr
+		{
+			background-color:#ffffff;
 		}
 	</style>
     
@@ -241,11 +478,51 @@
 	var fileIdCounter = 0;
 	var filesToUpload = [];
 	var fileTotalSize = 0;
+	var attach_list = [];
 	var url = window.location.pathname;
+	var has_parent = false;
+	var has_child = false;
+	var omdata_info = ''
+	
 	flowcontent.init(false);
 	omdata_history_formcontent.init(false);
 	flowcontent.event_chart_selected(flow_history_select);
 	
+	var date = new Date();
+	date.setDate(date.getDate() + 1);
+	
+	//顯示關聯相關參數
+	var OMD_relationList_select_time;
+	var OMD_relationList_is_closed = [0];
+    var OMD_relationList_table;
+    var OMD_relationList_tmp;
+	var OMD_relationList_len;
+	var OMD_relationList_page;
+	var OMD_relationList_drawn = false;
+	
+	//建立關聯相關參數
+	var OMD_relationData_select_time;
+	var OMD_relationData_is_closed = [0];
+    var OMD_relationData_table;
+    var OMD_relationData_tmp;
+	var OMD_relationData_len;
+	var OMD_relationData_page;
+	var OMD_relationData_drawn = false;
+	
+	var const_select = "{% trans '--請選擇--'%}",
+		const_create_relation = "{% trans '產生關聯'%}",
+		const_delete_relation = "{% trans '刪除關聯'%}",
+		const_normal_relation = "{% trans '一般關聯'%}",
+		const_parent_relation = "{% trans '母關聯'%}",
+		const_child_relation = "{% trans '子關聯'%}",
+		const_affect_relation = "{% trans '影響關聯'%}",
+		const_affected_relation = "{% trans '被影響關聯'%}",
+		const_own_relation = "{% trans '包含關聯'%}",
+		const_belong_relation = "{% trans '所屬關聯'%}",
+		const_data_no = "{% trans '資料編號'%}",
+		const_create = "{% trans '建立'%}",
+		const_working = "{% trans '處理中...'%}";
+		
     $(function(){
     	readform('{{data_id}}');
 	    
@@ -258,6 +535,12 @@
 	            var fileId = fileIdCounter;
 	            var file_size = omflowSizeUnit(file.size);
 				
+				filesToUpload.forEach(function(item){
+					if (item.file.name == file.name)
+					{
+						$('button[onclick="remove_upload(this,'+item.id+')"]').trigger('click');
+					}
+				})
 				fileTotalSize += Math.ceil(file.size/Math.pow(2, 20));
 	            filesToUpload.push({
 	                id: fileId,
@@ -276,7 +559,7 @@
 		      
 	      	evt.target.value = null;
 	    	check_disk();
-			
+	    	check_duplicate();
 		});	
     });
     
@@ -290,8 +573,8 @@
 	var level_now = 1; 
 	var flow_map = ''
     function fp_show_browser(){
+    	level_now = 1;
     	var postdata = { 
-    			csrfmiddlewaretoken: csrfmiddlewaretoken,
     			flow_uuid: '{{flow_uuid}}',
     			data_no	 : '{{data_no}}',
     			data_id	 : '{{data_id}}',
@@ -304,8 +587,8 @@
     	{
     		if (data.status == 200)
     		{
-    			flow_map = '<a id="map_'+level_now+'" onclick="change_fp_show(\'{{flow_uuid}}\',{{data_no}},1,\'map_'+level_now+'\')">'+data.result.flow_name+'</a>';
-    			$('#modal_flow_browser .modal-title h4 small').html(flow_map);
+    			flow_map = '<a class="pointer" id="map_'+level_now+'" onclick="change_fp_show(\'{{flow_uuid}}\',{{data_no}},1,\'map_'+level_now+'\')">'+data.result.flow_name+'</a>';
+    			$('#modal_flow_browser .box-header').html(flow_map);
     			$('#flowcontent').empty();
     			$('#flow_history_table tbody').empty();
 		      	flowcontent.load(data.result.flowobject);
@@ -315,16 +598,16 @@
 		      		var checkflow = '';
 		      		if(value.stop_chart_type == 'subflow')
 		      		{ 
-		      			checkflow = ' <button class="btn btn-xs btn-default" onclick="change_fp_show(\'{{flow_uuid}}-'+value.subflow_uid+'\',{{data_no}},'+(level_now+1)+',\'next\')"><i class="fas fa-search"></i></button>'
+		      			checkflow = ' <button class="btn btn-xs btn-default" onclick="change_fp_show(\'{{flow_uuid}}-'+value.subflow_uid+'\',{{data_no}},'+(level_now+1)+',\'next\',\''+value.chart_id+'\')"><i class="fas fa-search"></i></button>'
 		      		}
 		      		else if (value.stop_chart_type == 'outflow' | value.stop_chart_type == 'inflow')
 		      		{
 		      			checkflow = ' <button class="btn btn-xs btn-default" onclick="change_fp_show(\''+value.outflow_uuid+'\',\''+value.outflow_data_no+'\',1,\'next\')"><i class="fas fa-search"></i></button>'
 		      		}
-		      		$('#flow_history_table tbody').append('<tr data-value="'+value.chart_id+'"><td>'+value.createtime.slice(0,-7)+'</td><td>'+value.stop_chart_text+'</td><td><button class="btn btn-xs btn-default" onclick="inoutput('+index+')">檢視</button>'+checkflow+'</td></tr>')
+		      		$('#flow_history_table tbody').append('<tr data-value="'+value.chart_id+'" title="'+value.createtime.slice(0,-3)+'\r\n'+value.stop_chart_text+'"><td>'+value.createtime.slice(0,-7)+'</td><td>'+value.stop_chart_text+'</td><td><button class="btn btn-xs btn-default" onclick="inoutput('+index+')">檢視</button>'+checkflow+'</td></tr>')
 		      	});
 		      	inoutputdata = data.result.inoutput;
-		      	flow_history_table =  $('#flow_history_table').DataTable({"ordering": false, "info": false, "lengthChange": false, "paging": false,"searching": false,"language": __const_language__})
+		      	flow_history_table =  $('#flow_history_table').DataTable({"autoWidth":true, "ordering": false, "info": false, "lengthChange": false, "paging": false,"searching": false,"language": __const_language__})
 		      	$('#flow_history_table tbody').off('click').on( 'click', 'tr', function(){
 		      		flowcontent.setFocus($(this).data('value'));
 			    });
@@ -345,12 +628,12 @@
     }
     
     
-    function change_fp_show(flow_uuid, data_no, level, pos)
+    function change_fp_show(flow_uuid, data_no, level, pos, stop_id)
     {
     	var postdata = { 
-	    			csrfmiddlewaretoken: csrfmiddlewaretoken,
-	    			data_no	 : data_no,
-	    			flow_level	 : level
+	    			data_no	 		: data_no,
+	    			flow_level	 	: level,
+	    			parent_chart_id : stop_id
 	    	}
     	if (level == 1)
     	{
@@ -371,13 +654,13 @@
     			if (pos == 'next')
     			{ 
     				level_now = level_now + 1;
-    				flow_map += '<a id="map_'+level_now+'" onclick="change_fp_show(\''+flow_uuid+'\','+data_no+','+level+',\'map_'+level_now+'\')">/'+data.result.flow_name+'</a>';
-    				$('#modal_flow_browser .modal-title h4 small').html(flow_map);
+    				flow_map += '<a id="map_'+level_now+'" class="pointer" onclick="change_fp_show(\''+flow_uuid+'\','+data_no+','+level+',\'map_'+level_now+'\',\''+stop_id+'\')"> - '+data.result.flow_name+'</a>';
+    				$('#modal_flow_browser .box-header').html(flow_map);
     			}
     			else
     			{
     				$('#'+pos).nextAll().remove();
-    				flow_map = $('#modal_flow_browser .modal-title h4 small').html();
+    				flow_map = $('#modal_flow_browser .box-header').html();
     			}
     			$('#flow_history_table').DataTable().clear();
     			$('#flow_history_table').DataTable().destroy();
@@ -391,16 +674,30 @@
 		      		if(value.stop_chart_type == 'subflow')
 		      		{ 
 		      			var thisflow_uuid = flow_uuid.split('-')
-		      			checkflow = ' <button class="btn btn-xs btn-default" onclick="change_fp_show(\''+thisflow_uuid+'-'+value.subflow_uid+'\',\''+data_no+'\','+(level+1)+',\'next\')"><i class="fas fa-search"></i></button>'
+		      			checkflow = ' <button class="btn btn-xs btn-default" onclick="change_fp_show(\''+thisflow_uuid+'-'+value.subflow_uid+'\',\''+data_no+'\','+(level+1)+',\'next\',\''+value.chart_id+'\')"><i class="fas fa-search"></i></button>'
 		      		}
 		      		else if (value.stop_chart_type == 'outflow' | value.stop_chart_type == 'inflow')
 		      		{
 		      			checkflow = ' <button class="btn btn-xs btn-default" onclick="change_fp_show(\''+value.outflow_uuid+'\',\''+value.outflow_data_no+'\',1,\'next\')"><i class="fas fa-search"></i></button>'
 		      		}
-		      		$('#flow_history_table tbody').append('<tr data-value="'+value.chart_id+'"><td>'+value.createtime.slice(0,-7)+'</td><td>'+value.stop_chart_text+'</td><td><button class="btn btn-xs btn-default" onclick="inoutput('+index+')">檢視</button>'+checkflow+'</td></tr>')
+		      		if(level == 1)
+		      		{
+		      			$('#flow_history_table tbody').append('<tr data-value="'+value.chart_id+'" title="'+value.createtime.slice(0,-3)+'\r\n'+value.stop_chart_text+'"><td>'+value.createtime.slice(0,-7)+'</td><td>'+value.stop_chart_text+'</td><td><button class="btn btn-xs btn-default" onclick="inoutput('+index+')">檢視</button>'+checkflow+'</td></tr>')
+		      		}
+		      		else
+		      		{
+		      			$('#flow_history_table tbody').append('<tr data-value="'+value.chart_id.split('-').pop()+'" title="'+value.createtime.slice(0,-3)+'\r\n'+value.stop_chart_text+'"><td>'+value.createtime.slice(0,-7)+'</td><td>'+value.stop_chart_text+'</td><td><button class="btn btn-xs btn-default" onclick="inoutput('+index+')">檢視</button>'+checkflow+'</td></tr>')
+		      		}
 		      	});
 		      	inoutputdata = data.result.inoutput;
-		      	flow_history_table =  $('#flow_history_table').DataTable({"ordering": false, "info": false, "lengthChange": false, "paging": false,"searching": false,"language": __const_language__})
+		      	flow_history_table =  $('#flow_history_table').DataTable({
+		      		"ordering": false, 
+		      		"info": false, 
+		      		"lengthChange": false, 
+		      		"paging": false,
+		      		"searching": false,
+		      		"language": __const_language__
+		      	})
 		      	$('#flow_history_table tbody').off('click').on( 'click', 'tr', function(){
 		      		flowcontent.setFocus($(this).data('value'));
 			    });
@@ -463,24 +760,23 @@
     	omdata_history_select_time = date.getFullYear() +'-'+('0'+(date.getMonth()+1)).substr(-2)+'-'+('0'+date.getDate()).substr(-2);
     	omdata_history_table = $('#omdata_history_table').DataTable({
     		"autoWidth"	: false,
-			"order"		: [[ 0, "dsc" ]], 					//	default order column[1]
-			"ordering"	: false,
+			"order"		: [[ 2, "asc" ]], 					//	default order column[1]
 			"serverSide": true,							//	serverside data loading
-			"dom"		:"<<t>'row'<'col-sm-5'><'col-sm-7'p>>",
+			"dom"		:"<<t>'row'<'col-sm-12'p>>",
 			"language"	: __const_language__,
 			"ajax": {
            		"url": "{% url 'listOmDataHistoryAjax' %}",
             	"type": "POST",
+            	"headers": { "X-CSRFToken": csrfmiddlewaretoken },
+				"contentType": "application/json;charset=utf-8;",
             	"data":	function ( d ) {
-					return $.extend( {}, d, {
-				        csrfmiddlewaretoken: csrfmiddlewaretoken,
+					return JSON.stringify($.extend( {}, d, {
 				        flow_uuid	: '{{flow_uuid}}',
 				        data_no		: '{{data_no}}',
 				        data_id		: '{{data_id}}',
-					    createtime	: omdata_history_select_time,
-					    "closed"	: [1,0],
+					    closed		: [1,0],
 					    manage		: 0
-				    }); 
+				    })); 
 				},
 				"dataSrc": function(data){
 					a = dataCompare(data,omdata_history_data_tmp,omdata_history_data_len,omdata_history_data_page,omdata_history_table);
@@ -492,7 +788,7 @@
 				},
         	},
         	"columns":[	
-				{"data": "error", "render": function(data)
+				{"data": "error", "orderable": false, "render": function(data)
 					{
 						if(data)
 							{return '<div class="label label-danger">異常</div>'}
@@ -500,8 +796,8 @@
 							{return '<div class="label label-success">正常</div>'}		
 					}
 				},
-				{"data": "update_user"},
-				{"data": "createtime", "width": "150px", "render": function(data)
+				{"data": "update_user", "orderable": false},
+				{"data": "updatetime", "orderable": false, "width": "150px", "render": function(data)
 					{
 						if (data)
 							{return data.slice(0,-7)}
@@ -524,7 +820,7 @@
     }
     
     function form_history_select(thistr, data_id) {
-		var postbody = {csrfmiddlewaretoken: '{{ csrf_token }}', flow_uuid: '{{ flow_uuid }}', data_id: data_id}
+		var postbody = {flow_uuid: '{{ flow_uuid }}', data_id: data_id}
 		omflowJsonAjax(postbody, '{% url "loadOmDataAjax"%}', callback);
 		
 		function callback(data)
@@ -537,31 +833,33 @@
 				omdata_history_formcontent.load(JSON.stringify(data.result.formobject));
 				omdata_history_formcontent.setData(data.result.formdata);
 				$('#omdata_history_formcontent input').prop('readonly', true);
+				$('#omdata_history_formcontent textarea').prop('readonly', true);
 				$('#omdata_history_formcontent select').prop('disabled', true);
 				$('#omdata_history_formcontent input[type="radio"]').prop('disabled', true);
 				$('#omdata_history_formcontent input[type="checkbox"]').prop('disabled', true);
 				$('#attach_box').remove();
 				if (data.result.files.length != 0)
 				{
-					$('#modal_omdata_history > .modal-dialog > .modal-content > .modal-body').append('<div class="box-body" id="attach_box"><div class="col-md-12"><div class="box"><div class="box-body">'
-						+'<ul class="mailbox-attachments clearfix" id="attach_upload"></ul>'
-						+'</div></div></div></div>');
+					$('#omdata_history_formcontent').after('<div class="box-body" id="attach_box"><div class="col-md-12"><div class="box box-default"><div class="box-header with-border"><span>{% trans "附加檔案" %}</sapn><div class="box-body">'
+						+'<ul class="mailbox-attachments clearfix" id="history_attach_upload"></ul>'
+						+'</div></div></div></div></div>');
 					$.each(data.result.files, function(index, item){
 						var delete_mes = '';
 			    		var file_href = 'href="/api/history-files/download/'+item.file+'"';
 			    		if (item.delete)
 						{
-							delete_mes = '<br>({% trans "此附件已刪除" %})'
+							delete_mes = '<span class="mailbox-attachment-size">※※※({% trans "此附件已刪除" %})※※※</span>'
 							file_href = '';
 						}
-						$('#attach_upload').append('<li name="'+item.file_name+'"><div class="mailbox-attachment-info">'
+						$('#history_attach_upload').append('<li name="'+item.file_name+'"><div class="mailbox-attachment-info">'
 				        	+'<a '+file_href+' class="mailbox-attachment-name" title="'+item.file_name+'&#10;'
 				        	+'上傳者: '+item.upload_user_id__nick_name+'&#10;'
 				        	+'大小: '+omflowSizeUnit(item.size)+'&#10;'
-				        	+'修改日期: '+item.createtime.replace(/T/g,' ').slice(0,-7)+'" style="word-break: break-all;overflow: hidden;display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 2;"><i class="fa fa-paperclip"></i>&nbsp;&nbsp;'+item.file_name+delete_mes+'</a>'
+				        	+'修改日期: '+item.createtime.replace(/T/g,' ').slice(0,-7)+'" style="word-break: break-all;overflow: hidden;display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 1;"><i class="fa fa-paperclip"></i>&nbsp;&nbsp;'+item.file_name+'</a>'
 				            +'<span class="mailbox-attachment-size">'+item.upload_user_id__nick_name+'</span>'
 				            +'<span class="mailbox-attachment-size">'+omflowSizeUnit(item.size)+'</span>'
 				            +'<span class="mailbox-attachment-size">'+item.createtime.replace(/T/g,' ').slice(0,-7)+'</span>'
+				            +delete_mes
 				      		+'</div></li>');
 					});
 				}
@@ -576,14 +874,594 @@
 		$(thistr).addClass('selected');
 	}; 
     
-    
     function relation_browser()
-    {}
+    {
+    	if(OMD_relationList_drawn){
+	      OMD_relationList_table.clear();
+    	  OMD_relationList_table.destroy();
+    	  OMD_relationList_drawn = false;
+        }
+    	
+    	OMD_relationList_select_time = date.getFullYear() +'-'+('0'+(date.getMonth()+1)).substr(-2)+'-'+('0'+date.getDate()).substr(-2);
+    	OMD_relationList_table = $('#OMD_relationList_table').DataTable({
+    		autoWidth	: false,
+			order		: [[ 0, "desc" ]],
+			ordering	: false,
+			serverSide	: true,
+			dom			:"<<t>'row'<'col-sm-5'><'col-sm-7'p>>",
+			language	: __const_language__,
+			ajax: {
+           		url: "{% url 'listOmDataRelationAjax' %}",
+            	type: "POST",
+            	headers: { "X-CSRFToken": csrfmiddlewaretoken },
+				contentType: "application/json;charset=utf-8;",
+            	data:	function ( d ) {
+					return JSON.stringify($.extend( {}, d, {
+				        flow_uuid	: '{{flow_uuid}}',
+				        data_no		: '{{data_no}}',
+				        data_id		: '{{data_id}}'
+				    })); 
+				},
+				dataSrc: function(data){ //更新差異
+					a = dataCompare(
+						data,
+						OMD_relationList_tmp,
+						OMD_relationList_len,
+						OMD_relationList_page,
+						OMD_relationList_table);
+					OMD_relationList_tmp = a['data_tmp']
+					OMD_relationList_len = a['data_len']
+					OMD_relationList_page = a['data_page']
+					data.data = a['data.data']
+					return data.data;
+				},
+        	},
+        	columns:[
+				{data: "id", orderable: false, render: 
+					function(data, type, row){
+						return '<input type="checkbox" class="icheckbox_minimal-blue" value="'+data+'" data-no="'+row.data_no+'" data-value="'+const_data_no+'：'+paddingLeft(row.data_no,8)+'" id="OMD_list_'+data+'"><label for=OMD_list_'+data+'></label>'
+					}
+				},
+				{data: "relation_type", "render": function(data){
+					return '<span name='+data+'>'+transRelation(data)+'</span>';
+					
+				}},
+				{data: "data_no", "render": function(data){return paddingLeft(data,8)}},
+				{data: "flow_name", width: "50%"},
+				{data: "title", width: "50%"},
+				{data: "closed", "render": function(data){return data==true?'是':'否';}},
+				{data: "id", orderable: false, render: function(data, type, row){
+					return '<button class="btn btn-xs btn-default" onclick="omdata_view(event,\''+row.flow_uuid+'\','+row.data_id+')">檢視</button>';
+					//return '<div class="btn btn-xs btn-default" style="border-bottom: none; box-shadow: none;" onclick="omdata_view(event)"><i class="fas fa-eye"></i></div>';
+				}},
+				{data: "id", orderable: false, render: function( data, type, row ){
+					var url = '/flowmanage/page/myform/'+row.flow_uuid+'/'+row.data_no+'/'+row.data_id;
+					return '<button class="btn btn-xs btn-default" onclick="omdata_edit(event,\''+String(url)+'\')">編輯</button>';
+					//return '<div class="btn btn-xs btn-default" style="border-bottom: none; box-shadow: none;" onclick="omdata_view(event)"><i class="fas fa-pen"></i></div>';
+				}}
+	 		],
+	 		rowCallback: function(row, data){
+	 			$(row).off('click').on('click', function(){
+	 				var thisCB = $(this).find('input:checkbox');
+	 				if (thisCB.is(':checked')){
+	 					thisCB.prop('checked',false).trigger('change');
+	 				}else{
+	 					thisCB.prop('checked',true).trigger('change');
+	 				}
+	 			});
+	 		},
+	 		preDrawCallback: function(){
+    			
+	 		},
+	 		fnDrawCallback: function( oSettings ) {
+	 			OMD_relationList_drawn = true;
+	 			$('#delete_relation').prop('disabled',true);
+	 			omflowCheckAll();
+	 			
+	 			if($('#OMD_relationList_table').find('span[name=parent]').length)
+					has_parent = true;
+				else
+					has_parent = false;
+				if($('#OMD_relationList_table').find('span[name=child]').length)
+					has_child = true;
+				else
+					has_child = false;
+		    }
+    	});
+    	
+    	//讀取表單清單
+    	var callback = function(data){
+    		if (data.status == 200){
+	    		var thisSelect = $('#OMD_relationObject_flow').empty();
+	    		//thisSelect.append('<option value="">'+const_select+'</option>');
+	    		data.result.app.forEach(function(item,index){
+					thisSelect.append('<option value="'+item.id+'" class="l1 non-leaf" disabled="disabled">'+item.app_name+'</option>');
+				});
+				data.result.flow.forEach(function(item, index){
+					thisSelect.find('option[value="'+item.flow_app_id+'"]').after('<option value="'+item.flow_uuid+'" data-id="'+item.id+'" data-pup="'+item.flow_app_id+'" class="l2">'+item.flow_name+'</option>')
+				});
+				thisSelect.off('change').on('change',function(){
+					
+					var thisDom = $(this);
+    			
+	    			if(OMD_relationData_drawn){
+				      $('#OMD_relationData_table tr').empty();
+				      OMD_relationData_table.clear();
+			    	  OMD_relationData_table.destroy();
+			    	  OMD_relationData_drawn = false;
+			        }
+			        
+	    			if(thisDom.val()){
+	    				var postbody = {a_flow_uuid: thisDom.val()};
+	    				omflowJsonAjax(postbody, '{% url "getFlowActiveDisplayFieldAjax"%}', table_callback);
+	    			}
+				});
+				thisSelect.select2ToTree();
+				thisSelect.next().css('float', 'left');
+	    		thisSelect.val(null).trigger('change');
+    		}else{
+				omflowAlert('red', data.message);
+			}
+    	}
+    	
+		omflowJsonAjax({}, '{% url "listActiveApplication4RelationAjax"%}', callback);
+    	
+    	HideBodyScrollModal($('#OMD_relationList_modal'));
+    }
     
+    function transRelation(result){
+    	switch(result){
+	    	case 'normal':
+	    		result = const_normal_relation;
+	    	break;
+	    	case 'parent':
+	    		result = const_parent_relation;
+	    	break;
+	    	case 'child':
+	    		result = const_child_relation;
+	    	break;
+	    	case 'affect':
+	    		result = const_affect_relation;
+	    	break;
+	    	case 'normal':
+	    		affected = const_affected_relation;
+	    	break;
+	    	case 'own':
+	    		result = const_own_relation;
+	    	break;
+	    	case 'belong':
+	    		result = const_belong_relation;
+	    	break;
+    	}
+		return result;
+    }
+    
+    function table_callback(data)
+    {
+    	if (data.status == 200)
+    	{
+	    	var table_column = [];
+			var display_field = JSON.parse(data.result.display_field);
+			
+			if($("#OMD_relationObject_type").val()!="parent")
+				$('#OMD_relationData_table thead tr').append('<th align="center" class="sorting_disabled" rowspan="1" colspan="1" style="width: 15px;" aria-label=""><a><i class="fa fa-lg fa-check-square-o checkbox-toggle" style="color:SteelBlue"></i></a></th>');
+			else
+				$('#OMD_relationData_table thead tr').append('<th></th>');
+				
+			table_column.push(
+			
+			{"data": "id", "width": "15px", "orderable": false, "render": function(data, type, row)
+				{
+					if( $('#OMD_relationObject_type').val()=="parent" )
+						return '<input type="radio" name="one_data" class="iradio_minimal-blue" value="'+data+'" data-no="'+row.data_no+'" data-value="'+const_data_no+'：'+paddingLeft(row.data_no,8)+'" id="OMD_data_'+data+'"><label for=OMD_data_'+data+'></label>'
+					else
+						return '<input type="checkbox" class="icheckbox_minimal-blue" value="'+data+'" data-no="'+row.data_no+'" data-value="'+const_data_no+'：'+paddingLeft(row.data_no,8)+'" id="OMD_data_'+data+'"><label for=OMD_data_'+data+'></label>'
+				}	
+			});
+			$.each(display_field, function(index, value){
+				$('#OMD_relationData_table thead tr').append('<th>'+value+'</th>');
+				if(index == 'data_no')
+				{
+					table_column.push({"data": index, "render": function(data)
+						{	
+							return paddingLeft(data,8)
+						}	
+					});
+				}
+				else if(index == 'closed')
+				{
+					table_column.push({"data": index, "render": function(data)
+						{
+							if(data)
+								{return '已關閉'}
+							else
+								{return '未關閉'}
+						}
+					});
+				}
+				else if(index == 'running')
+				{
+					table_column.push({"data": index, "render": function(data)
+						{
+							if(data)
+								{return '流程執行中'}
+							else
+								{return '流程等待中'}		
+						}
+					});
+				}
+				else if(index == 'error')
+				{	
+					table_column.push({"data": index, "render": function(data)
+						{
+							if(data)
+							{return '<div class="label label-danger">異常</div>'}
+							else
+							{return '<div class="label label-success">正常</div>'}
+						}
+					});
+				}
+				else if(index == 'level')
+				{	
+					table_column.push({"data": index, "render": function(data)
+						{
+							if(data == 'yellow')
+								{return '<div class="label label-warning">黃燈</div>'}
+							else if(data == 'red')
+								{return '<div class="label label-danger">紅燈</div>'}
+							else
+								{return '<div class="label label-success">綠燈</div>'}		
+						}
+					});
+				}
+				else if(index == 'updatetime')
+				{
+					table_column.push({"data": index, "width": "150px", "render": function(data)
+						{
+							if(data)
+								{return data.slice(0,-7)}
+							else
+								{return data}
+						}
+					});
+				}else if(index.indexOf('-group') > 0)
+				{
+					table_column.push({"data": index.replace('-group', ''), "width": "150px", "render": function(data)
+						{
+							data = JSON.parse(unescapeHtml(data));
+							if(data)
+								{return data.group}
+							else
+								{return data.group}
+						}
+					});
+				}
+				else if(index.indexOf('-user') > 0)
+				{
+					console.log(index.replace('-user', ''))
+					table_column.push({"data": index.replace('-user', ''), "width": "150px", "render": function(data)
+						{
+							data = JSON.parse(unescapeHtml(data));
+							if(data)
+								{return data.user}
+							else
+								{return data.user}
+						}
+					});
+				}
+				else
+				{
+					table_column.push({"data": index});
+				}
+			});
+	    	OMD_relationData_select_time = date.getFullYear() +'-'+('0'+(date.getMonth()+1)).substr(-2)+'-'+('0'+date.getDate()).substr(-2);
+	    	OMD_relationData_table = $('#OMD_relationData_table').DataTable({
+				autoWidth	: false,
+				order		: [[ 0, "dsc" ]], 					//	default order column[1]
+				serverSide	: true,							//	serverside data loading
+				dom			:"<<t>'row'<'col-sm-5'i><'col-sm-7'p>>",
+				language	: __const_language__,
+				ajax		: {
+	           		url: "{% url 'listOmData4RelationAjax' %}",
+	            	type: "POST",
+	            	headers: { "X-CSRFToken": csrfmiddlewaretoken },
+					contentType: "application/json;charset=utf-8;",
+	            	data:	function ( d ) {
+								return JSON.stringify($.extend( {}, d, {
+							        flow_uuid	: $('#OMD_relationObject_flow').val(),
+							        updatetime	: OMD_relationData_select_time,
+							        "closed"	: OMD_relationData_is_closed,
+							        //relation	: $('#OMD_relationObject_type').val()
+							        //data_no		: '{{data_no}}'
+							    })); 
+							},
+					dataSrc: function(data){
+						a = dataCompare(data,
+							OMD_relationData_tmp,
+							OMD_relationData_len,
+							OMD_relationData_page,
+							OMD_relationData_table);
+						OMD_relationData_tmp = a['data_tmp']
+						OMD_relationData_len = a['data_len']
+						OMD_relationData_page = a['data_page']
+						data.data = a['data.data']
+						return data.data;
+					},
+					error: function(xhr,status,error){
+							clearInterval(table_routine);
+					}
+	        	},
+	        	columns:	table_column,
+		 		rowCallback: function(row, data){
+		 			$(row).off('click').on('click', function(){
+		 				var thisCB = $(this).find('input:checkbox,input:radio');
+		 				if (thisCB.is(':checked')){
+		 					thisCB.prop('checked',false).trigger('change');
+		 				}else{
+		 					thisCB.prop('checked',true).trigger('change');
+		 				}
+		 			});
+		 			if (data.running)
+	        		{
+	        			$('td:eq(0)', row).html('<i class="fas fa-spinner fa-spin"></i>');
+	        			$(row).css('color','#b5bbc8');
+	        		}
+	        		else
+	        		{
+			    		//$('td:not(:eq(0))', row).attr('onclick', 'javascript:location.href="/flowmanage/page/myform/{{flow_uuid}}/'+data.data_no+'/'+data.id+'"')
+			    	}
+		 		},
+				drawCallback:function(){
+				},
+		 		fnDrawCallback: function( oSettings ) {
+			      	OMD_relationData_drawn = true;
+			      	//$('#select_relation').prop('disabled',true);
+			      	omflowCheckAll();
+			    }
+			});
+		}
+		else
+		{
+			omflowAlert('red', data.message);
+		}
+    }
+    
+    function filter_relation()
+    {
+    	omflowFilter(['filter_flow','filter_length']);
+    	
+		var filter_flow_callback = function(data){
+			if (data.status == 200)
+			{
+				var thisSelect = $('#modal-default-filter #select_flow_uuid');
+				data.result.app.forEach(function(item,index){
+					thisSelect.append('<option value="'+item.id+'" class="l1 non-leaf" disabled="disabled">'+item.app_name+'</option>');
+				});
+				data.result.flow.forEach(function(item, index){
+					thisSelect.find('option[value="'+item.flow_app_id+'"]').after('<option value="'+item.flow_uuid+'" data-id="'+item.id+'" data-pup="'+item.flow_app_id+'" class="l2">'+item.flow_name+'</option>')
+				});
+				thisSelect.select2ToTree();
+				thisSelect.val(null).trigger('change');
+			}
+			else
+			{
+				omflowAlert('red', data.message);
+			}
+		}
+		
+    	var postdata = {schedule: 'schedule'};
+		omflowJsonAjax(postdata, '{% url "listActiveApplicationAjax"%}', filter_flow_callback)
+
+    	$('#modal-relation-filter-confirm').off("click").on("click",function(){
+    		OMD_relationList_is_closed = [];
+			var searchkey = $.trim($('#modal-default-filter #search').val());
+			var page_length = $('#modal-relation-filter #page_length').val();
+			$.each($('[name="filter_closed"] input:checkbox:checked'), function(){
+				OMD_relationList_is_closed.push($(this).data('value'));
+			});
+			//$('#delete_relation').prop('disabled',true);
+			OMD_relationList_table.page.len(page_length);
+			OMD_relationList_table.search(searchkey).draw();
+			
+		});
+    }
+    
+    function filter_relation_default(){
+		OMD_relationList_is_closed = [0];
+    	OMD_relationList_table.page.len(10);
+		OMD_relationList_table.search('');
+    	OMD_relationList_table.draw();
+    	//$('#delete_relation').prop('disabled',true);
+    }
+    
+    function filter_omdata()
+    {
+    	omflowFilter(['filter_search','filter_closed','filter_length']);
+    	$('#modal-default-filter-confirm').off("click").on("click",function(){
+    		OMD_relationData_is_closed = [];
+			var searchkey = $.trim($('#modal-default-filter #search').val());
+			var page_length = $('#modal-default-filter #page_length').val();
+			$.each($('[name="filter_closed"] input:checkbox:checked'), function(){
+				OMD_relationData_is_closed.push($(this).data('value'));
+			});
+			//$('#select_relation').prop('disabled',true);
+			OMD_relationData_table.page.len(page_length);
+			OMD_relationData_table.search(searchkey).draw();
+		});
+    }
+    
+    function filter_default(){
+		OMD_relationData_is_closed = [0];
+    	//$('#select_relation').prop('disabled',true);
+    	OMD_relationData_table.page.len(10);
+		OMD_relationData_table.search('');
+    	OMD_relationData_table.draw();
+    }
+  
+    function select_relation(){
+    	OMD_relationCreate_modal = $('#OMD_relationCreate_modal');
+    	OMD_relationCreate_modal.find('#OMD_relationObject_type').val('normal');
+    	if(has_parent){
+			OMD_relationCreate_modal.find('option[value=parent]').hide();
+			
+		}else{
+			OMD_relationCreate_modal.find('option[value=parent]').show();
+		}	
+		if(has_child){
+			OMD_relationCreate_modal.find('option[value=child]').hide();
+			
+		}else{
+			OMD_relationCreate_modal.find('option[value=child]').show();
+		}
+    	OMD_relationCreate_modal.modal('show');
+    	OMD_relationCreate_modal.find('#OMD_relationObject_type').off('change').on('change',function(){
+    		if( $(this).val()=='affect' || $(this).val()=='affected' ){
+    			OMD_relationCreate_modal.find('#OMD_relationObject_percentage').closest('div').show();
+    		}else{
+    			OMD_relationCreate_modal.find('#OMD_relationObject_percentage').closest('div').hide();
+    		}
+    	}).trigger('change');
+    	
+    }
+  
+    function create_relation(){
+    	var lastDialoge = $('#OMD_relationCreate_modal');
+		var thisDialoge = $('#OMD_relationData_modal');
+		var thisRelation = lastDialoge.find('#OMD_relationObject_type').val();
+		BindSwitchModal($('#OMD_relationCreate_modal'),thisDialoge)
+		lastDialoge.modal('hide');
+    	
+    	thisDialoge.find('.modal-title span').text(' '+const_create+transRelation(lastDialoge.find("#OMD_relationObject_type").val()));
+    	//omflowListDialogue('relation',const_select_relation,callback,{},$('#OMD_relationData_table'));
+    	
+    	if(thisRelation=='parent'||thisRelation=='child')
+    		thisDialoge.find('#OMD_relationObject_flow').val("{{flow_uuid}}").trigger('change').prop('disabled',true);
+    	else
+    		thisDialoge.find('#OMD_relationObject_flow').trigger('change').prop('disabled',false);
+		
+		thisDialoge.find('.btn-primary').prop('disabled',true);
+	}
+    
+    function send_relation(){
+		var postdata = {
+			action: 'create', 
+			flow_uuid: '{{ flow_uuid }}', 
+			data_no: '{{data_no}}', 
+			data_id: '{{data_id}}',
+			object_flow: $('#OMD_relationObject_flow').val(),
+			object_no: $('#OMD_relationData_table input:checked').map(function() { return $(this).data('no'); }).get(),
+			relation_type: $('#OMD_relationObject_type').val(),
+			relation_percentage: $('#OMD_relationObject_percentage').val()
+		};
+		
+		var callback = function(data){
+			OMD_actions(data);
+			OMD_relationList_table.draw();
+			//$('#select_relation').prop('disabled',true);
+		}
+		
+		Swal.fire({
+		  title: const_working,
+		  toast: true,
+		  position: 'bottom-start',
+		  showConfirmButton: false,
+		});
+    	omflowJsonAjax(postdata, '{% url "editOmDataRelationAjax"%}',callback);
+	}
+    
+    function delete_relation(){
+    	var callback = function(){
+    		Swal.fire({
+			  title: const_working,
+			  toast: true,
+			  position: 'bottom-start',
+			  showConfirmButton: false,
+			});
+    		
+    		var postdata = {
+    			action: 'delete', 
+    			flow_uuid: '{{ flow_uuid }}', 
+    			data_no: '{{data_no}}', 
+    			data_id: '{{data_id}}',
+    			id: $('#OMD_relationList_table').find('input:checked').map(function() { return $(this).val(); }).get(),
+    		};
+    		var delete_callback = function(data){
+    			OMD_actions(data);
+    			OMD_relationList_table.draw();
+    			//$('#delete_relation').prop('disabled',true);
+    		}
+    		omflowJsonAjax(postdata, '{% url "editOmDataRelationAjax"%}',delete_callback);
+    	};
+    	
+    	omflowListDialogue('delete',const_delete_relation,callback,{},$('#OMD_relationList_table'));
+    }
+    
+    function omdata_view(e, flow_uuid, data_id)
+    {	
+		e.stopPropagation();
+		e.cancelBubble = true;
+		var postbody = {flow_uuid: flow_uuid, data_id: data_id}
+		omflowJsonAjax(postbody, '{% url "loadOmDataAjax"%}', callback);
+		
+		function callback(data)
+		{
+			if (data.status == 200)
+			{
+				$('#omdata_history_formcontent').empty();
+				omdata_history_formcontent.event_group_list(load_group_list);
+				omdata_history_formcontent.event_user_list(load_user_list);
+				omdata_history_formcontent.load(JSON.stringify(data.result.formobject));
+				omdata_history_formcontent.setData(data.result.formdata);
+				$('#omdata_history_formcontent input').prop('readonly', true);
+				$('#omdata_history_formcontent textarea').prop('readonly', true);
+				$('#omdata_history_formcontent select').prop('disabled', true);
+				$('#omdata_history_formcontent input[type="radio"]').prop('disabled', true);
+				$('#omdata_history_formcontent input[type="checkbox"]').prop('disabled', true);
+				$('#attach_box').remove();
+				if (data.result.files.length != 0)
+				{
+					$('#modal_omdata_history > .modal-dialog > .modal-content > .modal-body').append('<div class="box-body" id="attach_box"><div class="col-md-12"><div class="box box-default"><div class="box-header with-border"><span>{% trans "附加檔案" %}</sapn><div class="box-body">'
+						+'<ul class="mailbox-attachments clearfix" id="history_attach_upload"></ul>'
+						+'</div></div></div></div></div>');
+					$.each(data.result.files, function(index, item){
+						var delete_mes = '';
+			    		var file_href = 'href="/api/history-files/download/'+item.file+'"';
+			    		if (item.delete)
+						{
+							delete_mes = '<span class="mailbox-attachment-size">※※※({% trans "此附件已刪除" %})※※※</span>'
+							file_href = '';
+						}
+						$('#history_attach_upload').append('<li name="'+item.file_name+'"><div class="mailbox-attachment-info">'
+				        	+'<a '+file_href+' class="mailbox-attachment-name" title="'+item.file_name+'&#10;'
+				        	+'上傳者: '+item.upload_user_id__nick_name+'&#10;'
+				        	+'大小: '+omflowSizeUnit(item.size)+'&#10;'
+				        	+'修改日期: '+item.createtime.replace(/T/g,' ').slice(0,-7)+'" style="word-break: break-all;overflow: hidden;display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 1;"><i class="fa fa-paperclip"></i>&nbsp;&nbsp;'+item.file_name+'</a>'
+				            +'<span class="mailbox-attachment-size">'+item.upload_user_id__nick_name+'</span>'
+				            +'<span class="mailbox-attachment-size">'+omflowSizeUnit(item.size)+'</span>'
+				            +'<span class="mailbox-attachment-size">'+item.createtime.replace(/T/g,' ').slice(0,-7)+'</span>'
+				            +delete_mes
+				      		+'</div></li>')
+						});
+				}
+				$('#modal_omdata_history').modal('show');
+			}
+			else
+			{
+				omflowAlert('red', data.message)
+			}
+		}
+    }
+    
+    function omdata_edit(e,url){
+    	e.stopPropagation();
+		e.cancelBubble = true;
+		
+		window.location.href = url;
+    }
     
     function attachment_browser()
     {
-    	var postdata = {csrfmiddlewaretoken: '{{ csrf_token }}', flow_uuid: '{{ flow_uuid }}', data_no: '{{data_no}}', data_id: '{{data_id}}'};
+    	var postdata = {flow_uuid: '{{ flow_uuid }}', data_no: '{{data_no}}', data_id: '{{data_id}}'};
     	omflowJsonAjax(postdata, '{% url "listOmDataFilesAjax"%}', callback);
     	
     	function callback(data)
@@ -591,20 +1469,26 @@
     		if (data.status == 200)
 			{
 	    		$('#attach_list').empty();
+			    attach_list = [];
 	    		$.each(data.result, function(index, value){
 		    		var delete_mes = '';
 		    		var file_href = 'href="/api/history-files/download/'+value.file+'"';
 		    		if (value.delete)
 					{
-						delete_mes = '<br>({% trans "此附件已刪除" %})'
+						delete_mes = '<span class="mailbox-attachment-size">※※※({% trans "此附件已刪除" %})※※※<span>'
 						file_href = '';
 					}
 	    			$('#attach_list').append(
 						'<li name="'+value.file_name+'"><div class="mailbox-attachment-info">'+
-			        	'<a '+file_href+' class="mailbox-attachment-name" title="'+value.file_name+'&#10;大小: '+omflowSizeUnit(value.size)+'&#10;修改日期: '+value.createtime.replace(/T/g,' ').slice(0,-4)+'" style="overflow: hidden;display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 1;"><i class="fa fa-paperclip"></i>&nbsp;&nbsp;'+value.file_name+delete_mes+'</a>'+
-			            '<span class="mailbox-attachment-size">'+omflowSizeUnit(value.size)+'</span><span class="mailbox-attachment-size">'+value.createtime.replace(/T/g,' ').slice(0,-4)+'</span>'+
+			        	'<a '+file_href+' class="mailbox-attachment-name" title="'+value.file_name+'&#10;大小: '+omflowSizeUnit(value.size)+'&#10;修改日期: '+value.createtime.replace(/T/g,' ').slice(0,-4)+'" style="overflow: hidden;display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 1;"><i class="fa fa-paperclip"></i>&nbsp;&nbsp;'+value.file_name+'</a>'+
+			            '<span class="mailbox-attachment-size">'+omflowSizeUnit(value.size)+'</span><span class="mailbox-attachment-size">'+value.createtime.replace(/T/g,' ').slice(0,-4)+'</span>'+delete_mes+
 			      		'</div></li>'
 			      	);
+			      	
+			      	if(!(value.file_name in attach_list))
+			      	{
+			      		attach_list.push(value.file_name);
+			      	}
 	    		});
 	    	}
 			else
@@ -635,22 +1519,26 @@
     
     function remove_upload(th,item)
     {
-    	
     	for (var i = 0; i < filesToUpload.length; ++i) {
             if (filesToUpload[i].id === item)
                 filesToUpload.splice(i, 1);
         }
         $(th).closest('li').remove();
+        check_duplicate();
         if (filesToUpload.length != 0)
-        	{check_disk();}
+        {
+        	check_disk();
+        }
         else
-        	{$('button[name="file_upload"]').hide();}
+        {
+        	$('button[name="file_upload"]').hide();
+        }
     }
     
     
     function check_disk()
     {
-    	var postbody = { csrfmiddlewaretoken: '{{ csrf_token }}', file_size: fileTotalSize };
+    	var postbody = {file_size: fileTotalSize };
 		omflowJsonAjax(postbody, '{% url "getDiskStatusAjax" %}', actions_upload)
 		
 		function actions_upload(data){
@@ -672,6 +1560,26 @@
 				omflowAlert('red', data.message);
 			}
 		}
+    }
+    
+    
+    function check_duplicate()
+    {
+    	var duplicate_count = 0  
+    	filesToUpload.forEach(function(item){
+    		if (attach_list.indexOf(item.file.name) >= 0)
+    		{
+    			duplicate_count++
+    		}
+    	})
+    	if (duplicate_count > 0)
+    	{
+    		$('label[name="duplicateWarning"]').show();
+    	}
+    	else
+    	{
+    		$('label[name="duplicateWarning"]').hide();
+    	}
     }
     
     
@@ -699,7 +1607,7 @@
 	        	if(myXhr.upload)
 	        	{
 	        		$('label[name="uploadWarning"]').show();
-	        		$('#attachment_input').hide();
+	        		$('#attachment_input, label[name="duplicateWarning"]').hide();
 	        		$('#modal_attachment_browser .progress-bar').parent().show();
 	        		$('#attachment_input, .btn-file, button[name="file_upload"], button[name="remove_upload"]').attr('disabled', true);
 			    	Swal.fire({
@@ -759,19 +1667,109 @@
     
     
     function worklog_browser()
-    {}
+    {
+    	var worklog_postdata = {
+    		flow_uuid: '{{flow_uuid}}', 
+    		data_no: '{{data_no}}',
+    		data_id: '{{data_id}}'
+    	}
+    	omflowJsonAjax(worklog_postdata, '{% url "listOmDataWorkLogAjax"%}' ,callback)
+
+		function callback(data)
+		{
+			if (data.status == 200)
+			{
+				$('#worklog_text').text('').prop('readonly', true);
+				$('#worklog_new_btt').show();
+    			$('#worklog_save_btt, #worklog_cancel_btt').hide();
+				$('#worklog_table tbody').empty();
+				data.result.forEach(function(item){
+					$('#worklog_table tbody').append('<tr><td>'+item.content+'</td><td>'+item.create_user_id__nick_name+'</td><td>'+item.createtime.slice(0, -7)+'</td>/tr>')
+				});
+				$('#worklog_table tbody').off('click').on( 'click', 'tr', function(){
+					$('#worklog_table tbody tr').removeClass('selected');
+					$(this).addClass('selected')
+					$('#worklog_text').val($(this).children().first().text());
+				});
+				$('#worklog_table tbody tr:last').trigger('click');
+			}
+			else
+			{}
+			
+			
+			
+		}
+    	$('#modal_worklog_browser').modal('show');
+    }
     
+    {% if 'omformmodel.Omdata_'|add:flow_uuid|add:'_Modify' in perms or check %}
+	    function create_worklog(action)
+	    {
+	    	if (action == 'new')
+	    	{
+	    		$('#worklog_table tbody tr').removeClass('selected');
+	    		$('#worklog_text').val('').prop('readonly', false);
+	    		$('#worklog_new_btt').hide();
+	    		$('#worklog_save_btt, #worklog_cancel_btt').show();
+	    		$('#worklog_table tbody').off('click');
+	    	}
+	    	else if(action == 'save')
+	    	{
+	    		var content = $('#worklog_text').val();
+	    		var worklog_postbody = {
+	    			flow_uuid: '{{flow_uuid}}', 
+	    			data_no: '{{data_no}}',
+	    			data_id: '{{data_id}}',
+	    			content: content
+	    		}
+	    		omflowJsonAjax(worklog_postbody, '{% url "createOmDataWorkLogAjax" %}' , callback)
+				var data = {status: 200}
+				callback(data)
+				function callback(data)
+				{
+					if (data.status == 200)
+					{
+						$('#worklog_text').val('').prop('readonly', true);
+						$('#worklog_new_btt').show();
+	    				$('#worklog_save_btt, #worklog_cancel_btt').hide();
+	    				worklog_browser();
+					}
+					else
+					{}
+					$('#worklog_table tbody').off('click').on( 'click', 'tr', function(){
+						$('#worklog_table tbody tr').removeClass('selected');
+						$(this).addClass('selected')
+						$('#worklog_text').val($(this).children().first().text());
+					});
+				}
+	    		
+	    	}
+	    	else if (action == 'cancel')
+	    	{	
+	    		$('#worklog_text').val('').prop('readonly', true);
+	    		$('#worklog_new_btt').show();
+	    		$('#worklog_save_btt, #worklog_cancel_btt').hide();
+	    		$('#worklog_table tbody').off('click').on( 'click', 'tr', function(){
+					$('#worklog_table tbody tr').removeClass('selected');
+					$(this).addClass('selected')
+					$('#worklog_text').val($(this).children().first().text());
+				});
+	    	}
+	    }
+    {% endif %}
     
     function load_group_list()
 	{
 		var grouplist=[];
-		var postbody = {csrfmiddlewaretoken: "{{ csrf_token }}", 'functional_flag_%B': 'False', 'ad_flag_%B': ['0']};
+		var postbody = {'functional_flag': 'False', 'ad_flag': ['1', '0']};
 		$.ajax({
 			url	: '{% url 'listGroupAjax' %}',
 			type: 'post',
-	        data: postbody,
+			headers: { "X-CSRFToken": csrfmiddlewaretoken },
+	        data: JSON.stringify(postbody),
 	        async:false,
 	        dataType: 'json',
+	        contentType: "application/json;charset=utf-8;",
 	        success: function (data) {
 	            grouplist = data.result;
 	        },
@@ -790,8 +1788,10 @@
 		$.ajax({
 			url: "{% url 'searchGroupUserAjax' %}",
 			type: 'post',
+			headers: { "X-CSRFToken": csrfmiddlewaretoken },
 			async:false,
-			data: { csrfmiddlewaretoken: '{{ csrf_token }}' , searchkey: group_id},
+			data: JSON.stringify({searchkey: group_id}),
+			contentType: "application/json;charset=utf-8;",
 			success: function (data) {
 				userlist = data.result;
 			},
@@ -806,12 +1806,15 @@
       
     function readform(data_id)
     {
-    	var postdata = {csrfmiddlewaretoken: csrfmiddlewaretoken, flow_uuid: '{{flow_uuid}}', data_id: data_id};
+    	var postdata = {flow_uuid: '{{flow_uuid}}', data_id: data_id};
     	omflowJsonAjax(postdata, '{% url "loadOmDataAjax"%}', readFormDesign_callback);
     	function readFormDesign_callback(data)
     	{	
     		if(data.status == 200)
     		{
+    			omdata_info = data.result;
+    			if(data.result.closed)
+    			{$('#updateOmdata').hide();}
 	    		formcontent.init(false);
 	    		formcontent.event_group_list(load_group_list);
 				formcontent.event_user_list(load_user_list);
@@ -821,83 +1824,107 @@
 	    			if (value)
 	    			{$('#'+index).show()}
 	    		})
-	    		$('#modal_flow_browser .modal-title').html('<h4>'+data.result.flow_name+'<small></small></h4>');
-	    		$('#modal_omdata_history .modal-title').html('<h4>'+data.result.flow_name+'</h4>');
 		    	if(url.indexOf('/my-mission/page/myform/') >= 0)
 		    	{	
 		    		$('ol.breadcrumb').append('<li><a href="/my-mission/page/mission/">我的任務</a></li><li>'+data.result.flow_name+'</li>');
 		    		$('.content-header h1').append(paddingLeft('{{data_no}}', 8)+'<small>'+data.result.flow_name+'</small>');
+		    		$('li a[href="/my-mission/page/mission/#mymission"]').parent().siblings().removeClass('active').end().addClass('active');
 				}
 		    	else if(url.indexOf('/flowmanage/page/myform/') >= 0)
 		    	{	
 					$('ol.breadcrumb').append('<li><a href="javascript:history.back();">'+data.result.flow_name+'</a></li><li>'+paddingLeft('{{data_no}}', 8)+'</li>');
 	    			$('.content-header h1').append(paddingLeft('{{data_no}}', 8)+'<small>'+data.result.flow_name+'</small>')	    			
 		    	}
-		    	if(data.result.quick_action != null)
-		    	{
-			    	var action1 = '';
-					var action2 = '';
-					var quick_action = data.result.quick_action.split(',');
-					if(quick_action[0].length != 0)
-					{
+		    	{% if 'omformmodel.Omdata_'|add:flow_uuid|add:'_Modify' in perms or check%}
+{#		    	if(data.result.quick_action != null)#}
+{#		    	{#}
+{#			    	var action1 = '';#}
+{#					var action2 = '';#}
+{#					var quick_action = data.result.quick_action.split(',');#}
+{#					if(quick_action[0].length != 0)#}
+{#					{#}
 									
-						action1 = '<button type="button" class="btn btn-default" title="'+quick_action[0]+'" onclick="quick_action(\'action1\', \'{{flow_uuid}}\', \'{{data_id}}\')" style="margin:1px 0px;background-color: #3d9970;color: #fff;border-color: #32664f;border-bottom: 1px solid #2B5140;box-shadow: inset 0 -1px #416454"> '+quick_action[0]+'</button>';
-					}
-					if(quick_action[1].length != 0)
-					{
-						action2 = '<button type="button" class="btn btn-default" title="'+quick_action[1]+'" onclick="quick_action(\'action2\', \'{{flow_uuid}}\', \'{{data_id}}\')" style="margin:1px 0px;background-color: #d81b60;color: #fff;border-color: #cc7b99;border-bottom: 1px solid #886571;box-shadow: inset 0 -1px #682c42"> '+quick_action[1]+'</button>';
-					}
-					$('.content .box-header:first .pull-right').append(action1+' '+action2);
-				}
+{#						action1 = '<button type="button" class="btn btn-default" title="'+quick_action[0]+'" onclick="quick_action(\'action1\', \'{{flow_uuid}}\', \'{{data_id}}\')" style="margin:1px 0px;background-color: #3d9970;color: #fff;border-color: #32664f;border-bottom: 1px solid #2B5140;box-shadow: inset 0 -1px #416454"> '+quick_action[0]+'</button>';#}
+{#					}#}
+{#					if(quick_action[1].length != 0)#}
+{#					{#}
+{#						action2 = '<button type="button" class="btn btn-default" title="'+quick_action[1]+'" onclick="quick_action(\'action2\', \'{{flow_uuid}}\', \'{{data_id}}\')" style="margin:1px 0px;background-color: #d81b60;color: #fff;border-color: #cc7b99;border-bottom: 1px solid #886571;box-shadow: inset 0 -1px #682c42"> '+quick_action[1]+'</button>';#}
+{#					}#}
+{#					$('.content .box-header:first .pull-right').append(action1+' '+action2);#}
+{#				}#}
+				{% endif %}
 			}
 			else
 			{omflowAlert('red', data.message)}
     	}
     }
     
+    $('#OMD_relationList_modal,#OMD_relationData_modal').off('change').on('change','input:checkbox,input:radio',function(){
+    	enablebtt();
+    });
     
-    function updateOmdata()
-    {
-    	$('#formcontent .form-group').removeClass('has-warning');
-		Swal.fire({
-		  title: '處理中...',
-		  toast: true,
-		  position: 'bottom-start',
-		  showConfirmButton: false,
-		});
-		Swal.showLoading() ;
-		var formdata = formcontent.getData()
-		if (formdata.checker.length == 0)
-		{
-			var postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, 
-							flow_uuid: '{{flow_uuid}}',
-							data_id	 : '{{data_id}}',
-							action	 : 'update',
-							formdata : JSON.stringify(formdata.values)}
-			
-			omflowJsonAjax(postbody, '{% url "editOmDataAjax"%}', actions)
+    function enablebtt(){
+    	if($('#OMD_relationList_table:visible').length){
+			if($('#OMD_relationList_table input:checked').length){
+				$('#OMD_relationList_modal #delete_relation').prop('disabled',false);
+			}else{
+				$('#OMD_relationList_modal #delete_relation').prop('disabled',true);
+			}
 		}
-		else
-		{
-			formdata.checker.forEach(function(item){
-				$('#formcontent_'+item).addClass('has-warning');
-			})
-			Swal.close();
-			omflowAlert('blue', '缺少必填欄位');
+		if($('#OMD_relationData_table:visible').length){
+	    	if($('#OMD_relationData_table input:checked').length){
+				$('#OMD_relationData_modal .btn-primary').prop('disabled',false);
+			}else{
+				$('#OMD_relationData_modal .btn-primary').prop('disabled',true);
+			}
 		}
-	}
-	
-	
-	function quick_action(action, flow_uuid, data_id){
-	 	var postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, 
-								flow_uuid: flow_uuid,
-								data_id	 : data_id,
-								action	 : 'update',
-								quick_action: action,
+	};
+    
+    
+    {% if 'omformmodel.Omdata_'|add:flow_uuid|add:'_Modify' in perms or check%}
+	    function updateOmdata()
+	    {
+	    	$('#formcontent .form-group').removeClass('has-warning');
+			Swal.fire({
+			  title: const_working,
+			  toast: true,
+			  position: 'bottom-start',
+			  showConfirmButton: false,
+			});
+			Swal.showLoading() ;
+			var formdata = formcontent.getData()
+			if (formdata.checker.length == 0)
+			{
+				var postbody = { 
+						flow_uuid: '{{flow_uuid}}',
+						data_id	 : '{{data_id}}',
+						action	 : 'update',
+						formdata : formdata.values
 				}
-		omflowJsonAjax(postbody, '{% url "editOmDataAjax"%}', actions)
- 	}
+				
+				omflowJsonAjax(postbody, '{% url "editOmDataAjax"%}', actions)
+			}
+			else
+			{
+				formdata.checker.forEach(function(item){
+					$('#formcontent_'+item).addClass('has-warning');
+				})
+				Swal.close();
+				omflowAlert('blue', '缺少必填欄位');
+			}
+		}
 	
+		
+{#		function quick_action(action, flow_uuid, data_id){#}
+{#		 	var postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, #}
+{#									flow_uuid: flow_uuid,#}
+{#									data_id	 : data_id,#}
+{#									action	 : 'update',#}
+{#									quick_action: action,#}
+{#					}#}
+{#			omflowJsonAjax(postbody, '{% url "editOmDataAjax"%}', actions)#}
+{#	 	}#}
+	{% endif%}
 	
 	function actions(data)
 	{
@@ -912,10 +1939,9 @@
 		  	  showConfirmButton: false,
 	      	  timer: 2000,
   		    });
-  		    LSide();
   		    if(url.indexOf('/my-mission/page/myform/') >= 0)
 	    	{	
-	    		window.location.href = '/my-mission/page/mission/';
+	    		window.location.href = '/my-mission/page/mission/#mymission';
 	    	}
 	    	else if(url.indexOf('/flowmanage/page/myform/') >= 0)
 	    	{	
@@ -942,6 +1968,90 @@
 		{
 			omflowAlert('red', data.message);
 		}
+    }
+    
+    function OMD_actions(data)
+	{
+    	Swal.close();
+		if(data.status == 200)
+		{
+			Swal.fire({
+	      	  icon : 'success',
+	      	  title: '成功',
+	      	  toast: true,
+		  	  position: 'bottom-start',
+		  	  showConfirmButton: false,
+	      	  timer: 2000,
+  		    });
+		}
+		else if (data.status == 404)
+		{
+			omflowAlert('yellow', data.message);
+		}
+		else if (data.status == 500)
+		{
+			Swal.fire({
+	      	  icon : 'info',
+	      	  title: data.message,
+	      	  toast: true,
+		  	  position: 'bottom-start',
+		  	  showConfirmButton: false,
+	      	  timer: 10000,
+  		    });
+  		    $('#modal-create_ticket').modal('show')
+		}
+		else if (data.status == 403)
+		{
+			omflowAlert('red', data.message);
+		}
+    }
+    
+    
+    function SLA_view_browser()
+    {
+    	var postdata = {
+    		app_name	:	omdata_info.app_name,
+    		flow_name	:	omdata_info.flow_name,
+    		data_no		:	{{data_no}}
+    	}
+    	omflowJsonAjax(postdata, '{% url "listSLADataAjax"%}', callback)
+    	
+    	function callback(data)
+    	{
+    		if (data.status == 200)
+    		{
+    			$('#SLA_view_table tbody').empty();
+    			$.each(data.result, function(index, value){
+    				var slatime = ''
+    				if (value.createtime != null)
+    				{ slatime = value.createtime.slice(0, -4).replace(/T/g,' ')}
+    				
+    				$('#SLA_view_table tbody').append('<tr style="cursor:default">'
+    													+'<th>'+value.sla_name+'</th>'
+    													+'<th>'+value.description+'</th>'
+    													+'<th>'+slatime+'</th>'
+    													+'<th>'+level_trans(value.level)+'</th>'
+    													+'</tr>')
+    			})
+    			
+    			$('#modal_SLA_view_browser').modal('show'); 
+    		}
+    		else
+    		{
+    			actions(data)
+    		}
+    	}
+    	
+    	function level_trans(lv)
+    	{
+    		if(lv == 'green')
+				{return '<div class="label label-success">綠燈</div>'}
+			else if(lv == 'yellow')
+				{return '<div class="label label-warning">黃燈</div>'}
+			else if(lv == 'red')
+				{return '<div class="label label-danger">紅燈</div>'}
+		}
+    	
     }
     </script>
 {% endblock %}

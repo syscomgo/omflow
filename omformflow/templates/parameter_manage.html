@@ -1,0 +1,454 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %} 
+{% block content %}
+<!-- 
+	parameter_manage.html 
+	author : Pei lin
+-->
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+     	{% trans '參數管理' %}
+        <small>{% trans '參數列表' %}</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i> {% trans '首頁' %}</a></li>
+        <li>{% trans '應用管理' %}</li>
+        <li class="active">{% trans '參數管理' %}</li>
+      </ol>
+    </section>
+    
+    <section class="content">
+      <div class="row">
+      	<div class="col-xs-12">
+      	  <div class="box box-primary">
+      	    <div class="box-header with-border">
+      	      <div class="pull-left">
+      	        <button type="button" class="btn btn-default" onclick="edit_param('create')" style="margin:1px 0px;"><i class="fa fa-plus"></i>{% trans ' 新增' %}</button>
+			    <button type="button" class="btn btn-default" onclick="edit_param('delete')" id="delete_param" disabled="disabled" style="margin:1px 0px;"><i class="fa fa-trash-o"></i>{% trans ' 刪除' %}</button>
+			    <button type="button" class="btn btn-default" onclick="filter_param()" style="margin:1px 0px;"><i class="fa fa-filter"></i>{% trans ' 篩選' %}</button>
+                <button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default" onclick="filter_default()" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
+              </div>
+              <div class="pull-right">
+                <button type="button" class="btn btn-default" id="parameter_input" onclick="$('#file').click()" style="margin:1px 0px;"><i class="fa fa-download"></i> 匯入</button>
+                <input type="file" id="file" onchange="parameter_input(this.files)" style="display:none;"/>
+			    <button type="button" class="btn btn-default" id="parameter_output" onclick="parameter_output()" style="margin:1px 0px;" disabled="disabled"><i class="fa fa-upload"></i> 匯出</button>
+              </div>
+      	    </div>
+      	    <!-- box-header -->
+      	    <div class="box-body">
+      	      <table id="param_table" class="table table-bordered table-striped table-hover" width="100%">
+				<thead>
+				  <tr>
+					<th style="width:15px"><a><i class="fa fa-lg fa-check-square-o checkbox-toggle" style="color:SteelBlue"></i></a></th>
+					<th>{% trans '編號'%}</th>
+					<th>{% trans '參數名稱'%}</th>
+					<th>{% trans '參數值'%}</th>
+					<th>{% trans '說明'%}</th>
+					<th></th>
+				  </tr>
+				</thead>
+				<tbody>
+				</tbody>
+			  </table>
+      	    </div>
+			<!-- box-body -->
+      	  </div>
+      	  <!-- box -->
+      	</div>
+      	<!-- col -->
+      </div>
+      <!-- row -->
+    </section>
+    
+    <div class="modal fade" id="modal-param-creat" data-backdrop="static">
+	  <div class="modal-dialog modal-lg">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title"></h4>
+		  </div>
+		  <div class="modal-body">
+		    <div class="container-fluid">
+              <div class="row">
+                <div class="col-md-6 ">
+                  <div class="box box-primary">
+                    <div class="box-body">
+                      <div class="form-group ">
+                        <label>{% trans '名稱'%}</label>
+                        <input id="name" type="text" class="form-control" placeholder="">
+                      </div>
+                      <div class="form-group ">
+                        <label>{% trans '說明'%}</label>
+                        <textarea id="description" rows="3" class="form-control" style="resize:none;"></textarea>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6 ">
+                  <div class="box box-primary">
+                    <div class="box-body">
+                      <div class="form-group ">
+                        <label>{% trans '參數值'%}</label>
+                        <input id="value" type="text" class="form-control" placeholder="">
+                      </div>
+                      <div class="form-group ">
+                        <label>{% trans '遮罩'%}</label>
+                        <select id="shadow" class="form-control select2 " style="width:100%">
+                          <option value='0'>{% trans '否'%}</option>
+                          <option value='1'>{% trans '是'%}</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+			  </div>
+			</div>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
+			<button type="button" class="btn btn-primary" id="modal-param-submit">確定</button>
+		  </div>
+		</div>
+	  </div><!-- /.modal-content -->
+	</div>
+	
+	<div class="modal fade" id="modal-param_input" data-backdrop="static">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title"><i class="fa fa-download"></i>&nbsp;&nbsp;參數匯入</h4>
+		  </div>
+		  <div class="modal-body">
+		  	<ul class="mailbox-attachments clearfix" id="param_input_name">
+            </ul>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
+			<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="param_input_save()">確定</button>
+		  </div>
+		</div>
+	  </div><!-- /.modal-content -->
+	</div>
+    
+	<script>
+	var csrfmiddlewaretoken = "{{ csrf_token }}";
+	var table ;
+	var data_tmp;
+	var data_len;
+	var data_page;
+	var checkbox_status = [];
+	var textFile = null; //設計檔案
+	var input_file;
+	var param_list = []
+	$(function(){
+		table = $('#param_table').DataTable({
+			"autoWidth": false,
+			"order": [[ 1, "desc" ]], 
+			"dom":"<<t>'row'<'col-sm-5'i><'col-sm-7'p>>",
+			"language": __const_language__,
+			"serverSide": true,							//	serverside data loading
+			"deferRender": true,
+			"processing": true,
+			"ajax": {
+           		"url": "{% url 'listOmParameterAjax' %}",
+            	"type": "POST",
+            	"headers": { "X-CSRFToken": csrfmiddlewaretoken },
+				"contentType": "application/json;charset=utf-8;",
+            	"data": function ( d ) {
+							return JSON.stringify($.extend( {}, d, {
+								group_id	: '',
+								datatable	: 'True'
+							}));
+						},
+				"dataSrc": function(data){
+						a = dataCompare(data,data_tmp,data_len,data_page,table);
+						data_tmp = a['data_tmp']
+						data_len = a['data_len']
+						data_page = a['data_page']
+						data.data = a['data.data']
+						return data.data;
+					},
+				"error": function(xhr,status,error){
+							clearInterval(table_routine);
+					}
+        	},
+        	"columns":[
+				{"width": "15px", "data": "name", "orderable": false, "render": function (data, type, row)
+                	{return '<input type="checkbox" class="icheckbox_minimal-blue" value="'+row.id+'" id="param_'+row.id+'" data-value="'+data+'"><label for="param_'+row.id+'"></label>'}
+                },   
+                {"data": "id", "width": "15px"},
+                {"data": "name"},
+				{"data": "value", "render": function (data, type, row)
+					{
+						if (row.shadow)
+						{ return paddingMark(data) }
+						else
+						{ return data }
+					}
+				},
+				{"data": "description"},
+				{"data": "value", "width": "30px", "render": function(data, type, row)
+					{
+						return '<button class="btn btn-xs btn-default" data-id="'+row.id+'" onclick="edit_param(\'modify\', this)">設定</button>'
+					}
+				}
+            ],
+            rowCallback: function(row, data){
+            	param_list.push(data);
+            },
+            drawCallback: function(){
+				omflowCheckAll();
+				$('.table input[type="checkbox"]').change(function(){
+			    	enablebtt();
+			    });
+			},
+        });
+        
+		$('#shadow').change(function(){
+			if (this.value == 1)
+			{
+				$('#value').attr('type', 'password');
+			}
+			else
+			{
+				$('#value').attr('type', 'text');
+			}
+		});
+	});
+	
+	
+	function enablebtt()
+	{
+		var count = $('.table input:checkbox:checked').length;
+    	if (count == 0)
+    	{
+    		$('#delete_param, #parameter_output').prop('disabled', 'disabled');
+    	}
+    	else
+    	{
+    		$('#delete_param, #parameter_output').prop('disabled', '');
+    	} 
+	}
+	
+	
+	function edit_param(action, obj)
+	{
+		$('#name, #value, #description').val('');
+		$('#shadow').val(0).trigger('change');
+		
+		if (action == 'create')
+		{	
+			$('#modal-param-creat .modal-title').empty().append('<i class="fa fa-plus"></i>&nbsp;&nbsp;{% trans '新增參數'%}');
+			$('#modal-param-creat').modal('show');
+		}
+		else if (action == 'modify')
+		{
+			param_list.forEach(function(item){
+				var shadow = '';
+				if (item.shadow)
+				{ shadow = 1 }
+				else
+				{ shadow = 0 }
+				if (item.id == $(obj).data('id'))
+				{
+					$('#name').val(item.name);
+					$('#value').val(item.value);
+					$('#description').val(item.description);
+					$('#shadow').val(shadow).trigger('change');
+				}
+			})
+			$('#modal-param-creat .modal-title').empty().append('<i class="fa fa-edit"></i>&nbsp;&nbsp;{% trans '設定參數'%}');
+			$('#modal-param-creat').modal('show');
+		}
+		else if (action == 'delete')
+		{
+			omflowListDialogue('delete', '刪除下列參數', param_submit);
+		}
+		
+		$('#modal-param-submit').off('click').on('click', param_submit);
+		
+		function param_submit()
+		{
+			if ( action == 'create' | action == 'modify')
+			{
+				var postdata = {
+					name: $('#name').val(),
+					value: $('#value').val(),
+					description: $('#description').val(),
+					shadow: $('#shadow').val(),
+					type: '',
+					group_id: ''
+				}
+				if(action == 'create')
+				{
+					omflowJsonAjax(postdata, '{% url 'createOmParameterAjax' %}', actions)
+				}
+				else
+				{
+					postdata['id'] = $(obj).data('id')
+					omflowJsonAjax(postdata, '{% url 'updateOmParameterAjax' %}', actions)
+				}
+				
+				$('#modal-param-creat').modal('hide');
+			}
+			else
+			{
+				var delete_lst = []
+				$.each($('#param_table input:checkbox:checked'), function(){
+					delete_lst.push(this.value);
+				})
+				var postdata = {
+					id: delete_lst,
+					group_id: ''
+				}
+				omflowJsonAjax(postdata, '{% url 'deleteOmParameterAjax' %}', actions)
+			}
+		}
+	}
+	
+	
+	function parameter_output(){
+		omflowListDialogue('output', "{% trans '匯出下列參數' %}", output_confirm);
+		//產生
+		var makeTextFile = function (text) {
+            var data = new Blob([text], {
+                type: 'text/plain'
+            });
+
+            // If we are replacing a previously generated file we need to
+            // manually revoke the object URL to avoid memory leaks.
+            if (textFile !== null) {
+                window.URL.revokeObjectURL(textFile);
+            }
+            textFile = window.URL.createObjectURL(data);
+
+            return textFile;
+        };
+        
+        //產生檔名
+        var NowDate = new Date();
+		var Y = NowDate.getYear()+1900;
+		var M = NowDate.getMonth()+1;
+		var d = NowDate.getDate();
+		var h = NowDate.getHours();
+		var m = NowDate.getMinutes();
+		var s = NowDate.getSeconds();
+        var filename = "OMFLOW-Flowparameter_"+Y+"-"+M+"-"+d+"_"+h+"-"+m+"-"+s+".omf";
+		$('#modal-default-list-text').append('<li class="list-group-item"><div class="mailbox-attachment-info">'+
+			        	'<p class="mailbox-attachment-name" style="word-break: break-all;"><i class="fa fa-paperclip"></i>&nbsp;&nbsp;'+filename+'</p>'+
+			            '<span class="mailbox-attachment-size"></span>'+
+			      		'</div></li>')
+		
+		var param_id_list =[];
+		$('.table input:checkbox:checked').each(function(){
+			param_id_list.push($(this).attr('id').slice(6));
+		});
+		
+		var postbody = {param_id_list: param_id_list};
+		omflowJsonAjax(postbody, "{% url 'exportOmParameterAjax'%}", output_callback);
+		
+		function output_callback(data)
+		{	
+			$('body').append($('<a id="exporta" href="'+makeTextFile(JSON.stringify(data.result))+'" download="'+filename+'" style="display:none;"></a>'));
+		}
+		
+		function output_confirm()
+		{
+			$('#exporta')[0].click();
+			$('#exporta').remove();
+		}
+	}
+	
+	
+	function parameter_input(files) {
+	    if (files.length) {
+	        var file = files[0];
+	        var reader = new FileReader();
+	        reader.onload = function(event) {
+	        	$('#param_input_name').empty().append('<li style="width:100%;"><div class="mailbox-attachment-info">'+
+				        	'<p class="mailbox-attachment-name" style="word-break: break-all;"><i class="fa fa-paperclip"></i>&nbsp;&nbsp;'+file.name+'</p>'+
+				            '<span class="mailbox-attachment-size">'+omflowSizeUnit(file.size)+'</span>'+
+				      		'</div></li>')
+				$('#modal-param_input').modal('show');
+				input_file = reader.result;
+	        }
+	            reader.readAsText(file);
+	            
+        }
+    }
+    
+    
+    function param_input_save(){
+    	input_file = JSON.stringify(JSON.parse(input_file));
+    	Swal.fire({
+		  title: '處理中...',
+		  toast: true,
+		  position: 'bottom-start',
+		  showConfirmButton: false,
+		});
+		Swal.showLoading() ;
+	
+		var postbody =
+			{
+				param_list	: input_file
+			}
+		omflowJsonAjax(postbody, '{% url "importOmParameterAjax"%}', actions);
+		$('#file').val('');
+    }
+	
+	
+	function filter_param(){
+		omflowFilter(['filter_search','filter_length']);
+		$('#modal-default-filter-confirm').off("click").on("click",function(){
+			var searchkey = $.trim($('#modal-default-filter #search').val());
+			var page_length = $('#modal-default-filter #page_length').val();
+			table.page.len(page_length);
+			table.search(searchkey).draw();
+			
+		});
+	}
+	
+    function filter_default(){
+		table.page.len(10);
+		table.search('');
+    	table.draw(false)
+    }
+	
+	
+	function actions(data)
+	{
+		Swal.close();
+		if(data.status == 200)
+		{
+			LSide();
+			table.draw(false);
+			Swal.fire({
+	      	  icon : 'success',
+	      	  title: '成功',
+	      	  toast: true,
+		  	  position: 'bottom-start',
+		  	  showConfirmButton: false,
+	      	  timer: 2000,
+  		    });
+		}	
+		else if (data.status == 404)
+		{
+			omflowAlert('yellow', data.message);
+		}
+		else if (data.status == 500)
+		{
+			omflowAlert('blue', data.message);
+		}
+		else if (data.status == 403)
+		{
+			omflowAlert('red', data.message);
+		}
+	}
+	
+	</script>
+{% endblock %}

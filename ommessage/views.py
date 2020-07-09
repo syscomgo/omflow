@@ -2,7 +2,7 @@ import os
 from django.shortcuts import render
 from omuser.models import OmUser
 from django.contrib.auth.decorators import login_required
-from omflow.syscom.common import DatatableBuilder, UserSearch, GroupSearch, try_except
+from omflow.syscom.common import DatatableBuilder, UserSearch, GroupSearch, try_except, getPostdata
 from django.utils.translation import gettext as _
 from omflow.syscom.message import ResponseAjax, statusEnum
 from django.http.response import JsonResponse
@@ -45,7 +45,7 @@ def listMessagesAjax(request):
     return: messages object
     author: Kolin Hsu
     '''
-    mes_box = request.POST.get('mes_box','Inbox')
+    mes_box = getPostdata(request).get('mes_box','Inbox')
     field_list=['messages_id__subject__icontains']
     if mes_box == 'Inbox':
         display_field = ['messages_id','messages_id__subject','createtime','id','create_group__name','create_user__nick_name','messagebox__read','messagehistoryfiles__main_id','content']
@@ -71,7 +71,7 @@ def composeMessageDetailAjax(request):
     author: Kolin Hsu
     '''
     result={}
-    postdata = request.POST
+    postdata = getPostdata(request)
     messagehistory_id = postdata.get('messagehsitory_id','')
     reply_history = []
     if messagehistory_id:
@@ -108,7 +108,7 @@ def createMessagesAjax(request):
     author: Kolin Hsu
     '''
     #取得post資料
-    postdata = request.POST
+    postdata = getPostdata(request)
     subject = postdata.get('subject','')
     if subject:
         #建立一筆新的messages
@@ -130,7 +130,7 @@ def listMessageHistoryAjax(request):
     return: messages content object
     author: Kolin Hsu
     '''
-    postdata = request.POST
+    postdata = getPostdata(request)
     messages_id = postdata.get('messages_id',None)
     if messages_id is not None:
         box_lst = list(request.user.messagebox_set.filter(messages_id=messages_id).values_list('id',flat=True))
@@ -151,7 +151,7 @@ def loadMessageHistoryAjax(request):
     return: messagehistory object
     author: Kolin Hsu
     '''
-    postdata = request.POST
+    postdata = getPostdata(request)
     messagehistory_id = postdata.get('messagehistory_id','')
     if messagehistory_id:
         result = {}
@@ -212,7 +212,7 @@ def createMessageHistoryAjax(request, *args):
     receive_groups_id_lst = ''
     receive_groups_name = ''
     #取得post資料
-    postdata = request.POST
+    postdata = getPostdata(request)
     messages_id = postdata.get('messages_id','')
     content = postdata.get('content','')
     files = request.FILES.getlist('attachment[]','')
@@ -290,8 +290,8 @@ def deleteMessageHistoryAjax(request):
     return: json
     author: Kolin Hsu
     '''
-    postdata = request.POST
-    messagehistory_id_list = postdata.getlist('messagehistory_id[]','')
+    postdata = getPostdata(request)
+    messagehistory_id_list = postdata.get('messagehistory_id','')
     action = postdata.get('action', 'delete')
     if messagehistory_id_list:
         if action == 'delete':
@@ -315,7 +315,7 @@ def searchSendUserAjax(request):
     return: json
     author: Kolin Hsu
     '''
-    postdata = request.POST
+    postdata = getPostdata(request)
     searchkey = postdata.get('searchkey','')
     field_list=['username__icontains','nick_name__icontains']
     ordercolumn = 'nick_name'
@@ -333,9 +333,9 @@ def searchSendGroupAjax(request):
     return: json
     author: Kolin Hsu
     '''
-    postdata = request.POST
+    postdata = getPostdata(request)
     searchkey = postdata.get('searchkey','')
-    adGroup = postdata.get('adGroup[]',['1','0'])
+    adGroup = postdata.get('adGroup',['1','0'])
     field_list=['name__icontains']
     ordercolumn = 'name'
     result = GroupSearch(field_list, searchkey, ordercolumn,adGroup)
@@ -352,7 +352,7 @@ def searchGroupUserAjax(request):
     return: json
     author: Kolin Hsu
     '''
-    postdata = request.POST
+    postdata = getPostdata(request)
     searchkey = postdata.get('searchkey','')
     field_list=['groups__id']
     ordercolumn = 'nick_name'

@@ -25,7 +25,7 @@
               <span class="label label-success" name="mission_count"></span>
             </a>
           </li>
-          <li>
+          <li style="display:None;">
             <!-- Menu toggle button -->
             <a href="/announcement/page/messageManage/Inbox/">
               <i class="fa fa-envelope-o"></i>
@@ -43,9 +43,8 @@
               <li class="user-header">
                 <p>
                   {{user.nick_name}}
-                  <small>({{user}})</small>
+                  <small>({{user.username}})</small>
                   <small>{{user.company}}</small>
-                  <small>{{user.department}}</small>
                   <small>{{user.email}}</small>
                 </p>
               </li>
@@ -78,21 +77,16 @@
 			success: function (data) {	
 				if (data.status == 200)
 				{
-					$('span[name="message_count"]').text(data.result.messages);
-					$('span[name="mission_count"]').text(data.result.missions);
-					num = data.result;
-				}
-				else if (data.status == 404)
-				{
-					omflowAlert('yellow', data.message);
-				}
-				else if (data.status == 500)
-				{
-					omflowAlert('blue', data.message);
-				}
-				else if (data.status == 403)
-				{
-					omflowAlert('red', data.message);
+					if (data.node == 1)
+					{
+						$('.navbar-nav').hide()	
+					}
+					else
+					{
+						$('span[name="message_count"]').text(data.result.messages);
+						$('span[name="mission_count"]').text(data.result.missions);
+						num = data.result;
+					}
 				}
 				else
 				{
@@ -107,10 +101,16 @@
 					else
 					{
 						omflowAlert('red', data.message);
+						clearInterval(header_routine);
 					}
 					
 				}
-			}
+			},
+			error: function(req, status, err) {
+			 	clearInterval(header_routine)
+				$('#modal_error').modal('show');
+	        	console.log('Something went wrong', status, err);
+	    	}
     	});
     }
     LHeader();

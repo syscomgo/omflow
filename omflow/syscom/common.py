@@ -3,18 +3,36 @@ syscom omflow common mehod
 @author: Pen Lin
 '''
 import re, operator, datetime, json
-from django.core.paginator import Paginator
 from django.db.models import Q
 from _functools import reduce
-from omuser.models import OmUser
+from omuser.models import OmUser, OmGroup
 from django.contrib.auth.models import Group
 from omflow.syscom.message import ResponseAjax, statusEnum
 from django.utils.translation import gettext as _
 from omflow.syscom.default_logger import error
+from omflow.syscom.constant import LOCAL_PORT
+from omflow.global_obj import GlobalObject
 from functools import wraps
 from django.apps import apps
 from django.conf import settings
+from django.core.management import call_command
+from omflow.syscom.license import getApps, getCustomer, getDevices, getUsers, getVersion, getVersionType, license_file_checker
 
+
+
+def getPostdata(request):
+    '''
+    get postdata 
+    input: request
+    return: postdata 
+    author: Kolin Hsu
+    '''
+    try:
+        postdata = json.loads(request.body.decode("utf-8"))
+    except:
+        postdata = request.POST
+    finally:
+        return postdata
 
 
 def checkEmailFormat(content = None):
@@ -135,7 +153,7 @@ def DataChecker(data, req_list):
                 if '_$' in key:
                     check = isInt(data.get(key,''))
                 elif '[]' in key:
-                    check = isList(data.getlist(key,''))
+                    check = isList(data.get(key,''))
                 elif '_@' in key:
                     check = isEmail(data.get(key,''))
                 elif '_%Y' in key:
@@ -165,7 +183,7 @@ def DataChecker(data, req_list):
     return result
 
 
-def FormDataChecker(formdata, formobject_items):
+def FormDataChecker(formdata_list, formobject_items):
     '''
     check form data.
     input: formdata , formobject_items
@@ -174,55 +192,58 @@ def FormDataChecker(formdata, formobject_items):
     '''
     #set variable
     status = True
+    if isinstance(formdata_list, str):
+        formdata_list = json.loads(formdata_list)
     for form_item in formobject_items:
-        if form_item['type'] == 'h_group':
-            config = form_item['config']
-            group_req = config.get('require',False)
-            user_req = config.get('user_require',False)
-            if group_req or user_req :
-                status = False
-            else:
-                status = True
-                
-            for data_item in formdata:
-                if data_item['id'] == form_item['id']:
+        if form_item['id'][:8] == 'FORMITM_':
+            if form_item['type'] == 'h_group':
+                config = form_item['config']
+                group_req = config.get('require',False)
+                user_req = config.get('user_require',False)
+                if group_req or user_req :
+                    status = False
+                else:
                     status = True
-                    group = data_item['value']['group']
-                    user = data_item['value']['user']
-                    if user_req:
-                        if user == None or user == '':
-                            status = False
-                    if group_req:
-                        if group == None or group == '':
-                            status = False
-                    break
-            
-            if not status:
-                break
-        else:
-            config = form_item['config']
-            require = config.get('require',False)
-            regex = config.get('regex','')
-            
-            if require :
-                status = False
-            else:
-                status = True
+                    
+                for data_item in formdata_list:
+                    if data_item['id'] == form_item['id']:
+                        status = True
+                        group = data_item['value']['group']
+                        user = data_item['value']['user']
+                        if user_req:
+                            if user == None or user == '':
+                                status = False
+                        if group_req:
+                            if group == None or group == '':
+                                status = False
+                        break
                 
-            for data_item in formdata:
-                if data_item['id'] == form_item['id']:
-                    status = True
-                    value = data_item['value']
-                    if require:
-                        if not value:
-                            status = False
-                    if regex:
-                        REGEX = re.compile(regex)
-                        if not REGEX.match(value):
-                            status = False
+                if not status:
                     break
-            if not status:
-                break
+            else:
+                config = form_item['config']
+                require = config.get('require',False)
+                regex = config.get('regex','')
+                if require :
+                    status = False
+                else:
+                    status = True
+                for data_item in formdata_list:
+                    if data_item['id'] == form_item['id']:
+                        status = True
+                        value = data_item['value']
+                        if require:
+                            if value or value == 0:
+                                pass
+                            else:
+                                status = False
+                        if regex:
+                            REGEX = re.compile(regex)
+                            if not REGEX.match(value):
+                                status = False
+                        break
+                if not status:
+                    break
     return status
 
 
@@ -238,31 +259,42 @@ def DatatableBuilder(request, queryset, filed_list):
     result_change = {}
     ordercolumn_list = []
     #data from datatable
-    postdata = request.POST
-    draw = int(postdata.get('draw'))
-    order = 0
-    while order >= 0:
-        i = postdata.get('order['+ str(order) +'][column]','')    #排序欄位值  int
-        if i:
-            ordercolumn_list.append(postdata.get('columns['+i+'][data]'))  #排序欄位名稱  str
-            order += 1
-        else:
-            order = -999
-    searchkey = postdata.get('search[value]',' ')       #搜尋關鍵字
-    orderdir = postdata.get('order[0][dir]')            #排序方式:asc,desc  str
-    length = int(postdata.get('length'))                #列表顯示長度  int
-    start = int(postdata.get('start'))                  #列表顯示起始位置  int
+    
+    postdata = json.loads(request.body.decode('UTF-8'))
+    draw = postdata.get('draw')
+#     order = 0
+#     while order >= 0:
+#         i = postdata.get('order['+ str(order) +'][column]','')    #排序欄位值  int
+#         if i:
+#             ordercolumn_list.append(postdata.get('columns['+i+'][data]'))  #排序欄位名稱  str
+#             order += 1
+#         else:
+#             order = -999
+    for col in postdata.get('order'):
+        if col['dir'] == 'asc':
+            ordercolumn_list.append(postdata['columns'][col['column']]['data'])
+        elif col['dir'] == 'desc':
+            ordercolumn_list.append('-'+postdata['columns'][col['column']]['data'])
+    searchkey = postdata['search'].get('value','')             #搜尋關鍵字
+#     orderdir = postdata.get('order[0][dir]')           #排序方式:asc,desc  str
+    length = postdata.get('length')                     #列表顯示長度  int
+    start = postdata.get('start')                       #列表顯示起始位置  int
+    limit = start + length
     lst = SearchQueryBuilder(filed_list,searchkey)
-    if orderdir == "asc":                                   #判斷排序方式          Q搜尋包含search關鍵字
-        table_dict = list(queryset.filter(reduce(operator.or_, lst)).order_by(*ordercolumn_list))
-    else:
-        table_dict = list(queryset.filter(reduce(operator.or_, lst)).order_by(*ordercolumn_list).reverse())
+#     if orderdir == "asc":                                   #判斷排序方式          Q搜尋包含search關鍵字
+    thislist = list(queryset.filter(reduce(operator.or_, lst)).order_by(*ordercolumn_list)[start:limit])
+#     else:
+#         thislist = list(queryset.filter(reduce(operator.or_, lst)).order_by(*ordercolumn_list).reverse()[start:limit])
     
     totalrecords = queryset.count()                         #計算總共取出資料筆數
     pagenumber = start/length + 1                           #現在頁數
-    recordsfiltered = len(table_dict)                       #計算關鍵字過濾後資料筆數
-    paginator = Paginator(table_dict,length)                #資料以列表顯示長度length做分頁
-    thislist = paginator.page(pagenumber).object_list       #以現在頁數pagnumber取得資料清單
+    recordsfiltered = queryset.filter(reduce(operator.or_, lst)).order_by(*ordercolumn_list).count()    #計算關鍵字過濾後資料筆數
+#     paginator = Paginator(table_dict,length)                #資料以列表顯示長度length做分頁
+#     try:
+#         thislist = paginator.page(pagenumber).object_list       #以現在頁數pagnumber取得資料清單
+#     except:
+#         thislist = 'page_null'
+#     if thislist != 'page_null':
     recordsNum = len(thislist)
     thislist = DataFormat(thislist)
     #check draw is 1 or not
@@ -394,7 +426,7 @@ def try_except(fun):
                 error('Parameter is None',e)
             else:
                 error(args[0],e)
-            return ResponseAjax(statusEnum.no_permission, e.__str__()).returnJSON()
+            return ResponseAjax(statusEnum.error, e.__str__()).returnJSON()
     return handle_problems
 
 
@@ -433,14 +465,19 @@ def FormatToFormdataList(item, input_value, formdata_list):
     formdata_dict['id'] = item['id']
     formdata_dict['type'] = item['type']
     if item['type'] == 'checkbox':
+        if input_value == None or input_value == '':
+            formdata_dict['value'] = input_value
         #如果是自動填入 格式為xxx,xxx,xxx
-        if '[' in input_value:
+        elif '[' in input_value:
             formdata_dict['value'] = json.loads(input_value)
         #如果是前端回傳 格式為['xxx','xxx','xxx']
         else:
             formdata_dict['value'] = input_value.split(',')
     elif item['type'] == 'h_group':
-        if '{' in input_value:
+        if input_value == None or input_value == '':
+            group = ''
+            user = ''
+        elif '{' in input_value:
             json_input_value = json.loads(input_value)
             group = json_input_value['group']
             user = json_input_value['user']
@@ -468,22 +505,180 @@ def FormatToFormdataList(item, input_value, formdata_list):
         formdata_list.append(level_dict)
         formdata_dict['value'] = input_value
     elif item['type'] == 'h_status':
+        text = ''
         lists = item['config']['lists']
         for l in lists:
             if l['value'] == input_value:
                 text = l['text']
-            else:
-                text = ''
+                break
         status_dict = {'id':'status','type':'header','value':text}
         formdata_list.append(status_dict)
         formdata_dict['value'] = input_value
     else:
         formdata_dict['value'] = input_value
     formdata_list.append(formdata_dict)
+
+
+def FormatFormdataListToFormdata(formdata_list):
+    formdata = {}
+    for item in formdata_list:
+        item_id = item['id'].lower()
+        value = item['value']
+        if isinstance(value, dict):
+            new_value = json.dumps(value)
+        elif isinstance(value, list):
+            new_value = json.dumps(value)
+        elif isinstance(value, str):
+            new_value = value
+        elif value == None:
+            new_value = ''
+        else:
+            new_value = str(value)
+        formdata[item_id] = new_value
+    return formdata
+
+
+def merge_formobject_items(items_list):
+    try:
+        merge_dict = {}
+        for items in items_list:
+            for item in items:
+                item_id = item['id']
+                if item_id[:8] == 'FORMITM_':
+                    if item['type'] in ['h_status','h_group','list','checkbox']:
+                        if merge_dict.get(item_id,''):
+                            ex_item = merge_dict.get(item_id,'')
+                            ex_item_list = ex_item['config']['lists']
+                            now_item_list = item['config']['lists']
+                            ex_value_list = []
+                            for el in ex_item_list:
+                                ex_value_list.append(el['value'])
+                            for l in now_item_list:
+                                if l['value'] not in ex_value_list:
+                                    ex_item_list.append(l)
+                    merge_dict[item_id] = item
+    except:
+        merge_dict = {}
+    finally:
+        return merge_dict
+
     
-def check_ldap_app():
+def check_app(app_name):
     app_list = settings.INSTALLED_APPS
-    if 'omldap' in app_list:
+    if app_name in app_list:
         return True
     else:
         return False
+
+
+def getAppAttr(app_attr_num):
+    try:
+        s = 'user'
+        if isinstance(app_attr_num, str):
+            app_attr_num = int(app_attr_num)
+        if app_attr_num == 1:
+            s = 'sys'
+        elif app_attr_num == 2:
+            s = 'lib'
+        elif app_attr_num == 3:
+            s = 'cloud'
+        elif app_attr_num == 4:
+            s = 'policy'
+    except:
+        pass
+    finally:
+        return s
+
+
+def getPolicyAttr(policy_attr_num):
+    try:
+        if isinstance(policy_attr_num, str):
+            policy_attr_num = int(policy_attr_num)
+        if policy_attr_num == 1:
+            s = 'sch'
+        elif policy_attr_num == 2:
+            s = 'api'
+        else:
+            s = 'sch'
+    except:
+        pass
+    finally:
+        return s
+
+
+def getUserName(user_id):
+    try:
+        nick_name = OmUser.objects.get(id=user_id).nick_name
+    except:
+        nick_name = ''
+    finally:
+        return nick_name
+
+
+def getGroupName(group_id):
+    try:
+        display_name = OmGroup.objects.get(id=group_id).display_name
+    except:
+        display_name = ''
+    finally:
+        return display_name
+
+
+def checkMigrate():
+    if GlobalObject.__statusObj__.get('first_migrate',False):
+        pass
+    else:
+        GlobalObject.__statusObj__['first_migrate'] = True
+        call_command('migrate', app_label='omformmodel')
+
+
+class License():
+    def __init__(self):
+        if license_file_checker() == LOCAL_PORT:
+            self.check = True
+        else:
+            self.check = False
+    
+    
+    def getVersionType(self):
+        if self.check:
+            return getVersionType()
+        else:
+            return 'C'
+    
+    
+    def getUsers(self):
+        if self.check:
+            return getUsers()
+        else:
+            return 5
+    
+    
+    def getApps(self):
+        if self.check:
+            return getApps()
+        else:
+            return 2
+    
+    
+    def getDevices(self):
+        if self.check:
+            return getDevices()
+        else:
+            return 0
+    
+    
+    def getCustomer(self):
+        if self.check:
+            return getCustomer()
+        else:
+            return ''
+    
+    
+    def getVersion(self):
+        if self.check:
+            return getVersion()
+        else:
+            return getVersion()
+        
+    

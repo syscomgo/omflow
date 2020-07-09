@@ -40,10 +40,10 @@ class FormModel():
             with open(file_path,"w",encoding="utf-8") as f:
                 f.write(file_data)
         
-        def updateModel(file_path,model_name,file_content,form_item_counter):
+        def updateModel(file_path, model_name, form_item_counter):
             '''
             update model
-            input: file_content
+            input: file_path, model_name, form_item_counter
             return: None
             author: Kolin Hsu
             '''
@@ -53,12 +53,11 @@ class FormModel():
             get_model_start_line = False
             next_line_is_json = False
             change = True
-            file_content = file_content.replace("#<new here>","")
             with open(file_path, "r", encoding="utf-8") as f:
                 for line in f:
-                    #search flow model start line
+                    #搜尋這個model的第一行
                     if get_model_start_line:
-                        #the model 2nd line is max form_item_count
+                        #model的第二行是max form_item_count
                         if next_line_is_json:
                             max_item_count = int(line[1:])
                             next_line_is_json = False
@@ -70,6 +69,14 @@ class FormModel():
                             else:
                                 file_data += "#<" + model_name + " start>\n"
                                 line = "#" + str(form_item_counter) + "\n"
+                        elif max_item_count == 0:
+                            if 'init_data = ' in line:
+                                file_data += line
+                                while max_item_count < form_item_counter:
+                                    max_item_count += 1
+                                    file_data += "    " + "formitm_" + str(max_item_count) + " = models.TextField(null=True,blank=True)\n"
+                                line = ""
+                                get_model_start_line = False
                         else:
                             #find max field
                             field = 'formitm_' + str(max_item_count)
@@ -88,7 +95,6 @@ class FormModel():
                             next_line_is_json = True
                         file_data += line
             if change:
-                #file_data += file_content
                 with open(file_path,"w",encoding="utf-8") as f:
                     f.write(file_data)
             return change
@@ -110,10 +116,10 @@ class FormModel():
             file_content += code_space + "dataid_header = models.CharField(verbose_name= _('資料代碼'), max_length=3)\n"
             file_content += code_space + "data_no = models.IntegerField(verbose_name = _('資料編號'), null=True, blank=True)\n"
             file_content += code_space + "history = models.BooleanField(verbose_name = _('歷史資料'), default=False)\n"
-            file_content += code_space + "status = models.CharField(verbose_name= _('狀態'), max_length=20,null=True, blank=True)\n"
-            file_content += code_space + "title = models.CharField(verbose_name= _('標題'), max_length=20,null=True, blank=True)\n"
-            file_content += code_space + "level = models.CharField(verbose_name= _('燈號'), max_length=20,null=True, blank=True)\n"
-            file_content += code_space + "group = models.CharField(verbose_name= _('受派群組'), max_length=20,null=True, blank=True)\n"
+            file_content += code_space + "status = models.CharField(verbose_name= _('狀態'), max_length=200,null=True, blank=True)\n"
+            file_content += code_space + "title = models.CharField(verbose_name= _('標題'), max_length=200,null=True, blank=True)\n"
+            file_content += code_space + "level = models.CharField(verbose_name= _('燈號'), max_length=200,null=True, blank=True)\n"
+            file_content += code_space + "group = models.CharField(verbose_name= _('受派群組'), max_length=500,null=True, blank=True)\n"
             file_content += code_space + "closed = models.BooleanField(verbose_name = _('關閉標記'), default=False)\n"
             file_content += code_space + "stop_uuid = models.TextField(verbose_name = _('關卡'), blank=True, null=True)\n"
             file_content += code_space + "stop_chart_type = models.TextField(verbose_name = _('關卡類型'), blank=True, null=True)\n"
@@ -128,6 +134,7 @@ class FormModel():
             file_content += code_space + "data_param = models.TextField(verbose_name = _('流程參數'), null=True,blank=True)\n"
             file_content += code_space + "error_message = models.TextField(verbose_name = _('錯誤訊息'), null=True,blank=True)\n"
             file_content += code_space + "init_data = models.ForeignKey('self', blank=True, null=True, related_name='extra_data', verbose_name = _('初始資料'), on_delete=models.CASCADE)\n"
+            file_content += code_space + "is_child = models.BooleanField(verbose_name = _('子單'), default=False)\n"
             for i in range(form_item_counter):
                 file_content += code_space + "formitm_" + str(i+1) + " = models.TextField(null=True,blank=True)\n"
             file_content += code_space + "objects = FormatManager()\n"
@@ -148,7 +155,7 @@ class FormModel():
             file_content += code_space + "flow_uuid = models.UUIDField(verbose_name= _('流程編號'), null=True, blank=True)\n"
             file_content += code_space + "data_no = models.IntegerField(verbose_name = _('資料編號'), null=True, blank=True)\n"
             file_content += code_space + "data_id = models.IntegerField(verbose_name = _('多重資料編號'), blank=True, null=True)\n"
-            file_content += code_space + "chart_id = models.CharField(verbose_name= _('功能點'), max_length=50,null=True, blank=True)\n"
+            file_content += code_space + "chart_id = models.CharField(verbose_name= _('功能點'), max_length=500,null=True, blank=True)\n"
             file_content += code_space + "stop_chart_type = models.TextField(verbose_name = _('關卡類型'), blank=True, null=True)\n"
             file_content += code_space + "stop_chart_text = models.TextField(verbose_name = _('關卡名稱'), blank=True, null=True)\n"
             file_content += code_space + "input_data = models.TextField(verbose_name= _('輸入參數'),null=True, blank=True)\n"
@@ -194,10 +201,10 @@ class FormModel():
             attrs['dataid_header'] = models.CharField(verbose_name= _('資料代碼'), max_length=3)
             attrs['data_no'] = models.IntegerField(verbose_name = _('資料編號'), null=True, blank=True)
             attrs['history'] = models.BooleanField(verbose_name = _('歷史資料'), default=False)
-            attrs['status'] = models.CharField(verbose_name= _('狀態'), max_length=20,null=True, blank=True)
-            attrs['title'] = models.CharField(verbose_name= _('標題'), max_length=20,null=True, blank=True)
-            attrs['level'] = models.CharField(verbose_name= _('燈號'), max_length=20,null=True, blank=True)
-            attrs['group'] = models.CharField(verbose_name= _('受派群組'), max_length=20,null=True, blank=True)
+            attrs['status'] = models.CharField(verbose_name= _('狀態'), max_length=200,null=True, blank=True)
+            attrs['title'] = models.CharField(verbose_name= _('標題'), max_length=200,null=True, blank=True)
+            attrs['level'] = models.CharField(verbose_name= _('燈號'), max_length=200,null=True, blank=True)
+            attrs['group'] = models.CharField(verbose_name= _('受派群組'), max_length=500,null=True, blank=True)
             attrs['closed'] = models.BooleanField(verbose_name = _('關閉標記'), default=False)
             attrs['stop_uuid'] = models.TextField(verbose_name = _('關卡'), blank=True, null=True)
             attrs['stop_chart_type'] = models.TextField(verbose_name = _('關卡類型'), blank=True, null=True)
@@ -212,6 +219,7 @@ class FormModel():
             attrs['data_param'] = models.TextField(verbose_name = _('流程參數'), null=True,blank=True)
             attrs['error_message'] = models.TextField(verbose_name = _('錯誤訊息'), null=True,blank=True)
             attrs['init_data'] = models.ForeignKey('self', blank=True, null=True, related_name='extra_data', verbose_name = _('初始資料'), on_delete=models.CASCADE)
+            attrs['is_child'] = models.BooleanField(verbose_name = _('子單'), default=False)
             for i in range(form_item_counter):
                 attrs['formitm_'+str(i+1)] = models.TextField(null=True,blank=True)
             attrs['objects'] = FormatManager()
@@ -221,7 +229,7 @@ class FormModel():
             attrs_vh['flow_uuid'] = models.UUIDField(verbose_name= _('流程編號'), null=True, blank=True)
             attrs_vh['data_no'] = models.IntegerField(verbose_name = _('資料編號'), null=True, blank=True)
             attrs_vh['data_id'] = models.IntegerField(verbose_name = _('多重資料編號'), blank=True, null=True)
-            attrs_vh['chart_id'] = models.CharField(verbose_name= _('功能點'), max_length=50,null=True, blank=True)
+            attrs_vh['chart_id'] = models.CharField(verbose_name= _('功能點'), max_length=500,null=True, blank=True)
             attrs_vh['stop_chart_type'] = models.TextField(verbose_name = _('關卡類型'), blank=True, null=True)
             attrs_vh['stop_chart_text'] = models.TextField(verbose_name = _('關卡名稱'), blank=True, null=True)
             attrs_vh['input_data'] = models.TextField(verbose_name= _('輸入參數'),null=True, blank=True)
@@ -247,13 +255,13 @@ class FormModel():
         self.running = True
         result = True
         model_name = 'Omdata_' + flow_uuid
-        file_content = getDefaultModel(model_name, flow_name, form_item_counter, flow_uuid)
         try:
             apps.get_registered_model('omformmodel',model_name)
-            update_result = updateModel(self.file_path, model_name, file_content, form_item_counter)
+            update_result = updateModel(self.file_path, model_name, form_item_counter)
             if update_result:
                 addModelClass(model_name, flow_name, form_item_counter, flow_uuid)
         except LookupError:
+            file_content = getDefaultModel(model_name, flow_name, form_item_counter, flow_uuid)
             createModel(self.file_path, file_content)
             addModelClass(model_name, flow_name, form_item_counter, flow_uuid)
         except Exception as e:

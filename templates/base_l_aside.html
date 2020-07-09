@@ -32,43 +32,18 @@
 	  </li>
     </div>
     
-    <div id="custom_1" style="display:None;">
-      <li class="treeview" id="custom_1">
-		<a >
-		  <i class="fa fa-folder"></i> <span>{% trans '自訂應用' %}</span>
-		  <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
-		</a>
-	  <ul class="treeview-menu">
-	  </ul>
-	  </li>
-    </div>
-    
     {%omflow_version_type as version_type%}
-    {%if version_type != "C"%}
-    <div id="servicemanage" style="display:None;">
-      <li class="treeview">
-        <a ><i class="fa fa-headphones"></i> <span>{% trans '服務管理' %}</span>
-          <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
-        </a>
-        <ul class="treeview-menu">
-          <li><a ><i class="fa fa-circle-o"></i>{% trans '行事曆' %}</a></li>
-          <li><a ><i class="fa fa-circle-o"></i>{% trans '事件管理' %}</a></li>
-          <li><a ><i class="fa fa-circle-o"></i>{% trans '事故管理' %}</a></li>
-          <li><a ><i class="fa fa-circle-o"></i>{% trans '問題管理' %}</a></li>
-          <li><a ><i class="fa fa-circle-o"></i>{% trans '資產管理' %}</a></li>
-        </ul>
-      </li>
-    </div>
-    
+    {%if version_type != "C" and perms.ommonitor.OmMonitor_Manage%}
     <div id="servermanage" style="display:None;">
       <li class="treeview">
         <a ><i class="fa fa-server"></i> <span>{% trans '資料收集' %}</span>
           <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
         </a>
         <ul class="treeview-menu">
-          <li><a ><i class="fa fa-circle-o"></i>{% trans '代理程式管理' %}</a></li>
-          <li><a ><i class="fa fa-circle-o"></i>{% trans '原則管理' %}</a></li>
-          <li><a ><i class="fa fa-circle-o"></i>{% trans '資訊收集器' %}</a></li>
+          <li><a href="/monitor/page/nodeGroupsManagePage/"><i class="fa fa-circle-o"></i>{% trans '收集器管理' %}</a></li>
+          <li><a href="/monitor/page/monitorManagePage/"><i class="fa fa-circle-o"></i>{% trans '收集器流程' %}</a></li>
+          <li><a href="/monitor/page/monitorAPIManagePage/"><i class="fa fa-circle-o"></i>{% trans '收集器API' %}</a></li>
+          <li><a href="/monitor/page/eventManagePage/"><i class="fa fa-circle-o"></i>{% trans '事件管理' %}</a></li>
         </ul>
       </li>
     </div>
@@ -84,6 +59,10 @@
           <li><a href="/flowmanage/page/flow-app/"><i class="fa fa-circle-o"></i>{% trans '應用設計' %}</a></li>
           <li><a href="/flowmanage/page/workflow-app/"><i class="fa fa-circle-o"></i>{% trans '已上架應用' %}</a></li>
           <li><a href="/flowmanage/page/scheduleflowManagePage/"><i class="fa fa-circle-o"></i>{% trans '排程設定' %}</a></li>
+          <li><a href="/flowmanage/page/parameterPage/"><i class="fa fa-circle-o"></i>{% trans '參數管理' %}</a></li>
+          {%if version_type != "C"%}
+          <li><a href="/flowmanage/page/SLAManagePage/"><i class="fa fa-circle-o"></i>{% trans '服務水準管理' %}</a></li>
+          {% endif %}
         </ul>
       </li>
     </div>
@@ -104,9 +83,14 @@
           <li><a href="/accounts/page/role-management/"><i class="fa fa-circle-o"></i>{% trans '角色管理' %}</a></li>
           <li><a href="/accounts/page/group-management/"><i class="fa fa-circle-o"></i>{% trans '組織管理' %}</a></li>
       			{% get_ldap_bool as ldap_bool %}
-      			{% if ldap_bool %}
+      			{%if version_type != "C" and ldap_bool %}
           <li><a href="/accounts/page/adgroup-management/"><i class="fa fa-circle-o"></i>{% trans 'AD檢視' %}</a></li>
        			{% endif %}
+       			{% get_org_bool as org_bool %}
+  			    {%if version_type != "C" and org_bool%}
+      	  <li><a href="/organization/page/position-management/"><i class="fa fa-circle-o"></i>{% trans '職務管理' %}</a></li>
+       	  <li><a href="/organization/page/organization-management/"><i class="fa fa-circle-o"></i>{% trans '組織圖管理' %}</a></li>
+       	  		{% endif %}
        		{% endif %}
         </ul>
       </li>
@@ -120,7 +104,6 @@
         </a>
         <ul class="treeview-menu">
           <li><a href="/page/system/"><i class="fa fa-circle-o"></i>{% trans '系統設定' %}</a></li>
-          <li><a ><i class="fa fa-circle-o"></i>{% trans '參數管理' %}</a></li>
           <li><a href="/page/file-management/"><i class="fa fa-circle-o"></i>{% trans '附加檔案維護' %}</a></li>
           <li><a href="/page/sidebar-management/"><i class="fa fa-circle-o"></i>{% trans '主選單管理' %}</a></li>
         </ul>
@@ -140,7 +123,9 @@
 		$.ajax({
     		url: "{% url 'loadLSideAjax' %}",
 			type: 'post',
-			data: {csrfmiddlewaretoken: '{{ csrf_token }}', draw_$: draw},
+			headers: { "X-CSRFToken": "{{ csrf_token }}" },
+			contentType: "application/json;charset=utf-8;",
+			data: JSON.stringify({draw_$: draw}),
 			success: function (data) {	
 				if (data.status == 200)
 				{
@@ -153,18 +138,6 @@
 					$('ul.sidebar-menu ul.treeview-menu > li > a').filter(function() {
 					    return this.href == url;
 					}).parentsUntil(".sidebar-menu > .treeview-menu").siblings().removeClass('active menu-open').end().addClass('active menu-open');
-				}
-				else if (data.status == 404)
-				{
-					omflowAlert('yellow', data.message);
-				}
-				else if (data.status == 500)
-				{
-					omflowAlert('blue', data.message);
-				}
-				else if (data.status == 403)
-				{
-					omflowAlert('red', data.message);
 				}
 				else
 				{
@@ -179,11 +152,13 @@
 					else
 					{
 						omflowAlert('red', data.message);
+						clearInterval(LSide_routine)
 					}
 					
 				}
 			},
-			 error: function(req, status, err) {
+			error: function(req, status, err) {
+			 	clearInterval(LSide_routine)
 				$('#modal_error').modal('show');
 	        	console.log('Something went wrong', status, err);
 	    	}
@@ -196,7 +171,7 @@
 		if (data.result.sidebar != null && data.result.sidebar != "" && data.result.sidebar.length != 0)
 		{
 			$('ul.sidebar-menu').empty();
-			defaultarr = ['mymission', 'custom_1', 'servicemanage', 'service', 'servermanage', 'flowmgmt', 'report', 'syssetting', 'staffmgmt']
+			defaultarr = ['mymission', 'service', 'servermanage', 'flowmgmt', 'report', 'syssetting', 'staffmgmt']
 			$.each(data.result.sidebar, function(index, value){
 				if (defaultarr.indexOf(value.id) >= 0 && (value.p_id == null | value.p_id.length == 0))
 				{
@@ -204,6 +179,10 @@
 				}
 				else if ( (value.flow_uuid == 'custom' | value.flow_uuid == 'app') && (value.p_id == null | value.p_id.length == 0))
 				{
+					{%if version_type == "C"%}
+						if (value.name == '服務管理')
+							{return}
+					{%endif%}
 					$('ul.sidebar-menu').append('<li id="'+value.id+'" class="treeview">'
 	        					+'<a ><i class="fa fa-'+value.icon+'"></i> <span>'+value.name+'</span>'
 	          					+'<span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>'

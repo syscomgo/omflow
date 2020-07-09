@@ -54,6 +54,41 @@
       <!-- /.row -->
     </section>
     
+    
+    <!-- create-role-Modal -->
+	<div class="modal fade" id="modal-create-role" data-backdrop="static">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title" id="modal-create-role-title"><i class="fa fa-plus"></i>&nbsp;&nbsp;建立權限角色</h4>
+		  </div>
+		  <div class="modal-body">
+			  <div class="row">
+	            <div class="col-md-12">
+	              <div class="form-group">
+	              	<label>角色名稱</label>
+	              	<input type="text" name="create_role" id="create_role" class="form-control" placeholder="{%trans '角色名稱'%}" required="true"/>
+	              </div>
+	              <div class="form-group">
+	              	<label>說明</label>
+	              	<input type="text" name="create_role_description" id="create_role_description" class="form-control" placeholder="{%trans '說明'%}" required="true"/>
+	              </div>
+	              <!-- /.form-group -->
+	            </div>
+	            <!-- /.col -->
+	          </div>
+	          <!-- /.row -->
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
+			<button type="button" class="btn btn-primary" data-dismiss="modal">確定</button>
+		  </div>
+		</div>
+	  </div><!-- /.modal-content -->
+	</div>
+    
     <style>
 		table tr{
 		  cursor:pointer;
@@ -66,6 +101,7 @@
     var data_tmp;
 	var data_len;
 	var data_page;
+	var checkbox_status = [];
     $(function(){
     	table = $('#rolelist').DataTable({
     		"autoWidth": false,
@@ -75,7 +111,14 @@
     		"ajax": {
            		"url": "{% url 'listGroupAjax' %}",
             	"type": "POST",
-            	"data": {"csrfmiddlewaretoken": "{{ csrf_token }}", "datatable": "True", "functional_flag": "True"},
+            	"headers": { "X-CSRFToken": csrfmiddlewaretoken },
+				"contentType": "application/json;charset=utf-8;",
+            	"data":function ( d ) {
+					return JSON.stringify($.extend( {}, d, {
+						datatable: 'True',
+						functional_flag: 'True'
+					}));
+				},
             	"dataSrc": function(data){
 						a = dataCompare(data,data_tmp,data_len,data_page,table);
 						data_tmp = a['data_tmp']
@@ -107,7 +150,19 @@
         		$.each(data.aoData, function(index, value){
         			rolename.push(value._aData);
         		});
+        		$.each(checkbox_status, function(){
+					$('.table input[type="checkbox"]#'+this).prop('checked', true);
+				});
     			check_permission();
+    		},
+    		preDrawCallback: function(settings) {
+    			checkbox_status = []
+    			$.each($('.table input[type="checkbox"]'), function(){
+    				if (this.checked)
+    				{	
+    					checkbox_status.push(this.id)
+    				}
+    			});
     		}
     	});    
     	$('.select2').select2({
@@ -125,6 +180,7 @@
 		{#如果沒OmGroup_Delete權限，將隱藏刪除角色按鈕#}
 		{% if perms.omuser.OmGroup_Delete %}
 			$('#delete_role_button').show();
+			$('#rolelist input[type="checkbox"]').prop('disabled', false);
 		{% endif %}
     }
     function filter_role()		
@@ -141,7 +197,7 @@
 	{
 		table.page.len(10);
 		table.search('');
-		table.draw();
+		table.draw(false);
 	}
     function create_role()
 	{
@@ -150,9 +206,8 @@
 		$('#modal-create-role').modal('show');
 		$('#modal-create-role button:eq(2)').off("click").on("click",function(){
 			var postdata = {};
-			postdata['csrfmiddlewaretoken']="{{ csrf_token}}";
 			postdata['group_name']=$('#create_role').val();
-			postdata['functional_flag_%B']="True";
+			postdata['functional_flag']="True";
 			postdata['p_id']="";
 			postdata['description']=$('#create_role_description').val();
 			$('#modal-create-role').on('hidden.bs.modal', function () {
@@ -173,7 +228,6 @@
 		omflowListDialogue("delete", "{% trans '下列角色將被刪除' %}")
 		$('#modal-default-list button:eq(2)').off("click").on("click",function(){
 			var postdata = {
-				csrfmiddlewaretoken : csrfmiddlewaretoken,
 				group_name			: []
 			};
 			$.each($('.table input:checkbox:checked'), function(){
@@ -197,7 +251,7 @@
 		Swal.close();
 		if(data.status == 200)
 		{	
-			table.draw();
+			table.draw(false);
 			Swal.fire({
 	      	  icon : 'success',
 	      	  title: data.message,
@@ -212,7 +266,7 @@
 			omflowAlert('yellow', data.message);
 		}
 	}
-	var table_routine = setInterval(function(){ table.draw();}, {{user.frequency}}*1000);
+	var table_routine = setInterval(function(){ table.draw(false);}, {{user.frequency}}*1000);
     </script>
 
 {% endblock %}

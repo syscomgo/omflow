@@ -45,7 +45,7 @@ class Scheduler(models.Model):
     every = models.CharField(verbose_name= _('每次'),max_length=50,null=True, blank=True)
     cycle = models.CharField(verbose_name= _('週期'), max_length=50,choices=Recurrence,null=True, blank=True)
     cycle_date = models.CharField(verbose_name= _('週期執行日期'), max_length=50,null=True, blank=True)
-    exec_fun = models.CharField(verbose_name= _('執行功能'), max_length=50)
+    exec_fun = models.CharField(verbose_name= _('執行功能'), max_length=500)
     input_param = models.TextField(verbose_name = _('輸入參數'))
     is_active = models.BooleanField(verbose_name = _('啟用/停用'), default=True)
     last_exec_time = models.TextField(verbose_name = _('上次執行時間'), null=True, blank=True)
@@ -65,7 +65,6 @@ class QueueData(models.Model):
     Queue Data
     author: Kolin Hsu
     '''
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     queue_id = models.TextField(verbose_name= _('佇列編號'), null=True, blank=True)
     name = models.CharField(verbose_name= _('名稱'), max_length=50)
     module_name = models.TextField(verbose_name= _('模組名稱'), null=True, blank=True)
@@ -102,3 +101,13 @@ def auto_delete_file_on_delete(sender, instance, **kwargs):
     if instance.file:
         if os.path.isfile(instance.file.path):
             os.remove(instance.file.path)
+
+
+class Translation(models.Model):
+    '''
+    classdocs
+    '''
+    language = models.TextField(verbose_name= _('語言'),null=True, blank=True)
+    trans = models.TextField(verbose_name= _('翻譯表'),null=True, blank=True)
+    class Meta:
+        default_permissions = ()

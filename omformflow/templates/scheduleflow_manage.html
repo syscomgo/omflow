@@ -32,7 +32,7 @@
       </div>
       <!-- box-header -->
       <div class="box-body">
-      	<table id="flow_table" class="table table-bordered table-striped">
+      	<table id="flow_table" class="table table-bordered table-striped" width="100%">
 		  <thead>
 		  	<tr>
 			  <th style="width:15px"><a><i class="fa fa-lg fa-check-square-o checkbox-toggle" style="color:SteelBlue"></i></a></th>
@@ -63,7 +63,7 @@
             <h4 class="modal-title"><i class="fa fa-lg fa-calendar" style="color:SteelBlue;"> {% trans '排程設定'%}</i></h4>
           </div>
           <div class="modal-body">
-		    <table class="table mo-margin dataTable">
+		    <table class="table mo-margin dataTable" width="100%">
 		      <col width="15%">
 		      <col width="65%">
 		      <col width="20%">
@@ -82,7 +82,7 @@
 			  </tbody>
 			</table>
 			<div id="schedule_table">
-		  	<table class="table mo-margin dataTable">
+		  	<table class="table mo-margin dataTable" width="100%">
 		      <col width="15%">
 		      <tbody>
 		      	<tr>
@@ -108,7 +108,7 @@
 		      	</tr>
 		      </tbody>
 		  	</table>
-		  	<table class="table mo-margin dataTable">
+		  	<table class="table mo-margin dataTable" width="100%">
 		      <col width="15%">
 		      <tbody>
 		      	<tr>
@@ -123,7 +123,7 @@
 		      	</tr>
 		      </tbody>
 		  	</table>
-		  	<table class="table mo-margin dataTable" name="short_period" hidden="true">
+		  	<table class="table mo-margin dataTable" name="short_period" hidden="true" width="100%">
 		  	  <col width="15%">
 		  	  <col width="40%">
 		      <tbody>
@@ -134,7 +134,7 @@
 		      	</tr>
 		      </tbody>
 		  	</table>
-		  	<table class="table mo-margin dataTable" name="week_period" hidden="true">
+		  	<table class="table mo-margin dataTable" name="week_period" hidden="true" width="100%">
 		  	  <col width="15%">
 		      <tbody>
 		      	<tr>
@@ -150,7 +150,7 @@
 		      	</tr>
 		      </tbody>
 		  	</table>
-		  	<table class="table mo-margin dataTable" name="month_period" hidden="true">
+		  	<table class="table mo-margin dataTable" name="month_period" hidden="true" width="100%">
 		  	  <col width="15%">
 		  	  <col width="10%">
 		  	  <col width="10%">
@@ -243,11 +243,11 @@
     var csrfmiddlewaretoken="{{ csrf_token }}";
     var table ;
     var formcontent = new omformeng('formcontent');
-    var flow_attr =[];
-    var is_active=[];
+    var is_active=[1,0];
     var data_tmp;
 	var data_len;
 	var data_page;
+	var checkbox_status = [];
 	var schedule_formdata = {};
 	var formtype = ''
 	var nowid = null;
@@ -266,15 +266,15 @@
 			"ajax": {
            		"url": "{% url 'listSchedulerAjax' %}",
             	"type": "POST",
+            	"headers": { "X-CSRFToken": getCookie("csrftoken") },
+            	"contentType": "application/json;charset=utf-8;",
             	"data": function ( d ) {
-							return $.extend( {}, d, {
-								csrfmiddlewaretoken: csrfmiddlewaretoken,
-								datatable: "True", 
-								worktype: "schedule",
-								deploytime: select_time,
-								flow_attr: flow_attr,
-								is_active: is_active
-							});
+							return JSON.stringify($.extend({}, d, {
+								'datatable'	:	"True",
+								'worktype':	"schedule",
+								'deploytime':	select_time,
+								'is_active':	is_active
+							}));
 						},
 				"dataSrc": function(data){
 						a = dataCompare(data,data_tmp,data_len,data_page,table);
@@ -296,9 +296,9 @@
 				{"data":"is_active", "orderable": false, "width": "45px", "render": function(data,type,row)
 					{	
 						if(data)
-	        				{return '<button class="btn btn-xs btn-success" onclick="active_flowdesign(this,'+row.id+')" style="width:36px">啟用</button>'}
+	        				{return '<button class="btn btn-xs btn-success" onclick="active_flowdesign(this,'+row.id+')">啟用</button>'}
 	        			else	
-	        				{return '<button class="btn btn-xs btn-warning" onclick="active_flowdesign(this,'+row.id+')" style="width:36px">停用</button>'}
+	        				{return '<button class="btn btn-xs btn-warning" onclick="active_flowdesign(this,'+row.id+')">停用</button>'}
 	        		}
 				},
 				{"data":"next_exec_time", "width": "150px"},
@@ -333,10 +333,22 @@
 				$('#flow_table input[type="checkbox"]').change(function(){
 			    	enablebtt();
 			    });
-			}
+			    $.each(checkbox_status, function(){
+					$('.table input[type="checkbox"]#'+this).prop('checked', true);
+				});
+			},
+			preDrawCallback: function(settings) {
+    			checkbox_status = []
+    			$.each($('.table input[type="checkbox"]'), function(){
+    				if (this.checked)
+    				{	
+    					checkbox_status.push(this.id)
+    				}
+    			});
+    		} 
 		});
 		
-		var postdata = {csrfmiddlewaretoken : csrfmiddlewaretoken, schedule: 'schedule'};
+		var postdata = {schedule: 'schedule'};
 		omflowJsonAjax(postdata, '{% url "listActiveApplicationAjax"%}', callback)
 		function callback(data){
 			if (data.status == 200)
@@ -377,28 +389,23 @@
 	
 	
 	function filter_flowdesign(){
-		omflowFilter(['filter_search','filter_type','filter_status','filter_length']);
+		omflowFilter(['filter_search','filter_status','filter_length']);
 		$('#modal-default-filter-confirm').off("click").on("click",function(){
 			is_active = [];
-			flow_attr =[];
 			var searchkey = $.trim($('#modal-default-filter #search').val());
 			var page_length = $('#modal-default-filter #page_length').val();
 			$.each($('[name="filter_status"] input:checkbox:checked'), function(){
 				is_active.push($(this).data('value'));
-			});
-			$.each($('[name="filter_type"] input:checkbox:checked'), function(){
-				flow_attr.push($(this).data('value'));
 			});
 			table.page.len(page_length);
 			table.search(searchkey).draw();
 		});
 	}
     function filter_default(){
-    	is_active = [];
-		flow_attr =[];
+    	is_active = [1,0];
     	table.page.len(10);
 		table.search('');
-    	table.draw();
+    	table.draw(false);
     }
     
     function unschedule_flowactive(){
@@ -406,7 +413,6 @@
 		
 		$('#modal-default-list button:eq(2)').off("click").on("click",function(){
 			postbody = {
-				csrfmiddlewaretoken : csrfmiddlewaretoken,
 				schedule_id			: [],
 				action		: 'delete'
 			}
@@ -424,14 +430,13 @@
     function active_flowdesign(thisbt, schedule_id){
     	$(thisbt).empty().html('<i class="fa fa-refresh fa-spin" style="text-align:center;"></i>');
 		var postbody = {
-			csrfmiddlewaretoken : csrfmiddlewaretoken,
 			schedule_id			: schedule_id
 		}
 		omflowJsonAjax(postbody,'{% url "activeScheduleAjax"%}', active_actions);
 		function active_actions(data)
 		{
 			if(data.status == 200)
-			{table.draw();}
+			{table.draw(false);}
 			else
 			{omflowAlert('yellow', data.message);}
 		}
@@ -451,7 +456,7 @@
 	      	  timer: 2000,
   		    });
 			LSide();
-			table.draw();
+			table.draw(false);
 		}	
 		else if (data.status == 404)
 		{
@@ -511,8 +516,9 @@
 			$('select[name="flowactive_select"]').val(flow_id).trigger('change').prop('disabled',true);
 			$('#schedule_setting').trigger('click');
 			$('input[name="cycle_type"]#'+cycle).prop('checked',true);
-			$('#exec_time').val(exec_time);
+			$('#exec_time').val(exec_time.slice(11));
 			display(cycle);
+			$('#modal-flow-schedule table[name="short_period"] input[name="every"]').val(every);
 			if (cycle == 'Weekly')
 			{	
 				cycle_date.forEach(function(item,index){
@@ -524,6 +530,7 @@
 				cycle_date.forEach(function(item,index){
 					$('table[name="month_period"] td[data-value="'+item+'"]').trigger('click');
 				});
+				$('#modal-flow-schedule table[name="month_period"] input[name="every"]').val(every)
 			}
 		}
 		
@@ -564,7 +571,6 @@
 			var input_param;
 			
 			var postdata = {	
-								csrfmiddlewaretoken:csrfmiddlewaretoken,
 								flow_id:　flow_id,
 								flow_uuid: flow_uuid,
 								action: action,
@@ -578,7 +584,7 @@
 			if(formtype == 'formobject')
 			{ 
 				formdata = formcontent.getData();
-				postdata['formdata'] = JSON.stringify(formdata.values) 
+				postdata['formdata'] = formdata.values 
 			}
 			else if (formtype == 'startinput')
 			{ 
@@ -586,7 +592,7 @@
 				$.each($('#initdata input'), function(){
 					formdata['values'][this.name] = this.value
 				});
-				postdata['start_input'] = JSON.stringify(formdata.values)
+				postdata['start_input'] = formdata.values
 			}
 			
 			if (formdata.checker.length == 0)
@@ -696,14 +702,13 @@
 	function formmodal(flow_uuid){
 		if(flow_uuid)
 		{
-			var postdata = {csrfmiddlewaretoken: csrfmiddlewaretoken, flow_uuid: flow_uuid};
+			var postdata = {flow_uuid: flow_uuid};
 			omflowJsonAjax(postdata, '{% url "loadFormDesignAjax"%}', loadFormDesign_callback);
 			
 			function loadFormDesign_callback(data){
 				if (data.status == 200)
 				{
-					var formobject = JSON.parse(data.result.formobject);
-					if (formobject.items.length > 0)
+					if (data.result.use_form)
 					{
 						formtype = 'formobject';
 						$('#initdata').empty()
@@ -712,7 +717,7 @@
 						formcontent.event_user_list(load_user_list);
 						formcontent.load(data.result.formobject);
 						if (nowid != null)
-						{formcontent.setData(JSON.parse(schedule_formdata[nowid]))}
+						{formcontent.setData(schedule_formdata[nowid])}
 						$('#form_setting').show();
 					}
 					else if (data.result.start_input.length > 0)
@@ -729,7 +734,11 @@
 							+'</div>');
 						})
 						if (nowid != null)
-						{schedule_formdata[nowid]}
+						{
+							$.each(schedule_formdata[nowid], function(index, value){
+								$('#initdata input[name="'+index+'"]').val(value)
+							});
+						}
 						$('#form_setting').show();
 					}
 					else
@@ -759,13 +768,15 @@
 	function load_group_list()
 	{
 		var grouplist=[];
-		var postbody = {csrfmiddlewaretoken: "{{ csrf_token }}", 'functional_flag_%B': 'False', 'ad_flag_%B': ['0']};
+		var postbody = {'functional_flag': 'False', 'ad_flag': ['0']};
 		$.ajax({
 			url	: '{% url 'listGroupAjax' %}',
 			type: 'post',
-	        data: postbody,
+			headers: { "X-CSRFToken": csrfmiddlewaretoken },
+	        data: JSON.stringify(postbody),
 	        async:false,
 	        dataType: 'json',
+	        contentType: "application/json;charset=utf-8;",
 	        success: function (data) {
 	            grouplist = data.result;
 	        },
@@ -784,8 +795,11 @@
 		$.ajax({
 			url: "{% url 'searchGroupUserAjax' %}",
 			type: 'post',
+			headers: { "X-CSRFToken": csrfmiddlewaretoken },
+			data: JSON.stringify({searchkey: group_id}),
 			async:false,
-			data: { csrfmiddlewaretoken: '{{ csrf_token }}' , searchkey: group_id},
+			dataType: 'json',
+	        contentType: "application/json;charset=utf-8;",
 			success: function (data) {
 				userlist = data.result;
 			},
@@ -797,6 +811,6 @@
 		return userlist;
 	}
 	
-	var table_routine = setInterval(function(){ table.draw();}, {{user.frequency}}*1000);
+	var table_routine = setInterval(function(){ table.draw(false);}, {{user.frequency}}*1000);
     </script>
 {% endblock %}

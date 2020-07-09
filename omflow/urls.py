@@ -17,6 +17,7 @@ from django.urls import path
 from omflow import views
 from django.urls.conf import include
 from django.conf.urls import url
+from django.views.i18n import JavaScriptCatalog
 
 urlpatterns = [
     url(r'^announcement/', include('ommessage.urls')),
@@ -25,6 +26,8 @@ urlpatterns = [
     url(r'^dashboard/', include('omdashboard.urls')),
     url(r'^service/', include('omservice.urls')),
     url(r'^my-mission/', include('ommission.urls')),
+#    url(r'^monitor/', include('ommonitor.urls')),
+#    url(r'^organization/', include('omorganization.urls')),
     path('',views.home, name='homePage'),
     url(r'^page/file-management/$',views.filePage),
     url(r'^page/403/$',views.noPermissionPage),
@@ -46,7 +49,9 @@ urlpatterns = [
     path('api/l-side/load/', views.loadLSideAjax, name='loadLSideAjax'),
     path('api/ldap-config/check-connect/', views.ldapCheckConnectAjax, name='ldapCheckConnectAjax'),
     path('api/ldap-config/ldap-manual-sync/', views.ldapManualSyncAjax, name='ldapManualSyncAjax'),
+    path('api/license-file/upload/', views.uploadLicenseFileAjax, name='uploadLicenseFileAjax'),
     url(r'^api/history-files/download/(?P<path>.+)$', views.downloadHistoryFilesAjax),
+    path('jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog'),
     #default
     #path('admin/', admin.site.urls),
 ]

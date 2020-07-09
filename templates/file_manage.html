@@ -27,7 +27,7 @@
           <div class="nav-tabs-custom">
             <ul class="nav nav-tabs">
             {% for app in app_name %}
-              <li><a id="tab_p{{forloop.counter}}" href="#p{{forloop.counter}}" data-toggle="tab" value="{{app}}">{{app}}</a></li>
+              <li><a id="tab_p{{forloop.counter}}" href="#p{{forloop.counter}}" data-toggle="tab" data-value="{{app}}">{{app}}</a></li>
             {% endfor %}
             </ul>
             <div class="tab-content">
@@ -45,6 +45,10 @@
 					  <div class="row">
   						<div class="col-md-12">
 					  	  <table id="{{app}}_table" class="table table-striped table-bordered">
+					  	  <col width="5%"></col>
+					  	  <col width="40%"></col>
+					  	  <col width="30%"></col>
+					  	  <col width="25%"></col>
 						   
 						  </table>
 					    </div>
@@ -82,7 +86,21 @@
 	var data_tmp;
 	var data_len;
 	var data_page;
+	var checkbox_status = [];
 	$(function () {
+		$.each($('.content .nav-tabs li'), function(){
+			var app_name = $(this).text();
+			var display_name = '';
+			switch (app_name){
+				case "ommessage":
+					display_name = '{% trans "訊息管理"%}'
+					break;
+				case "omformflow":
+					display_name = '{% trans "應用管理"%}'
+					break;
+			}
+			$(this).children().text(display_name)
+		});
 		$('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
 			if(table != undefined)
 			{
@@ -90,7 +108,8 @@
 				table.destroy();
 				$('#'+app_name+'_table').empty();
 			}
-			app_name = this.text;
+			app_name = $(this).data('value');
+			$('.tab-pane[name="'+app_name+'"] button[name="delete_file"]').prop('disabled', true);
 			$('#'+app_name+'_table').append('<thead>'
 			      +'<tr>'
 			      	+'<th align="center"><a><i class="fa fa-lg fa-check-square-o checkbox-toggle" style="color:SteelBlue"></i></a></th>'
@@ -103,7 +122,7 @@
 			select_time = date.getFullYear() +'-'+('0'+(date.getMonth()+1)).substr(-2)+'-'+('0'+date.getDate()).substr(-2);
 			table = $('#'+app_name+'_table').DataTable({
 				"autoWidth": false,
-				"order": [[ 3, "asc" ]], 					//	default order column[1]
+				"order": [[ 3, "desc" ]], 					//	default order column[1]
 				"serverSide": true,							//	serverside data loading
 				"dom":"<<t>'row'<'col-sm-5'i><'col-sm-7'p>>",
 				"language": __const_language__,
@@ -111,12 +130,13 @@
 				"ajax": {
 	           		"url": "{% url 'listFilesAjax' %}",
 	            	"type": "POST",
+	            	"headers": { "X-CSRFToken": csrfmiddlewaretoken },
+					"contentType": "application/json;charset=utf-8;",
 	            	"data":	function ( d ) {
-								return $.extend( {}, d, {
-							        "csrfmiddlewaretoken": "{{ csrf_token }}",
+								return JSON.stringify($.extend( {}, d, {
 							        app_name: app_name,
 							        createtime: select_time
-							    }); 
+							    })); 
 							},
 					"dataSrc": function(data){
 						a = dataCompare(data,data_tmp,data_len,data_page,table);
@@ -141,7 +161,7 @@
 	        			{return omflowSizeUnit(data)}
 	        		},
 	        		{"data": "createtime", "render": function (data)
-	        			{return data.replace(/\T/g,' ')}
+	        			{return data.replace(/\T/g,' ').slice(0, -7)}
 	        		},
 {#	        		{"data": "main_id"}#}
 	        	],
@@ -168,14 +188,35 @@
 				    	else
 				    	{
 				    		$('.tab-pane[name="'+app_name+'"] button[name="delete_file"]').prop('disabled', false);
-				    	} 
+				    	}
 				    });
+				    $.each(checkbox_status, function(){
+						$('#'+app_name+'_table input[id="'+this+'"]').trigger('click');
+					});
+					$('.checkbox-toggle').off('click').on('click',function () {
+						thistable = $(this).closest('table').attr('id');
+						if($('#'+ thistable +' input:checkbox:checked').length == 0)
+							{$('#'+ thistable +' input[type="checkbox"]').trigger('click');}
+						else
+							{$('#'+ thistable +' input[type="checkbox"]').trigger('click');}
+					});
+	    		},
+	    		preDrawCallback: function(settings) {
+	    			checkbox_status = []
+	    			$.each($('#'+app_name+'_table input[type="checkbox"]'), function(){
+	    				if (this.checked)
+	    				{	
+	    					checkbox_status.push(this.id)
+	    				}
+	    			});
 	    		}        
 	        });
 		});
 		$('#tab_p1').tab('show');
 		
 	});
+	
+	
 	function filter_search()
 	{
 		omflowFilter(['filter_search','filter_length','filter_date']);
@@ -193,26 +234,29 @@
 			
 		});
 	}
+	
+	
 	function filter_default()
 	{
 		select_time = date.getFullYear() +'-'+('0'+(date.getMonth()+1)).substr(-2)+'-'+('0'+date.getDate()).substr(-2);
 		table.page.len(10);
 		table.search('');
-		table.draw();
+		table.draw(false);
 	}
+	
+	
 	function delete_file(){
 		omflowListDialogue("delete", "{% trans '下列檔案將被刪除' %}");
 	
 		$('#modal-default-list button:eq(2)').off("click").on("click",function(){
 			var select_file = [];
-			postbody = {
-				csrfmiddlewaretoken : csrfmiddlewaretoken,
-				app_name: app_name,
-				path: select_file
-			}
 			$.each($('#'+app_name+'_table input:checkbox:checked'), function(){
 				select_file.push($(this).val());
 			});
+			postbody = {
+				app_name: app_name,
+				path: select_file
+			}
 			
 			$('#modal-default-list').on('hidden.bs.modal', function () {
 				omflowJsonAjax(postbody,'{% url "deleteFilesAjax"%}', actions);
@@ -228,10 +272,11 @@
 		});
 	}
 	
+	
 	function table_footer(api, select_size, total){
 		select_size = omflowSizeUnit(select_size);
 		total = omflowSizeUnit(total);
-		$( api.table().footer(2) ).html('<tr><th></th><th>Total</th><th>'+select_size+'/'+total+'</th><th></th><th></th></tr>');
+		$( api.table().footer(2) ).html('<tr><th></th><th>Total</th><th>'+select_size+'/'+total+'</th><th></th></tr>');
 	}
 	
 	function actions(data)
@@ -247,7 +292,7 @@
 		  	  showConfirmButton: false,
 	      	  timer: 2000,
   		    });
-  		    table.draw();
+  		    table.draw(false);
 		}	
 		else if (data.status == 404)
 		{
@@ -262,8 +307,7 @@
 			omflowAlert('red', data.message);
 		}
 	}
-	omflowCheckAll();
-	var table_routine = setInterval(function(){ table.draw();}, {{user.frequency}}*1000);
+	var table_routine = setInterval(function(){ table.draw(false);}, {{user.frequency}}*1000);
 	</script>
     
     

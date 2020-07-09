@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load i18n %} 
+{% load omflow_tags %}
 {% block content %}
 <!-- 
 	flow_design.html flowdesignPage
@@ -13,7 +14,7 @@
       </h1>
       <ol class="breadcrumb">
         <li><a href="/"><i class="fa fa-dashboard"></i> 首頁</a></li>
-		<li>流程管理</li>
+		<li>應用管理</li>
         <li><a href="/flowmanage/page/flow-app/">應用設計</a></li>
         
       </ol>
@@ -53,31 +54,43 @@
 						  <label>說明</label>
 						  <textarea rows="3" class="form-control" name="description" id="description" placeholder="流程說明" style="resize:none;"></textarea>
 					  	</div>
+					  	<div class="form-group">
+						  <input type="checkbox" class="icheckbox_minimal-blue" id="flowlog" name="flowlog"><label for="flowlog"></label>
+						  <label>執行過程紀錄(LOG)</label>
+					  	</div>
+					  	<div class="form-group">
+						  <input type="checkbox" class="icheckbox_minimal-blue" id="api" name="api"><label for="api"></label>
+						  <label>應用程式介面(API)</label>
+					  	</div>
 					  </div>
 					  <div class="col-md-6">
 					  	<div class="form-group">
 						  <label><h4>表單工作區設定:</h4></label>
 					  	</div>
 					  	<div class="form-group">
-						  <input type="checkbox" class="icheckbox_minimal-blue" id="fp_show" name="fp_show_%B"><label for="fp_show"></label>
+						  <input type="checkbox" class="icheckbox_minimal-blue" id="mission" name="mission"><label for="mission"></label>
+						  <label>是否建立任務</label>
+					  	</div>
+					  	<div class="form-group">
+						  <input type="checkbox" class="icheckbox_minimal-blue" id="fp_show" name="fp_show"><label for="fp_show"></label>
 						  <label>查看目前流程及進度</label>
 					  	</div>
 					  	<div class="form-group">
-						  <input type="checkbox" class="icheckbox_minimal-blue" id="attachment" name="attachment_%B"><label for="attachment"></label>
+						  <input type="checkbox" class="icheckbox_minimal-blue" id="history" name="history"><label for="history"></label>
+						  <label>檢視表單資料操作歷程</label>
+					  	</div>
+					  	<div class="form-group">
+						  <input type="checkbox" class="icheckbox_minimal-blue" id="attachment" name="attachment"><label for="attachment"></label>
 						  <label>附加檔案功能</label>
 					  	</div>
 					  	<div class="form-group">
-						  <input type="checkbox" class="icheckbox_minimal-blue" id="relation" name="relation_%B"><label for="relation"></label>
+						  <input type="checkbox" class="icheckbox_minimal-blue" id="relation" name="relation"><label for="relation"></label>
 						  <label>顯示資料關聯</label>
 					  	</div>
 					  	<div class="form-group">
-						  <input type="checkbox" class="icheckbox_minimal-blue" id="worklog" name="worklog_%B"><label for="worklog"></label>
+						  <input type="checkbox" class="icheckbox_minimal-blue" id="worklog" name="worklog"><label for="worklog"></label>
 						  <label>填寫及顯示工作日誌</label>
 					    </div>
-					  	<div class="form-group">
-						  <input type="checkbox" class="icheckbox_minimal-blue" id="history" name="history_%B"><label for="history"></label>
-						  <label>檢視表單資料操作歷程</label>
-					  	</div>
 					  </div>
 					</div>
 				  </div>
@@ -94,7 +107,7 @@
 						<button type="button" class="btn btn-default" onclick="permission_delete()"><i class="fa fa-trash-o" style="margin:1px 0px;"></i> 刪除</button>
 					  </div>
 					  <div class="box-body">
-						<table id="flow_permission_table" class="table table-bordered table-striped">
+						<table id="flow_permission_table" class="table table-bordered table-striped" width="100%">
 						  <thead>
 							<tr>
 							  <th style="width:15px"></th>
@@ -163,11 +176,11 @@
               	    <div class="box box-default">
               	      <div class="box-header with-dorder">
               	      	<button type="button" class="btn btn-default" onclick="create_subflowdesign()" style="margin:1px 0px;"><i class="fa fa-plus"></i> 新增</button>
-              	      	<button type="button" class="btn btn-default" onclick="delete_subflowdesign()" style="margin:1px 0px;"><i class="fa fa-trash-o"></i> 刪除</button>
+              	      	<button type="button" class="btn btn-default" onclick="delete_subflowdesign()" id="subflow_delete" style="margin:1px 0px;" disabled="true"><i class="fa fa-trash-o"></i> 刪除</button>
               	      </div>
               	      <!-- /.box-header -->
               	      <div class="box-body">
-              	      	<table class="table table-bordered table-striped" id="subflow_table">
+              	      	<table class="table table-bordered table-striped" id="subflow_table" width="100%">
               	      	  <thead>
               	      	  	<tr>
               	      	  	  <th style="width:15px"><a><i class="fa fa-lg fa-check-square-o checkbox-toggle" style="color:SteelBlue"></i></a></th>
@@ -238,6 +251,7 @@
 	</div>
     <script>
     var csrfmiddlewaretoken="{{ csrf_token }}";
+    var this_app_name = '';
     var flow_info = {};
     var formcontent = new omformeng('formcontent');
     var flowcontent = new omfloweng('flowcontent');
@@ -249,9 +263,9 @@
 	$(function () {
 		if ('{{flow_id}}' != 'newflow')
 		{
-			var getname_postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, w_flow_id: '{{ flow_id }}'};
+			var getname_postbody = {w_flow_id: '{{ flow_id }}'};
     		omflowJsonAjax(getname_postbody, '{% url "getApplicationFlowNameAjax" %}', getname_action);
-			var flow_postbody = {csrfmiddlewaretoken:csrfmiddlewaretoken, flow_id:'{{flow_id}}'};
+			var flow_postbody = {flow_id:'{{flow_id}}'};
 			omflowJsonAjax(flow_postbody, "{% url 'loadFlowWorkspaceAjax'%}", flow_action);
 	        
 	        var tabCookie = getCookie('tabCookie');
@@ -272,12 +286,20 @@
 	    }
 	    else
 	    {
-	    	var postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, w_app_id: '{{ app_id }}'};
+	    	var postbody = {w_app_id: '{{ app_id }}'};
     		omflowJsonAjax(postbody, '{% url "getApplicationFlowNameAjax" %}', getname_action);
-    		var role_postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, functional_flag: 'True', ad_flag: ['0']};
+    		var role_postbody = {functional_flag: 'True', ad_flag: ['0']};
 			omflowJsonAjax(role_postbody, "{% url 'listGroupAjax'%}", role_action);
 	    	formcontent.event_group_list(load_group_list);
+	    	formcontent.event_user_list(load_user_list);
 	    	formcontent.init(true);
+	    	
+	    	config['permission'] = [];
+	    	$('#fp_show').prop('checked',true);
+	    	$('#history').prop('checked',true);
+			$('#mission').prop('checked',true);
+			$('#flowlog').prop('checked',true);
+			$('#api').prop('checked',true);
 	    	
 	    	var uid = Date.now();
 	    	flowcontent.event_app_list(load_app_list);
@@ -286,7 +308,7 @@
 	    	flowcontent.event_group_list(load_group_list);
     		flowcontent.event_user_list(load_user_list);
 	    	flowcontent.init(true);
-	    	flowcontent.load('{"flow_item_counter":4,"flow_line_counter":3,"form_object":{"form_item_counter":0,"form_box_counter":0,"user":[],"group":[],"level":[],"title":false,"status":[],"op1":[],"op2":[],"items":[]},"is_sub":false,"subflow":[],"items":[{"id":"FITEM_1","type":"start","text":"開始","left":0,"top":0,"config":{"error_pass":false,"load_balance":false,"callable":false,"input":[{"require":false,"value":"success","name":"result","des":""}],"output":[],"subflow_input":[],"subflow_output":[],"top":0,"left":420}},{"id":"FITEM_2","type":"form","text":"人工輸入","left":0,"top":0,"config":{"calculate":[],"input":[],"output":[],"form_object":null,"form_setdata":[],"subflow_id":"","subflow_input":[],"subflow_output":[],"log":true,"top":100,"left":420,"input1":[],"input2":[],"cform_object":null,"action1":false,"action2":false,"action1_text":"","action2_text":""}},{"id":"FITEM_3","type":"switch","text":"判斷","left":0,"top":0,"config":{"calculate":[],"rules":[{"target":"FITEM_2","value1":"","value2":"","rule":"="}],"log":true,"top":200,"left":420}},{"id":"FLINE_MW1","type":"line","config":{"target_side":"top","source_side":"bottom","target_item":"FITEM_2","source_item":"FITEM_1","idcounter":1,"linebox_left":480,"linebox_top":100,"linebox_long":0,"linebox_top_width":20,"linebox_bottom_width":-20,"linebox_arrow_top":110,"linebox_arrow_left":476}},{"id":"FLINE_MW2","type":"line","config":{"target_side":"top","source_side":"bottom","target_item":"FITEM_3","source_item":"FITEM_2","idcounter":2,"linebox_left":480,"linebox_top":200,"linebox_long":0,"linebox_top_width":20,"linebox_bottom_width":-20,"linebox_arrow_top":210,"linebox_arrow_left":476}},{"id":"FLINE_MH3","type":"line","config":{"target_side":"left","source_side":"left","target_item":"FITEM_2","source_item":"FITEM_3","idcounter":3,"linebox_left":"355","linebox_top":"150","linebox_long":100,"linebox_top_width":65,"linebox_bottom_width":65,"linebox_arrow_top":146,"linebox_arrow_left":410}},{"id":"FITEM_4","type":"end","text":"結束","left":0,"top":0,"config":{"output":[{"value":"$(result)","name":"$(result)","des":""}],"calculate":[],"top":300,"left":420}}]}');
+	    	flowcontent.load('{"flow_item_counter":4,"flow_line_counter":3,"form_object":{"form_item_counter":0,"form_box_counter":0,"user":[],"group":[],"level":[],"title":false,"status":[],"op1":[],"op2":[],"items":[]},"is_sub":false,"subflow":[],"items":[{"id":"FITEM_1","type":"start","text":"開始","left":0,"top":0,"config":{"error_pass":false,"load_balance":false,"callable":false,"input":[{"require":false,"value":"success","name":"result","des":""}],"output":[],"subflow_input":[],"subflow_output":[],"top":0,"left":210}},{"id":"FITEM_2","type":"form","text":"人工輸入","left":0,"top":0,"config":{"calculate":[],"input":[],"output":[],"form_object":null,"form_setdata":[],"subflow_id":"","subflow_input":[],"subflow_output":[],"log":true,"top":100,"left":210,"input1":[],"input2":[],"cform_object":null,"action1":false,"action2":false,"action1_text":"","action2_text":""}},{"id":"FITEM_3","type":"switch","text":"判斷","left":0,"top":0,"config":{"calculate":[],"rules":[{"target":"FITEM_2","value1":"","value2":"","rule":"="}],"log":true,"top":200,"left":210}},{"id":"FLINE_MW1","type":"line","config":{"target_side":"top","source_side":"bottom","target_item":"FITEM_2","source_item":"FITEM_1","idcounter":1,"linebox_left":270,"linebox_top":100,"linebox_long":0,"linebox_top_width":20,"linebox_bottom_width":-20,"linebox_arrow_top":110,"linebox_arrow_left":266}},{"id":"FLINE_MW2","type":"line","config":{"target_side":"top","source_side":"bottom","target_item":"FITEM_3","source_item":"FITEM_2","idcounter":2,"linebox_left":270,"linebox_top":200,"linebox_long":0,"linebox_top_width":20,"linebox_bottom_width":-20,"linebox_arrow_top":210,"linebox_arrow_left":266}},{"id":"FLINE_MH3","type":"line","config":{"target_side":"left","source_side":"left","target_item":"FITEM_2","source_item":"FITEM_3","idcounter":3,"linebox_left":110,"linebox_top":150,"linebox_long":100,"linebox_top_width":100,"linebox_bottom_width":100,"linebox_arrow_top":146,"linebox_arrow_left":200}},{"id":"FITEM_4","type":"end","text":"結束","left":0,"top":0,"config":{"output":[{"value":"$(result)","name":"$(result)","des":""}],"calculate":[],"top":275,"left":210}}]}');
 	    	flowcontent.event_flow_list(load_flow_list);
 	    	flowcontent.event_flowIO_list(load_flowIO_list);
 	    	flowcontent.form(formcontent.getObject());
@@ -302,13 +324,15 @@
 		{ 
 			if (typeof data.result === 'object')
 			{
+				this_app_name = data.result.app_name;
 				$('.content-header > h1').append(data.result.flow_name+'<small>'+data.result.app_name+'</small>');
 				$('ol.breadcrumb').append('<li><a href="/flowmanage/page/flowManagePage/{{app_id}}">'+data.result.app_name+'</a></li>');
 				$('ol.breadcrumb').append('<li class="active"><a href="javascript:location.reload();">'+data.result.flow_name+'</a></li>');
 			}
 			else
 			{
-				$('.content-header > h1').append('{% trans "建立新流程"%}'+'<small>'+data.result.app_name+'</small>');
+				this_app_name = data.result;
+				$('.content-header > h1').append('{% trans "建立新流程"%}'+'<small>'+data.result+'</small>');
 				$('ol.breadcrumb').append('<li><a href="/flowmanage/page/flowManagePage/{{app_id}}">'+data.result+'</a></li>');
 				$('ol.breadcrumb').append('<li class="active"><a href="javascript:location.reload();">{% trans "建立新流程"%}</a></li>');
 			}
@@ -329,10 +353,10 @@
 			if (config['permission'] != undefined | null != config['permission'])
 			{
 				config['permission'].forEach( function(item, index){
-					$('#role_select option[value="'+item.role_name+'"]').hide();
+					$('#role_select option[value="'+item.role_name+'"]').hide().prop('disabled', true);
 					$('#flow_permission_table tbody').append('<tr>'
 					+'<td><input type="checkbox" class="icheckbox_minimal-blue" value="'+item.role_name+'" id="'+item.role_name+'"><label for="'+item.role_name+'"></label></td>'
-					+'<td><a onclick="permission_edit(\'edit\',\''+item.role_name+'\')" style="color:black;"><i class="fa fa-fw fa-edit" style="color:SteelBlue"></i></a>'+item.role_name+'</td>'
+					+'<td><a onclick="permission_edit(\'edit\',\''+item.role_name+'\')" style="color:black;cursor:pointer;"><i class="fa fa-fw fa-edit" style="color:SteelBlue"></i>'+item.role_name+'</a></td>'
 					+'<td><input type="checkbox" class="icheckbox_minimal-blue" name="view"  id="'+item.role_name+'_view" disabled><label for="'+item.role_name+'_view"></label> 允許</td>'
 					+'<td><input type="checkbox" class="icheckbox_minimal-blue" name="add"  id="'+item.role_name+'_add" disabled><label for="'+item.role_name+'_add"></label> 允許</td>'
 					+'<td><input type="checkbox" class="icheckbox_minimal-blue" name="modify" id="'+item.role_name+'_modify" disabled><label for="'+item.role_name+'_modify"></label> 允許</td>'
@@ -360,7 +384,7 @@
 		{
 			$('#flow_permission_table tbody').append('<tr>'
 				+'<td><input type="checkbox" class="icheckbox_minimal-blue" value="'+role+'" id="'+role+'"><label for="'+role+'"></label></td>'
-				+'<td><a onclick="permission_edit(\'edit\',\''+role+'\')" style="color:black;"><i class="fa fa-fw fa-edit" style="color:SteelBlue"></i></a>'+role+'</td>'
+				+'<td><a onclick="permission_edit(\'edit\',\''+role+'\')" style="color:black;cursor:pointer;"><i class="fa fa-fw fa-edit" style="color:SteelBlue"></i>'+role+'</a></td>'
 				+'<td><input type="checkbox" class="icheckbox_minimal-blue" name="view"  id="'+role+'_view" disabled><label for="'+role+'_view"></label> 允許</td>'
 				+'<td><input type="checkbox" class="icheckbox_minimal-blue" name="add"  id="'+role+'_add" disabled><label for="'+role+'_add"></label> 允許</td>'
 				+'<td><input type="checkbox" class="icheckbox_minimal-blue" name="modify" id="'+role+'_modify" disabled><label for="'+role+'_modify"></label> 允許</td>'
@@ -372,7 +396,7 @@
 			thisper[item.value] = item.checked
 		});
 		var newper = true;
-		if(config['permission'] != undefined)
+		if(config['permission'] != [])
 		{
 			$(config['permission']).each( function(index, item){
 				if (role == item.role_name)
@@ -382,15 +406,9 @@
 				}
 			});
 		}
-		else
-		{
-			config['permission'] = []
-			config['permission'].push({'role_name': role, 'value': thisper})
-			newper = false;
-		}
 		if (newper)
 		{ config['permission'].push({'role_name': role, 'value': thisper}) }
-		$('#role_select option[value="'+role+'"]').hide();
+		$('#role_select option[value="'+role+'"]').hide().prop('disabled', true);
 		$('#modal-flowdesign-permission').modal('hide');
 	}
 	
@@ -400,7 +418,7 @@
 		if(action == 'edit')
 		{
 			$('#role_select').val(role).trigger('change').prop('disabled', true);
-			$('#role_select option[value="'+role+'"]').show();
+			$('#role_select option[value="'+role+'"]').show().prop('disabled', false);
 			config['permission'].forEach( function(item, index){
 				if(item.role_name == role)
 				{
@@ -422,7 +440,7 @@
 		}
 		
 		$('#modal-flowdesign-permission').off('hidden.bs.modal').on('hidden.bs.modal', function(){
-			$('#role_select option[value="'+role+'"]').hide();
+			$('#role_select option[value="'+role+'"]').hide().prop('disabled', true);
 			$('#role_select').val('').trigger('change').prop('disabled', false);
 			$('#modal-flowdesign-permission input:checkbox').prop('checked', false);
 		});
@@ -437,7 +455,7 @@
 			if(this.checked)
 			{
 				$(this).closest('tr').remove();
-				$('#role_select option[value="'+this.value+'"]').show();
+				$('#role_select option[value="'+this.value+'"]').show().prop('disabled', false);
 				config['permission'].forEach( function(config_item, config_index){
 				if(config_item.role_name == item.value)
 				{
@@ -453,22 +471,28 @@
 	{
 		if (data.status == 200)
 		{
-			var role_postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, functional_flag: 'True', ad_flag: ['0']};
+			var role_postbody = {functional_flag: 'True', ad_flag: ['0']};
 			omflowJsonAjax(role_postbody, "{% url 'listGroupAjax'%}", role_action);
 			res = data.result;
 			config = JSON.parse(res.config);
 			$('#flow_name').val(res.flow_name);
 			$('#description').val(res.description);
+			$('#flowlog').prop('checked',config.flowlog);
+			$('#api').prop('checked',config.api);
 			$('#fp_show').prop('checked',config.fp_show);
 			$('#attachment').prop('checked',config.attachment);
 			$('#relation').prop('checked',config.relation);
 			$('#worklog').prop('checked',config.worklog);
 			$('#history').prop('checked',config.history);
+			$('#mission').prop('checked',config.mission);
+			if (config['permission'] == undefined)
+			{ config['permission'] = [] }
 			
 			flow_info['id'] = res.id;
 			
 			formcontent.init(true);
 			formcontent.event_group_list(load_group_list);
+			formcontent.event_user_list(load_user_list);
 			formcontent.load(res.formobject);
 			
 			flowcontent.event_app_list(load_app_list);
@@ -484,7 +508,7 @@
 			flowcontent.form(formcontent.getObject());
 			JSON.parse(res.flowobject).subflow.forEach(function(item,index){
 				subflows.push(item)
-				$('#subflow_table tbody').append('<tr><td><input type="checkbox" class="icheckbox_minimal-blue" id="'+item.uid+'" value="'+item.uid+'"></input><label for="'+item.uid+'"></label></td>'
+				$('#subflow_table tbody').append('<tr><td><input type="checkbox" class="icheckbox_minimal-blue" id="'+item.uid+'" value="'+item.uid+'" onchange="enablebtt()"></input><label for="'+item.uid+'"></label></td>'
 	          	      	  	  +'<td><a onclick="subflow_edit(\''+item.uid+'\')" title="編輯" style="color:black;cursor: pointer;"><i class="fa fa-fw fa-edit" style="color:SteelBlue;"></i>'+item.name+'</a></td>'
 	          	      	  	  +'<td>'+item.description+'</td></tr>');
 			});
@@ -497,16 +521,32 @@
 	};
 	
 	
+	function enablebtt()
+	{
+    	var subflow_count = $('#subflow_table input:checkbox:checked').length;
+    	if (subflow_count == 0)
+    	{
+    		$('#subflow_delete').prop('disabled', 'disabled');
+    	}
+    	else
+    	{
+    		$('#subflow_delete').prop('disabled', '');
+    	} 
+	}
+	
+	
 	function load_group_list()
 	{
 		var grouplist=[];
-		var postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, 'functional_flag_%B': 'False', 'ad_flag_%B': ['0']};
+		var postbody = {'functional_flag': 'False', 'ad_flag': ['1', '0']};
 		$.ajax({
 			url	: '{% url 'listGroupAjax' %}',
 			type: 'post',
-	        data: postbody,
+			headers: { "X-CSRFToken": csrfmiddlewaretoken },
+	        data: JSON.stringify(postbody),
 	        async:false,
 	        dataType: 'json',
+	        contentType: "application/json;charset=utf-8;",
 	        success: function (data) {
 	            grouplist = data.result;
 	        },
@@ -525,8 +565,11 @@
 		$.ajax({
 			url: "{% url 'searchGroupUserAjax' %}",
 			type: 'post',
+			headers: { "X-CSRFToken": csrfmiddlewaretoken },
+			data:  JSON.stringify({searchkey: group_id}),
 			async:false,
-			data: { csrfmiddlewaretoken: '{{ csrf_token }}' , searchkey: group_id},
+			dataType: 'json',
+	        contentType: "application/json;charset=utf-8;",
 			success: function (data) {
 				userlist = data.result;
 			},
@@ -546,9 +589,11 @@
 		$.ajax({
 			url	: '{% url 'listActiveApplicationAjax' %}',
 			type: 'post',
-	        data: postbody,
+			headers: { "X-CSRFToken": csrfmiddlewaretoken },
+	        data: JSON.stringify(postbody),
 	        async:false,
 	        dataType: 'json',
+	        contentType: "application/json;charset=utf-8;",
 	        success: function (data) {
 	            applist = data.result;
 	        },
@@ -561,16 +606,18 @@
 	}
 	
 	
-	function load_flow_list(app_id)
+	function load_flow_list(app_name)
 	{
 		var flowlist = []
-		var postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, app_id: app_id};
+		var postbody = {app_name: app_name};
 		$.ajax({
 			url	: '{% url 'listFlowActiveAjax' %}',
 			type: 'post',
-	        data: postbody,
+			headers: { "X-CSRFToken": csrfmiddlewaretoken },
+	        data: JSON.stringify(postbody),
 	        async:false,
 	        dataType: 'json',
+	        contentType: "application/json;charset=utf-8;",
 	        success: function (data) {
 	            flowlist = data.result;
 	        },
@@ -583,16 +630,18 @@
 	}
 	
 	
-	function load_flowIO_list(flow_uuid)
+	function load_flowIO_list(app_name, flow_name)
 	{	
 		var IOlist = []
-		var postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, flow_uuid: flow_uuid};
+		var postbody = {app_name: app_name, flow_name: flow_name};
 		$.ajax({
 			url	: '{% url 'getOutsideFlowAjax' %}',
 			type: 'post',
-	        data: postbody,
+			headers: { "X-CSRFToken": csrfmiddlewaretoken },
+	        data: JSON.stringify(postbody),
 	        async:false,
 	        dataType: 'json',
+	        contentType: "application/json;charset=utf-8;",
 	        success: function (data) {
 	            IOlist = data.result;
 	        },
@@ -608,13 +657,15 @@
 	function my_flow_list()
 	{
 		var myflowlist = []
-		var postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, flow_id: '{{flow_id}}', app_id: '{{app_id}}'};
+		var postbody = {flow_id: '{{flow_id}}', app_id: '{{app_id}}'};
 		$.ajax({
 			url	: '{% url 'listFlowWorkspaceAjax' %}',
 			type: 'post',
-	        data: postbody,
+			headers: { "X-CSRFToken": csrfmiddlewaretoken },
+	        data: JSON.stringify(postbody),
 	        async:false,
 	        dataType: 'json',
+	        contentType: "application/json;charset=utf-8;",
 	        success: function (data) {
 	            myflowlist = data.result;
 	        },
@@ -630,13 +681,15 @@
 	function my_flowIO_list(flow_name)
 	{	
 		var flowIOlist = []
-		var postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken,app_id: '{{app_id}}', flow_name: flow_name};
+		var postbody = {app_name: this_app_name, flow_name: flow_name};
 		$.ajax({
 			url	: '{% url 'getInsideFlowAjax' %}',
 			type: 'post',
-	        data: postbody,
+			headers: { "X-CSRFToken": csrfmiddlewaretoken },
+	        data: JSON.stringify(postbody),
 	        async:false,
 	        dataType: 'json',
+	        contentType: "application/json;charset=utf-8;",
 	        success: function (data) {
 	            flowIOlist = data.result;
 	        },
@@ -665,18 +718,19 @@
 		config.relation = $('#relation').prop('checked');
 		config.worklog = $('#worklog').prop('checked');
 		config.history = $('#history').prop('checked');
+		config.mission = $('#mission').prop('checked');
+		config.flowlog = $('#flowlog').prop('checked');
+		config.api = $('#api').prop('checked');
 		config.title_field = 0;
 		config.status_field = 0;
 		config.display_field = 0;
 		config.search_field = 0;
 	
 		flowcontent.subflow(subflows);
-		
 		var formobject = formcontent.toString();
 		var flowobject = flowcontent.toString();
 		var postbody =
 			{
-				csrfmiddlewaretoken : csrfmiddlewaretoken,
 				app_id		: {{app_id}},
 				flow_id  	: flow_info.id,
 				flow_name	: $('#flow_name').val(),
@@ -757,11 +811,12 @@
 		$('#subflow_box').append(subflow_box);
 		
 		subflow_flowcontent = new omfloweng('subflow_flowcontent');
+		subflow_flowcontent.event_app_list(load_app_list);
+		subflow_flowcontent.event_my_flow_list(my_flow_list);
 		subflow_flowcontent.init_subflow(true);
-		subflow_flowcontent.load('{"flow_item_counter":4,"flow_line_counter":3,"form_object":{"form_item_counter":0,"form_box_counter":0,"user":[],"group":[],"level":[],"title":false,"status":[],"op1":[],"op2":[],"items":[]},"is_sub":false,"subflow":[],"items":[{"id":"FITEM_1","type":"start","text":"開始","left":0,"top":0,"config":{"error_pass":false,"load_balance":false,"callable":false,"input":[{"require":false,"value":"success","name":"result","des":""}],"output":[],"subflow_input":[],"subflow_output":[],"top":0,"left":420}},{"id":"FITEM_2","type":"form","text":"人工輸入","left":0,"top":0,"config":{"calculate":[],"input":[],"output":[],"form_object":null,"form_setdata":[],"subflow_id":"","subflow_input":[],"subflow_output":[],"log":true,"top":100,"left":420,"input1":[],"input2":[],"cform_object":null,"action1":false,"action2":false,"action1_text":"","action2_text":""}},{"id":"FITEM_3","type":"switch","text":"判斷","left":0,"top":0,"config":{"calculate":[],"rules":[{"target":"FITEM_2","value1":"","value2":"","rule":"="}],"log":true,"top":200,"left":420}},{"id":"FLINE_MW1","type":"line","config":{"target_side":"top","source_side":"bottom","target_item":"FITEM_2","source_item":"FITEM_1","idcounter":1,"linebox_left":480,"linebox_top":100,"linebox_long":0,"linebox_top_width":20,"linebox_bottom_width":-20,"linebox_arrow_top":110,"linebox_arrow_left":476}},{"id":"FLINE_MW2","type":"line","config":{"target_side":"top","source_side":"bottom","target_item":"FITEM_3","source_item":"FITEM_2","idcounter":2,"linebox_left":480,"linebox_top":200,"linebox_long":0,"linebox_top_width":20,"linebox_bottom_width":-20,"linebox_arrow_top":210,"linebox_arrow_left":476}},{"id":"FLINE_MH3","type":"line","config":{"target_side":"left","source_side":"left","target_item":"FITEM_2","source_item":"FITEM_3","idcounter":3,"linebox_left":"355","linebox_top":"150","linebox_long":100,"linebox_top_width":65,"linebox_bottom_width":65,"linebox_arrow_top":146,"linebox_arrow_left":410}},{"id":"FITEM_4","type":"end","text":"結束","left":0,"top":0,"config":{"output":[{"value":"$(result)","name":"$(result)","des":""}],"calculate":[],"top":300,"left":420}}]}');
+		subflow_flowcontent.load('{"flow_item_counter":4,"flow_line_counter":3,"form_object":{"form_item_counter":0,"form_box_counter":0,"user":[],"group":[],"level":[],"title":false,"status":[],"op1":[],"op2":[],"items":[]},"is_sub":false,"subflow":[],"items":[{"id":"FITEM_1","type":"start","text":"開始","left":0,"top":0,"config":{"error_pass":false,"load_balance":false,"callable":false,"input":[{"require":false,"value":"success","name":"result","des":""}],"output":[],"subflow_input":[],"subflow_output":[],"top":0,"left":210}},{"id":"FITEM_2","type":"form","text":"人工輸入","left":0,"top":0,"config":{"calculate":[],"input":[],"output":[],"form_object":null,"form_setdata":[],"subflow_id":"","subflow_input":[],"subflow_output":[],"log":true,"top":100,"left":210,"input1":[],"input2":[],"cform_object":null,"action1":false,"action2":false,"action1_text":"","action2_text":""}},{"id":"FITEM_3","type":"switch","text":"判斷","left":0,"top":0,"config":{"calculate":[],"rules":[{"target":"FITEM_2","value1":"","value2":"","rule":"="}],"log":true,"top":200,"left":210}},{"id":"FLINE_MW1","type":"line","config":{"target_side":"top","source_side":"bottom","target_item":"FITEM_2","source_item":"FITEM_1","idcounter":1,"linebox_left":270,"linebox_top":100,"linebox_long":0,"linebox_top_width":20,"linebox_bottom_width":-20,"linebox_arrow_top":110,"linebox_arrow_left":266}},{"id":"FLINE_MW2","type":"line","config":{"target_side":"top","source_side":"bottom","target_item":"FITEM_3","source_item":"FITEM_2","idcounter":2,"linebox_left":270,"linebox_top":200,"linebox_long":0,"linebox_top_width":20,"linebox_bottom_width":-20,"linebox_arrow_top":210,"linebox_arrow_left":266}},{"id":"FLINE_MH3","type":"line","config":{"target_side":"left","source_side":"left","target_item":"FITEM_2","source_item":"FITEM_3","idcounter":3,"linebox_left":110,"linebox_top":150,"linebox_long":100,"linebox_top_width":100,"linebox_bottom_width":100,"linebox_arrow_top":146,"linebox_arrow_left":200}},{"id":"FITEM_4","type":"end","text":"結束","left":0,"top":0,"config":{"output":[{"value":"$(result)","name":"$(result)","des":""}],"calculate":[],"top":275,"left":210}}]}');
 		subflow_flowcontent.event_group_list(load_group_list);
 		subflow_flowcontent.event_user_list(load_user_list);
-		subflow_flowcontent.event_app_list(load_app_list);
 	    subflow_flowcontent.event_flow_list(load_flow_list);
 	    subflow_flowcontent.event_flowIO_list(load_flowIO_list);
 		subflow_flowcontent.form(formcontent.getObject());
@@ -827,7 +882,8 @@
 		$('#subflow_box').append(subflow_box);
 		
 		subflow_flowcontent = new omfloweng('subflow_flowcontent');
-		
+		subflow_flowcontent.event_app_list(load_app_list);
+		subflow_flowcontent.event_my_flow_list(my_flow_list);
 		subflow_flowcontent.init_subflow(true);
 		subflow_flowcontent.event_group_list(load_group_list);
 		subflow_flowcontent.event_user_list(load_user_list);
@@ -839,7 +895,6 @@
 				subflow_flowcontent.load(JSON.stringify(item));
 			}
 		});
-		subflow_flowcontent.event_app_list(load_app_list);
 	    subflow_flowcontent.event_flow_list(load_flow_list);
 	    subflow_flowcontent.event_flowIO_list(load_flowIO_list);
 	    subflow_flowcontent.form(formcontent.getObject());
@@ -942,7 +997,7 @@
 				item = subflow_flowcontent.getObject();
 				create = false;
 			}
-			$('#subflow_table tbody').append('<tr><td><input type="checkbox" class="icheckbox_minimal-blue" id="'+item.uid+'" value="'+item.uid+'"></input><label for="'+item.uid+'"></label></td>'
+			$('#subflow_table tbody').append('<tr><td><input type="checkbox" class="icheckbox_minimal-blue" id="'+item.uid+'" value="'+item.uid+'" onchange="enablebtt()"></input><label for="'+item.uid+'"></label></td>'
               	      	  	  +'<td><a onclick="subflow_edit(\''+item.uid+'\')" title="編輯" style="color:black;cursor: pointer;"><i class="fa fa-fw fa-edit" style="color:SteelBlue;"></i>'+item.name+'</a></td>'
               	      	  	  +'<td>'+item.description+'</td></tr>');
 		});
@@ -957,7 +1012,7 @@
 		{
 			subflows.push(subflow_flowcontent.getObject());
 			config.subflow.push(subflow_config);
-			$('#subflow_table tbody').append('<tr><td><input type="checkbox" class="icheckbox_minimal-blue" id="'+uid+'" value="'+uid+'"></input><label for="'+uid+'"></label></td>'
+			$('#subflow_table tbody').append('<tr><td><input type="checkbox" class="icheckbox_minimal-blue" id="'+uid+'" value="'+uid+'" onchange="enablebtt()"></input><label for="'+uid+'"></label></td>'
               	      	  	  +'<td><a onclick="subflow_edit(\''+uid+'\')" title="編輯" style="color:black;cursor: pointer;"><i class="fa fa-fw fa-edit" style="color:SteelBlue;"></i>'+new_name+'</a></td>'
               	      	  	  +'<td>'+new_des+'</td></tr>');
 			
@@ -1005,7 +1060,15 @@
 			omflowAlert('red', data.message);
 		}
 	};
-
+	
+	
+	$('#omformFlowDesign').on('keyup keypress', function(e) {
+	  var keyCode = e.keyCode || e.which;
+	  if (keyCode === 13) { 
+	    e.preventDefault();
+	    return false;
+	  }
+	});
     </script>
 	
 {% endblock %}

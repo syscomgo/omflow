@@ -70,19 +70,20 @@
     var csrfmiddlewaretoken="{{ csrf_token }}";
     var table ;
     var date = new Date();
-    var app_attr =[];
+    var app_attr = ['user','cloud','lib','sys'];
     var textFile = null; //設計檔案
     var is_active=['1','0'];
     var data_tmp;
 	var data_len;
 	var data_page;
+	var checkbox_status = [];
 	var undeploy_flag = ['0'];
     date.setDate(date.getDate() + 1);
 	select_time = date.getFullYear() +'-'+(date.getMonth()+1)+'-'+date.getDate();
     $(function () {
 		table = $('#flow_table').DataTable({
 			"autoWidth": false,
-			"order": [[ 3, "dsc" ]], 
+			"order": [[ 3, "desc" ]], 
 			"dom":"<<t>'row'<'col-sm-5'i><'col-sm-7'p>>",
 			"language": __const_language__,
 			"serverSide": true,							//	serverside data loading
@@ -91,15 +92,16 @@
 			"ajax": {
            		"url": "{% url 'listActiveApplicationAjax' %}",
             	"type": "POST",
+            	"headers": { "X-CSRFToken": csrfmiddlewaretoken },
+				"contentType": "application/json;charset=utf-8;",
             	"data": function ( d ) {
-							return $.extend( {}, d, {
-								csrfmiddlewaretoken: csrfmiddlewaretoken,
+							return JSON.stringify($.extend( {}, d, {
 								datatable: "True", 
 								undeploy_flag: undeploy_flag,
 								updatetime: select_time,
 								app_attr: app_attr,
 								
-							});
+							}));
 						},
 				"dataSrc": function(data){
 						a = dataCompare(data,data_tmp,data_len,data_page,table);
@@ -128,8 +130,7 @@
 			rowCallback: function(row, data){
 				if (data.undeploy_flag)
 				{	
-					$('td:eq(0)',row).html('')
-					$('td:last', row).html(data.version + '<button class="btn btn-xs btn-default" onclick="redeploy_app('+data.id+',\''+data.app_name+'\')" style="width:36px">降版</button>')
+					$('td:last', row).html(data.version + '  <button class="btn btn-xs btn-default" onclick="redeploy_app('+data.id+',\''+data.app_name+'\')">切換</button>')
 					$(row).css('color','#b5bbc8');
 				}
 				else
@@ -142,7 +143,19 @@
 				$('.table input[type="checkbox"]').change(function(){
 			    	enablebtt();
 			    });
-			}
+			    $.each(checkbox_status, function(){
+					$('.table input[type="checkbox"]#'+this).prop('checked', true);
+				});
+			},
+			preDrawCallback: function(settings) {
+    			checkbox_status = []
+    			$.each($('.table input[type="checkbox"]'), function(){
+    				if (this.checked)
+    				{	
+    					checkbox_status.push(this.id)
+    				}
+    			})
+    		}   
 		});
 	});
 	
@@ -167,7 +180,7 @@
 	function filter_flowdesign(){
 		omflowFilter(['filter_search','filter_type','filter_length']);
 		$('#modal-default-filter-confirm').off("click").on("click",function(){
-			app_attr =[];
+			app_attr = [];
 			var searchkey = $.trim($('#modal-default-filter #search').val());
 			var page_length = $('#modal-default-filter #page_length').val();
 			$.each($('[name="filter_type"] input:checkbox:checked'), function(){
@@ -181,6 +194,7 @@
 	
 	function flow_history()
 	{
+		$('#undeploy_flowdesign').hide();
 		undeploy_flag = ['1','0'];
 		table.order([[1,'desc'],[5,'desc'],[3,'desc']]);
 		table.ajax.reload();
@@ -188,11 +202,12 @@
 	
 	
     function filter_default(){
-		app_attr =[];
+    	$('#undeploy_flowdesign').show();
+		app_attr = ['user','cloud','lib','sys'];
 		undeploy_flag = ['0'];
     	table.page.len(10);
 		table.search('');
-    	table.draw();
+    	table.draw(false);
     }
     
     
@@ -201,7 +216,6 @@
 		
 		$('#modal-default-list button:eq(2)').off("click").on("click",function(){
 			var postbody = {
-				csrfmiddlewaretoken : csrfmiddlewaretoken,
 				app_id			: $('.table input:checkbox:checked').val(),
 			}
 			
@@ -232,12 +246,11 @@
     			lside_pid = $(value).closest('li').parent().closest('li').attr('id');
     		}	
     	}) 
-    	if (lside_pid == undefined)
+    	if (lside_pid == '')
     	{
     		lside_pid = 'custom_1';
     	}
     	var postdata = {
-    		csrfmiddlewaretoken : csrfmiddlewaretoken,
     		lside_pid 	: lside_pid,
     		ex_app_id 	: ex_app_id,
     		new_app_id	: app_id,
@@ -252,7 +265,7 @@
 		if(data.status == 200)
 		{
 			LSide();
-			table.draw();
+			table.draw(false);
 			Swal.fire({
 	      	  icon : 'success',
 	      	  title: '成功',
@@ -278,7 +291,6 @@
 	
 	
 	function workflowapp_output(){
-		omflowListDialogue('output', "{% trans '匯出下列應用' %}", output_confirm);
 		//產生
 		var makeTextFile = function (text) {
             var data = new Blob([text], {
@@ -313,12 +325,28 @@
 			app_id_list.push($(this).val());
 		});
 		
-		var postbody = {csrfmiddlewaretoken:csrfmiddlewaretoken, app_id_list: app_id_list};
+		var postbody = {app_id_list: app_id_list};
 		omflowJsonAjax(postbody, "{% url 'exportActiveApplicationAjax'%}", actions)
 		
 		function actions(data)
 		{	
-			$('body').append($('<a id="exporta" href="'+makeTextFile(JSON.stringify(data.result))+'" download="'+filename+'" style="display:none;"></a>'));
+			if (data.status == 200)
+			{
+				$('body').append($('<a id="exporta" href="'+makeTextFile(JSON.stringify(data.result))+'" download="'+filename+'" style="display:none;"></a>'));
+				omflowListDialogue('output', "{% trans '匯出下列應用' %}", output_confirm);
+			}
+			else if (data.status == 404)
+			{
+				omflowAlert('yellow', data.message);
+			}
+			else if (data.status == 500)
+			{
+				omflowAlert('blue', data.message);
+			}
+			else if (data.status == 403)
+			{
+				omflowAlert('red', data.message);
+			}
 		}
 		
 		function output_confirm()
@@ -328,7 +356,7 @@
 		}
 	}
 	
-	var table_routine = setInterval(function(){ table.draw();}, {{user.frequency}}*1000);
+	var table_routine = setInterval(function(){ table.draw(false);}, {{user.frequency}}*1000);
     </script>
     
 {% endblock %}

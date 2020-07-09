@@ -50,7 +50,7 @@
 	                <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i></button>
 	                <div class="btn-group">
 	                  <button type="button" class="btn btn-default btn-sm" onclick="delete_message('delete')"><i class="fa fa-trash-o"></i></button>
-	                  <button type="button" class="btn btn-default btn-sm"><i class="fa fa-reply"></i></button>
+	                  <button type="button" class="btn btn-default btn-sm" onclick="reply_message()"><i class="fa fa-reply"></i></button>
 	                </div>
 	                <!-- /.btn-group -->
 	                <button type="button" class="btn btn-default btn-sm" onclick="filter_search()"><i class="fa fa-search"></i></button>
@@ -100,6 +100,7 @@ var table;
 var data_tmp;
 var data_len;
 var data_page;
+var checkbox_status = [];
 $(function () {
 	list_read();
     window.onhashchange = list_read;
@@ -122,107 +123,119 @@ function listmessage()
 		$('#message_box').remove();
 		$('#listbox').show();
 		table = $('#message_table').DataTable({
-	      "autoWidth": false,
-				"order": [[ 5, "dsc" ]], 					//	default order column[1]
-				"info":     false,
-				"dom": 'rt<"bottom"p>',	
-				"language": __const_language__,
-				"serverSide": true,	
-				"ajax":{
-					"url": "{% url 'listMessagesAjax' %}",
-	            	"type": "POST",
-	            	"data": {"csrfmiddlewaretoken": csrfmiddlewaretoken,"mes_box": "{{mes_box}}"},
-	            	"dataSrc": function(data){
-							a = dataCompare(data,data_tmp,data_len,data_page,table);
-							data_tmp = a['data_tmp']
-							data_len = a['data_len']
-							data_page = a['data_page']
-							data.data = a['data.data']
-							return data.data;
-						},
-					"error": function(xhr,status,error){
-							clearInterval(table_routine);
-					}
-				},
-				"columns": [
-		            {"data": "id", "orderable": false, "render": function (data,type,row)
-	                	{return '<input type="checkbox" id="check_this_'+data+'" data-value="'+row.messages_id__subject+'" class="icheckbox_minimal-blue" value="'+data+'"><label for="check_this_'+data+'"></label>'}
-	                },
-	                {"data": "id", "render": function(data)
-	                	{return '<a href="#"><i class="fa text-yellow fa-star-o"></i></a>'}
-	                },
-	                {"data": "create_user__nick_name", "orderable": false, "render":function(data,type,row)
-	                	{if (data)
-	                		{ return '<a>'+data+'</a>'}
-	                	 else
-	                	 	{ return row.create_group__name+row.create_group__name}
-	                	}
-	                },
-		            {"data": "messages_id__subject", "orderable": false, "render":function(data,type,row)
-		            	{return '<b>' + data +'</b>  -  '+ row.content.split('※※※※※※※※※※※※※※※',1)}
-		            },
-		            {"data": "messagehistoryfiles__main_id", "orderable": false, "render":function(data)
-		            	{if (data != null)
-		            		{return '<i class="fa fa-paperclip pull-right"></i>'}
-		            	 else
-		            	 	{return ' '}
-		            	}
-		            },
-		            {"data": "createtime", "orderable": false, "render": function(data)
-		            	{
-		            		var gsDayNames = [
-							  '{% trans "周日 " %}',
-							  '{% trans "周一 " %}',
-							  '{% trans "周二 " %}',
-							  '{% trans "周三 " %}',
-							  '{% trans "周四 " %}',
-							  '{% trans "周五 " %}',
-							  '{% trans "周六 " %}'
-							];
-								            		
-		            		var now = new Date();
-		            		data = new Date(data)
-							if((now.getDate()-data.getDate()) >= 7)
-							{
-								return (data.getMonth()+1) + '月' + data.getDate() + '日' + data.getHours() + ':' + data.getMinutes();
-							}
-							else if ((now.getDate()-data.getDate()) >= 1)
-							{
-								return gsDayNames[data.getDay()] + data.getHours() + ':' + data.getMinutes();
-							}
-							else
-							{
-								return data.getHours() + ':' + data.getMinutes();
-							}
+	      	"autoWidth": false,
+			"order": [[ 5, "dsc" ]], 					//	default order column[1]
+			"info":     false,
+			"dom": 'rt<"bottom"p>',	
+			"language": __const_language__,
+			"serverSide": true,	
+			"ajax":{
+				"url": "{% url 'listMessagesAjax' %}",
+            	"type": "POST",
+            	"data": {"csrfmiddlewaretoken": csrfmiddlewaretoken,"mes_box": "{{mes_box}}"},
+            	"dataSrc": function(data){
+						a = dataCompare(data,data_tmp,data_len,data_page,table);
+						data_tmp = a['data_tmp']
+						data_len = a['data_len']
+						data_page = a['data_page']
+						data.data = a['data.data']
+						return data.data;
+					},
+				"error": function(xhr,status,error){
+						clearInterval(table_routine);
+				}
+			},
+			"columns": [
+	            {"data": "id", "orderable": false, "render": function (data,type,row)
+                	{return '<input type="checkbox" id="check_this_'+data+'" data-value="'+row.messages_id__subject+'" class="icheckbox_minimal-blue" value="'+data+'"><label for="check_this_'+data+'"></label>'}
+                },
+                {"data": "id", "render": function(data)
+                	{return '<a href="#"><i class="fa text-yellow fa-star-o"></i></a>'}
+                },
+                {"data": "create_user__nick_name", "orderable": false, "render":function(data,type,row)
+                	{if (data)
+                		{ return '<a>'+data+'</a>'}
+                	 else
+                	 	{ return row.create_group__name+row.create_group__name}
+                	}
+                },
+	            {"data": "messages_id__subject", "orderable": false, "render":function(data,type,row)
+	            	{return '<b>' + data +'</b>  -  '+ row.content.split('※※※※※※※※※※※※※※※',1)}
+	            },
+	            {"data": "messagehistoryfiles__main_id", "orderable": false, "render":function(data)
+	            	{if (data != null)
+	            		{return '<i class="fa fa-paperclip pull-right"></i>'}
+	            	 else
+	            	 	{return ' '}
+	            	}
+	            },
+	            {"data": "createtime", "orderable": false, "render": function(data)
+	            	{
+	            		var gsDayNames = [
+						  '{% trans "周日 " %}',
+						  '{% trans "周一 " %}',
+						  '{% trans "周二 " %}',
+						  '{% trans "周三 " %}',
+						  '{% trans "周四 " %}',
+						  '{% trans "周五 " %}',
+						  '{% trans "周六 " %}'
+						];
+							            		
+	            		var now = new Date();
+	            		data = new Date(data.replace(/-/g, "/").slice(0,-7))
+						if((now.getDate()-data.getDate()) >= 7)
+						{
+							return (data.getMonth()+1) + '月' + data.getDate() + '日' + data.getHours() + ':' + data.getMinutes();
 						}
-		            }
-		            
-	  			],
-	  			rowCallback: function (row, data) {
-	  				if (data.messagebox__read == false)
-	  				{ $(row).css('font-weight','bold').addClass('selected'); }
-	  				$(row).data('id',data.id);
-	  				$('td:eq(1)', row).addClass('mailbox-star');
-	  			},
-	  			drawCallback: function () {
-	  				$('#message_table tbody tr').on('click', 'td:eq(2), td:eq(3), td:eq(4), td:eq(5)', function(){
-						var messagehistory_id = $(this).parent().data('id');
-						location.hash=messagehistory_id;
-						LHeader();
-			   		});
-			   		$(".mailbox-star").click(function (e) {
-				    	e.preventDefault();
-				      	//detect type
-				      	var $this = $(this).find("a > i");
-				      	var fa = $this.hasClass("fa");
-				
-				      	//Switch states
-				      	if (fa) {
-				        	$this.toggleClass("fa-star");
-				        	$this.toggleClass("fa-star-o");
-				      	}
-				    });
-			   	}
+						else if ((now.getDate()-data.getDate()) >= 1)
+						{
+							return gsDayNames[data.getDay()] + data.getHours() + ':' + data.getMinutes();
+						}
+						else
+						{
+							return data.getHours() + ':' + data.getMinutes();
+						}
+					}
+	            }
+	            
+  			],
+  			rowCallback: function (row, data) {
+  				if (data.messagebox__read == false)
+  				{ $(row).css('font-weight','bold').addClass('selected'); }
+  				$(row).data('id',data.id);
+  				$('td:eq(1)', row).addClass('mailbox-star');
+  			},
+  			drawCallback: function () {
+  				$('#message_table tbody tr').on('click', 'td:eq(2), td:eq(3), td:eq(4), td:eq(5)', function(){
+					var messagehistory_id = $(this).parent().data('id');
+					location.hash=messagehistory_id;
+					LHeader();
+		   		});
+		   		$(".mailbox-star").click(function (e) {
+			    	e.preventDefault();
+			      	//detect type
+			      	var $this = $(this).find("a > i");
+			      	var fa = $this.hasClass("fa");
+			
+			      	//Switch states
+			      	if (fa) {
+			        	$this.toggleClass("fa-star");
+			        	$this.toggleClass("fa-star-o");
+			      	}
+			    });
+			    $.each(checkbox_status, function(){
+					$('.table input[type="checkbox"]#'+this).prop('checked', true);
+				});
+		   	},
+		   	preDrawCallback: function(settings) {
+    			checkbox_status = []
+    			$.each($('.table input[type="checkbox"]'), function(){
+    				if (this.checked)
+    				{	
+    					checkbox_status.push(this.id)
+    				}
+    			})
+    		}   
 	    });
 	}
 
@@ -286,7 +299,7 @@ function readmessage(messagehistory_id){
 				                +'<h3 id="message_from">'+data.result.messagehistory.create_user__nick_name+data.result.messagehistory.create_group_name+'</h3>'
 				                +'<p></p>'
 				                +'<h5 id="message_to">'+data.result.receivers
-								+'<span class="mailbox-read-time pull-right"><h5>'+data.result.messagehistory.createtime.replace(/\T/g,' ')+'</h5></span></h5>'
+								+'<span class="mailbox-read-time pull-right"><h5>'+data.result.messagehistory.createtime.slice(0,-7)+'</h5></span></h5>'
 				              +'</div>'
 				              +'<div class="mailbox-read-message">'
 				              +'<textarea id="message_content" class="form-control" style="resize:none;font-size:20px; height: 300px" readonly>'+data.result.messagehistory.content+'</textarea>'
@@ -304,6 +317,11 @@ function readmessage(messagehistory_id){
 			console.log('Something went wrong', status, err);
 		}
 		});
+}
+
+function reply_message()
+{
+	replyall($('#message_table input:checkbox:checked').val());
 }
 
 function replyall(messagehistory_id){
@@ -352,7 +370,7 @@ function actions(data)
 	}
 }
 
-var table_routine =setInterval(function(){ table.draw();}, {{user.frequency}}*1000);
+var table_routine =setInterval(function(){ table.draw(false);}, {{user.frequency}}*1000);
 </script>
 
 {% endblock %}

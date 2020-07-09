@@ -63,7 +63,7 @@
     var const_home = "{% trans '首頁'%}",
     	const_word = "{% trans '顯示文字'%}",
     	const_meter_bar = "{% trans '計量條'%}",
-    	const_tube = "{% trans '水管圖'%}",
+    	const_tube = "{% trans '計量圖'%}",
     	const_line = "{% trans '折線圖'%}",
     	const_bar = "{% trans '長條圖'%}",
     	const_world = "{% trans '世界地圖'%}",
@@ -98,6 +98,7 @@
     	const_val_min = "{% trans '最小值'%}",
     	const_val_sum = "{% trans '總和'%}",
     	const_val_count = "{% trans '數量'%}",
+    	const_first_color = "{% trans '資料起始顏色'%}",
 		const_color_blue = "{% trans '藍'%}",
 		const_color_sky = "{% trans '青'%}",
 		const_color_green = "{% trans '綠'%}",
@@ -148,7 +149,7 @@
             '</div>',
 		setChartColor:
             '<div class="form-group">'+
-                '<label class="text-light-blue">'+const_color+'</label>'+
+                '<label class="text-light-blue">'+const_first_color+'</label>'+
                 '<div></div>'+
                 '<input name="showColor" style="display:inline-block;width:20%;top:-1px;position:relative;" class="form-control" readOnly></input>'+
                 '<select style="display:inline-block;width:80%;" name="setColor" class="form-control select2" >'+
@@ -429,7 +430,7 @@
 		$(".borderHide").removeClass("no-border-top");
 		$('#DashboardRoot [id^=ID_]').prop("draggable",true).css('cursor','move');
 		$("#DashboardRoot .btn-box-tool").show();
-		$(".box-header .pull-right").show('fade');
+		//$(".box-header .pull-right").show('fade');
 		$("#read-mode_edit").hide();
 		$("#edit-mode_save").show('fade');
 		$("#edit-mode_cancel").show('fade');
@@ -448,40 +449,25 @@
 		$("#edit-mode_cancel").nextAll().hide();
 	}
     function DashboardRoot_load(){
-		var postbody = {csrfmiddlewaretoken:csrfmiddlewaretoken};
 		var callback = function(){
 			const duration = performance.now() - startTime;
-{#			console.log(`DashboardRoot_load：${duration}ms`);#}
 			data = arguments[0];
 			if (data.status==200){
 				const startTime2 = performance.now();
 				DashboardRoot_input(JSON.parse(data.result[0].content));
 				const duration2 = performance.now() - startTime2;
-{#				console.log(`DashboardRoot_input：${duration2}ms`);#}
 				old_box_object = JSON.stringify(box_object);
 				DO_readmode();
 			}else{actions(data)}
 		}
 	    const startTime = performance.now();
-		omflowJsonAjax(postbody,"{% url 'loadDashboardAjax'%}",callback);
+		omflowJsonAjax({},"{% url 'loadDashboardAjax'%}",callback);
 	}
 	function DashboardRoot_save(){
 		build_object_tree();
 		old_box_object = JSON.stringify(box_object);
-		var postdata = {  csrfmiddlewaretoken: csrfmiddlewaretoken, content: JSON.stringify(box_object) };
-		$.ajax({
-			url: "{% url 'saveDashboardAjax' %}",
-			type: 'post',
-			data: postdata,
-			success: function (data) {
-				if (data.status==200){
-				}else{actions(data)}
-			},
-			error: function(req, status, err) {
-				$('#modal_error').modal('show');
-				console.log('Something went wrong', status, err);
-			},complete: function(){}
-		});
+		var postdata = { content: JSON.stringify(box_object) };
+		omflowJsonAjax(postdata,"{% url 'saveDashboardAjax'%}", function(){});
 		DO_readmode();
 		//$(".omflow-box-header").off("hover");
 	}
@@ -704,7 +690,7 @@
 					'<div class="info-box '+item.setting.setColor+'" style="margin-bottom:0px;">'+
 		            	'<span class="info-box-icon"><i class="'+item.setting.setIcon+'"></i></span>'+
 						'<div class="info-box-content">'+
-							'<span class="info-box-text">'+item.setting.setTitle+'</span>'+
+							//'<span class="info-box-text">'+item.setting.setTitle+'</span>'+
 							'<span class="info-box-number">0'+item.setting.setUnit+'</span>'+
 							'<div class="progress">'+
 								'<div class="progress-bar" style="width: 0%"></div>'+
@@ -788,7 +774,7 @@
     	else
 			return;
 		
-		postdata={
+		var postdata={
 			type:item.type,
 			form:item.setting.setForm,
 			column:[],
@@ -802,11 +788,9 @@
 				value:item.setting.setType[idx]
 			};
 		});
-		
-		postbody = {
-			content:JSON.stringify(postdata),
-			csrfmiddlewaretoken:csrfmiddlewaretoken
-		}
+		var postbody = {
+			content : JSON.stringify(postdata)
+		};
 		var callback = function(){};
 		//呼叫Ajax
 		switch(item.type){
@@ -814,7 +798,10 @@
 			callback = function(){
 				var data = arguments[0];
 				if (null==data || data.status==200){
-					var thisValue = null==data? Math.floor(Math.random()*99+1):data.result.dataset[0].data[0];
+					var thisValue = 'None';
+					try{
+						thisValue = null==data? Math.floor(Math.random()*99+1) : data.result.dataset[0].data[0];
+					}catch(e){}	
 					thisDom.find("#CONTENT_"+item.id+" .info-box-number").html(thisValue+'<small>'+item.setting.setUnit+'</small>');
 				}else{actions(data)}
 			};
@@ -823,7 +810,10 @@
 			callback = function(){
 				var data = arguments[0];
 				if (null==data || data.status==200){
-					var thisValue = null==data? Math.floor(Math.random()*item.setting.setMax/2)+Math.floor(item.setting.setMax/2) : data.result.dataset[0].data[0];
+					var thisValue = 'None';
+					try{
+						thisValue = null==data? Math.floor(Math.random()*item.setting.setMax/2)+Math.floor(item.setting.setMax/2) : data.result.dataset[0].data[0];
+					}catch(e){}	
 					var thisProportion = Math.floor(thisValue*100/item.setting.setMax);
 		        	thisDom.find("#CONTENT_"+item.id+" .progress-number").text(thisValue+item.setting.setUnit);
 		        	thisDom.find("#CONTENT_"+item.id+" .progress-bar").css("width",thisProportion+"%");
@@ -834,7 +824,10 @@
 			callback = function(){
 				var data = arguments[0];
 				if (null==data || data.status==200){
-					var thisValue = null==data? Math.floor(Math.random()*item.setting.setMax/2)+Math.floor(item.setting.setMax/2) : data.result.dataset[0].data[0];
+					var thisValue = 'None';
+					try{
+						thisValue = null==data? Math.floor(Math.random()*item.setting.setMax/2)+Math.floor(item.setting.setMax/2) : data.result.dataset[0].data[0];
+		        	}catch(e){}	
 		        	var thisProportion = Math.floor(thisValue*100/item.setting.setMax);
 		        	thisDom.find("#CONTENT_"+item.id+" .info-box-number").text(thisValue+item.setting.setUnit);
 		        	thisDom.find("#CONTENT_"+item.id+" .progress-bar").css("width",thisProportion+"%");
@@ -845,102 +838,40 @@
 			callback = function(){
 				var data = arguments[0];
 				if (null==data || data.status==200){
-					if(null!=chart_list[item.id])
-						chart_list[item.id].destroy();
-					var dataset = null==data? [
-						{name:"Name1",data:[Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1)]},
-						{name:"Name2",data:[Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1)]},
-						{name:"Name3",data:[Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1)]}
-					]:data.result.dataset;
-					var labels = null==data? ["周日","周一","周二","周三","周四","周五","周六"] : data.result.labels;
-					var datasets=[];
-					var count=color_set.length;
-					$.each(dataset,function(idx,thisData){
-						datasets.push({
-				            label: dataset[idx].name,
-				            data: dataset[idx].data,
-				            backgroundColor: color_set[(parseInt(idx)+parseInt(item.setting.setColor))%count].color
-				        });
-					});
-					
-					var chartJson = {
-					    type: 'bar',
-					    data: {
-					        labels: labels,
-					        datasets: datasets
-					    },
-					    options: {
-							responsive: true,
-				            legend: {
-				                position: 'right',
-				                labels: {
-				                    boxWidth: 20,
-				                    padding: 20,
-				                }
-				            },
-					        scales: {
-								xAxes: [{
-									gridLines: {
-										color: "rgba(0, 0, 0, 0)"
-									}
-								}],
-					            yAxes: [{
-									gridLines: {
-										color: "rgba(0, 0, 0, 0)"
-									},
-					                ticks: {
-					                    beginAtZero:true,
-					                    suggestedMin: item.setting.setY
-					                }
-					            }]
-					        }
-					    }
-					};
-					var ctx = document.getElementById('CHART_'+item.id).getContext('2d');
-					chart_list[item.id] = new Chart(ctx, chartJson);
-				}else{actions(data)}
-			};
-		break;
-		case "line":
-			callback = function(){
-				var data = arguments[0];
-				if (null==data || data.status==200){
-					if(null!=chart_list[item.id])
-						chart_list[item.id].destroy();
-					var dataset = null==data? [
-						{name:"Name1",data:[Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1)]},
-						{name:"Name2",data:[Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1)]},
-						{name:"Name3",data:[Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1)]}
-					]:data.result.dataset;
-					var labels = null==data? ["周日","周一","周二","周三","周四","周五","周六"] : data.result.labels;
-					var datasets=[];
-					var count=color_set.length;
-					
-					$.each(dataset,function(idx,thisData){
-						datasets.push({
-				            label: dataset[idx].name,
-				            //data: [Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1)],
-					        data: dataset[idx].data,
-					        backgroundColor: color_set[(parseInt(idx)+parseInt(item.setting.setColor))%count].color,
-							borderColor: color_set[(parseInt(idx)+parseInt(item.setting.setColor))%count].color,
-					        fill: false
-				        });
-					});
-					var canvas = $('#CHART_'+item.id).empty();
-					var ctx = document.getElementById('CHART_'+item.id).getContext('2d');
-					var chartJson = {
-						    type: 'line',
+					try{
+						if(null!=chart_list[item.id])
+							chart_list[item.id].destroy();
+						var dataset = null==data? [
+							{name:"Name1",data:[Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1)]},
+							{name:"Name2",data:[Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1)]},
+							{name:"Name3",data:[Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1)]}
+						]:data.result.dataset;
+						var labels = null==data? ["周日","周一","周二","周三","周四","周五","周六"] : data.result.labels;
+						var datasets=[];
+						var count=color_set.length;
+						$.each(dataset,function(idx,thisData){
+							datasets.push({
+					            label: dataset[idx].name,
+					            data: dataset[idx].data,
+					            backgroundColor: color_set[(parseInt(idx)+parseInt(item.setting.setColor))%count].color
+					        });
+						});
+						
+						var ctx = document.getElementById('CHART_'+item.id).getContext('2d');
+						var chartJson = {
+						    type: 'bar',
 						    data: {
 						        labels: labels,
 						        datasets: datasets
 						    },
 						    options: {
 								responsive: true,
+								maintainAspectRatio: false,
 					            legend: {
 					                position: 'right',
 					                labels: {
 					                    boxWidth: 20,
-					                    padding: 20
+					                    padding: 20,
 					                }
 					            },
 						        scales: {
@@ -954,13 +885,83 @@
 											color: "rgba(0, 0, 0, 0)"
 										},
 						                ticks: {
-						                    suggestedMin: item.setting.setY
+						                    beginAtZero:true
+						                    //suggestedMin: item.setting.setY
 						                }
 						            }]
 						        }
 						    }
 						};
-					chart_list[item.id] = new Chart(ctx, chartJson);
+						chart_list[item.id] = new Chart(ctx, chartJson);
+					}catch(e){}
+				}else{actions(data)}
+			};
+		break;
+		case "line":
+			callback = function(){
+				var data = arguments[0];
+				if (null==data || data.status==200){
+					try{
+						if(null!=chart_list[item.id])
+							chart_list[item.id].destroy();
+						var dataset = null==data? [
+							{name:"Name1",data:[Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1)]},
+							{name:"Name2",data:[Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1)]},
+							{name:"Name3",data:[Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1)]}
+						]:data.result.dataset;
+						var labels = null==data? ["周日","周一","周二","周三","周四","周五","周六"] : data.result.labels;
+						var datasets=[];
+						var count=color_set.length;
+						
+						$.each(dataset,function(idx,thisData){
+							datasets.push({
+					            label: dataset[idx].name,
+					            //data: [Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1), Math.floor(Math.random()*10+1)],
+						        data: dataset[idx].data,
+						        backgroundColor: color_set[(parseInt(idx)+parseInt(item.setting.setColor))%count].color,
+								borderColor: color_set[(parseInt(idx)+parseInt(item.setting.setColor))%count].color,
+						        fill: false
+					        });
+						});
+						var canvas = $('#CHART_'+item.id).empty();
+						var ctx = document.getElementById('CHART_'+item.id).getContext('2d');
+						ctx.height = item.setting.setHeight;
+						var chartJson = {
+							    type: 'line',
+							    data: {
+							        labels: labels,
+							        datasets: datasets
+							    },
+							    options: {
+									responsive: true, 
+									maintainAspectRatio: false,
+						            legend: {
+						                position: 'right',
+						                labels: {
+						                    boxWidth: 20,
+						                    padding: 20
+						                }
+						            },
+							        scales: {
+										xAxes: [{
+											gridLines: {
+												color: "rgba(0, 0, 0, 0)"
+											}
+										}],
+							            yAxes: [{
+											gridLines: {
+												color: "rgba(0, 0, 0, 0)"
+											},
+							                ticks: {
+						                    	beginAtZero:true
+							                    //suggestedMin: item.setting.setY
+							                }
+							            }]
+							        }
+							    }
+							};
+						chart_list[item.id] = new Chart(ctx, chartJson);
+					}catch(e){}
 				}else{actions(data)}
 			};
 		break;
@@ -968,47 +969,50 @@
 			callback = function(){
 				var data = arguments[0];
 				if (null==data || data.status==200){
-					if(null!=chart_list[item.id])
-						chart_list[item.id].destroy();
-					var dataset = null==data? [
-						{name:"Name1",data:[Math.floor(Math.random()*10+1)]},
-						{name:"Name2",data:[Math.floor(Math.random()*10+1)]},
-						{name:"Name3",data:[Math.floor(Math.random()*10+1)]}
-					]:data.result.dataset;
-					var ctx = document.getElementById('CHART_'+item.id).getContext('2d');
-					
-					var labels=[];
-					var datasets=[];
-					var colorsets=[];
-					var count=color_set.length;
-					
-					$.each(dataset,function(idx,thisData){
-						labels.push(thisData.name);
-						//datasets.push(Math.floor(Math.random()*10+1));
-						datasets.push(thisData.data[0]);
-						colorsets.push(color_set[(parseInt(idx)+parseInt(item.setting.setColor))%count].color);
-					});
-					
-					chart_list[item.id] = new Chart(ctx, {
-					    type: 'doughnut',
-					    data: {
-					    	labels: labels,
-						    datasets: [{
-						    	data: datasets,
-								backgroundColor: colorsets
-						    }],
-						},
-					    options: {
-				            responsive: true,
-				            legend: {
-				                position: 'right',
-				                labels: {
-				                    boxWidth: 20,
-				                    padding: 20
-				                }
-				            }
-				        }
-					});
+					try{
+						if(null!=chart_list[item.id])
+							chart_list[item.id].destroy();
+						var dataset = null==data? [
+							{name:"Name1",data:[Math.floor(Math.random()*10+1)]},
+							{name:"Name2",data:[Math.floor(Math.random()*10+1)]},
+							{name:"Name3",data:[Math.floor(Math.random()*10+1)]}
+						]:data.result.dataset;
+						var ctx = document.getElementById('CHART_'+item.id).getContext('2d');
+						
+						var labels=[];
+						var datasets=[];
+						var colorsets=[];
+						var count=color_set.length;
+						
+						$.each(dataset,function(idx,thisData){
+							labels.push(thisData.name);
+							//datasets.push(Math.floor(Math.random()*10+1));
+							datasets.push(thisData.data[0]);
+							colorsets.push(color_set[(parseInt(idx)+parseInt(item.setting.setColor))%count].color);
+						});
+						
+						chart_list[item.id] = new Chart(ctx, {
+						    type: 'doughnut',
+						    data: {
+						    	labels: labels,
+							    datasets: [{
+							    	data: datasets,
+									backgroundColor: colorsets
+							    }],
+							},
+						    options: {
+					            responsive: true, 
+								maintainAspectRatio: false,
+					            legend: {
+					                position: 'right',
+					                labels: {
+					                    boxWidth: 20,
+					                    padding: 20
+					                }
+					            }
+					        }
+						});
+					}catch(e){}
 				}else{actions(data)}
 			};
 		break;
@@ -1022,7 +1026,7 @@
 		if(null!=timer_list[item.id])
 			clearTimeout(timer_list[item.id]);
 		timer_list[item.id]=setTimeout(function() {
-			box_update_item(item);}, 60*1000 );
+			box_update_item(item);}, 20*1000 );
 	}
     //窗格-移除 NEWTYPE
 	function box_button_remove_item(item_id){
@@ -1065,7 +1069,7 @@
 				break;
 			case 'line':
 			case 'bar':
-				Grid_buildAdvance(["setTitle","setChartColor","setHeight","setYstart","setNull"]);
+				Grid_buildAdvance(["setTitle","setChartColor","setHeight","setNull","setNull"]);
 				Grid_buildSearch(["setForm","setColumn","setTime","setType","setGroup"]);
 				break;
 			case 'pie':
@@ -1155,7 +1159,6 @@
 		thisSetting = undefined;
 	}
 	function Grid_listForm(value){
-		var postbody = {csrfmiddlewaretoken:csrfmiddlewaretoken};
 		var callback = function(){
 			data = arguments[0];
 			if (data.status==200){
@@ -1169,22 +1172,26 @@
 			else
 			{actions(data)}
 		}
-		omflowJsonAjax(postbody,"{% url 'formGridAjax'%}",callback);
+		omflowJsonAjax({},"{% url 'formGridAjax'%}",callback);
 	}
 	function Grid_listColumn(){
 		var thisForm = arguments[0];
-		var postbody = {csrfmiddlewaretoken:csrfmiddlewaretoken,model:thisForm};
+		var postbody = {model:thisForm};
 		var callback = function(){
 			data = arguments[0];
 			if (data.status==200){
-				thisColumnSelect=$("#modal-grid-config select[name=setColumn]");
+				thisColumnSelect=$("#modal-grid-config select[name=setColumn]").empty();
 				thisTypeSelect=$("#modal-grid-config select[name=setType]");
-				thisGroupSelect=$("#modal-grid-config select[name=setGroup]");
-				thisOrderSelect=$("#modal-grid-config select[name=setOrder]");
+				thisGroupSelect=$("#modal-grid-config select[name=setGroup]").empty();
+				//thisOrderSelect=$("#modal-grid-config select[name=setOrder]").empty();
+				
+				thisColumnSelect.append($('<option value="">--'+const_select_column+'--</option>'))
+				thisGroupSelect.append($('<option value="">'+const_non_group+'</option>'))
+				//thisOrderSelect.append($('<option value="'+key+'">'+value+'</option>'))
 				$.each(data.result,function(key,value){
 					thisColumnSelect.append($('<option value="'+key+'">'+value+'</option>'))
 					thisGroupSelect.append($('<option value="'+key+'">'+value+'</option>'))
-					thisOrderSelect.append($('<option value="'+key+'">'+value+'</option>'))
+					//thisOrderSelect.append($('<option value="'+key+'">'+value+'</option>'))
 				});
 				$.each(grid_object.data.setColumn,function(idx,value){
 					$(thisColumnSelect[idx]).val(value);
@@ -1196,7 +1203,7 @@
 					$(thisGroupSelect[idx]).val(value);
 				});
 				$.each(grid_object.data.setOrder,function(idx,value){
-					$(thisOrderSelect[idx]).val(value);
+					//$(thisOrderSelect[idx]).val(value);
 				});
 			}
 			else
@@ -1255,7 +1262,10 @@
 		
 	    if(source.attr('class').startsWith('omflow-form-group'))
 	    {
-	        source.prependTo(target.find('div[id^=CONTENT_]:eq(0)'));
+	        if(target.find('.omflow-board').length)
+	        	return;
+	        else
+	        	source.appendTo(target.find('div[id^=CONTENT_]:eq(0)'));
 	    }
 	    else
 	    {

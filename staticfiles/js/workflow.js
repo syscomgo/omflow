@@ -39,6 +39,7 @@ var omfloweng = function(div_id)
 	var event_get_my_flowIO_list_callback = null;
 
 	var design_mode = false;
+	var policy_mode = false;
 	var myCodeMirror = null;
 	var box_ball_content = '<div id="' + active_id + '_ball_left" style="z-index:1000;width: 10px;height: 10px;background-color: #fff;border: 1px solid #777;border-radius: 5px;margin: 0px auto 0;position: absolute;top:0px;left:0px;display:none" ></div>'
 		+ '<div id="' + active_id + '_ball_right" style="z-index:1000;width: 10px;height: 10px;background-color: #fff;border: 1px solid #777;border-radius: 5px;margin: 0px auto 0;position: absolute;top:0px;left:0px;display:none" ></div>'
@@ -100,6 +101,10 @@ var omfloweng = function(div_id)
 	var baseID_OUTFLOW = active_id + '_' + 'outflow_chart_modal';
 	var baseID_INFLOW = active_id + '_' + 'inflow_chart_modal';
 	var baseID_SETFORM = active_id + '_' + 'setform_chart_modal';
+	
+	var baseID_ORG1 = active_id + '_' + 'org1_chart_modal';
+	var baseID_ORG2 = active_id + '_' + 'org2_chart_modal';
+	
 	//====================
 	//===public method====
 	//====================
@@ -114,6 +119,10 @@ var omfloweng = function(div_id)
 		
 		_self_.init(mode);
 		flowobject.is_sub = true;
+	}
+	_self_.setPolicyMode = function()
+	{
+		policy_mode = true;
 	}
 	/**
 	 * initialization  omfloweng for new flow
@@ -151,101 +160,118 @@ var omfloweng = function(div_id)
 			//===MODAL NEW CHART CHART 
 			//====================
 			var modal_add_item = '<div class="modal fade" id="' + baseID_NEW + '">'
-						+'<div class="modal-dialog modal-lg modal-dialog-scrollable">'
-						+' <div class="modal-content">'
-						+'  <div class="modal-header">'
-						+'   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-						+'   <h4 class="modal-title"> 新增元件</h4>'
-						+'  </div>'
-						+'  <div class="modal-body">'
-						+'   <div class="nav-tabs-custom">'
-						+'    <ul class="nav nav-tabs">'
-						+'     <li class="active"><a href="#' + baseID_NEW + '_exec" data-toggle="tab">執行</a></li>'
-						+'     <li><a href="#' + baseID_NEW + '_rule" data-toggle="tab">路線</a></li>'
-						+'    </ul>'
-						
-						+'    <div class="tab-content">'
+                           +'<div class="modal-dialog modal-lg modal-dialog-scrollable">'
+                           +' <div class="modal-content">'
+                           +'  <div class="modal-header">'
+                           +'   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+                           +'   <h4 class="modal-title"> ' + gettext('新增元件') + '</h4>'
+                           +'  </div>'
+                           +'  <div class="modal-body">'
+                           +'   <div class="nav-tabs-custom">'
+                           +'    <ul class="nav nav-tabs">'
+                           +'     <li class="active"><a href="#' + baseID_NEW + '_exec" data-toggle="tab">' + gettext('執行') + '</a></li>'
+                           +'     <li><a href="#' + baseID_NEW + '_rule" data-toggle="tab">' + gettext('路線') + '</a></li>'
+                        +'     <li><a href="#' + baseID_NEW + '_rolemap" data-toggle="tab">' + gettext('組織圖') + '</a></li>'
+                           +'    </ul>'
+                           
+                           +'    <div class="tab-content">'
 
-						+'     <div class="tab-pane active" id="' + baseID_NEW + '_exec">'
+                           +'     <div class="tab-pane active" id="' + baseID_NEW + '_exec">'
 
-						+'      <div class="table-responsive" style="z-index:1001">'
-						+'      <table class="table no-margin">'
-						+'      <thead><tr><th>元件</th><th>說明</th></tr></thead>'
-						+'      <tbody>'
-						//+'      <tr>'
-						//+'      <td><input type="radio" name="' + baseID_NEW + '_options" id="' + baseID_NEW + '_start" class="iradio_minimal-blue" value="start"><label for="' + baseID_NEW + '_start"></label><b>  <i class="fa fa-play-circle"></i>  開始(測試用)</b></td>'
-						//+'      <td>流程開始執行的起始元件，可以定義輸入參數以及預先執行子流程處理資料。</td>'
-						//+'      </tr>'
-						//+'      <tr>'
-						//+'      <td><input type="radio" name="' + baseID_NEW + '_options" id="' + baseID_NEW + '_end" class="iradio_minimal-blue" value="end"><label for="' + baseID_NEW + '_end"></label><b>  <i class="fas fa-flag-checkered"></i>  結束(測試用)</b></td>'
-						//+'      <td>流程結束的終止元件，進入結束後的資料代表生命週期已結束。</td>'
-						//+'      </tr>'	
-						+'      <tr>'
-						+'      <td><input type="radio" name="' + baseID_NEW + '_options" id="' + baseID_NEW + '_form" class="iradio_minimal-blue" value="form"><label for="' + baseID_NEW + '_form"></label><b>  <i class="fa fa-pencil-square-o"></i>  人工輸入</b></td>'
-						+'      <td>使用者填寫表單。</td>'
-						+'      </tr>'	
-						+'      <tr>'
-						+'      <td><input type="radio" name="' + baseID_NEW + '_options" id="' + baseID_NEW + '_setform" class="iradio_minimal-blue" value="setform"><label for="' + baseID_NEW + '_setform"></label><b>  <i class="fas fa-database"></i>  自動輸入</b></td>'
-						+'      <td>直接設定表單欄位的值。</td>'
-						+'      </tr>'	
-						+'      <tr>'
-						+'      <td><input type="radio" name="' + baseID_NEW + '_options" id="' + baseID_NEW + '_inflow" class="iradio_minimal-blue" value="inflow"><label for="' + baseID_NEW + '_inflow"></label><b>  <i class="fas fa-share"></i>  呼叫流程</b></td>'
-						+'      <td>呼叫此應用的其他流程。</td>'
-						+'      </tr>'						
-						+'      <tr>'
-						+'      <td><input type="radio" name="' + baseID_NEW + '_options" id="' + baseID_NEW + '_subflow" class="iradio_minimal-blue" value="subflow" checked><label for="' + baseID_NEW + '_subflow"></label><b>  <i class="fa fa-play-circle-o"></i>  子流程</b></td>'
-						+'      <td>呼叫自身的子流程。</td>'
-						+'      </tr>'	
-						+'      <tr>'
-						+'      <td><input type="radio" name="' + baseID_NEW + '_options" id="' + baseID_NEW + '_python" class="iradio_minimal-blue" value="python"><label for="' + baseID_NEW + '_python"></label><b>  <i class="fab fa-python"></i>  程式碼</b></td>'
-						+'      <td>執行自定義的Python程式碼。</td>'
-						+'      </tr>'
-						+'      <tr>'
-						+'      <td><input type="radio" name="' + baseID_NEW + '_options" id="' + baseID_NEW + '_outflow" class="iradio_minimal-blue" value="outflow"><label for="' + baseID_NEW + '_outflow"></label><b>  <i class="far fa-share-square"></i>  外部流程</b></td>'
-						+'      <td>呼叫系統中已上架的流程。</td>'
-						+'      </tr>'
-						+'      </tbody>'
-						+'      </table></div>'
+                           +'      <div class="table-responsive" style="z-index:1001">'
+                           +'      <table class="table no-margin">'
+                           +'      <thead><tr><th>' + gettext('元件') + '</th><th>' + gettext('說明') + '</th></tr></thead>'
+                           +'      <tbody>'
+                           //+'      <tr>'
+                           //+'      <td><input type="radio" name="' + baseID_NEW + '_options" id="' + baseID_NEW + '_start" class="iradio_minimal-blue" value="start"><label for="' + baseID_NEW + '_start"></label><b>  <i class="fa fa-play-circle"></i>  ' + gettext('開始(測試用)') + '</b></td>'
+                           //+'      <td>'+gettext('流程開始執行的起始元件，可以定義輸入參數以及預先執行子流程處理資料。')+'</td>'
+                           //+'      </tr>'
+                           //+'      <tr>'
+                           //+'      <td><input type="radio" name="' + baseID_NEW + '_options" id="' + baseID_NEW + '_end" class="iradio_minimal-blue" value="end"><label for="' + baseID_NEW + '_end"></label><b>  <i class="fas fa-flag-checkered"></i>  '+gettext('結束(測試用)')+'</b></td>'
+                           //+'      <td>'+gettext('流程結束的終止元件，進入結束後的資料代表生命週期已結束。')+'</td>'
+                           //+'      </tr>'  
+                           +'      <tr>'
+                           +'      <td><input type="radio" name="' + baseID_NEW + '_options" id="' + baseID_NEW + '_form" class="iradio_minimal-blue" value="form"><label for="' + baseID_NEW + '_form"></label><b>  <i class="fa fa-pencil-square-o"></i> '+gettext('人工輸入')+'</b></td>'
+                           +'      <td>' + gettext('使用者填寫表單。') + ' </td>'
+                           +'      </tr>'    
+                           +'      <tr>'
+                           +'      <td><input type="radio" name="' + baseID_NEW + '_options" id="' + baseID_NEW + '_setform" class="iradio_minimal-blue" value="setform"><label for="' + baseID_NEW + '_setform"></label><b>  <i class="fas fa-database"></i> '+gettext('欄位設定')+'</b></td>'
+                            +'      <td>'+gettext('直接設定表單欄位的值。')+'</td>'
+                           +'      </tr>'    
+                           +'      <tr>'
+                           +'      <td><input type="radio" name="' + baseID_NEW + '_options" id="' + baseID_NEW + '_inflow" class="iradio_minimal-blue" value="inflow"><label for="' + baseID_NEW + '_inflow"></label><b>  <i class="fas fa-share"></i>  '+gettext('呼叫流程')+'</b></td>'
+                           +'      <td>'+gettext('呼叫此應用的其他流程。')+'</td>'
+                           +'      </tr>'                           
+                           +'      <tr>'
+                           +'      <td><input type="radio" name="' + baseID_NEW + '_options" id="' + baseID_NEW + '_subflow" class="iradio_minimal-blue" value="subflow" checked><label for="' + baseID_NEW + '_subflow"></label><b>  <i class="fa fa-play-circle-o"></i>  '+gettext('子流程')+'</b></td>'
+                           +'      <td>'+gettext('呼叫自身的子流程。')+'</td>'
+                           +'      </tr>'    
+                           +'      <tr>'
+                           +'      <td><input type="radio" name="' + baseID_NEW + '_options" id="' + baseID_NEW + '_python" class="iradio_minimal-blue" value="python"><label for="' + baseID_NEW + '_python"></label><b>  <i class="fab fa-python"></i>  '+gettext('程式碼')+'</b></td>'
+                           +'      <td>'+gettext('執行自定義的Python程式碼。')+'</td>'
+                           +'      </tr>'
+                           +'      <tr>'
+                           +'      <td><input type="radio" name="' + baseID_NEW + '_options" id="' + baseID_NEW + '_outflow" class="iradio_minimal-blue" value="outflow"><label for="' + baseID_NEW + '_outflow"></label><b>  <i class="far fa-share-square"></i>  '+gettext('外部流程')+'</b></td>'
+                           +'      <td>'+gettext('呼叫系統中已上架的流程。')+'</td>'
+                           +'      </tr>'
+                           +'      </tbody>'
+                           +'      </table></div>'
+                           +'     </div>'
+                           
+                           +'     <div class="tab-pane" id="' + baseID_NEW + '_rule">'
+                           +'      <div class="table-responsive" style="z-index:1001">'
+                           +'      <table class="table no-margin">'
+                           +'      <thead><tr><th>'+gettext('元件')+'</th><th>'+gettext('說明')+'</th></tr></thead>'
+                           +'      <tbody>'
+                           +'      <tr>'
+                           +'      <td><input type="radio" name="' + baseID_NEW + '_options" id="' + baseID_NEW + '_switch" class="iradio_minimal-blue" value="switch"><label for="' + baseID_NEW + '_switch"></label><b>  <i class="fa fa-map-signs"></i>  '+gettext('條件判斷')+'</b></td>'
+                           +'      <td>'+gettext('依據規則判斷，將流程導往指定的一條路線。')+'</td>'
+                           +'      </tr>'
+                           +'      <tr>'
+                           +'      <td><input type="radio" name="' + baseID_NEW + '_options" id="' + baseID_NEW + '_async" class="iradio_minimal-blue" value="async"><label for="' + baseID_NEW + '_async"></label><b>  <i class="fas fa-people-arrows"></i>  '+gettext('並行')+'</b></td>'
+                           +'      <td>'+gettext('流程會同時往所有的路線前進，並在並行匯集的時候回歸到單一路線。')+'</td>'
+                           +'      </tr>'    
+                           +'      <tr>'
+                           +'      <td><input type="radio" name="' + baseID_NEW + '_options" id="' + baseID_NEW + '_collection" class="iradio_minimal-blue" value="collection"><label for="' + baseID_NEW + '_collection"></label><b>  <i class="fas fa-compress-arrows-alt"></i>  '+gettext('並行匯集')+'</b></td>'
+                           +'      <td>'+gettext('所有指向自己的路線都抵達時，流程會繼續前進。')+'</td>'
+                           +'      </tr>'                           
+                           +'      <tr>'
+                           +'      <td><input type="radio" name="' + baseID_NEW + '_options" id="' + baseID_NEW + '_sleep" class="iradio_minimal-blue" value="sleep"><label for="' + baseID_NEW + '_sleep"></label><b>  <i class="far fa-clock"></i>  '+gettext('暫停')+'</b></td>'
+                           +'      <td>'+gettext('流程執行到暫停時，會暫時停止指定的毫秒後才繼續往前。')+'</td>'
+                           +'      </tr>'    
+                           +'      </tbody>'
+                           +'      </table></div>'
+                           +'     </div>'
+                           
+                        +'     <div class="tab-pane" id="' + baseID_NEW + '_rolemap">'
+                        +'      <div class="table-responsive" style="z-index:1001">'
+                        +'      <table class="table no-margin">'
+                        +'      <thead><tr><th>'+gettext('元件')+'</th><th>'+gettext('說明')+'</th></tr></thead>'
+                        +'      <tbody>'
+                        +'      <tr>'
+                        +'      <td><input type="radio" name="' + baseID_NEW + '_options" id="' + baseID_NEW + '_org1" class="iradio_minimal-blue" value="org1"><label for="' + baseID_NEW + '_org1"></label><b>  <i class="fas fa-user-tie"></i>  '+gettext('同系職務')+'</b></td>'
+                        +'      <td>'+gettext('取得在組織圖上，指定使用者同組織最先碰到的職務使用者。')+'</td>'
+                        +'      </tr>'
+                        +'      <tr>'
+                        +'      <td><input type="radio" name="' + baseID_NEW + '_options" id="' + baseID_NEW + '_org2" class="iradio_minimal-blue" value="org2"><label for="' + baseID_NEW + '_org2"></label><b>  <i class="fas fa-user-tag"></i>  '+gettext('部門職務')+'</b></td>'
+                        +'      <td>'+gettext('搜尋組織圖上，指定部門以下的第一個職務。')+'</td>'
+                        +'      </tr>'
+                        +'      </tbody>'
+                        +'      </table></div>'
+                        +'     </div>'
+            
+                           +'    </div>'
+                           
+                           +'   </div>'
+                           +'  </div>'
+                           +'  <div class="modal-footer">'
+                           +'   <button type="button" class="btn btn-default pull-left" id="' + baseID_NEW + '_close">'+gettext('取消')+'</button>'
+                           +'   <button type="button" class="btn btn-primary"  id="' + baseID_NEW + '_submit" >'+gettext('確定')+'</button>'
+                           +'  </div>'
+                           +' </div>'
+                           +'</div>'
+                           +'</div>';
 
-						+'     </div>'
-						+'     <div class="tab-pane" id="' + baseID_NEW + '_rule">'
-
-						+'      <div class="table-responsive" style="z-index:1001">'
-						+'      <table class="table no-margin">'
-						+'      <thead><tr><th>元件</th><th>說明</th></tr></thead>'
-						+'      <tbody>'
-						+'      <tr>'
-						+'      <td><input type="radio" name="' + baseID_NEW + '_options" id="' + baseID_NEW + '_switch" class="iradio_minimal-blue" value="switch"><label for="' + baseID_NEW + '_switch"></label><b>  <i class="fa fa-map-signs"></i>  條件判斷</b></td>'
-						+'      <td>依據規則判斷，將流程導往指定的一條路線。</td>'
-						+'      </tr>'
-						+'      <tr>'
-						+'      <td><input type="radio" name="' + baseID_NEW + '_options" id="' + baseID_NEW + '_async" class="iradio_minimal-blue" value="async"><label for="' + baseID_NEW + '_async"></label><b>  <i class="fas fa-people-arrows"></i>  並行</b></td>'
-						+'      <td>流程會同時往所有的路線前進，並在並行匯集的時候回歸到單一路線。</td>'
-						+'      </tr>'	
-						+'      <tr>'
-						+'      <td><input type="radio" name="' + baseID_NEW + '_options" id="' + baseID_NEW + '_collection" class="iradio_minimal-blue" value="collection"><label for="' + baseID_NEW + '_collection"></label><b>  <i class="fas fa-compress-arrows-alt"></i>  並行匯集</b></td>'
-						+'      <td>所有指向自己的路線都抵達時，流程會繼續前進。</td>'
-						+'      </tr>'						
-						+'      <tr>'
-						+'      <td><input type="radio" name="' + baseID_NEW + '_options" id="' + baseID_NEW + '_sleep" class="iradio_minimal-blue" value="sleep"><label for="' + baseID_NEW + '_sleep"></label><b>  <i class="far fa-clock"></i>  暫停</b></td>'
-						+'      <td>流程執行到暫停時，會暫時停止指定的毫秒後才繼續往前。</td>'
-						+'      </tr>'	
-						+'      </tbody>'
-						+'      </table></div>'
-
-						+'     </div>'
-
-						+'    </div>'
-						
-						+'   </div>'
-						+'  </div>'
-						+'  <div class="modal-footer">'
-						+'   <button type="button" class="btn btn-default pull-left" id="' + baseID_NEW + '_close">取消</button>'
-						+'   <button type="button" class="btn btn-primary"  id="' + baseID_NEW + '_submit" >確定</button>'
-						+'  </div>'
-						+' </div>'
-						+'</div>'
-						+'</div>';
 			flowcontent.append(modal_add_item);
 			//====================
 			//===MODAL INIT
@@ -276,32 +302,32 @@ var omfloweng = function(div_id)
 						+' <div class="modal-content">'
 						+'  <div class="modal-header">'
 						+'   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-						+'   <h4 class="modal-title"> 開始-<span id="' + baseID_START + '_id"></span></h4>'
+						+'   <h4 class="modal-title"> '+gettext('開始-')+'<span id="' + baseID_START + '_id"></span></h4>'
 						+'  </div>'
 						+'  <div class="modal-body">'
 						+'   <div class="nav-tabs-custom">'
 						+'    <ul class="nav nav-tabs">'
-						+'     <li class="active"><a href="#' + baseID_START + '_config" data-toggle="tab">設定</a></li>'
-						+'     <li><a href="#' + baseID_START + '_input" data-toggle="tab">輸入</a></li>'
-						+'     <li><a href="#' + baseID_START + '_subflow" data-toggle="tab">驗證</a></li>'
-						+'     <li><a href="#' + baseID_START + '_subflow_input" data-toggle="tab">驗證輸入</a></li>'
+						+'     <li class="active"><a href="#' + baseID_START + '_config" data-toggle="tab">'+gettext('設定')+'</a></li>'
+						+'     <li><a href="#' + baseID_START + '_input" data-toggle="tab">'+gettext('輸入')+'</a></li>'
+						+'     <li><a href="#' + baseID_START + '_subflow" data-toggle="tab">'+gettext('驗證')+'</a></li>'
+						+'     <li><a href="#' + baseID_START + '_subflow_input" data-toggle="tab">'+gettext('驗證輸入')+'</a></li>'
 						+'    </ul>'
 						
 						+'    <div class="tab-content">'
 
 						+'     <div class="tab-pane active" id="' + baseID_START + '_config">'
 						+'      <div class="form-group has-warning" >'
-						+'       <label> 顯示名稱</label>'
-						+'       <input id="' + baseID_START + '_config_text" type="text" class="form-control" placeholder="請輸入名稱..." >'
+						+'       <label> '+gettext('顯示名稱')+'</label>'
+						+'       <input id="' + baseID_START + '_config_text" type="text" class="form-control" placeholder="'+gettext('請輸入名稱...')+'" >'
 						+'      </div>'
 						+'      <div class="form-group">'
 						+'       <input id="' + baseID_START + '_config_callable" type="checkbox" class="icheckbox_minimal-blue"><label for="' + baseID_START + '_config_callable"></label>'
-						+'       <label> 允許外部呼叫</label>'
+						+'       <label> '+gettext('允許外部呼叫')+'</label>'
 						+'      </div>'
 						+'     </div>'
 						
 						+'     <div class="tab-pane" id="' + baseID_START + '_input">'
-						+'      <button id="' + baseID_START + '_input_content_add" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> 新增</button>'
+						+'      <button id="' + baseID_START + '_input_content_add" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> '+gettext('新增')+'</button>'
 						+'      <ul id="' + baseID_START + '_input_content" style="list-style-type: none; margin: 0; padding: 0">'
 						+'      </ul>'
 						+'     </div>'
@@ -326,8 +352,8 @@ var omfloweng = function(div_id)
 						+'   </div>'
 						+'  </div>'
 						+'  <div class="modal-footer">'
-						+'   <button type="button" class="btn btn-default pull-left" id="' + baseID_START + '_close">取消</button>'
-						+'   <button type="button" class="btn btn-primary"  id="' + baseID_START + '_submit">確定</button>'
+						+'   <button type="button" class="btn btn-default pull-left" id="' + baseID_START + '_close">'+gettext('取消')+'</button>'
+						+'   <button type="button" class="btn btn-primary"  id="' + baseID_START + '_submit">'+gettext('確定')+'</button>'
 						+'  </div>'
 						+' </div>'
 						+'</div>'
@@ -363,7 +389,7 @@ var omfloweng = function(div_id)
 							}
 							else
 							{
-								select2_new_option(baseID_START + '_subflow_content_input' + '_value_' + i,'$(' + option_name + ')','變數:' + option_name );
+								select2_new_option(baseID_START + '_subflow_content_input' + '_value_' + i,'$(' + option_name + ')',gettext('變數:') + option_name );
 							}
 						});
 					}
@@ -403,33 +429,33 @@ var omfloweng = function(div_id)
 						+' <div class="modal-content">'
 						+'  <div class="modal-header">'
 						+'   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-						+'   <h4 class="modal-title"> 結束-<span id="' + baseID_END + '_id"></span></h4>'
+						+'   <h4 class="modal-title"> '+gettext('結束-')+'<span id="' + baseID_END + '_id"></span></h4>'
 						+'  </div>'
 						+'  <div class="modal-body">'
 						+'   <div class="nav-tabs-custom">'
 						+'    <ul class="nav nav-tabs">'
-						+'     <li class="active"><a href="#' + baseID_END + '_config" data-toggle="tab">設定</a></li>'
-						+'     <li><a href="#' + baseID_END + '_calculate" data-toggle="tab">篩選</a></li>'
-						+'     <li><a href="#' + baseID_END + '_output" data-toggle="tab">輸出</a></li>'
+						+'     <li class="active"><a href="#' + baseID_END + '_config" data-toggle="tab">'+gettext('設定')+'</a></li>'
+						+'     <li><a href="#' + baseID_END + '_calculate" data-toggle="tab">'+gettext('篩選')+'</a></li>'
+						+'     <li><a href="#' + baseID_END + '_output" data-toggle="tab">'+gettext('輸出')+'</a></li>'
 						+'    </ul>'
 						
 						+'    <div class="tab-content">'
 						
 						+'     <div class="tab-pane active" id="' + baseID_END + '_config">'
 						+'      <div class="form-group has-warning" >'
-						+'       <label >顯示名稱</label>'
-						+'       <input id="' + baseID_END + '_config_text" type="text" class="form-control" placeholder="請輸入名稱..." >'
+						+'       <label >'+gettext('顯示名稱')+'</label>'
+						+'       <input id="' + baseID_END + '_config_text" type="text" class="form-control" placeholder="'+gettext('請輸入名稱...')+'" >'
 						+'      </div>'
 						+'     </div>'
 						
 						+'     <div class="tab-pane" id="' + baseID_END + '_calculate">'
-						+'      <button id="' + baseID_END + '_calculate_content_add' + '" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> 新增</button>'
+						+'      <button id="' + baseID_END + '_calculate_content_add' + '" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> '+gettext('新增')+'</button>'
 						+'      <ul id="' + baseID_END +  '_calculate_content' + '" style="list-style-type: none; margin: 0; padding: 0">'
 						+'      </ul>'					
 						+'     </div>'
 						
 						+'     <div class="tab-pane" id="' + baseID_END + '_output">'
-						+'      <button id="' + baseID_END + '_output_content_add" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> 新增</button>'
+						+'      <button id="' + baseID_END + '_output_content_add" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> '+gettext('新增')+'</button>'
 						+'      <ul id="' + baseID_END + '_output_content" style="list-style-type: none; margin: 0; padding: 0">'
 						+'      </ul>'
 						+'     </div>'
@@ -439,8 +465,8 @@ var omfloweng = function(div_id)
 						+'   </div>'
 						+'  </div>'
 						+'  <div class="modal-footer">'
-						+'   <button type="button" class="btn btn-default pull-left" id="' + baseID_END + '_close">取消</button>'
-						+'   <button type="button" class="btn btn-primary"  id="' + baseID_END + '_submit">確定</button>'
+						+'   <button type="button" class="btn btn-default pull-left" id="' + baseID_END + '_close">'+gettext('取消')+'</button>'
+						+'   <button type="button" class="btn btn-primary"  id="' + baseID_END + '_submit">'+gettext('確定')+'</button>'
 						+'  </div>'
 						+' </div>'
 						+'</div>'
@@ -471,14 +497,14 @@ var omfloweng = function(div_id)
 						$('[id^="' + baseID_END + '_output_content' + '_value_"]').each(function(i)
 						{
 							var input_name_select_object = $('#' + baseID_END + '_output_content' +'_value_' + i);
-							if(input_name_select_object.html().indexOf(option_name) > 0)
+							if(input_name_select_object.html().indexOf('value="' + option_name + '"') > 0)
 							{
 								//已存在
 							}
 							else
 							{
 								//加上
-								select2_new_option(baseID_END + '_output_content' + '_value_' + i,option_name,'變數:' + option_text );
+								select2_new_option(baseID_END + '_output_content' + '_value_' + i,option_name,gettext('變數:') + option_text );
 							}
 						});
 					}
@@ -505,14 +531,14 @@ var omfloweng = function(div_id)
 						$('[id^="' + baseID_END + '_output_content' + '_value_"]').each(function(i)
 						{
 							var input_name_select_object = $('#' + baseID_END + '_output_content' +'_value_' + i);
-							if(input_name_select_object.html().indexOf(option_name) > 0)
+							if(input_name_select_object.html().indexOf('value="' + option_name + '"') > 0)
 							{
 								//已存在
 							}
 							else
 							{
 								//加上
-								select2_new_option(baseID_END + '_output_content' + '_value_' + i,option_name,'變數:' + option_text );
+								select2_new_option(baseID_END + '_output_content' + '_value_' + i,option_name,gettext('變數:') + option_text );
 							}
 						});
 					}
@@ -552,67 +578,67 @@ var omfloweng = function(div_id)
 						+' <div class="modal-content">'
 						+'  <div class="modal-header">'
 						+'   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-						+'   <h4 class="modal-title"> 程式碼-<span id="' + baseID_PYTHON + '_id"></span></h4>'
+						+'   <h4 class="modal-title"> '+gettext('程式碼-')+'<span id="' + baseID_PYTHON + '_id"></span></h4>'
 						+'  </div>'
 						+'  <div class="modal-body">'
 						+'   <div class="nav-tabs-custom">'
 						+'    <ul class="nav nav-tabs">'
-						+'     <li class="active"><a href="#' + baseID_PYTHON + '_config" data-toggle="tab">設定</a></li>'
-						+'     <li ><a href="#' +baseID_PYTHON + '_calculate" data-toggle="tab">篩選</a></li>'
-						+'     <li><a href="#' + baseID_PYTHON + '_input" data-toggle="tab">輸入</a></li>'
+						+'     <li class="active"><a href="#' + baseID_PYTHON + '_config" data-toggle="tab">'+gettext('設定')+'</a></li>'
+						+'     <li ><a href="#' +baseID_PYTHON + '_calculate" data-toggle="tab">'+gettext('篩選')+'</a></li>'
+						+'     <li><a href="#' + baseID_PYTHON + '_input" data-toggle="tab">'+gettext('輸入')+'</a></li>'
 						+'     <li><a href="#' + baseID_PYTHON + '_python" data-toggle="tab">Python</a></li>'
-						+'     <li><a href="#' + baseID_PYTHON + '_output" data-toggle="tab">輸出</a></li>'
+						+'     <li><a href="#' + baseID_PYTHON + '_output" data-toggle="tab">'+gettext('輸出')+'</a></li>'
 						+'    </ul>'
 						
 						+'    <div class="tab-content">'
 						
 						+'     <div class="tab-pane active" id="' +baseID_PYTHON + '_config">'
 						+'      <div class="form-group has-warning" >'
-						+'       <label >顯示名稱</label>'
-						+'       <input id="' + baseID_PYTHON + '_config_text" type="text" class="form-control" placeholder="請輸入名稱..." >'
+						+'       <label >'+gettext('顯示名稱')+'</label>'
+						+'       <input id="' + baseID_PYTHON + '_config_text" type="text" class="form-control" placeholder="'+gettext('請輸入名稱...')+'" >'
 						+'      </div>'
 						+'      <div class="form-group">'
 						+'       <input id="' + baseID_PYTHON + '_config_autoinstall" type="checkbox" class="icheckbox_minimal-blue"><label for="' + baseID_PYTHON + '_config_autoinstall"></label>'
-						+'       <label> 自動安裝缺少的套件</label>'
+						+'       <label> '+gettext('自動安裝缺少的套件')+'</label>'
 						+'      </div>'						
 						+'      <div class="form-group">'
 						+'       <input id="' + baseID_PYTHON + '_config_error_pass" type="checkbox" class="icheckbox_minimal-blue"><label for="' + baseID_PYTHON + '_config_error_pass"></label>'
-						+'       <label> 異常時通過/標示異常</label>'
+						+'       <label> '+gettext('異常時通過/標示異常')+'</label>'
 						+'      </div>'
 						+'      <div class="form-group">'
 						+'       <input id="' + baseID_PYTHON + '_config_load_balance" type="checkbox" class="icheckbox_minimal-blue"><label for="' + baseID_PYTHON + '_config_load_balance"></label>'
-						+'       <label> 分散運算</label>'
+						+'       <label> '+gettext('分散運算')+'</label>'
 						+'      </div>'
 						+'      <div class="form-group">'
 						+'       <input id="' + baseID_PYTHON + '_config_callable" type="checkbox" class="icheckbox_minimal-blue"><label for="' + baseID_PYTHON + '_config_callable"></label>'
-						+'       <label> 允許外部呼叫</label>'
+						+'       <label> '+gettext('允許外部呼叫')+'</label>'
 						+'      </div>'
 						+'      <div class="form-group">'
 						+'       <input id="' + baseID_PYTHON + '_config_log" type="checkbox" class="icheckbox_minimal-blue"><label for="' + baseID_PYTHON + '_config_log"></label>'
-						+'       <label> 紀錄Log</label>'
+						+'       <label> '+gettext('紀錄Log')+'</label>'
 						+'      </div>'						
 						+'     </div>'
 						
 						+'     <div class="tab-pane" id="' + baseID_PYTHON + '_calculate">'
-						+'      <button id="' + baseID_PYTHON + '_calculate_content_add' + '" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> 新增</button>'
+						+'      <button id="' + baseID_PYTHON + '_calculate_content_add' + '" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> '+gettext('新增')+'</button>'
 						+'      <ul id="' + baseID_PYTHON +  '_calculate_content' + '" style="list-style-type: none; margin: 0; padding: 0">'
 						+'      </ul>'					
 						+'     </div>'
 						
 						+'     <div class="tab-pane" id="' + baseID_PYTHON + '_input">'
-						+'      <button id="' + baseID_PYTHON + '_input_content_add" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> 新增</button>'
+						+'      <button id="' + baseID_PYTHON + '_input_content_add" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> '+gettext('新增')+'</button>'
 						+'      <ul id="' + baseID_PYTHON + '_input_content" style="list-style-type: none; margin: 0; padding: 0">'
 						+'      </ul>'
 						+'     </div>'
 						
 						+'     <div class="tab-pane" id="' + baseID_PYTHON + '_python">'						
 						+'      <div class="form-group">'
-						+'       <textarea id="' + baseID_PYTHON + '_python_content" rows="10"  placeholder="輸入您的程式碼..."></textarea>'
+						+'       <textarea id="' + baseID_PYTHON + '_python_content" rows="10"  placeholder="'+gettext('輸入您的程式碼...')+'"></textarea>'
 						+'      </div>'
 						+'     </div>'
 						
 						+'     <div class="tab-pane" id="' + baseID_PYTHON + '_output">'
-						+'      <button id="' + baseID_PYTHON + '_output_content_add" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> 新增</button>'
+						+'      <button id="' + baseID_PYTHON + '_output_content_add" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> '+gettext('新增')+'</button>'
 						+'      <ul id="' + baseID_PYTHON + '_output_content" style="list-style-type: none; margin: 0; padding: 0">'
 						+'      </ul>'
 						+'     </div>'
@@ -622,8 +648,8 @@ var omfloweng = function(div_id)
 						+'   </div>'
 						+'  </div>'
 						+'  <div class="modal-footer">'
-						+'   <button type="button" class="btn btn-default pull-left" id="' + baseID_PYTHON + '_close">取消</button>'
-						+'   <button type="button" class="btn btn-primary"  id="' + baseID_PYTHON + '_submit">確定</button>'
+						+'   <button type="button" class="btn btn-default pull-left" id="' + baseID_PYTHON + '_close">'+gettext('取消')+'</button>'
+						+'   <button type="button" class="btn btn-primary"  id="' + baseID_PYTHON + '_submit">'+gettext('確定')+'</button>'
 						+'  </div>'
 						+' </div>'
 						+'</div>'
@@ -675,14 +701,14 @@ var omfloweng = function(div_id)
 						$('[id^="' + baseID_PYTHON + '_input_content' + '_value_"]').each(function(i)
 						{
 							var input_name_select_object = $('#' + baseID_PYTHON + '_input_content' +'_value_' + i);
-							if(input_name_select_object.html().indexOf(option_name) > 0)
+							if(input_name_select_object.html().indexOf('value="' + option_name + '"') > 0)
 							{
 								//已存在
 							}
 							else
 							{
 								//加上
-								select2_new_option(baseID_PYTHON + '_input_content' + '_value_' + i,option_name,'變數:' + option_text );
+								select2_new_option(baseID_PYTHON + '_input_content' + '_value_' + i,option_name,gettext('變數:') + option_text );
 							}
 						});
 					}
@@ -706,7 +732,7 @@ var omfloweng = function(div_id)
 							}
 							else
 							{
-								select2_new_option(baseID_PYTHON + '_output_content' + '_value_' + i,'$(' + option_name + ')','變數:' + option_name );
+								select2_new_option(baseID_PYTHON + '_output_content' + '_value_' + i,'$(' + option_name + ')',gettext('變數:') + option_name );
 							}
 						});
 					}
@@ -730,7 +756,7 @@ var omfloweng = function(div_id)
 							}
 							else
 							{
-								select2_new_option(baseID_PYTHON + '_output_content' + '_value_' + i,'$(' + option_name + ')','變數:' + option_name );
+								select2_new_option(baseID_PYTHON + '_output_content' + '_value_' + i,'$(' + option_name + ')',gettext('變數:')+ option_name );
 							}
 						});
 					}
@@ -753,14 +779,14 @@ var omfloweng = function(div_id)
 						$('[id^="' + baseID_PYTHON + '_input_content' + '_value_"]').each(function(i)
 						{
 							var input_name_select_object = $('#' + baseID_PYTHON + '_input_content' +'_value_' + i);
-							if(input_name_select_object.html().indexOf(option_name) > 0)
+							if(input_name_select_object.html().indexOf('value="' + option_name + '"') > 0)
 							{
 								//已存在
 							}
 							else
 							{
 								//加上
-								select2_new_option(baseID_PYTHON + '_input_content' + '_value_' + i,option_name,'變數:' + option_text );
+								select2_new_option(baseID_PYTHON + '_input_content' + '_value_' + i,option_name,gettext('變數:') + option_text );
 							}
 						});
 					}
@@ -811,31 +837,31 @@ var omfloweng = function(div_id)
 						+' <div class="modal-content">'
 						+'  <div class="modal-header">'
 						+'   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-						+'   <h4 class="modal-title"> 子流程-<span id="' + baseID_SUBFLOW + '_id"></span></h4>'
+						+'   <h4 class="modal-title"> '+gettext('子流程-')+'<span id="' + baseID_SUBFLOW + '_id"></span></h4>'
 						+'  </div>'
 						+'  <div class="modal-body">'
 						+'   <div class="nav-tabs-custom">'
 						+'    <ul class="nav nav-tabs">'
-						+'     <li class="active"><a href="#' + baseID_SUBFLOW + '_config" data-toggle="tab">設定</a></li>'
-						+'     <li><a href="#' + baseID_SUBFLOW + '_subflow" data-toggle="tab">子流程</a></li>'
-						+'     <li><a href="#' + baseID_SUBFLOW + '_subflow_input" data-toggle="tab">子流程輸入</a></li>'
-						+'     <li><a href="#' + baseID_SUBFLOW + '_subflow_output" data-toggle="tab">子流程輸出</a></li>'
+						+'     <li class="active"><a href="#' + baseID_SUBFLOW + '_config" data-toggle="tab">'+gettext('設定')+'</a></li>'
+						+'     <li><a href="#' + baseID_SUBFLOW + '_subflow" data-toggle="tab">'+gettext('子流程')+'</a></li>'
+						+'     <li><a href="#' + baseID_SUBFLOW + '_subflow_input" data-toggle="tab">'+gettext('子流程輸入')+'</a></li>'
+						+'     <li><a href="#' + baseID_SUBFLOW + '_subflow_output" data-toggle="tab">'+gettext('子流程輸出')+'</a></li>'
 						+'    </ul>'
 						
 						+'    <div class="tab-content">'
 
 						+'     <div class="tab-pane active" id="' + baseID_SUBFLOW + '_config">'
 						+'      <div class="form-group has-warning" >'
-						+'       <label> 顯示名稱</label>'
-						+'       <input id="' + baseID_SUBFLOW + '_config_text" type="text" class="form-control" placeholder="請輸入名稱..." >'
+						+'       <label> '+gettext('顯示名稱')+'</label>'
+						+'       <input id="' + baseID_SUBFLOW + '_config_text" type="text" class="form-control" placeholder="'+gettext('請輸入名稱...')+'" >'
 						+'      </div>'
 						+'      <div class="form-group">'
 						+'       <input id="' + baseID_SUBFLOW + '_config_error_pass" type="checkbox" class="icheckbox_minimal-blue"><label for="' + baseID_SUBFLOW + '_config_error_pass"></label>'
-						+'       <label> 異常時通過/標示異常</label>'
+						+'       <label> '+gettext('異常時通過/標示異常')+'</label>'
 						+'      </div>'
 						+'      <div class="form-group">'
 						+'       <input id="' + baseID_SUBFLOW + '_config_log" type="checkbox" class="icheckbox_minimal-blue"><label for="' + baseID_SUBFLOW + '_config_log"></label>'
-						+'       <label> 紀錄Log</label>'
+						+'       <label> '+gettext('紀錄Log')+'</label>'
 						+'      </div>'	
 						+'     </div>'
 						
@@ -859,8 +885,8 @@ var omfloweng = function(div_id)
 						+'   </div>'
 						+'  </div>'
 						+'  <div class="modal-footer">'
-						+'   <button type="button" class="btn btn-default pull-left" id="' + baseID_SUBFLOW + '_close">取消</button>'
-						+'   <button type="button" class="btn btn-primary"  id="' + baseID_SUBFLOW + '_submit">確定</button>'
+						+'   <button type="button" class="btn btn-default pull-left" id="' + baseID_SUBFLOW + '_close">'+gettext('取消')+'</button>'
+						+'   <button type="button" class="btn btn-primary"  id="' + baseID_SUBFLOW + '_submit">'+gettext('確定')+'</button>'
 						+'  </div>'
 						+' </div>'
 						+'</div>'
@@ -907,31 +933,31 @@ var omfloweng = function(div_id)
 						+' <div class="modal-content">'
 						+'  <div class="modal-header">'
 						+'   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-						+'   <h4 class="modal-title"> 條件判斷-<span id="' + baseID_SWITCH + '_id"></span></h4>'
+						+'   <h4 class="modal-title"> '+gettext('條件判斷-')+'<span id="' + baseID_SWITCH + '_id"></span></h4>'
 						+'  </div>'
 						+'  <div class="modal-body">'
 						+'   <div class="nav-tabs-custom">'
 						+'    <ul class="nav nav-tabs">'
-						+'     <li class="active"><a href="#' + baseID_SWITCH + '_config" data-toggle="tab">設定</a></li>'
-						+'     <li><a href="#' +baseID_SWITCH + '_calculate" data-toggle="tab">篩選</a></li>'
-						+'     <li><a href="#' + baseID_SWITCH + '_rule" data-toggle="tab">規則</a></li>'
+						+'     <li class="active"><a href="#' + baseID_SWITCH + '_config" data-toggle="tab">'+gettext('設定')+'</a></li>'
+						+'     <li><a href="#' +baseID_SWITCH + '_calculate" data-toggle="tab">'+gettext('篩選')+'</a></li>'
+						+'     <li><a href="#' + baseID_SWITCH + '_rule" data-toggle="tab">'+gettext('規則')+'</a></li>'
 						+'    </ul>'
 						
 						+'    <div class="tab-content">'
 						
 						+'     <div class="tab-pane active" id="' + baseID_SWITCH + '_config">'
 						+'      <div class="form-group has-warning" >'
-						+'       <label> 顯示名稱</label>'
-						+'       <input id="' + baseID_SWITCH + '_config_text" type="text" class="form-control" placeholder="請輸入名稱..." >'
+						+'       <label> '+gettext('顯示名稱')+'</label>'
+						+'       <input id="' + baseID_SWITCH + '_config_text" type="text" class="form-control" placeholder="'+gettext('請輸入名稱...')+'" >'
 						+'      </div>'
 						+'      <div class="form-group">'
 						+'       <input id="' + baseID_SWITCH + '_config_log" type="checkbox" class="icheckbox_minimal-blue"><label for="' + baseID_SWITCH + '_config_log"></label>'
-						+'       <label> 紀錄Log</label>'
+						+'       <label> '+gettext('紀錄Log')+'</label>'
 						+'      </div>'	
 						+'     </div>'
 						
 						+'     <div class="tab-pane" id="' + baseID_SWITCH + '_calculate">'
-						+'      <button id="' + baseID_SWITCH + '_calculate_content_add' + '" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> 新增</button>'
+						+'      <button id="' + baseID_SWITCH + '_calculate_content_add' + '" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> '+gettext('新增')+'</button>'
 						+'      <ul id="' + baseID_SWITCH +  '_calculate_content' + '" style="list-style-type: none; margin: 0; padding: 0">'
 						+'      </ul>'					
 						+'     </div>'
@@ -946,8 +972,8 @@ var omfloweng = function(div_id)
 						+'   </div>'
 						+'  </div>'
 						+'  <div class="modal-footer">'
-						+'   <button type="button" class="btn btn-default pull-left" id="' + baseID_SWITCH + '_close">取消</button>'
-						+'   <button type="button" class="btn btn-primary"  id="' + baseID_SWITCH + '_submit">確定</button>'
+						+'   <button type="button" class="btn btn-default pull-left" id="' + baseID_SWITCH + '_close">'+gettext('取消')+'</button>'
+						+'   <button type="button" class="btn btn-primary"  id="' + baseID_SWITCH + '_submit">'+gettext('確定')+'</button>'
 						+'  </div>'
 						+' </div>'
 						+'</div>'
@@ -975,27 +1001,27 @@ var omfloweng = function(div_id)
 						$('[id^="' + baseID_SWITCH + '_rule_content' + '_value1_"]').each(function(i)
 						{
 							var input_name_select_object = $('#' + baseID_SWITCH + '_rule_content' +'_value1_' + i);
-							if(input_name_select_object.html().indexOf(option_name) > 0)
+							if(input_name_select_object.html().indexOf('value="' + option_name + '"') > 0)
 							{
 								//已存在
 							}
 							else
 							{
 								//加上
-								select2_new_option(baseID_SWITCH + '_rule_content' + '_value_' + i,option_name,'變數:' + option_text );
+								select2_new_option(baseID_SWITCH + '_rule_content' + '_value_' + i,option_name,gettext('變數:') + option_text );
 							}
 						});
 						$('[id^="' + baseID_SWITCH + '_rule_content' + '_value2_"]').each(function(i)
 						{
 							var input_name_select_object = $('#' + baseID_SWITCH + '_rule_content' +'_value2_' + i);
-							if(input_name_select_object.html().indexOf(option_name) > 0)
+							if(input_name_select_object.html().indexOf('value="' + option_name + '"') > 0)
 							{
 								//已存在
 							}
 							else
 							{
 								//加上
-								select2_new_option(baseID_SWITCH + '_rule_content' + '_value_' + i,option_name,'變數:' + option_text );
+								select2_new_option(baseID_SWITCH + '_rule_content' + '_value_' + i,option_name,gettext('變數:') + option_text );
 							}
 						});
 					}
@@ -1017,26 +1043,26 @@ var omfloweng = function(div_id)
 						$('[id^="' + baseID_SWITCH + '_rule_content' + '_value1_"]').each(function(i)
 						{
 							var input_name_select_object = $('#' + baseID_SWITCH + '_rule_content' +'_value1_' + i);
-							if(input_name_select_object.html().indexOf(option_name) > 0)
+							if(input_name_select_object.html().indexOf('value="' + option_name + '"') > 0)
 							{
 
 							}
 							else
 							{
-								select2_new_option(baseID_SWITCH + '_rule_content' + '_value1_' + i,option_name,'變數:' + option_text );
+								select2_new_option(baseID_SWITCH + '_rule_content' + '_value1_' + i,option_name,gettext('變數:') + option_text );
 							}
 						});
 						$('[id^="' + baseID_SWITCH + '_rule_content' + '_value2_"]').each(function(i)
 						{
 							var input_name_select_object = $('#' + baseID_SWITCH + '_rule_content' +'_value2_' + i);
-							if(input_name_select_object.html().indexOf(option_name) > 0)
+							if(input_name_select_object.html().indexOf('value="' + option_name + '"') > 0)
 							{
 								//已存在
 							}
 							else
 							{
 								//加上
-								select2_new_option(baseID_SWITCH + '_rule_content' + '_value2_' + i,option_name,'變數:' + option_text );
+								select2_new_option(baseID_SWITCH + '_rule_content' + '_value2_' + i , option_name,gettext('變數:') + option_text );
 							}
 						});
 					}
@@ -1077,38 +1103,38 @@ var omfloweng = function(div_id)
 						+' <div class="modal-content">'
 						+'  <div class="modal-header">'
 						+'   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-						+'   <h4 class="modal-title"> 人工處理-<span id="' + baseID_FORM + '_id"></span></h4>'
+						+'   <h4 class="modal-title"> '+gettext('人工處理-')+'<span id="' + baseID_FORM + '_id"></span></h4>'
 						+'  </div>'
 						+'  <div class="modal-body">'
 						+'   <div class="nav-tabs-custom">'
 						+'    <ul class="nav nav-tabs">'
-						+'     <li class="active"><a href="#' + baseID_FORM + '_config" data-toggle="tab">設定</a></li>'
-						+'     <li><a href="#' + baseID_FORM + '_calculate" data-toggle="tab">篩選</a></li>'
-						+'     <li><a href="#' + baseID_FORM + '_input" data-toggle="tab">欄位設定</a></li>'
-						+'     <li><a href="#' + baseID_FORM + '_myform" data-toggle="tab">自訂表單</a></li>'
-						+'     <li><a href="#' + baseID_FORM + '_subflow" data-toggle="tab">驗證</a></li>'
-						+'     <li><a href="#' + baseID_FORM + '_subflow_input" data-toggle="tab">驗證輸入</a></li>'
-						+'     <li><a href="#' + baseID_FORM + '_output" data-toggle="tab">輸出</a></li>'
-						+'     <li><a href="#' + baseID_FORM + '_quickok" data-toggle="tab">動作1</a></li>'
-						+'     <li><a href="#' + baseID_FORM + '_quickno" data-toggle="tab">動作2</a></li>'
+						+'     <li class="active"><a href="#' + baseID_FORM + '_config" data-toggle="tab">'+gettext('設定')+'</a></li>'
+						+'     <li><a href="#' + baseID_FORM + '_calculate" data-toggle="tab">'+gettext('篩選')+'</a></li>'
+						+'     <li><a href="#' + baseID_FORM + '_input" data-toggle="tab">'+gettext('欄位設定')+'</a></li>'
+						+'     <li><a href="#' + baseID_FORM + '_myform" data-toggle="tab">'+gettext('自訂表單')+'</a></li>'
+						+'     <li><a href="#' + baseID_FORM + '_subflow" data-toggle="tab">'+gettext('驗證')+'</a></li>'
+						+'     <li><a href="#' + baseID_FORM + '_subflow_input" data-toggle="tab">'+gettext('驗證輸入')+'</a></li>'
+						+'     <li><a href="#' + baseID_FORM + '_output" data-toggle="tab">'+gettext('輸出')+'</a></li>'
+						+'     <li><a href="#' + baseID_FORM + '_quickok" data-toggle="tab">'+gettext('動作1')+'</a></li>'
+						+'     <li><a href="#' + baseID_FORM + '_quickno" data-toggle="tab">'+gettext('動作2')+'</a></li>'
 						+'    </ul>'
 						
 						+'    <div class="tab-content">'
 
 						+'     <div class="tab-pane active" id="' + baseID_FORM + '_config">'
 						+'      <div class="form-group has-warning" >'
-						+'       <label> 顯示名稱</label>'
-						+'       <input id="' + baseID_FORM + '_config_text" type="text" class="form-control" placeholder="請輸入名稱..." >'
+						+'       <label> '+gettext('顯示名稱')+'</label>'
+						+'       <input id="' + baseID_FORM + '_config_text" type="text" class="form-control" placeholder="'+gettext('請輸入名稱...')+'" >'
 						+'      </div>'
 						+'      <div class="form-group">'
 						+'       <input id="' + baseID_FORM + '_config_log" type="checkbox" class="icheckbox_minimal-blue"><label for="' + baseID_FORM + '_config_log"></label>'
-						+'       <label> 紀錄Log</label>'
+						+'       <label> '+gettext('紀錄Log')+'</label>'
 						+'      </div>'	
 
 						+'     </div>'
 						
 						+'     <div class="tab-pane" id="' + baseID_FORM + '_calculate">'
-						+'      <button id="' + baseID_FORM + '_calculate_content_add' + '" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> 新增</button>'
+						+'      <button id="' + baseID_FORM + '_calculate_content_add' + '" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> '+gettext('新增')+'</button>'
 						+'      <ul id="' + baseID_FORM +  '_calculate_content' + '" style="list-style-type: none; margin: 0; padding: 0">'
 						+'      </ul>'					
 						+'     </div>'
@@ -1129,7 +1155,7 @@ var omfloweng = function(div_id)
 						+'     </div>'
 						
 						+'     <div class="tab-pane" id="' + baseID_FORM + '_input">'
-						+'      <button id="' + baseID_FORM + '_input_content_add" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> 新增</button>'
+						+'      <button id="' + baseID_FORM + '_input_content_add" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> '+gettext('新增')+'</button>'
 						+'      <ul id="' + baseID_FORM + '_input_content" style="list-style-type: none; margin: 0; padding: 0">'
 						+'      </ul>'
 						+'     </div>'
@@ -1138,13 +1164,13 @@ var omfloweng = function(div_id)
 						+'      <ul style="list-style-type: none; margin: 0; padding: 0">'
 						+'        <li class="ui-state-default" style=" margin: 0 0 0 0;height:30px;">'
 						+'          <table width="100%"><tr>'
-						+'            <td width="15%" nowrap><input id="' + baseID_FORM + '_action1" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_FORM + '_action1"></label> 啟用</td>'
-						+'            <td width="85%"><input id="' + baseID_FORM + '_action1_text" type="text" class="form-control " placeholder="名稱"></td>'
+						+'            <td width="15%" nowrap><input id="' + baseID_FORM + '_action1" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_FORM + '_action1"></label> '+gettext('啟用')+'</td>'
+						+'            <td width="85%"><input id="' + baseID_FORM + '_action1_text" type="text" class="form-control " placeholder="'+gettext('名稱')+'"></td>'
 						+'          </tr></table>'
 						+'        </li>'
 						+'        <li><hr style="border-color:silver"></li>'
 						+'      </ul>'
-						+'      <button id="' + baseID_FORM + '1_input_content_add" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> 新增</button>'
+						+'      <button id="' + baseID_FORM + '1_input_content_add" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> '+gettext('新增')+'</button>'
 						+'      <ul id="' + baseID_FORM + '1_input_content" style="list-style-type: none; margin: 0; padding: 0">'
 						+'      </ul>'
 						+'     </div>'
@@ -1153,13 +1179,13 @@ var omfloweng = function(div_id)
 						+'      <ul style="list-style-type: none; margin: 0; padding: 0">'
 						+'        <li class="ui-state-default" style=" margin: 0 0 0 0;height:30px;">'
 						+'          <table width="100%"><tr>'
-						+'            <td width="15%" nowrap><input id="' + baseID_FORM + '_action2" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_FORM + '_action2"></label> 啟用</td>'
-						+'            <td width="85%"><input id="' + baseID_FORM + '_action2_text" type="text" class="form-control " placeholder="名稱"></td>'
+						+'            <td width="15%" nowrap><input id="' + baseID_FORM + '_action2" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_FORM + '_action2"></label> '+gettext('啟用')+'</td>'
+						+'            <td width="85%"><input id="' + baseID_FORM + '_action2_text" type="text" class="form-control " placeholder="'+gettext('名稱')+'"></td>'
 						+'          </tr></table>'
 						+'        </li>'
 						+'        <li><hr style="border-color:silver"></li>'
 						+'      </ul>'
-						+'      <button id="' + baseID_FORM + '2_input_content_add" type="button" class="btn btn-default" ><i class="fa fa-plus"></i> 新增</button>'
+						+'      <button id="' + baseID_FORM + '2_input_content_add" type="button" class="btn btn-default" ><i class="fa fa-plus"></i> '+gettext('新增')+'</button>'
 						+'      <ul id="' + baseID_FORM + '2_input_content" style="list-style-type: none; margin: 0; padding: 0">'
 						+'      </ul>'
 						+'     </div>'
@@ -1168,9 +1194,9 @@ var omfloweng = function(div_id)
 						+'     <div class="tab-pane" id="' + baseID_FORM + '_myform">'						
 						+'      <div class="form-group">'
 						+'       <div>'
-						+'         <button id="' + baseID_FORM + '_myform_button_load" type="button" class="btn btn-default">載入</button><button id="' + baseID_FORM + '_myform_button_cancel" type="button" class="btn btn-default">取消</button>'
-						+'         <button id="' + baseID_FORM + '_myform_button_new_box6" style="display:none" type="button" class="btn btn-default">新增半區塊</button>' //(JOB)
-						+'         <button id="' + baseID_FORM + '_myform_button_new_box12" style="display:none" type="button" class="btn btn-default">新增全區塊</button>'
+						+'         <button id="' + baseID_FORM + '_myform_button_load" type="button" class="btn btn-default">'+gettext('載入')+'</button><button id="' + baseID_FORM + '_myform_button_cancel" type="button" class="btn btn-default">'+gettext('取消')+'</button>'
+						+'         <button id="' + baseID_FORM + '_myform_button_new_box6" style="display:none" type="button" class="btn btn-default">'+gettext('新增半區塊')+'</button>' //(JOB)
+						+'         <button id="' + baseID_FORM + '_myform_button_new_box12" style="display:none" type="button" class="btn btn-default">'+gettext('新增全區塊')+'</button>'
 						+'       </div>' 
 						+'       <div id="' + baseID_FORM + '_myform_content">'
 						+'       </div>' 
@@ -1178,7 +1204,7 @@ var omfloweng = function(div_id)
 						+'     </div>'
 						
 						+'     <div class="tab-pane" id="' +baseID_FORM + '_output">'
-						+'      <button id="' + baseID_FORM + '_output_content_add" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> 新增</button>'
+						+'      <button id="' + baseID_FORM + '_output_content_add" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> '+gettext('新增')+'</button>'
 						+'      <ul id="' + baseID_FORM + '_output_content" style="list-style-type: none; margin: 0; padding: 0">'
 						+'      </ul>'
 						+'     </div>'
@@ -1188,8 +1214,8 @@ var omfloweng = function(div_id)
 						+'   </div>'
 						+'  </div>'
 						+'  <div class="modal-footer">'
-						+'   <button type="button" class="btn btn-default pull-left"id="' + baseID_FORM + '_close">取消</button>'
-						+'   <button type="button" class="btn btn-primary"  id="' + baseID_FORM + '_submit">確定</button>'
+						+'   <button type="button" class="btn btn-default pull-left"id="' + baseID_FORM + '_close">'+gettext('取消')+'</button>'
+						+'   <button type="button" class="btn btn-primary"  id="' + baseID_FORM + '_submit">'+gettext('確定')+'</button>'
 						+'  </div>'
 						+' </div>'
 						+'</div>'
@@ -1233,14 +1259,14 @@ var omfloweng = function(div_id)
 						$('[id^="' + baseID_FORM + '_input_content' + '_value_"]').each(function(i)
 						{
 							var input_name_select_object = $('#' + baseID_FORM + '_input_content' +'_value_' + i);
-							if(input_name_select_object.html().indexOf(option_name) > 0)
+							if(input_name_select_object.html().indexOf('value="' + option_name + '"') > 0)
 							{
 								//已存在
 							}
 							else
 							{
 								//加上
-								select2_new_option(baseID_FORM + '_input_content' + '_value_' + i,option_name,'變數:' + option_text );
+								select2_new_option(baseID_FORM + '_input_content' + '_value_' + i,option_name,gettext('變數:') + option_text );
 							}
 						});
 					}
@@ -1260,14 +1286,14 @@ var omfloweng = function(div_id)
 						$('[id^="' + baseID_FORM + '1_input_content' + '_value_"]').each(function(i)
 						{
 							var input_name_select_object = $('#' + baseID_FORM + '1_input_content' +'_value_' + i);
-							if(input_name_select_object.html().indexOf(option_name) > 0)
+							if(input_name_select_object.html().indexOf('value="' + option_name + '"') > 0)
 							{
 								//已存在
 							}
 							else
 							{
 								//加上
-								select2_new_option(baseID_FORM + '1_input_content' + '_value_' + i,option_name,'變數:' + option_text );
+								select2_new_option(baseID_FORM + '1_input_content' + '_value_' + i,option_name,gettext('變數:') + option_text );
 							}
 						});
 					}
@@ -1287,14 +1313,14 @@ var omfloweng = function(div_id)
 						$('[id^="' + baseID_FORM + '2_input_content' + '_value_"]').each(function(i)
 						{
 							var input_name_select_object = $('#' + baseID_FORM + '2_input_content' +'_value_' + i);
-							if(input_name_select_object.html().indexOf(option_name) > 0)
+							if(input_name_select_object.html().indexOf('value="' + option_name + '"') > 0)
 							{
 								//已存在
 							}
 							else
 							{
 								//加上
-								select2_new_option(baseID_FORM + '2_input_content' + '_value_' + i,option_name,'變數:' + option_text );
+								select2_new_option(baseID_FORM + '2_input_content' + '_value_' + i,option_name,gettext('變數:') + option_text );
 							}
 						});
 					}
@@ -1318,7 +1344,7 @@ var omfloweng = function(div_id)
 							{
 								$('[id^="' + baseID_FORM + '_output_content' +'_value_"]').each(function(i)
 								{
-									select2_new_option(baseID_FORM + '_output_content' + '_value_' + i,'#(' + item.id + ')','欄位:' + item.config.title);
+									select2_new_option(baseID_FORM + '_output_content' + '_value_' + i,'#(' + item.id + ')',gettext('欄位:') + item.config.title);
 								});
 							}
 						});
@@ -1376,14 +1402,14 @@ var omfloweng = function(div_id)
 						$('[id^="' + baseID_FORM + '_input_content' + '_value_"]').each(function(i)
 						{
 							var input_name_select_object = $('#' + baseID_FORM + '_input_content' +'_value_' + i);
-							if(input_name_select_object.html().indexOf(option_name) > 0)
+							if(input_name_select_object.html().indexOf('value="' + option_name + '"') > 0)
 							{
 								//已存在
 							}
 							else
 							{
 								//加上
-								select2_new_option(baseID_FORM + '_input_content' + '_value_' + i,option_name,'變數:' + option_text );
+								select2_new_option(baseID_FORM + '_input_content' + '_value_' + i,option_name,gettext('變數:') + option_text );
 							}
 						});
 					}
@@ -1403,14 +1429,14 @@ var omfloweng = function(div_id)
 						$('[id^="' + baseID_FORM + '1_input_content' + '_value_"]').each(function(i)
 						{
 							var input_name_select_object = $('#' + baseID_FORM + '1_input_content' +'_value_' + i);
-							if(input_name_select_object.html().indexOf(option_name) > 0)
+							if(input_name_select_object.html().indexOf('value="' + option_name + '"') > 0)
 							{
 								//已存在
 							}
 							else
 							{
 								//加上
-								select2_new_option(baseID_FORM + '1_input_content' + '_value_' + i,option_name,'變數:' + option_text );
+								select2_new_option(baseID_FORM + '1_input_content' + '_value_' + i,option_name,gettext('變數:') + option_text );
 							}
 						});
 					}
@@ -1430,14 +1456,14 @@ var omfloweng = function(div_id)
 						$('[id^="' + baseID_FORM + '2_input_content' + '_value_"]').each(function(i)
 						{
 							var input_name_select_object = $('#' + baseID_FORM + '2_input_content' +'_value_' + i);
-							if(input_name_select_object.html().indexOf(option_name) > 0)
+							if(input_name_select_object.html().indexOf('value="' + option_name + '"') > 0)
 							{
 								//已存在
 							}
 							else
 							{
 								//加上
-								select2_new_option(baseID_FORM + '2_input_content' + '_value_' + i,option_name,'變數:' + option_text );
+								select2_new_option(baseID_FORM + '2_input_content' + '_value_' + i,option_name,gettext('變數:') + option_text );
 							}
 						});
 					}
@@ -1460,7 +1486,7 @@ var omfloweng = function(div_id)
 							{
 								$('[id^="' + baseID_FORM + '_output_content' +'_value_"]').each(function(i)
 								{
-									select2_new_option(baseID_FORM + '_output_content' + '_value_' + i,'#(' + item.id + ')','欄位:' + item.config.title);
+									select2_new_option(baseID_FORM + '_output_content' + '_value_' + i,'#(' + item.id + ')',gettext('欄位:') + item.config.title);
 								});
 							}
 						});
@@ -1520,13 +1546,13 @@ var omfloweng = function(div_id)
 						+' <div class="modal-content">'
 						+'  <div class="modal-header">'
 						+'   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-						+'   <h4 class="modal-title"> 暫停-<span id="' + baseID_SLEEP + '_id"></span></h4>'
+						+'   <h4 class="modal-title"> '+gettext('暫停-')+'<span id="' + baseID_SLEEP + '_id"></span></h4>'
 						+'  </div>'
 						+'  <div class="modal-body">'
 						+'   <div class="nav-tabs-custom">'
 						+'    <ul class="nav nav-tabs">'
-						+'     <li class="active"><a href="#' +baseID_SLEEP + '_input" data-toggle="tab">輸入</a></li>'
-						+'     <li><a href="#' +baseID_SLEEP + '_config" data-toggle="tab">預設值</a></li>'
+						+'     <li class="active"><a href="#' +baseID_SLEEP + '_input" data-toggle="tab">'+gettext('輸入')+'</a></li>'
+						+'     <li><a href="#' +baseID_SLEEP + '_config" data-toggle="tab">'+gettext('預設值')+'</a></li>'
 						+'    </ul>'
 						
 						+'    <div class="tab-content">'
@@ -1537,9 +1563,9 @@ var omfloweng = function(div_id)
 						+'         <table width="100%"><tr>'
 						+'           <td width="4%"></span></td>'
 						+'          <td width="6%"></td>'
-						+'          <td width="30%"><select id="' + baseID_SLEEP + '_input_value" class="form-control select2" placeholder="輸入資料" style="width:100%"></select></td>'
+						+'          <td width="30%"><select id="' + baseID_SLEEP + '_input_value" class="form-control select2" placeholder="'+gettext('輸入資料')+'" style="width:100%"></select></td>'
 						+'          <td width="30%"><input type="text" class="form-control " value="msec" readonly></td>'
-						+'          <td width="30%"><input type="text" class="form-control " placeholder="設定暫停的豪秒(ms)數" readonly></td>'
+						+'          <td width="30%"><input type="text" class="form-control " placeholder="'+gettext('設定暫停的豪秒(ms)數')+'" readonly></td>'
 						+'         </tr></table>'
 						+'        </li>'
 						+'      </ul>'
@@ -1547,7 +1573,7 @@ var omfloweng = function(div_id)
 						
 						+'     <div class="tab-pane" id="' + baseID_SLEEP + '_config">'
 						+'		<div class="form-group">'
-						+'		  <label>暫停豪秒</label>'
+						+'		  <label>'+gettext('暫停豪秒')+'</label>'
 						+'		  <input id="' + baseID_SLEEP + '_config_msec" type="text" name="refresh_rate_$" class="js-range-slider">'
 						+'		</div>'
 						
@@ -1556,8 +1582,8 @@ var omfloweng = function(div_id)
 						+'   </div>'
 						+'  </div>'
 						+'  <div class="modal-footer">'
-						+'   <button type="button" class="btn btn-default pull-left" id="' + baseID_SLEEP + '_close">取消</button>'
-						+'   <button type="button" class="btn btn-primary"  id="' + baseID_SLEEP + '_submit">確定</button>'
+						+'   <button type="button" class="btn btn-default pull-left" id="' + baseID_SLEEP + '_close">'+gettext('取消')+'</button>'
+						+'   <button type="button" class="btn btn-primary"  id="' + baseID_SLEEP + '_submit">'+gettext('確定')+'</button>'
 						+'  </div>'
 						+' </div>'
 						+'</div>'
@@ -1573,7 +1599,7 @@ var omfloweng = function(div_id)
 				step    : 500,
 				from	: 5000,
 				type    : 'single',
-				postfix : ' 豪秒',
+				postfix : gettext(' 豪秒'),
 				prettify: false,
 				grid	: true,
 				grid_num: 200,
@@ -1599,6 +1625,7 @@ var omfloweng = function(div_id)
 				$('#' + baseID_SLEEP).modal('hide');
 			});
 		}
+		
 		//====================
 		//===MODAL CHART ASYNC 
 		//====================
@@ -1609,25 +1636,25 @@ var omfloweng = function(div_id)
 						+' <div class="modal-content">'
 						+'  <div class="modal-header">'
 						+'   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-						+'   <h4 class="modal-title"> 並行-<span id="' + baseID_ASYNC + '_id"></span></h4>'
+						+'   <h4 class="modal-title"> '+gettext('並行-')+'<span id="' + baseID_ASYNC + '_id"></span></h4>'
 						+'  </div>'
 						+'  <div class="modal-body">'
 						+'   <div class="nav-tabs-custom">'
 						+'    <ul class="nav nav-tabs">'
-						+'     <li class="active"><a href="#' + baseID_ASYNC + '_config" data-toggle="tab">設定</a></li>'
-						+'     <li ><a href="#' +baseID_ASYNC + '_rule" data-toggle="tab">規則</a></li>'
+						+'     <li class="active"><a href="#' + baseID_ASYNC + '_config" data-toggle="tab">'+gettext('設定')+'</a></li>'
+						+'     <li ><a href="#' +baseID_ASYNC + '_rule" data-toggle="tab">'+gettext('規則')+'</a></li>'
 						+'    </ul>'
 						
 						+'    <div class="tab-content">'
 
 						+'     <div class="tab-pane active" id="' + baseID_ASYNC + '_config">'
 						+'      <div class="form-group has-warning" >'
-						+'       <label> 顯示名稱</label>'
-						+'       <input id="' + baseID_ASYNC + '_config_text" type="text" class="form-control" placeholder="請輸入名稱..." >'
+						+'       <label> '+gettext('顯示名稱')+'</label>'
+						+'       <input id="' + baseID_ASYNC + '_config_text" type="text" class="form-control" placeholder="'+gettext('請輸入名稱...')+'" >'
 						+'      </div>'
 						+'      <div class="form-group">'
 						+'       <input id="' + baseID_ASYNC + '_config_log" type="checkbox" class="icheckbox_minimal-blue"><label for="' + baseID_ASYNC + '_config_log"></label>'
-						+'       <label> 紀錄Log</label>'
+						+'       <label> '+gettext('紀錄Log')+'</label>'
 						+'      </div>'	
 						+'     </div>'
 						
@@ -1641,8 +1668,8 @@ var omfloweng = function(div_id)
 						+'   </div>'
 						+'  </div>'
 						+'  <div class="modal-footer">'
-						+'   <button type="button" class="btn btn-default pull-left" id="' + baseID_ASYNC + '_close">取消</button>'
-						+'   <button type="button" class="btn btn-primary"  id="' + baseID_ASYNC + '_submit">關閉</button>'
+						+'   <button type="button" class="btn btn-default pull-left" id="' + baseID_ASYNC + '_close">'+gettext('取消')+'</button>'
+						+'   <button type="button" class="btn btn-primary"  id="' + baseID_ASYNC + '_submit">'+gettext('關閉')+'</button>'
 						+'  </div>'
 						+' </div>'
 						+'</div>'
@@ -1679,25 +1706,25 @@ var omfloweng = function(div_id)
 						+' <div class="modal-content">'
 						+'  <div class="modal-header">'
 						+'   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-						+'   <h4 class="modal-title"> 並行匯集-<span id="' + baseID_COLLECTION + '_id"></span></h4>'
+						+'   <h4 class="modal-title"> '+gettext('並行匯集-')+'<span id="' + baseID_COLLECTION + '_id"></span></h4>'
 						+'  </div>'
 						+'  <div class="modal-body">'
 						+'   <div class="nav-tabs-custom">'
 						+'    <ul class="nav nav-tabs">'
-						+'     <li class="active"><a href="#' + baseID_COLLECTION + '_config" data-toggle="tab">設定</a></li>'
-						+'     <li ><a href="#' +baseID_COLLECTION + '_rule" data-toggle="tab">規則</a></li>'
+						+'     <li class="active"><a href="#' + baseID_COLLECTION + '_config" data-toggle="tab">'+gettext('設定')+'</a></li>'
+						+'     <li ><a href="#' +baseID_COLLECTION + '_rule" data-toggle="tab">'+gettext('規則')+'</a></li>'
 						+'    </ul>'
 						
 						+'    <div class="tab-content">'
 
 						+'     <div class="tab-pane active" id="' + baseID_COLLECTION + '_config">'
 						+'      <div class="form-group has-warning" >'
-						+'       <label> 顯示名稱</label>'
-						+'       <input id="' + baseID_COLLECTION + '_config_text" type="text" class="form-control" placeholder="請輸入名稱..." >'
+						+'       <label> '+gettext('顯示名稱')+'</label>'
+						+'       <input id="' + baseID_COLLECTION + '_config_text" type="text" class="form-control" placeholder="'+gettext('請輸入名稱...')+'" >'
 						+'      </div>'
 						+'      <div class="form-group">'
 						+'       <input id="' + baseID_COLLECTION + '_config_log" type="checkbox" class="icheckbox_minimal-blue"><label for="' + baseID_COLLECTION + '_config_log"></label>'
-						+'       <label> 紀錄Log</label>'
+						+'       <label> '+gettext('紀錄Log')+'</label>'
 						+'      </div>'	
 						+'     </div>'
 						
@@ -1711,8 +1738,8 @@ var omfloweng = function(div_id)
 						+'   </div>'
 						+'  </div>'
 						+'  <div class="modal-footer">'
-						+'   <button type="button" class="btn btn-default pull-left" id="' + baseID_COLLECTION + '_close">取消</button>'
-						+'   <button type="button" class="btn btn-primary"  id="' + baseID_COLLECTION + '_submit">關閉</button>'
+						+'   <button type="button" class="btn btn-default pull-left" id="' + baseID_COLLECTION + '_close">'+gettext('取消')+'</button>'
+						+'   <button type="button" class="btn btn-primary"  id="' + baseID_COLLECTION + '_submit">'+gettext('關閉')+'</button>'
 						+'  </div>'
 						+' </div>'
 						+'</div>'
@@ -1751,31 +1778,31 @@ var omfloweng = function(div_id)
 						+' <div class="modal-content">'
 						+'  <div class="modal-header">'
 						+'   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-						+'   <h4 class="modal-title"> 外部流程-<span id="' + baseID_OUTFLOW + '_id"></span></h4>'
+						+'   <h4 class="modal-title"> '+gettext('外部流程-')+'<span id="' + baseID_OUTFLOW + '_id"></span></h4>'
 						+'  </div>'
 						+'  <div class="modal-body">'
 						+'   <div class="nav-tabs-custom">'
 						+'    <ul class="nav nav-tabs">'
-						+'     <li class="active"><a href="#' + baseID_OUTFLOW + '_config" data-toggle="tab">設定</a></li>'
-						+'     <li><a href="#' + baseID_OUTFLOW + '_subflow" data-toggle="tab">外部流程</a></li>'
-						+'     <li><a href="#' + baseID_OUTFLOW + '_subflow_input" data-toggle="tab">流程輸入</a></li>'
-						+'     <li><a href="#' + baseID_OUTFLOW + '_subflow_output" data-toggle="tab">流程輸出</a></li>'
+						+'     <li class="active"><a href="#' + baseID_OUTFLOW + '_config" data-toggle="tab">'+gettext('設定')+'</a></li>'
+						+'     <li><a href="#' + baseID_OUTFLOW + '_subflow" data-toggle="tab">'+gettext('外部流程')+'</a></li>'
+						+'     <li><a href="#' + baseID_OUTFLOW + '_subflow_input" data-toggle="tab">'+gettext('流程輸入')+'</a></li>'
+						+'     <li><a href="#' + baseID_OUTFLOW + '_subflow_output" data-toggle="tab">'+gettext('流程輸出')+'</a></li>'
 						+'    </ul>'
 						
 						+'    <div class="tab-content">'
 
 						+'     <div class="tab-pane active" id="' + baseID_OUTFLOW + '_config">'
 						+'      <div class="form-group has-warning" >'
-						+'       <label> 顯示名稱</label>'
-						+'       <input id="' + baseID_OUTFLOW + '_config_text" type="text" class="form-control" placeholder="請輸入名稱..." >'
+						+'       <label> '+gettext('顯示名稱')+'</label>'
+						+'       <input id="' + baseID_OUTFLOW + '_config_text" type="text" class="form-control" placeholder="'+gettext('請輸入名稱...')+'" >'
 						+'      </div>'
 						+'      <div class="form-group">'
 						+'       <input id="' + baseID_OUTFLOW + '_config_error_pass" type="checkbox" class="icheckbox_minimal-blue"><label for="' + baseID_OUTFLOW + '_config_error_pass"></label>'
-						+'       <label> 異常時通過/標示異常</label>'
+						+'       <label> '+gettext('異常時通過/標示異常')+'</label>'
 						+'      </div>'
 						+'      <div class="form-group">'
 						+'       <input id="' + baseID_OUTFLOW + '_config_log" type="checkbox" class="icheckbox_minimal-blue"><label for="' + baseID_OUTFLOW + '_config_log"></label>'
-						+'       <label> 紀錄Log</label>'
+						+'       <label> '+gettext('紀錄Log')+'</label>'
 						+'      </div>'	
 						+'     </div>'
 						
@@ -1805,8 +1832,8 @@ var omfloweng = function(div_id)
 						+'   </div>'
 						+'  </div>'
 						+'  <div class="modal-footer">'
-						+'   <button type="button" class="btn btn-default pull-left" id="' + baseID_OUTFLOW + '_close">取消</button>'
-						+'   <button type="button" class="btn btn-primary"  id="' + baseID_OUTFLOW + '_submit">確定</button>'
+						+'   <button type="button" class="btn btn-default pull-left" id="' + baseID_OUTFLOW + '_close">'+gettext('取消')+'</button>'
+						+'   <button type="button" class="btn btn-primary"  id="' + baseID_OUTFLOW + '_submit">'+gettext('確定')+'</button>'
 						+'  </div>'
 						+' </div>'
 						+'</div>'
@@ -1838,7 +1865,7 @@ var omfloweng = function(div_id)
 			
 			app_data.forEach(function(app_item) 
 			{
-				app_option += '<option value="' + app_item.id + '">' + app_item.app_name + '</option>'
+				app_option += '<option value="' + app_item.app_name + '">' + app_item.app_name + '</option>'
 			});
 			$('#' +  baseID_OUTFLOW + '_select_app').html(app_option);
 			$('#' +  baseID_OUTFLOW + '_select_app').val(null).trigger('change');
@@ -1860,7 +1887,7 @@ var omfloweng = function(div_id)
 				
 				flow_data.forEach(function(flow_item) 
 				{
-					flow_option += '<option value="' + flow_item.flow_uuid + '">' + flow_item.flow_name + '</option>'
+					flow_option += '<option value="' + flow_item.flow_name + '">' + flow_item.flow_name + '</option>'
 				});
 				
 				$('#' +  baseID_OUTFLOW + '_select_flow').html(flow_option);
@@ -1875,18 +1902,18 @@ var omfloweng = function(div_id)
 				var item_li_input_content = '<li id="' + ul_id + '_input_li__index_" class="ui-state-default" style=" margin: 0 0 0 0;height:30px;">'
 							+'<table width="100%"><tr>'
 							+'<td width="2%"><span class="fa fa-arrows-v"></span></td>'
-							+'<td width="8%" nowrap><input id="' + ul_id + '_input_require__index_" type="checkbox" class="icheckbox_minimal-blue"><label for="' + ul_id + '_input_require__index_" readonly></label> 必填</td>'
-							+'<td width="30%"><select id="' + ul_id + '_input_value__index_" class="form-control select2" placeholder="輸入資料" style="width:100%"></select></td>'
-							+'<td width="30%"><select id="' + ul_id + '_input_name__index_" type="text" class="form-control " placeholder="變數名稱" style="width:100%" readonly></select></td>'
-							+'<td width="30%"><input id="' + ul_id + '_input_des__index_" type="text" class="form-control " placeholder="說明" readonly></td>'
+							+'<td width="8%" nowrap><input id="' + ul_id + '_input_require__index_" type="checkbox" class="icheckbox_minimal-blue"><label for="' + ul_id + '_input_require__index_" readonly></label> '+gettext('必填')+'</td>'
+							+'<td width="30%"><select id="' + ul_id + '_input_value__index_" class="form-control select2" placeholder="'+gettext('輸入資料')+'" style="width:100%"></select></td>'
+							+'<td width="30%"><select id="' + ul_id + '_input_name__index_" type="text" class="form-control " placeholder="'+gettext('變數名稱')+'" style="width:100%" readonly></select></td>'
+							+'<td width="30%"><input id="' + ul_id + '_input_des__index_" type="text" class="form-control " placeholder="'+gettext('說明')+'" readonly></td>'
 							+'</tr></table>'
 							+'</li>';
 				var item_li_output_content = '<li id="' + ul_id + '_output_li__index_" class="ui-state-default" style=" margin: 0 0 0 0;height:30px;">'
 							+'<table width="100%"><tr>'
 							+'<td width="4%"><span class="fa fa-arrows-v"></span></td>'
-							+'<td width="32%"><select id="' + ul_id + '_output_value__index_" class="form-control select2" placeholder="輸出值" style="width:100%" readonly></select></td>'
-							+'<td width="32%"><select id="' + ul_id + '_output_name__index_" class="form-control select2" placeholder="輸出名稱" style="width:100%"></select></td>'
-							+'<td width="32%"><input id="' + ul_id + '_output_des__index_" type="text" class="form-control " placeholder="說明" readonly></td>'
+							+'<td width="32%"><select id="' + ul_id + '_output_value__index_" class="form-control select2" placeholder="'+gettext('輸出值')+'" style="width:100%" readonly></select></td>'
+							+'<td width="32%"><select id="' + ul_id + '_output_name__index_" class="form-control select2" placeholder="'+gettext('輸出名稱')+'" style="width:100%"></select></td>'
+							+'<td width="32%"><input id="' + ul_id + '_output_des__index_" type="text" class="form-control " placeholder="'+gettext('說明')+'" readonly></td>'
 							+'</tr></table>'
 							+'</li>';
 				//query
@@ -1894,7 +1921,7 @@ var omfloweng = function(div_id)
 				var output_option = [];
 				if(event_get_flowIO_list_callback != null)
 				{
-					var result = event_get_flowIO_list_callback($('#' +  baseID_OUTFLOW + '_select_flow').val());
+					var result = event_get_flowIO_list_callback($('#' +  baseID_OUTFLOW + '_select_app').val(), $('#' +  baseID_OUTFLOW + '_select_flow').val());
 					if(result != null)
 					{
 						input_option = result.outside_input;
@@ -1917,7 +1944,7 @@ var omfloweng = function(div_id)
 					{
 						item_text = input_item.name.substring(2);
 						item_text = item_text.substring(0,item_text.length -1);
-						$( '#' + ul_id + '_input_name_' + index ).html('<option value="$(' + item_text + ')">變數:' + item_text + '</option>');
+						$( '#' + ul_id + '_input_name_' + index ).html('<option value="$(' + item_text + ')">'+gettext('變數:') + item_text + '</option>');
 						$( '#' + ul_id + '_input_name_' + index ).select2({tags: false , placeholder: '',readonly: true , allowClear: false,dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}}});
 						$( '#' + ul_id + '_input_name_' + index ).prop("disabled", true);
 					}
@@ -1927,13 +1954,13 @@ var omfloweng = function(div_id)
 						{
 							item_text = input_item.name.substring(2);
 							item_text = item_text.substring(0,item_text.length -1);
-							$( '#' + ul_id + '_input_name_' + index ).html('<option value="#(' + item_text + ')">欄位:' + input_item.des + '</option>');
+							$( '#' + ul_id + '_input_name_' + index ).html('<option value="#(' + item_text + ')">'+gettext('欄位:') + input_item.des + '</option>');
 							$( '#' + ul_id + '_input_name_' + index ).select2({tags: false , placeholder: '',readonly: true , allowClear: false,dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}}});
 							$( '#' + ul_id + '_input_name_' + index ).prop("disabled", true);
 						}
 						else if(input_item.name.startsWith('#G1(')||input_item.name.startsWith('#G2('))
 						{
-							$( '#' + ul_id + '_input_name_' + index ).html('<option value="' + input_item.name + '">欄位:' + input_item.des + '</option>');
+							$( '#' + ul_id + '_input_name_' + index ).html('<option value="' + input_item.name + '">'+gettext('欄位:') + input_item.des + '</option>');
 							$( '#' + ul_id + '_input_name_' + index ).select2({tags: false , placeholder: '',readonly: true , allowClear: false,dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}}});
 							$( '#' + ul_id + '_input_name_' + index ).prop("disabled", true);
 						}
@@ -1959,7 +1986,7 @@ var omfloweng = function(div_id)
 					//$( '#' + ul_id + '_input_name_' + index ).val(input_item.name);
 					if(input_item.name.startsWith('#('))
 					{
-						$( '#' + ul_id + '_input_des_' + index ).val('表單欄位');
+						$( '#' + ul_id + '_input_des_' + index ).val(gettext('表單欄位'));
 					}
 					else
 					{
@@ -1976,7 +2003,7 @@ var omfloweng = function(div_id)
 					$( '#' + ul_id + '_output_name_' + index ).html(select_option_value());
 					//select2 enable
 					//$( '#' + ul_id + '_output_name_' + index ).select2({tags: false ,placeholder: '' ,allowClear: true,dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}}});
-					$( '#' + ul_id + '_output_name_' + index ).select2({tags: true,placeholder : "輸出變數",dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}},
+					$( '#' + ul_id + '_output_name_' + index ).select2({tags: true,placeholder : gettext("輸出變數"),dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}},
 								createTag: function(params) 
 								{
 									var term = $.trim(params.term);
@@ -1986,14 +2013,14 @@ var omfloweng = function(div_id)
 									  return null;
 									}
 									
-									if ((term.startsWith('變數:')))
+									if ((term.startsWith(gettext('變數:'))))
 									{
 										term = term.substring(3);
 									}
 									
 									return {
 									  id: '$(' + term + ')',
-									  text: '變數:' + term,
+									  text: gettext('變數:') + term,
 									  newTag: true // add additional parameters
 									}
 								}});
@@ -2003,7 +2030,7 @@ var omfloweng = function(div_id)
 					{
 						item_text = output_item.name.substring(2);
 						item_text = item_text.substring(0,item_text.length -1);
-						$( '#' + ul_id + '_output_value_' + index ).html('<option value="$(' + item_text + ')">變數:' + item_text + '</option>');
+						$( '#' + ul_id + '_output_value_' + index ).html('<option value="$(' + item_text + ')">'+gettext('變數:') + item_text + '</option>');
 						$( '#' + ul_id + '_output_value_' + index ).select2({tags: false , placeholder: '',readonly: true , allowClear: false,dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}}});
 						$( '#' + ul_id + '_output_value_' + index ).prop("disabled", true);
 					}
@@ -2014,7 +2041,7 @@ var omfloweng = function(div_id)
 					
 					
 					//寫設定值
-					//$( '#' + ul_id + '_output_value_' + index ).val('變數:' + item_text );
+					//$( '#' + ul_id + '_output_value_' + index ).val(gettext('變數:') + item_text );
 					$( '#' + ul_id + '_output_des_' + index ).val(output_item.des);
 
 					//相同名稱自動帶入
@@ -2043,8 +2070,8 @@ var omfloweng = function(div_id)
 				item.config.error_pass = $('#' + baseID_OUTFLOW + '_config_error_pass').prop("checked");
 				item.config.log = $('#' + baseID_OUTFLOW + '_config_log').prop("checked");
 				
-				item.config.app_id = $('#' + baseID_OUTFLOW + '_select_app').val();
-				item.config.flow_uuid = $('#' + baseID_OUTFLOW + '_select_flow').val();
+				item.config.app_name = $('#' + baseID_OUTFLOW + '_select_app').val();
+				item.config.flow_name = $('#' + baseID_OUTFLOW + '_select_flow').val();
 				
 				modal_save_outflow(baseID_OUTFLOW , item);
 
@@ -2066,31 +2093,31 @@ var omfloweng = function(div_id)
 						+' <div class="modal-content">'
 						+'  <div class="modal-header">'
 						+'   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-						+'   <h4 class="modal-title"> 呼叫流程-<span id="' + baseID_INFLOW + '_id"></span></h4>'
+						+'   <h4 class="modal-title"> '+gettext('呼叫流程-')+'<span id="' + baseID_INFLOW + '_id"></span></h4>'
 						+'  </div>'
 						+'  <div class="modal-body">'
 						+'   <div class="nav-tabs-custom">'
 						+'    <ul class="nav nav-tabs">'
-						+'     <li class="active"><a href="#' + baseID_INFLOW + '_config" data-toggle="tab">設定</a></li>'
-						+'     <li><a href="#' + baseID_INFLOW + '_subflow" data-toggle="tab">流程</a></li>'
-						+'     <li><a href="#' + baseID_INFLOW + '_subflow_input" data-toggle="tab">流程輸入</a></li>'
-						+'     <li><a href="#' + baseID_INFLOW + '_subflow_output" data-toggle="tab">流程輸出</a></li>'
+						+'     <li class="active"><a href="#' + baseID_INFLOW + '_config" data-toggle="tab">'+gettext('設定')+'</a></li>'
+						+'     <li><a href="#' + baseID_INFLOW + '_subflow" data-toggle="tab">'+gettext('流程')+'</a></li>'
+						+'     <li><a href="#' + baseID_INFLOW + '_subflow_input" data-toggle="tab">'+gettext('流程輸入')+'</a></li>'
+						+'     <li><a href="#' + baseID_INFLOW + '_subflow_output" data-toggle="tab">'+gettext('流程輸出')+'</a></li>'
 						+'    </ul>'
 						
 						+'    <div class="tab-content">'
 
 						+'     <div class="tab-pane active" id="' + baseID_INFLOW + '_config">'
 						+'      <div class="form-group has-warning" >'
-						+'       <label> 顯示名稱</label>'
-						+'       <input id="' + baseID_INFLOW + '_config_text" type="text" class="form-control" placeholder="請輸入名稱..." >'
+						+'       <label> '+gettext('顯示名稱')+'</label>'
+						+'       <input id="' + baseID_INFLOW + '_config_text" type="text" class="form-control" placeholder="'+gettext('請輸入名稱...')+'" >'
 						+'      </div>'
 						+'      <div class="form-group">'
 						+'       <input id="' + baseID_INFLOW + '_config_error_pass" type="checkbox" class="icheckbox_minimal-blue"><label for="' + baseID_INFLOW + '_config_error_pass"></label>'
-						+'       <label> 異常時通過/標示異常</label>'
+						+'       <label> '+gettext('異常時通過/標示異常')+'</label>'
 						+'      </div>'
 						+'      <div class="form-group">'
 						+'       <input id="' + baseID_INFLOW + '_config_log" type="checkbox" class="icheckbox_minimal-blue"><label for="' + baseID_INFLOW + '_config_log"></label>'
-						+'       <label> 紀錄Log</label>'
+						+'       <label> '+gettext('紀錄Log')+'</label>'
 						+'      </div>'	
 						+'     </div>'
 						
@@ -2119,8 +2146,8 @@ var omfloweng = function(div_id)
 						+'   </div>'
 						+'  </div>'
 						+'  <div class="modal-footer">'
-						+'   <button type="button" class="btn btn-default pull-left" id="' + baseID_INFLOW + '_close">取消</button>'
-						+'   <button type="button" class="btn btn-primary"  id="' + baseID_INFLOW + '_submit">確定</button>'
+						+'   <button type="button" class="btn btn-default pull-left" id="' + baseID_INFLOW + '_close">'+gettext('取消')+'</button>'
+						+'   <button type="button" class="btn btn-primary"  id="' + baseID_INFLOW + '_submit">'+gettext('確定')+'</button>'
 						+'  </div>'
 						+' </div>'
 						+'</div>'
@@ -2165,18 +2192,18 @@ var omfloweng = function(div_id)
 				var item_li_input_content = '<li id="' + ul_id + '_input_li__index_" class="ui-state-default" style=" margin: 0 0 0 0;height:30px;">'
 							+'<table width="100%"><tr>'
 							+'<td width="2%"><span class="fa fa-arrows-v"></span></td>'
-							+'<td width="8%" nowrap><input id="' + ul_id + '_input_require__index_" type="checkbox" class="icheckbox_minimal-blue"><label for="' + ul_id + '_input_require__index_" readonly></label> 必填</td>'
-							+'<td width="30%"><select id="' + ul_id + '_input_value__index_" class="form-control select2" placeholder="輸入資料" style="width:100%" readonly></select></td>'
-							+'<td width="30%"><select id="' + ul_id + '_input_name__index_" type="text" class="form-control " placeholder="變數名稱" style="width:100%" readonly></select></td>'
-							+'<td width="30%"><input id="' + ul_id + '_input_des__index_" type="text" class="form-control " placeholder="說明" readonly></td>'
+							+'<td width="8%" nowrap><input id="' + ul_id + '_input_require__index_" type="checkbox" class="icheckbox_minimal-blue"><label for="' + ul_id + '_input_require__index_" readonly></label> '+gettext('必填')+'</td>'
+							+'<td width="30%"><select id="' + ul_id + '_input_value__index_" class="form-control select2" placeholder="'+gettext('輸入資料')+'" style="width:100%" readonly></select></td>'
+							+'<td width="30%"><select id="' + ul_id + '_input_name__index_" type="text" class="form-control " placeholder="'+gettext('變數名稱')+'" style="width:100%" readonly></select></td>'
+							+'<td width="30%"><input id="' + ul_id + '_input_des__index_" type="text" class="form-control " placeholder="'+gettext('說明')+'" readonly></td>'
 							+'</tr></table>'
 							+'</li>';
 				var item_li_output_content = '<li id="' + ul_id + '_output_li__index_" class="ui-state-default" style=" margin: 0 0 0 0;height:30px;">'
 							+'<table width="100%"><tr>'
 							+'<td width="4%"><span class="fa fa-arrows-v"></span></td>'
-							+'<td width="32%"><select id="' + ul_id + '_output_value__index_"class="form-control select2" placeholder="輸出值" readonly style="width:100%"></select?</td>'
-							+'<td width="32%"><select id="' + ul_id + '_output_name__index_" class="form-control select2" placeholder="輸出名稱" style="width:100%"></select></td>'
-							+'<td width="32%"><input id="' + ul_id + '_output_des__index_" type="text" class="form-control " placeholder="說明" readonly></td>'
+							+'<td width="32%"><select id="' + ul_id + '_output_value__index_"class="form-control select2" placeholder="'+gettext('輸出值')+'" readonly style="width:100%"></select?</td>'
+							+'<td width="32%"><select id="' + ul_id + '_output_name__index_" class="form-control select2" placeholder="'+gettext('輸出名稱')+'" style="width:100%"></select></td>'
+							+'<td width="32%"><input id="' + ul_id + '_output_des__index_" type="text" class="form-control " placeholder="'+gettext('說明')+'" readonly></td>'
 							+'</tr></table>'
 							+'</li>';
 				//query
@@ -2212,7 +2239,7 @@ var omfloweng = function(div_id)
 					{
 						item_text = input_item.name.substring(2);
 						item_text = item_text.substring(0,item_text.length -1);
-						$( '#' + ul_id + '_input_name_' + index ).html('<option value="$(' + item_text + ')">變數:' + item_text + '</option>');
+						$( '#' + ul_id + '_input_name_' + index ).html('<option value="$(' + item_text + ')">'+gettext('變數:') + item_text + '</option>');
 						$( '#' + ul_id + '_input_name_' + index ).select2({tags: false , placeholder: '',allowClear: false,dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}}});
 					}
 					else if(input_item.name.startsWith('#'))
@@ -2221,13 +2248,13 @@ var omfloweng = function(div_id)
 						{
 							item_text = input_item.name.substring(2);
 							item_text = item_text.substring(0,item_text.length -1);
-							$( '#' + ul_id + '_input_name_' + index ).html('<option value="#(' + item_text + ')">欄位:' + input_item.des + '</option>');
+							$( '#' + ul_id + '_input_name_' + index ).html('<option value="#(' + item_text + ')">'+gettext('欄位:') + input_item.des + '</option>');
 							$( '#' + ul_id + '_input_name_' + index ).select2({tags: false , placeholder: '',readonly: true , allowClear: false,dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}}});
 							$( '#' + ul_id + '_input_name_' + index ).prop("disabled", true);
 						}
 						else if(input_item.name.startsWith('#G1(')||input_item.name.startsWith('#G2('))
 						{
-							$( '#' + ul_id + '_input_name_' + index ).html('<option value="' + input_item.name + '">欄位:' + input_item.des + '</option>');
+							$( '#' + ul_id + '_input_name_' + index ).html('<option value="' + input_item.name + '">'+gettext('欄位:') + input_item.des + '</option>');
 							$( '#' + ul_id + '_input_name_' + index ).select2({tags: false , placeholder: '',readonly: true , allowClear: false,dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}}});
 							$( '#' + ul_id + '_input_name_' + index ).prop("disabled", true);
 						}
@@ -2252,7 +2279,7 @@ var omfloweng = function(div_id)
 					//$( '#' + ul_id + '_input_name_' + index ).val(input_item.name);
 					if(input_item.name.startsWith('#('))
 					{
-						$( '#' + ul_id + '_input_des_' + index ).val('表單欄位');
+						$( '#' + ul_id + '_input_des_' + index ).val(gettext('表單欄位'));
 					}
 					else
 					{
@@ -2269,7 +2296,7 @@ var omfloweng = function(div_id)
 					$( '#' + ul_id + '_output_name_' + index ).html(select_option_value());
 					//select2 enable
 					//$( '#' + ul_id + '_output_name_' + index ).select2({tags: false ,placeholder: '' ,allowClear: true,dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}}});
-					$( '#' + ul_id + '_output_name_' + index ).select2({tags: true,placeholder : "輸出變數",dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}},
+					$( '#' + ul_id + '_output_name_' + index ).select2({tags: true,placeholder : gettext("輸出變數"),dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}},
 								createTag: function(params) 
 								{
 									var term = $.trim(params.term);
@@ -2279,14 +2306,14 @@ var omfloweng = function(div_id)
 									  return null;
 									}
 									
-									if ((term.startsWith('變數:')))
+									if ((term.startsWith(gettext('變數:'))))
 									{
 										term = term.substring(3);
 									}
 									
 									return {
 									  id: '$(' + term + ')',
-									  text: '變數:' + term,
+									  text: gettext('變數:') + term,
 									  newTag: true // add additional parameters
 									}
 								}});
@@ -2297,7 +2324,7 @@ var omfloweng = function(div_id)
 					{
 						item_text = output_item.name.substring(2);
 						item_text = item_text.substring(0,item_text.length -1);
-						$( '#' + ul_id + '_output_value_' + index ).html('<option value="$(' + item_text + ')">變數:' + item_text + '</option>');
+						$( '#' + ul_id + '_output_value_' + index ).html('<option value="$(' + item_text + ')">'+gettext('變數:') + item_text + '</option>');
 						$( '#' + ul_id + '_output_value_' + index ).select2({tags: false , placeholder: '',readonly: true , allowClear: false,dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}}});
 						$( '#' + ul_id + '_output_value_' + index ).prop("disabled", true);
 					}
@@ -2307,7 +2334,7 @@ var omfloweng = function(div_id)
 					}
 					
 					//寫設定值
-					$( '#' + ul_id + '_output_value_' + index ).html('<option value="$(' + item_text + ')">變數:' + item_text + '</option>');
+					$( '#' + ul_id + '_output_value_' + index ).html('<option value="$(' + item_text + ')">'+gettext('變數:') + item_text + '</option>');
 					$( '#' + ul_id + '_output_des_' + index ).val(output_item.des);
 
 					//相同名稱自動帶入
@@ -2359,44 +2386,44 @@ var omfloweng = function(div_id)
 						+' <div class="modal-content">'
 						+'  <div class="modal-header">'
 						+'   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-						+'   <h4 class="modal-title">  自動輸入-<span id="' + baseID_SETFORM + '_id"></span></h4>'
+						+'   <h4 class="modal-title">  '+gettext('欄位設定-')+'<span id="' + baseID_SETFORM + '_id"></span></h4>'
 						+'  </div>'
 						+'  <div class="modal-body">'
 						+'   <div class="nav-tabs-custom">'
 						+'    <ul class="nav nav-tabs">'
-						+'     <li class="active"><a href="#' + baseID_SETFORM + '_config" data-toggle="tab">設定</a></li>'
-						+'     <li><a href="#' + baseID_SETFORM + '_calculate" data-toggle="tab">篩選</a></li>'
-						+'     <li><a href="#' + baseID_SETFORM + '_input" data-toggle="tab">欄位設定</a></li>'
-						+'     <li><a href="#' + baseID_SETFORM + '_output" data-toggle="tab">輸出</a></li>'
+						+'     <li class="active"><a href="#' + baseID_SETFORM + '_config" data-toggle="tab">'+gettext('設定')+'</a></li>'
+						+'     <li><a href="#' + baseID_SETFORM + '_calculate" data-toggle="tab">'+gettext('篩選')+'</a></li>'
+						+'     <li><a href="#' + baseID_SETFORM + '_input" data-toggle="tab">'+gettext('欄位設定')+'</a></li>'
+						+'     <li><a href="#' + baseID_SETFORM + '_output" data-toggle="tab">'+gettext('輸出')+'</a></li>'
 						+'    </ul>'
 						
 						+'    <div class="tab-content">'
 
 						+'     <div class="tab-pane active" id="' + baseID_SETFORM + '_config">'
 						+'      <div class="form-group has-warning" >'
-						+'       <label> 顯示名稱</label>'
-						+'       <input id="' + baseID_SETFORM + '_config_text" type="text" class="form-control" placeholder="請輸入名稱..." >'
+						+'       <label> '+gettext('顯示名稱')+'</label>'
+						+'       <input id="' + baseID_SETFORM + '_config_text" type="text" class="form-control" placeholder="'+gettext('請輸入名稱...')+'" >'
 						+'      </div>'
 						+'      <div class="form-group">'
 						+'       <input id="' + baseID_SETFORM + '_config_log" type="checkbox" class="icheckbox_minimal-blue"><label for="' + baseID_SETFORM + '_config_log"></label>'
-						+'       <label> 紀錄Log</label>'
+						+'       <label> '+gettext('紀錄Log')+'</label>'
 						+'      </div>'	
 						+'     </div>'
 						
 						+'     <div class="tab-pane" id="' + baseID_SETFORM + '_calculate">'
-						+'      <button id="' + baseID_SETFORM + '_calculate_content_add' + '" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> 新增</button>'
+						+'      <button id="' + baseID_SETFORM + '_calculate_content_add' + '" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> '+gettext('新增')+'</button>'
 						+'      <ul id="' + baseID_SETFORM +  '_calculate_content' + '" style="list-style-type: none; margin: 0; padding: 0">'
 						+'      </ul>'					
 						+'     </div>'
 
 						+'     <div class="tab-pane" id="' + baseID_SETFORM + '_input">'
-						+'      <button id="' + baseID_SETFORM + '_input_content_add" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> 新增</button>'
+						+'      <button id="' + baseID_SETFORM + '_input_content_add" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> '+gettext('新增')+'</button>'
 						+'      <ul id="' + baseID_SETFORM + '_input_content" style="list-style-type: none; margin: 0; padding: 0">'
 						+'      </ul>'
 						+'     </div>'
 						
 						+'     <div class="tab-pane" id="' +baseID_SETFORM + '_output">'
-						+'      <button id="' + baseID_SETFORM + '_output_content_add" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> 新增</button>'
+						+'      <button id="' + baseID_SETFORM + '_output_content_add" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> '+gettext('新增')+'</button>'
 						+'      <ul id="' + baseID_SETFORM + '_output_content" style="list-style-type: none; margin: 0; padding: 0">'
 						+'      </ul>'
 						+'     </div>'
@@ -2406,8 +2433,8 @@ var omfloweng = function(div_id)
 						+'   </div>'
 						+'  </div>'
 						+'  <div class="modal-footer">'
-						+'   <button type="button" class="btn btn-default pull-left"id="' + baseID_SETFORM + '_close">取消</button>'
-						+'   <button type="button" class="btn btn-primary"  id="' + baseID_SETFORM + '_submit">確定</button>'
+						+'   <button type="button" class="btn btn-default pull-left"id="' + baseID_SETFORM + '_close">'+gettext('取消')+'</button>'
+						+'   <button type="button" class="btn btn-primary"  id="' + baseID_SETFORM + '_submit">'+gettext('確定')+'</button>'
 						+'  </div>'
 						+' </div>'
 						+'</div>'
@@ -2447,14 +2474,14 @@ var omfloweng = function(div_id)
 						$('[id^="' + baseID_SETFORM + '_input_content' + '_value_"]').each(function(i)
 						{
 							var input_name_select_object = $('#' + baseID_SETFORM + '_input_content' +'_value_' + i);
-							if(input_name_select_object.html().indexOf(option_name) > 0)
+							if(input_name_select_object.html().indexOf('value="' + option_name + '"') > 0)
 							{
 								//已存在
 							}
 							else
 							{
 								//加上
-								select2_new_option(baseID_SETFORM + '_input_content' + '_value_' + i,option_name,'變數:' + option_text );
+								select2_new_option(baseID_SETFORM + '_input_content' + '_value_' + i,option_name,gettext('變數:') + option_text );
 							}
 						});
 					}
@@ -2478,7 +2505,7 @@ var omfloweng = function(div_id)
 							{
 								$('[id^="' + baseID_SETFORM + '_output_content' +'_value_"]').each(function(i)
 								{
-									select2_new_option(baseID_SETFORM + '_output_content' + '_value_' + i,'#(' + item.id + ')','欄位:' + item.config.title);
+									select2_new_option(baseID_SETFORM + '_output_content' + '_value_' + i,'#(' + item.id + ')',gettext('欄位:') + item.config.title);
 								});
 							}
 						});
@@ -2501,14 +2528,14 @@ var omfloweng = function(div_id)
 						$('[id^="' + baseID_SETFORM + '_input_content' + '_value_"]').each(function(i)
 						{
 							var input_name_select_object = $('#' + baseID_SETFORM + '_input_content' +'_value_' + i);
-							if(input_name_select_object.html().indexOf(option_name) > 0)
+							if(input_name_select_object.html().indexOf('value="' + option_name + '"') > 0)
 							{
 								//已存在
 							}
 							else
 							{
 								//加上
-								select2_new_option(baseID_SETFORM + '_input_content' + '_value_' + i,option_name,'變數:' + option_text );
+								select2_new_option(baseID_SETFORM + '_input_content' + '_value_' + i,option_name,gettext('變數:') + option_text );
 							}
 						});
 					}
@@ -2537,6 +2564,174 @@ var omfloweng = function(div_id)
 			{
 				$('#' + baseID_SETFORM).modal('hide');
 			});
+		}
+		//====================
+		//===MODAL CHART ORG1 
+		//====================
+		if ($('#' + baseID_ORG1).length == 0)
+		{
+			var modal_ORG1 = '<div class="modal fade" id="' + baseID_ORG1 + '">'
+						+'<div class="modal-dialog modal-lg modal-dialog-scrollable">'
+						+' <div class="modal-content">'
+						+'  <div class="modal-header">'
+						+'   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+						+'   <h4 class="modal-title"> '+gettext('組織-同系職務-')+'<span id="' + baseID_ORG1 + '_id"></span></h4>'
+						+'  </div>'
+						+'  <div class="modal-body">'
+						+'   <div class="nav-tabs-custom">'
+						+'    <ul class="nav nav-tabs">'
+						+'     <li class="active"><a href="#' + baseID_ORG1 + '_config" data-toggle="tab">'+gettext('設定')+'</a></li>'
+						+'     <li><a href="#' + baseID_ORG1 + '_input" data-toggle="tab">'+gettext('輸入')+'</a></li>'
+						+'     <li><a href="#' + baseID_ORG1 + '_output" data-toggle="tab">'+gettext('輸出')+'</a></li>'
+						+'    </ul>'
+						
+						+'    <div class="tab-content">'
+						
+						+'     <div class="tab-pane active" id="' +baseID_ORG1 + '_config">'
+						+'      <div class="form-group has-warning" >'
+						+'       <label >'+gettext('顯示名稱')+'</label>'
+						+'       <input id="' + baseID_ORG1 + '_config_text" type="text" class="form-control" placeholder="'+gettext('請輸入名稱...')+'" >'
+						+'      </div>'					
+						+'     </div>'
+						
+						
+						+'     <div class="tab-pane" id="' + baseID_ORG1 + '_input">'
+						+'      <ul id="' + baseID_ORG1 + '_input_content" style="list-style-type: none; margin: 0; padding: 0">'
+						+'      </ul>'
+						+'     </div>'
+						
+						+'     <div class="tab-pane" id="' + baseID_ORG1 + '_output">'
+						+'      <ul id="' + baseID_ORG1 + '_output_content" style="list-style-type: none; margin: 0; padding: 0">'
+						+'      </ul>'
+						+'     </div>'
+						
+						+'    </div>'
+						
+						+'   </div>'
+						+'  </div>'
+						+'  <div class="modal-footer">'
+						+'   <button type="button" class="btn btn-default pull-left" id="' + baseID_ORG1 + '_close">'+gettext('取消')+'</button>'
+						+'   <button type="button" class="btn btn-primary"  id="' + baseID_ORG1 + '_submit">'+gettext('確定')+'</button>'
+						+'  </div>'
+						+' </div>'
+						+'</div>'
+						+'</div>';
+
+			flowcontent.append(modal_ORG1);
+			
+			//====================
+			//===MODAL INIT
+			//====================
+			$( '#' + baseID_ORG1 + '_output_content' ).sortable();
+			$( '#' + baseID_ORG1 + '_output_content' ).disableSelection();
+			$( '#' + baseID_ORG1 + '_input_content' ).sortable();
+			$( '#' + baseID_ORG1 + '_input_content' ).disableSelection();
+
+			//====================
+			//===MODAL EVENT SAVE 
+			//====================
+			$('#' +  baseID_ORG1 + '_submit').click(function ()
+			{
+				item = action_item_for_modal;
+				//save real to object
+				item.text = $('#' + baseID_ORG1 + '_config_text').val();
+				$('#' + active_id + '_itext_content_' + item.id).html(item.text);
+
+				modal_save_input(baseID_ORG1 , item);
+				modal_save_output(baseID_ORG1 , item);
+
+				$('#' + baseID_ORG1).modal('hide');
+			});
+			
+			$('#' +  baseID_ORG1 + '_close').click(function ()
+			{
+				$('#' + baseID_ORG1).modal('hide');
+			});
+			
+		}
+		//====================
+		//===MODAL CHART ORG2 
+		//====================
+		if ($('#' + baseID_ORG2).length == 0)
+		{
+			var modal_ORG2 = '<div class="modal fade" id="' + baseID_ORG2 + '">'
+						+'<div class="modal-dialog modal-lg modal-dialog-scrollable">'
+						+' <div class="modal-content">'
+						+'  <div class="modal-header">'
+						+'   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+						+'   <h4 class="modal-title"> '+gettext('組織-部門職務-')+'<span id="' + baseID_ORG2 + '_id"></span></h4>'
+						+'  </div>'
+						+'  <div class="modal-body">'
+						+'   <div class="nav-tabs-custom">'
+						+'    <ul class="nav nav-tabs">'
+						+'     <li class="active"><a href="#' + baseID_ORG2 + '_config" data-toggle="tab">'+gettext('設定')+'</a></li>'
+						+'     <li><a href="#' + baseID_ORG2 + '_input" data-toggle="tab">'+gettext('輸入')+'</a></li>'
+						+'     <li><a href="#' + baseID_ORG2 + '_output" data-toggle="tab">'+gettext('輸出')+'</a></li>'
+						+'    </ul>'
+						
+						+'    <div class="tab-content">'
+						
+						+'     <div class="tab-pane active" id="' +baseID_ORG2 + '_config">'
+						+'      <div class="form-group has-warning" >'
+						+'       <label >'+gettext('顯示名稱')+'</label>'
+						+'       <input id="' + baseID_ORG2 + '_config_text" type="text" class="form-control" placeholder="'+gettext('請輸入名稱...')+'" >'
+						+'      </div>'					
+						+'     </div>'
+						
+						
+						+'     <div class="tab-pane" id="' + baseID_ORG2 + '_input">'
+						+'      <ul id="' + baseID_ORG2 + '_input_content" style="list-style-type: none; margin: 0; padding: 0">'
+						+'      </ul>'
+						+'     </div>'
+						
+						+'     <div class="tab-pane" id="' + baseID_ORG2 + '_output">'
+						+'      <ul id="' + baseID_ORG2 + '_output_content" style="list-style-type: none; margin: 0; padding: 0">'
+						+'      </ul>'
+						+'     </div>'
+						
+						+'    </div>'
+						
+						+'   </div>'
+						+'  </div>'
+						+'  <div class="modal-footer">'
+						+'   <button type="button" class="btn btn-default pull-left" id="' + baseID_ORG2 + '_close">'+gettext('取消')+'</button>'
+						+'   <button type="button" class="btn btn-primary"  id="' + baseID_ORG2 + '_submit">'+gettext('確定')+'</button>'
+						+'  </div>'
+						+' </div>'
+						+'</div>'
+						+'</div>';
+
+			flowcontent.append(modal_ORG2);
+			
+			//====================
+			//===MODAL INIT
+			//====================
+			$( '#' + baseID_ORG2 + '_output_content' ).sortable();
+			$( '#' + baseID_ORG2 + '_output_content' ).disableSelection();
+			$( '#' + baseID_ORG2 + '_input_content' ).sortable();
+			$( '#' + baseID_ORG2 + '_input_content' ).disableSelection();
+
+			//====================
+			//===MODAL EVENT SAVE 
+			//====================
+			$('#' +  baseID_ORG2 + '_submit').click(function ()
+			{
+				item = action_item_for_modal;
+				//save real to object
+				item.text = $('#' + baseID_ORG2 + '_config_text').val();
+				$('#' + active_id + '_itext_content_' + item.id).html(item.text);
+
+				modal_save_input(baseID_ORG2 , item);
+				modal_save_output(baseID_ORG2 , item);
+
+				$('#' + baseID_ORG2).modal('hide');
+			});
+			
+			$('#' +  baseID_ORG2 + '_close').click(function ()
+			{
+				$('#' + baseID_ORG2).modal('hide');
+			});
+			
 		}
 		
 		
@@ -2933,52 +3128,60 @@ var omfloweng = function(div_id)
 		switch(item.type)
 		{
 			case 'start':
-				item.text = '開始';
+				item.text = gettext('開始');
 				item.config = new start_object();
 				break;
 			case 'end':
-				item.text = '結束';
+				item.text = gettext('結束');
 				item.config = new end_object();
 				break;
 			case 'python':
-				item.text = '執行';
+				item.text = gettext('執行');
 				item.config = new python_object();		
 				break;
 			case 'subflow':
-				item.text = '子流程';
+				item.text = gettext('子流程');
 				item.config = new subflow_object();				
 				break;
 			case 'outflow':
-				item.text = '外部流程';
+				item.text = gettext('外部流程');
 				item.config = new outflow_object();	
 				break;
 			case 'inflow':
-				item.text = '流程';
+				item.text = gettext('流程');
 				item.config = new inflow_object();	
 				break;
 			case 'switch':
-				item.text = '判斷';
+				item.text = gettext('判斷');
 				item.config = new switch_object();	
 				break;
 			case 'form':
-				item.text = '人工輸入';
+				item.text = gettext('人工輸入');
 				item.config = new cform_object();	
 				break;
 			case 'setform':
-				item.text = '資料設定';
+				item.text = gettext('欄位設定');
 				item.config = new setform_object();	
 				break;
 			case 'async':
-				item.text = '並行';
+				item.text = gettext('並行');
 				item.config = new async_object();	
 				break;
 			case 'collection':
-				item.text = '匯集';
+				item.text = gettext('匯集');
 				item.config = new collection_object();	
 				break;
 			case 'sleep':
-				item.text = '暫停';
+				item.text = gettext('暫停');
 				item.config = new sleep_object();	
+				break;
+			case 'org1':
+				item.text = gettext('同系職務');
+				item.config = new org1_object();	
+				break;
+			case 'org2':
+				item.text = gettext('部門職務');
+				item.config = new org2_object();	
 				break;
 			
 		}
@@ -3180,13 +3383,13 @@ var omfloweng = function(div_id)
 				{
 					item.config["log"] = false;
 				}
-				if(!item.config.hasOwnProperty("app_id"))
+				if(!item.config.hasOwnProperty("app_name"))
 				{
-					item.config["app_id"] = '';
+					item.config["app_name"] = '';
 				}
-				if(!item.config.hasOwnProperty("flow_uuid"))
+				if(!item.config.hasOwnProperty("flow_name"))
 				{
-					item.config["flow_uuid"] = '';
+					item.config["flow_name"] = '';
 				}
 				if(!item.config.hasOwnProperty("subflow_input"))
 				{
@@ -3514,8 +3717,8 @@ var omfloweng = function(div_id)
 		output["error_pass"] = false;
 		//output["load_balance"] = false;
 		output["log"] = true;
-		output["app_id"] = '';	
-		output["flow_uuid"] = '';	
+		output["app_name"] = '';	
+		output["flow_name"] = '';	
 		output["subflow_input"] = [];
 		output["subflow_output"] = [];
 		return output;
@@ -3591,6 +3794,21 @@ var omfloweng = function(div_id)
 		output["value"] = null;
 		return output;
 	}
+	function org1_object()
+	{
+		var output = {};
+		output["input"] = [{'require':true,'value':'','name':'role','des':'職務名稱'},{'require':true,'value':'','name':'user_no','des':'使用者編號'}];
+		output["output"] = [{'value':'$(dept_no)','name':'','des':'部門編號'},{'value':'$(user_no)','name':'','des':'使用者編號'}];	
+		return output;
+	}
+	function org2_object()
+	{
+		var output = {};
+		output["input"] = [{'require':true,'value':'','name':'dept_no','des':'部門編號'},{'require':true,'value':'','name':'role_name','des':'職務名稱'}];
+		output["output"] = [{'value':'$(dept_no)','name':'','des':'部門編號'},{'value':'$(user_no)','name':'','des':'使用者編號'}];		
+		return output;
+	}
+	
 	
 	/**
 	 * flow option maker for select2
@@ -3599,19 +3817,36 @@ var omfloweng = function(div_id)
 	 */
 	function chart_input_sortable_add(ul_id,form_include,value_include)
 	{
+		//org1_chart_modal  => check
+		//org2_chart_modal
+		
 		//ul_id already have activeid and chart id
 		var top_id = ul_id;
 		var baseID = top_id.replace('_input_content','');
 		var item_li_content = '<li id="' + top_id + '_li__index_" class="ui-state-default" style=" margin: 0 0 0 0;height:30px;">'
 						+'<table width="100%"><tr>'
 						+'<td width="2%"><span class="fa fa-arrows-v"></span></td>'
-						+'<td width="8%" nowrap><input id="' + top_id + '_require__index_" type="checkbox" class="icheckbox_minimal-blue" ><label id="' + top_id + '_requirestyle__index_" for="' + top_id + '_require__index_"></label> 必填</td>'
+						+'<td width="8%" nowrap><input id="' + top_id + '_require__index_" type="checkbox" class="icheckbox_minimal-blue" ><label id="' + top_id + '_requirestyle__index_" for="' + top_id + '_require__index_"></label> '+gettext('必填')+'</td>'
 						+'<td width="28%"><select id="' + top_id + '_value__index_" class="form-control select2" style="width:100%"></select></td>'
-						+'<td width="28%"><input id="' + top_id + '_name__index_" type="text" class="form-control " placeholder="變數名稱"></td>'
-						+'<td width="30%"><input id="' + top_id + '_des__index_" type="text" class="form-control " placeholder="說明"></td>'
+						+'<td width="28%"><input id="' + top_id + '_name__index_" type="text" class="form-control " placeholder="'+gettext('變數名稱')+'"></td>'
+						+'<td width="30%"><input id="' + top_id + '_des__index_" type="text" class="form-control " placeholder="'+gettext('說明')+'"></td>'
 						+'<td width="4%" align="right" style="color:silver"><i class="far fa-trash-alt" id="remove_' + top_id + '_li__index_"></i></td>'
 						+'</tr></table>'
 						+'</li>';
+						
+		if((ul_id.indexOf('org1_chart_modal') > 0)||(ul_id.indexOf('org2_chart_modal') > 0 ))
+		{
+			item_li_content = '<li id="' + top_id + '_li__index_" class="ui-state-default" style=" margin: 0 0 0 0;height:30px;">'
+						+'<table width="100%"><tr>'
+						+'<td width="2%"></td>'
+						+'<td width="2%" nowrap><input id="' + top_id + '_require__index_" type="checkbox" class="icheckbox_minimal-blue" style="display:none">' + '</td>'
+						+'<td width="31%"><select id="' + top_id + '_value__index_" class="form-control select2" style="width:100%"></select></td>'
+						+'<td width="31%"><input id="' + top_id + '_name__index_" type="text" class="form-control " placeholder="'+gettext('變數名稱')+'" readonly></td>'
+						+'<td width="30%"><input id="' + top_id + '_des__index_" type="text" class="form-control " placeholder="'+gettext('說明')+'" readonly></td>'
+						+'<td width="4%" align="right" style="color:silver"><i class="far fa-trash-alt" id="remove_' + top_id + '_li__index_" style="display:none"></i></td>'
+						+'</tr></table>'
+						+'</li>';
+		}
 						
 		var newindex = 0;
 		while($( '#' + top_id  + '_li_' + newindex).length !=0)
@@ -3633,7 +3868,7 @@ var omfloweng = function(div_id)
 		}
 		$( '#' + top_id  + '_value_' + newindex).html( options );
 		//select2 enable
-		$( '#' + top_id  + '_value_' + newindex).select2({tags: true,placeholder: '輸入資料',allowClear: true,dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}}});
+		$( '#' + top_id  + '_value_' + newindex).select2({tags: true,placeholder: gettext('輸入資料'),allowClear: true,dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}}});
 		$( '#' + top_id  + '_value_' + newindex).val(null).trigger('change');
 		
 		//remove event
@@ -3655,12 +3890,12 @@ var omfloweng = function(div_id)
 						+'_require_input_'
 						+'<td width="_require_td_%"><select id="' + top_id + '_value__index_" class="form-control select2" style="width:100%"></select></td>'
 						+'<td width="28%"><select id="' + top_id + '_name__index_" class="form-control select2" style="width:100%"></select></td>'
-						+'<td width="30%"><input id="' + top_id + '_des__index_" type="text" class="form-control " placeholder="說明"></td>'
+						+'<td width="30%"><input id="' + top_id + '_des__index_" type="text" class="form-control " placeholder="'+gettext('說明')+'"></td>'
 						+'<td width="4%" align="right" style="color:silver"><i class="far fa-trash-alt" id="remove_' + top_id + '_li__index_"></i></td>'
 						+'</tr></table>'
 						+'</li>';
 						
-		var require_checkbox = '<td width="8%" nowrap><input id="' + top_id + '_require__index_" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + top_id + '_require__index_"></label> 必填</td>';
+		var require_checkbox = '<td width="8%" nowrap><input id="' + top_id + '_require__index_" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + top_id + '_require__index_"></label> '+gettext('必填')+'</td>';
 		var newindex = 0;
 		while($( '#' + top_id  + '_li_' + newindex).length !=0)
 		{
@@ -3686,9 +3921,9 @@ var omfloweng = function(div_id)
 		$( '#' + top_id  + '_value_' + newindex).html( select_option_value );
 		$( '#' + top_id  + '_name_' + newindex).html( select_option_form );
 		//select2 enable
-		$( '#' + top_id  + '_value_' + newindex).select2({tags: true,placeholder: '輸入資料',allowClear: true,dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}}});
+		$( '#' + top_id  + '_value_' + newindex).select2({tags: true,placeholder: gettext('輸入資料'),allowClear: true,dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}}});
 		$( '#' + top_id  + '_value_' + newindex).val(null).trigger('change');
-		$( '#' + top_id  + '_name_' + newindex).select2({tags: false,placeholder: '設定欄位',allowClear: true,dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}}});
+		$( '#' + top_id  + '_name_' + newindex).select2({tags: false,placeholder: gettext('設定欄位'),allowClear: true,dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}}});
 		$( '#' + top_id  + '_name_' + newindex).val(null).trigger('change');
 		
 		//remove event
@@ -3711,21 +3946,27 @@ var omfloweng = function(div_id)
 					+ '<table width="100%"><tr><td width="4%"><span class="fa fa-arrows-v"></span></td>'
 					+'<td width="30%"><select id="' + top_id + '_type__index_" class="form-control select2" style="width:100%">'
 					+'<option value="--">--</option>'
-					+'<option value="upper">轉成大寫</option>'
-					+'<option value="lower">轉成小寫</option>'
-					+'<option value="replace">取代</option>'
-					+'<option value="len">取得長度</option>'
-					+'<option value="strip">去除前後空白</option>'
-					+'<option value="startwith">取開頭字元</option>'
-					+'<option value="endof">取後面字元</option>'
-					+'<option value="substring">擷取字元</option>'
-					+'<option value="string">轉成字串</option>'
-					+'<option value="add">字串相加</option>'
-					+'<option value="num+">數字相加</option>'
-					+'<option value="num-">數字相減</option>'
-					+'<option value="num*">數字相成</option>'
-					+'<option value="num/">數字相除</option>'
-					+'<option value="num_mod">數字取餘數</option>'
+					+'<option value="upper">'+gettext('轉成大寫')+'</option>'
+					+'<option value="lower">'+gettext('轉成小寫')+'</option>'
+					+'<option value="replace">'+gettext('取代')+'</option>'
+					+'<option value="len">'+gettext('取得長度')+'</option>'
+					+'<option value="strip">'+gettext('去除前後空白')+'</option>'
+					+'<option value="startwith">'+gettext('取開頭字元')+'</option>'
+					+'<option value="endof">'+gettext('取後面字元')+'</option>'
+					+'<option value="substring">'+gettext('擷取字元')+'</option>'
+					+'<option value="string">'+gettext('轉成字串')+'</option>'
+					+'<option value="add">'+gettext('字串相加')+'</option>'
+					+'<option value="num+">'+gettext('數字相加')+'</option>'
+					+'<option value="num-">'+gettext('數字相減')+'</option>'
+					+'<option value="num*">'+gettext('數字相成')+'</option>'
+					+'<option value="num/">'+gettext('數字相除')+'</option>'
+					+'<option value="num_mod">'+gettext('數字取餘數')+'</option>'
+					+'<option value="form_creater">'+gettext('開單人')+'</option>'
+					+'<option value="form_creater_group">'+gettext('開單人群組')+'</option>'
+					+'<option value="get_user_group">'+gettext('使用者所屬群組')+'</option>'
+					+'<option value="get_user_name">'+gettext('使用者名稱')+'</option>'
+					+'<option value="get_group_name">'+gettext('群組名稱')+'</option>'
+					+'<option value="sys_parameter">'+gettext('系統參數')+'</option>'
 					+'</select></td>'
 					+'<td width="14%"><select id="' + top_id + '_from__index_" class="form-control select2" style="width:100%"></td>'
 					+'<td width="16%"><select id="' + top_id + '_para1__index_" class="form-control select2" style="width:100%"></td>'
@@ -3775,8 +4016,8 @@ var omfloweng = function(div_id)
 			object_para1.html(availableTags);
 			object_para2.html(availableTags);
 			object_to.html(availableTagsValue);
-			object_from.select2({placeholder : "來源",dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}}});
-			object_to.select2({tags: true,placeholder : "結果",dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}},
+			object_from.select2({placeholder : gettext("來源"),dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}}});
+			object_to.select2({tags: true,placeholder : gettext("結果"),dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}},
 								createTag: function(params) 
 								{
 									var term = $.trim(params.term);
@@ -3786,14 +4027,14 @@ var omfloweng = function(div_id)
 									  return null;
 									}
 									
-									if ((term.startsWith('變數:')))
+									if ((term.startsWith(gettext('變數:'))))
 									{
 										term = term.substring(3);
 									}
 									
 									return {
 									  id: '$(' + term + ')',
-									  text: '變數:' + term,
+									  text: gettext('變數:') + term,
 									  newTag: true // add additional parameters
 									}
 								}});
@@ -3811,6 +4052,42 @@ var omfloweng = function(div_id)
 				object_para2.attr('disabled', true);
 				object_to.attr('disabled', false);
 			}
+			else if(changeValue == 'form_creater')
+			{
+				object_para1.select2({tags: true,placeholder : "",dropdownAutoWidth: true,allowClear: true, language: {noResults: function (params) {return " ";}}});
+				object_para2.select2({tags: true,placeholder : "",dropdownAutoWidth: true,allowClear: true, language: {noResults: function (params) {return " ";}}});
+				object_from.attr('disabled', true);
+				object_para1.attr('disabled', true);
+				object_para2.attr('disabled', true);
+				object_to.attr('disabled', false);
+			}
+			else if(changeValue == 'form_creater_group')
+			{
+				object_para1.select2({tags: true,placeholder : "",dropdownAutoWidth: true,allowClear: true, language: {noResults: function (params) {return " ";}}});
+				object_para2.select2({tags: true,placeholder : "",dropdownAutoWidth: true,allowClear: true, language: {noResults: function (params) {return " ";}}});
+				object_from.attr('disabled', true);
+				object_para1.attr('disabled', true);
+				object_para2.attr('disabled', true);
+				object_to.attr('disabled', false);
+			}
+			else if((changeValue == 'get_user_group')||(changeValue == 'get_user_name')||(changeValue == 'get_group_name'))
+			{
+				object_para1.select2({tags: true,placeholder : "",dropdownAutoWidth: true,allowClear: true, language: {noResults: function (params) {return " ";}}});
+				object_para2.select2({tags: true,placeholder : "",dropdownAutoWidth: true,allowClear: true, language: {noResults: function (params) {return " ";}}});
+				object_from.attr('disabled', false);
+				object_para1.attr('disabled', true);
+				object_para2.attr('disabled', true);
+				object_to.attr('disabled', false);
+			}
+			else if(changeValue == 'sys_parameter')
+			{
+				object_para1.select2({tags: true,placeholder : gettext("參數名"),dropdownAutoWidth: true,allowClear: true, language: {noResults: function (params) {return " ";}}});
+				object_para2.select2({tags: true,placeholder : "",dropdownAutoWidth: true,allowClear: true, language: {noResults: function (params) {return " ";}}});
+				object_from.attr('disabled', true);
+				object_para1.attr('disabled', false);
+				object_para2.attr('disabled', true);
+				object_to.attr('disabled', false);
+			}
 			else if(changeValue == '--')
 			{
 				object_from.select2({placeholder : "",dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}}});
@@ -3824,8 +4101,8 @@ var omfloweng = function(div_id)
 			}
 			else if(changeValue == 'replace')
 			{
-				object_para1.select2({tags: true,placeholder : "尋找",dropdownAutoWidth: true,allowClear: true, language: {noResults: function (params) {return " ";}}});
-				object_para2.select2({tags: true,placeholder : "換成",dropdownAutoWidth: true,allowClear: true, language: {noResults: function (params) {return " ";}}});
+				object_para1.select2({tags: true,placeholder : gettext("尋找"),dropdownAutoWidth: true,allowClear: true, language: {noResults: function (params) {return " ";}}});
+				object_para2.select2({tags: true,placeholder : gettext("換成"),dropdownAutoWidth: true,allowClear: true, language: {noResults: function (params) {return " ";}}});
 				object_from.attr('disabled', false);
 				object_para1.attr('disabled', false);
 				object_para2.attr('disabled', false);
@@ -3833,7 +4110,7 @@ var omfloweng = function(div_id)
 			}
 			else if((changeValue == 'startwith')||(changeValue == 'endof'))
 			{
-				object_para1.select2({tags: true,placeholder : "字數",dropdownAutoWidth: true,allowClear: true, language: {noResults: function (params) {return " ";}}});
+				object_para1.select2({tags: true,placeholder : gettext("字數"),dropdownAutoWidth: true,allowClear: true, language: {noResults: function (params) {return " ";}}});
 				object_para2.select2({tags: true,placeholder : "",dropdownAutoWidth: true,allowClear: true, language: {noResults: function (params) {return " ";}}});
 				object_from.attr('disabled', false);
 				object_para1.attr('disabled', false);
@@ -3842,8 +4119,8 @@ var omfloweng = function(div_id)
 			}
 			else if(changeValue == 'substring')
 			{
-				object_para1.select2({tags: true,placeholder : "第幾個字",dropdownAutoWidth: true,allowClear: true, language: {noResults: function (params) {return " ";}}});
-				object_para2.select2({tags: true,placeholder : "取幾個字",dropdownAutoWidth: true,allowClear: true, language: {noResults: function (params) {return " ";}}});
+				object_para1.select2({tags: true,placeholder : gettext("第幾個字"),dropdownAutoWidth: true,allowClear: true, language: {noResults: function (params) {return " ";}}});
+				object_para2.select2({tags: true,placeholder : gettext("取幾個字"),dropdownAutoWidth: true,allowClear: true, language: {noResults: function (params) {return " ";}}});
 				object_from.attr('disabled', false);
 				object_para1.attr('disabled', false);
 				object_para2.attr('disabled', false);
@@ -3851,7 +4128,7 @@ var omfloweng = function(div_id)
 			}
 			else if((changeValue == 'add')||(changeValue == 'num+'))
 			{
-				object_para1.select2({tags: true,placeholder : "加上",dropdownAutoWidth: true,allowClear: true, language: {noResults: function (params) {return " ";}}});
+				object_para1.select2({tags: true,placeholder : gettext("加上"),dropdownAutoWidth: true,allowClear: true, language: {noResults: function (params) {return " ";}}});
 				object_para2.select2({tags: true,placeholder : "",dropdownAutoWidth: true,allowClear: true, language: {noResults: function (params) {return " ";}}});
 				object_from.attr('disabled', false);
 				object_para1.attr('disabled', false);
@@ -3860,7 +4137,7 @@ var omfloweng = function(div_id)
 			}
 			else if(changeValue == 'num-')
 			{
-				object_para1.select2({tags: true,placeholder : "減去", language: {noResults: function (params) {return " ";}}});
+				object_para1.select2({tags: true,placeholder : gettext("減去"), language: {noResults: function (params) {return " ";}}});
 				object_para2.select2({tags: true,placeholder : "", language: {noResults: function (params) {return " ";}}});
 				object_from.attr('disabled', false);
 				object_para1.attr('disabled', false);
@@ -3869,7 +4146,7 @@ var omfloweng = function(div_id)
 			}
 			else if(changeValue == 'num*')
 			{
-				object_para1.select2({tags: true,placeholder : "乘上",dropdownAutoWidth: true,allowClear: true, language: {noResults: function (params) {return " ";}}});
+				object_para1.select2({tags: true,placeholder : gettext("乘上"),dropdownAutoWidth: true,allowClear: true, language: {noResults: function (params) {return " ";}}});
 				object_para2.select2({tags: true,placeholder : "",dropdownAutoWidth: true,allowClear: true, language: {noResults: function (params) {return " ";}}});
 				object_from.attr('disabled', false);
 				object_para1.attr('disabled', false);
@@ -3878,7 +4155,7 @@ var omfloweng = function(div_id)
 			}
 			else if((changeValue == 'num/')||(changeValue == 'num_mod'))
 			{
-				object_para1.select2({tags: true,placeholder : "除以",dropdownAutoWidth: true,allowClear: true, language: {noResults: function (params) {return " ";}}});
+				object_para1.select2({tags: true,placeholder : gettext("除以"),dropdownAutoWidth: true,allowClear: true, language: {noResults: function (params) {return " ";}}});
 				object_para2.select2({tags: true,placeholder : "",dropdownAutoWidth: true,allowClear: true, language: {noResults: function (params) {return " ";}}});
 				object_from.attr('disabled', false);
 				object_para1.attr('disabled', false);
@@ -3913,33 +4190,33 @@ var omfloweng = function(div_id)
 				item_text = item_text.substring(0,item_text.length -1);
 				$('[id^=' + top_id + '_from_]').each(function()
 				{
-					select2_new_option( $(this).attr('id'),item,'變數:' + item_text );
+					select2_new_option( $(this).attr('id'),item,gettext('變數:') + item_text );
 				});
 				$('[id^=' + top_id + '_para1_]').each(function()
 				{
-					select2_new_option( $(this).attr('id'),item,'變數:' + item_text );
+					select2_new_option( $(this).attr('id'),item,gettext('變數:') + item_text );
 				});
 				$('[id^=' + top_id + '_para2_]').each(function()
 				{
-					select2_new_option( $(this).attr('id'),item,'變數:' + item_text );
+					select2_new_option( $(this).attr('id'),item,gettext('變數:') + item_text );
 				});
 				$('[id^=' + top_id + '_to_]').each(function()
 				{
-					select2_new_option( $(this).attr('id'),item,'變數:' + item_text );
+					select2_new_option( $(this).attr('id'),item,gettext('變數:') + item_text );
 				});
 				
 				$('[id^="' + baseID + '_input_content_value_"]').each(function(i)
 				{
-					select2_new_option( $(this).attr('id'),item,'變數:' + item_text );
+					select2_new_option( $(this).attr('id'),item,gettext('變數:') + item_text );
 				});
 				$('[id^="' + baseID + '_rule_content_value1_"]').each(function(i)
 				{
-					select2_new_option( $(this).attr('id'),item,'變數:' + item_text );
+					select2_new_option( $(this).attr('id'),item,gettext('變數:') + item_text );
 				});
 				//_rule_content_value2_
 				$('[id^="' + baseID + '_rule_content_value2_"]').each(function(i)
 				{
-					select2_new_option( $(this).attr('id'),item,'變數:' + item_text );
+					select2_new_option( $(this).attr('id'),item,gettext('變數:') + item_text );
 				});
 			});
 		});
@@ -3960,19 +4237,39 @@ var omfloweng = function(div_id)
 						+'<td width="4%"><span class="fa fa-arrows-v"></span></td>'
 						+'<td width="32%"><select id="' + top_id + '_value__index_" class="form-control select2" style="width:100%"></select></td>'
 						+'<td width="30%"><select id="' + top_id + '_name__index_" class="form-control select2" style="width:100%"></select></td>'
-						+'<td width="30%"><input id="' + top_id + '_des__index_" type="text" class="form-control " placeholder="說明"></td>'
+						+'<td width="30%"><input id="' + top_id + '_des__index_" type="text" class="form-control " placeholder="'+gettext('說明')+'"></td>'
 						+'<td width="4%" align="right" style="color:silver"><i class="far fa-trash-alt" id="remove_' + top_id + '_li__index_"></i></td>'
 						+'</tr></table>'
 						+'</li>';
+		
+		if((ul_id.indexOf('org1_chart_modal') > 0)||(ul_id.indexOf('org2_chart_modal') > 0 ))
+		{
+			item_li_content = '<li id="' + top_id + '_li__index_" class="ui-state-default" style=" margin: 0 0 0 0;height:30px;">'
+						+'<table width="100%"><tr>'
+						+'<td width="4%"></span></td>'
+						+'<td width="32%"><select id="' + top_id + '_value__index_" class="form-control select2" style="width:100%"></select></td>'
+						+'<td width="30%"><select id="' + top_id + '_name__index_" class="form-control select2" style="width:100%"></select></td>'
+						+'<td width="30%"><input id="' + top_id + '_des__index_" type="text" class="form-control " placeholder="'+gettext('說明')+'" readonly></td>'
+						+'<td width="4%" align="right" style="color:silver"><i class="far fa-trash-alt" id="remove_' + top_id + '_li__index_" style="display:none"></i></td>'
+						+'</tr></table>'
+						+'</li>';
 						
+		}
+
 		var newindex = 0;
 		while($( '#' + top_id  + '_li_' + newindex).length !=0)
 		{
 			newindex = newindex + 1;
 		}
-
+		
 		$( '#' + top_id ).append(item_li_content.replace(/_index_/g,newindex));
-
+		
+		if((ul_id.indexOf('org1_chart_modal') > 0)||(ul_id.indexOf('org2_chart_modal') > 0 ))
+		{
+			
+			$( '#' + top_id  + '_value_' + newindex).select2({tags: false , placeholder: '',readonly: true , allowClear: false,dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}}});
+			$( '#' + top_id  + '_value_' + newindex).prop("disabled", true);
+		}
 		var options = '';
 		if(form_include)
 		{
@@ -3986,10 +4283,9 @@ var omfloweng = function(div_id)
 		$( '#' + top_id  + '_value_' + newindex).html(options);
 		$( '#' + top_id  + '_name_' + newindex).html(select_option_value);
 		//select2 enable
-		//select2 enable
-		$( '#' + top_id  + '_value_' + newindex).select2({tags: false , placeholder: '輸入資料', allowClear: true , dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}}});
+		$( '#' + top_id  + '_value_' + newindex).select2({tags: false , placeholder: gettext('輸入資料'), allowClear: true , dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}}});
 		$( '#' + top_id  + '_value_' + newindex).val(null).trigger('change');
-		$( '#' + top_id  + '_name_' + newindex).select2({tags: true , placeholder: '變數名稱', allowClear: true , dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}}, 
+		$( '#' + top_id  + '_name_' + newindex).select2({tags: true , placeholder: gettext('變數名稱'), allowClear: true , dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}}, 
 								createTag: function(params) 
 								{
 									var term = $.trim(params.term);
@@ -3999,14 +4295,14 @@ var omfloweng = function(div_id)
 									  return null;
 									}
 									
-									if ((term.startsWith('變數:')))
+									if ((term.startsWith(gettext('變數:'))))
 									{
 										term = term.substring(3);
 									}
 									
 									return {
 									  id: '$(' + term + ')',
-									  text: '變數:' + term,
+									  text: gettext('變數:') + term,
 									  newTag: true // add additional parameters
 									}
 								}});
@@ -4025,10 +4321,10 @@ var omfloweng = function(div_id)
 
 		var item_li_content = '<li id="' + top_id + '_li__index_" class="ui-state-default" style=" margin: 0 0 0 0;height:30px;">'
 						+'<table width="100%"><tr>'
-						+'<td width="25%"><input id="' + top_id + '_target__index_" type="text" class="form-control " placeholder="到" readonly></td>'
-						+'<td width="25%"><select id="' + top_id + '_value1__index_" class="form-control select2" placeholder="變數" style="width:100%"></select></td>'
-						+'<td width="25%"><select id="' + top_id + '_rule__index_" class="form-control select2" placeholder="條件" style="width:100%"></select></td>'
-						+'<td width="25%"><select id="' + top_id + '_value2__index_" class="form-control select2" placeholder="變數" style="width:100%"></select></td>'
+						+'<td width="25%"><input id="' + top_id + '_target__index_" type="text" class="form-control " placeholder="'+gettext('到')+'" readonly></td>'
+						+'<td width="25%"><select id="' + top_id + '_value1__index_" class="form-control select2" placeholder="'+gettext('變數')+'" style="width:100%"></select></td>'
+						+'<td width="25%"><select id="' + top_id + '_rule__index_" class="form-control select2" placeholder="'+gettext('條件')+'" style="width:100%"></select></td>'
+						+'<td width="25%"><select id="' + top_id + '_value2__index_" class="form-control select2" placeholder="'+gettext('變數')+'" style="width:100%"></select></td>'
 						+'</tr></table>'
 						+'</li>';
 						
@@ -4043,7 +4339,7 @@ var omfloweng = function(div_id)
 		//read form field to select2
 		$( '#' + top_id  + '_value1_' + newindex).html(select_option_form() + select_option_value());
 		$( '#' + top_id  + '_value2_' + newindex).html(select_option_form() + select_option_value());
-		$( '#' + top_id  + '_rule_' + newindex).html('<option value="=">相等</option><option value="!=">不相等</option><option value=">">大於</option><option value="<">小於</option>');
+		$( '#' + top_id  + '_rule_' + newindex).html('<option value="=">'+gettext('相等')+'</option><option value="!=">'+gettext('不相等')+'</option><option value=">">'+gettext('大於')+'</option><option value="<">'+gettext('小於')+'</option>');
 		//select2 enable
 		$( '#' + top_id  + '_value1_' + newindex).select2({tags: true,placeholder: '',allowClear: true,dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}}});
 		$( '#' + top_id  + '_value2_' + newindex).select2({tags: true,placeholder: '',allowClear: true,dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}}});
@@ -4057,8 +4353,8 @@ var omfloweng = function(div_id)
 		{
 			item_li_content = '<li id="' + top_id + '_li__index_" class="ui-state-default" style=" margin: 0 0 0 0;height:30px;">'
 						+'<table width="100%"><tr>'
-						+'<td width="20%">前往:</td>'
-						+'<td width="80%"><input id="' + top_id + '_target__index_" type="text" class="form-control " placeholder="到" readonly></td>'
+						+'<td width="20%">'+gettext('前往:')+'</td>'
+						+'<td width="80%"><input id="' + top_id + '_target__index_" type="text" class="form-control " placeholder="'+gettext('到')+'" readonly></td>'
 						+'</tr></table>'
 						+'</li>';
 		}
@@ -4066,9 +4362,9 @@ var omfloweng = function(div_id)
 		{
 			item_li_content = '<li id="' + top_id + '_li__index_" class="ui-state-default" style=" margin: 0 0 0 0;height:30px;">'
 						+'<table width="100%"><tr>'
-						+'<td width="20%"><input id="' + top_id + '_targetR__index_" name="' + top_id + '_targetR' + '" type="radio" class="iradio_minimal-blue" value=""><label for="' + top_id + '_targetR__index_"></label>主線</td>'
-						+'<td width="20%">來自:</td>'
-						+'<td width="60%"><input id="' + top_id + '_target__index_" type="text" class="form-control " placeholder="到" readonly></td>'
+						+'<td width="20%"><input id="' + top_id + '_targetR__index_" name="' + top_id + '_targetR' + '" type="radio" class="iradio_minimal-blue" value=""><label for="' + top_id + '_targetR__index_"></label>'+gettext('主線')+'</td>'
+						+'<td width="20%">'+gettext('來自:')+'</td>'
+						+'<td width="60%"><input id="' + top_id + '_target__index_" type="text" class="form-control " placeholder="'+gettext('到')+'" readonly></td>'
 						+'</tr></table>'
 						+'</li>';
 		}
@@ -4105,14 +4401,14 @@ var omfloweng = function(div_id)
 					{
 						if(item.type == 'h_group')
 						{
-							var option = '<option value="#G1(' + item.id + ')">欄位:' + item.config.group_title + '</option>'
-										+ '<option value="#G2(' + item.id + ')">欄位:' + item.config.user_title + '</option>';
+							var option = '<option value="#G1(' + item.id + ')">'+gettext('欄位:') + item.config.group_title + '</option>'
+										+ '<option value="#G2(' + item.id + ')">'+gettext('欄位:') + item.config.user_title + '</option>';
 							output = output + option;
 							
 						}
 						else
 						{
-							var option = '<option value="#(' + item.id + ')">欄位:' + item.config.title + '</option>';
+							var option = '<option value="#(' + item.id + ')">'+gettext('欄位:') + item.config.title + '</option>';
 							output = output + option;
 						}
 					}
@@ -4137,7 +4433,7 @@ var omfloweng = function(div_id)
 				item.config.input.forEach(function(input_item, index)
 				{
 
-					var option = '<option value="$(' + input_item.name + ')">變數:' + input_item.name + '</option>';
+					var option = '<option value="$(' + input_item.name + ')">'+gettext('變數:')+ input_item.name + '</option>';
 					if(output.indexOf(option) < 0)
 					{
 						output = output + option;
@@ -4163,7 +4459,7 @@ var omfloweng = function(div_id)
 							item_text = output_item.name;
 						}
 						
-						var option = '<option value="$(' + item_text + ')">變數:' + item_text + '</option>';
+						var option = '<option value="$(' + item_text + ')">'+gettext('變數:') + item_text + '</option>';
 						if(output.indexOf(option) < 0)
 						{
 							output = output + option;
@@ -4188,7 +4484,7 @@ var omfloweng = function(div_id)
 							item_text = output_item.name;
 						}
 						
-						var option = '<option value="$(' + item_text + ')">變數:' + item_text + '</option>';
+						var option = '<option value="$(' + item_text + ')">'+gettext('變數:')+ item_text + '</option>';
 						if(output.indexOf(option) < 0)
 						{
 							output = output + option;
@@ -4208,7 +4504,7 @@ var omfloweng = function(div_id)
 	{
 		var tmp = $('#' + obj_id).val(); 
 		//check exist
-		if($('#' + obj_id).html().indexOf(item_value) <= 0)
+		if ($('#'+ obj_id).html().indexOf('value="' + item_value + '"') <= 0)
 		{
 			$('#' + obj_id).append(new Option(item_text , item_value , false , false));
 		}
@@ -4231,8 +4527,8 @@ var omfloweng = function(div_id)
 					
 		$( '#' + ul_id ).append(subflow_item.replace(/_value_/g,"0")
 											.replace(/_id_/g, ul_id + '_radio_0')
-											.replace(/_name_/g,"不執行")
-											.replace(/_des_/g,"說明")
+											.replace(/_name_/g,gettext("不執行"))
+											.replace(/_des_/g,gettext("說明"))
 											);
 
 		flowobject.subflow.forEach(function(flowobject_item, index)
@@ -4258,18 +4554,18 @@ var omfloweng = function(div_id)
 		var item_li_input_content = '<li id="' + ul_id + '_input_li__index_" class="ui-state-default" style=" margin: 0 0 0 0;height:30px;">'
 					+'<table width="100%"><tr>'
 					+'<td width="2%"><span class="fa fa-arrows-v"></span></td>'
-					+'<td width="8%" nowrap><input id="' + ul_id + '_input_require__index_" type="checkbox" class="icheckbox_minimal-blue"><label for="' + ul_id + '_input_require__index_" readonly></label> 必填</td>'
-					+'<td width="30%"><select id="' + ul_id + '_input_value__index_" class="form-control select2" placeholder="輸入資料" style="width:100%"></select></td>'
-					+'<td width="30%"><select id="' + ul_id + '_input_name__index_" type="text" class="form-control " placeholder="變數名稱" style="width:100%" readonly></select></td>'
-					+'<td width="30%"><input id="' + ul_id + '_input_des__index_" type="text" class="form-control " placeholder="說明" readonly></td>'
+					+'<td width="8%" nowrap><input id="' + ul_id + '_input_require__index_" type="checkbox" class="icheckbox_minimal-blue"><label for="' + ul_id + '_input_require__index_" readonly></label> '+gettext('必填')+'</td>'
+					+'<td width="30%"><select id="' + ul_id + '_input_value__index_" class="form-control select2" placeholder="'+gettext('輸入資料')+'" style="width:100%"></select></td>'
+					+'<td width="30%"><select id="' + ul_id + '_input_name__index_" type="text" class="form-control " placeholder="'+gettext('變數名稱')+'" style="width:100%" readonly></select></td>'
+					+'<td width="30%"><input id="' + ul_id + '_input_des__index_" type="text" class="form-control " placeholder="'+gettext('說明')+'" readonly></td>'
 					+'</tr></table>'
 					+'</li>';
 		var item_li_output_content = '<li id="' + ul_id + '_output_li__index_" class="ui-state-default" style=" margin: 0 0 0 0;height:30px;">'
 					+'<table width="100%"><tr>'
 					+'<td width="4%"><span class="fa fa-arrows-v"></span></td>'
-					+'<td width="32%"><select id="' + ul_id + '_output_value__index_" type="text" class="form-control " placeholder="輸出值" style="width:100%" readonly></select></td>'
-					+'<td width="32%"><select id="' + ul_id + '_output_name__index_" class="form-control select2" placeholder="輸出名稱" style="width:100%"></select></td>'
-					+'<td width="32%"><input id="' + ul_id + '_output_des__index_" type="text" class="form-control " placeholder="說明" readonly></td>'
+					+'<td width="32%"><select id="' + ul_id + '_output_value__index_" type="text" class="form-control " placeholder="'+gettext('輸出值')+'" style="width:100%" readonly></select></td>'
+					+'<td width="32%"><select id="' + ul_id + '_output_name__index_" class="form-control select2" placeholder="'+gettext('輸出名稱')+'" style="width:100%"></select></td>'
+					+'<td width="32%"><input id="' + ul_id + '_output_des__index_" type="text" class="form-control " placeholder="'+gettext('說明')+'" readonly></td>'
 					+'</tr></table>'
 					+'</li>';	
 		
@@ -4320,7 +4616,7 @@ var omfloweng = function(div_id)
 									item_text = input_item.name;
 								}
 								
-								$( '#' + ul_id + '_input_name_' + index ).html('<option value="' + item_text + '">變數:' + item_text + '</option>');
+								$( '#' + ul_id + '_input_name_' + index ).html('<option value="' + item_text + '">'+gettext('變數:') + item_text + '</option>');
 								
 								$( '#' + ul_id + '_input_des_' + index ).val(input_item.des);
 							});
@@ -4334,7 +4630,7 @@ var omfloweng = function(div_id)
 								//read form field to select2
 								$( '#' + ul_id + '_output_name_' + index ).html(select_option_value());
 								//select2 enable
-								$( '#' + ul_id + '_output_name_' + index ).select2({tags: true,placeholder : "輸出變數",dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}},
+								$( '#' + ul_id + '_output_name_' + index ).select2({tags: true,placeholder : gettext("輸出變數"),dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}},
 								createTag: function(params) 
 								{
 									var term = $.trim(params.term);
@@ -4344,14 +4640,14 @@ var omfloweng = function(div_id)
 									  return null;
 									}
 									
-									if ((term.startsWith('變數:')))
+									if ((term.startsWith(gettext('變數:'))))
 									{
 										term = term.substring(3);
 									}
 									
 									return {
 									  id: '$(' + term + ')',
-									  text: '變數:' + term,
+									  text: gettext('變數:') + term,
 									  newTag: true // add additional parameters
 									}
 								}});
@@ -4368,7 +4664,7 @@ var omfloweng = function(div_id)
 								{
 									item_text = output_item.name;
 								}
-								$( '#' + ul_id + '_output_value_' + index ).html('<option value="' + item_text + '">變數:' + item_text + '</option>');
+								$( '#' + ul_id + '_output_value_' + index ).html('<option value="' + item_text + '">'+gettext('變數:')+ item_text + '</option>');
 								$( '#' + ul_id + '_output_des_' + index ).val(output_item.des);
 
 								//相同名稱自動帶入
@@ -4499,12 +4795,28 @@ var omfloweng = function(div_id)
 		flowobject.items.forEach(function(item,index)
 		{
 			if(flow_item_id == item.id)
-			{
+			{				
 				var new_item = new item_object();
 				flowobject.flow_item_counter++;
 				new_item.id = "FITEM_" + flowobject.flow_item_counter;
 				new_item.type = item.type;
-				new_item.config = JSON.parse(JSON.stringify(item.config)) //deep clone object
+				new_item.text = item.text;
+				if(new_item.type == 'switch')
+				{
+					new_item.config = new switch_object();
+				}
+				else if(new_item.type == 'async')
+				{
+					new_item.config = new async_object();
+				}
+				else if(new_item.type == 'collection')
+				{
+					new_item.config = new collection_object;
+				}
+				else
+				{
+					new_item.config = JSON.parse(JSON.stringify(item.config)) //deep clone object
+				}
 				//new_item.config = item.config;
 				new_item.config.top = item.config.top + 25;
 				new_item.config.left = item.config.left + 30;
@@ -4647,8 +4959,8 @@ var omfloweng = function(div_id)
 				
 				$('#' + baseID_OUTFLOW + '_id').html(action_item_for_modal.id);
 				
-				$('#' + baseID_OUTFLOW + '_select_app').val(action_item_for_modal.config.app_id).trigger('change');
-				$('#' + baseID_OUTFLOW + '_select_flow').val(action_item_for_modal.config.flow_uuid).trigger('change');
+				$('#' + baseID_OUTFLOW + '_select_app').val(action_item_for_modal.config.app_name).trigger('change');
+				$('#' + baseID_OUTFLOW + '_select_flow').val(action_item_for_modal.config.flow_name).trigger('change');
 				modal_load_outflow(baseID_OUTFLOW , action_item_for_modal);
 
 				break;
@@ -4823,6 +5135,38 @@ var omfloweng = function(div_id)
 				}
 				
 				
+				break;
+			case 'org1':
+				//clean all things
+				$('#' + baseID_ORG1 + '_config_text').val('');
+				
+				$('#' + baseID_ORG1 + '_output_content').html('');
+				$('#' + baseID_ORG1 + '_input_content').html('');
+
+				//load object to real
+				$('#' + baseID_ORG1 + '_config_text').val(action_item_for_modal.text);
+
+				$('#' + baseID_ORG1 + '_id').html(action_item_for_modal.id);
+				
+				modal_load_input(baseID_ORG1 , action_item_for_modal);
+				modal_load_output(baseID_ORG1 , action_item_for_modal);
+
+				break;
+			case 'org2':
+				//clean all things
+				$('#' + baseID_ORG2 + '_config_text').val('');
+				
+				$('#' + baseID_ORG2 + '_output_content').html('');
+				$('#' + baseID_ORG2 + '_input_content').html('');
+
+				//load object to real
+				$('#' + baseID_ORG2 + '_config_text').val(action_item_for_modal.text);
+
+				$('#' + baseID_ORG2 + '_id').html(action_item_for_modal.id);
+				
+				modal_load_input(baseID_ORG2 , action_item_for_modal);
+				modal_load_output(baseID_ORG2 , action_item_for_modal);
+
 				break;
 		}
 		$(show_id).modal('show');
@@ -5042,6 +5386,40 @@ var omfloweng = function(div_id)
 					para.push({'key':'_button_','value':''});
 				}
 				
+				break;
+			case 'org1':
+				para.push({'key':'_des_','value':''});
+				para.push({'key':'_style_','value':item_content_style_process});
+				para.push({'key':'_icon_','value':'fas fa-user-tie'});
+				para.push({'key':'_iconsize_','value':'40'});
+				para.push({'key':'_iconoffset_','value':'top:32px;left:40px;'});
+				para.push({'key':'_iconcolor_','value':'c0e4eb'});
+				if(design_mode)
+				{
+					para.push({'key':'_button_','value': item_content_button_remove + item_content_button_config + item_content_button_copy});
+				}
+				else
+				{
+					para.push({'key':'_button_','value':''});
+				}
+							
+				break;
+			case 'org2':
+				para.push({'key':'_des_','value':''});
+				para.push({'key':'_style_','value':item_content_style_process});
+				para.push({'key':'_icon_','value':'fas fa-user-tag'});
+				para.push({'key':'_iconsize_','value':'40'});
+				para.push({'key':'_iconoffset_','value':'top:32px;left:40px;'});
+				para.push({'key':'_iconcolor_','value':'c0e4eb'});
+				if(design_mode)
+				{
+					para.push({'key':'_button_','value': item_content_button_remove + item_content_button_config + item_content_button_copy});
+				}
+				else
+				{
+					para.push({'key':'_button_','value':''});
+				}
+							
 				break;
 			
 		}
@@ -5742,11 +6120,10 @@ var omfloweng = function(div_id)
 					{
 						flowcontent.scrollLeft(obj.config.left - (flowcontent.width() /2)  );
 					}
-					
-					if(event_chart_selected_callback != null)
-					{
-						event_chart_selected_callback(obj.id);
-					}
+				}
+				if(event_chart_selected_callback != null)
+				{
+					event_chart_selected_callback(obj.id);
 				}
 			}
 			else
@@ -6419,7 +6796,7 @@ var omfloweng = function(div_id)
 			}
 			else
 			{
-				if ($('#'+ item_id).html().indexOf(value) > 0)
+				if ($('#'+ item_id).html().indexOf('value="' + value + '"') > 0)
 				{
 					$('#'+ item_id).val(value).trigger('change');
 				} 
@@ -6429,14 +6806,14 @@ var omfloweng = function(div_id)
 					{
 						item_text = value.substring(2);
 						item_text = item_text.substring(0,item_text.length -1);
-						select2_new_option(item_id , value , '變數:' + item_text);
+						select2_new_option(item_id , value , gettext('變數:') + item_text);
 						$('#' + item_id ).val(value).trigger('change');
 					}
 					if(value.startsWith('#('))
 					{
 						item_text = value.substring(2);
 						item_text = item_text.substring(0,item_text.length -1);
-						select2_new_option(item_id , value , '欄位:' + item_text);
+						select2_new_option(item_id , value , gettext('欄位:') + item_text);
 						$('#' + item_id ).val(value).trigger('change');
 					}
 					else if(value.startsWith('#G'))
@@ -6495,6 +6872,7 @@ var omformeng = function(div_id)
 	var baseID_HGROUP = active_id + '_' + 'h_group_modal';
 	
 	
+	
 	//====================
 	//===public method====
 	//====================
@@ -6523,18 +6901,18 @@ var omformeng = function(div_id)
 					+'<div class="modal-header">'
 					+'<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
 					+'<span aria-hidden="true">&times;</span></button>'
-					+'<h4 class="modal-title"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;新增項目</h4>'
+					+'<h4 class="modal-title"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;'+gettext('新增項目')+'</h4>'
 					+'</div>'
 					+'<div class="modal-body">'
 					+'<div class="form-group">'
-					+'<label>選擇新增項目</label>'
+					+'<label>'+gettext('選擇新增項目')+'</label>'
 					+'<select id="' + baseID_NEW + '_item_select" class="form-control select2" style="width:100%">'
 					+'</select>'
 					+'</div>'
 					+'</div>'
 					+'<div class="modal-footer">'
-					+'<button type="button" class="btn btn-default pull-left" id="' + baseID_NEW + '_close">取消</button>'
-					+'<button type="button" class="btn btn-primary" id="' + baseID_NEW + '_submit">確定</button>'
+					+'<button type="button" class="btn btn-default pull-left" id="' + baseID_NEW + '_close">'+gettext('取消')+'</button>'
+					+'<button type="button" class="btn btn-primary" id="' + baseID_NEW + '_submit">'+gettext('確定')+'</button>'
 					+'</div>'
 					+'</div>'
 					+'</div><!-- /.modal-content -->'
@@ -6565,35 +6943,35 @@ var omformeng = function(div_id)
 					+'<div class="modal-header">'
 					+'<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
 					+'<span aria-hidden="true">&times;</span></button>'
-					+'<h4 class="modal-title"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;區塊設定</h4>'
+					+'<h4 class="modal-title"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;'+gettext('區塊設定')+'</h4>'
 					+'</div>'
 					+'<div class="modal-body">'
 					+'<div class="form-group">'
-					+'<label>標題文字</label>'
-					+'<input id="' + baseID_BOX + '_item_title" type="text" class="form-control" placeholder="請輸入標題文字">'
+					+'<label>'+gettext('標題文字')+'</label>'
+					+'<input id="' + baseID_BOX + '_item_title" type="text" class="form-control" placeholder="'+gettext('請輸入標題文字')+'">'
 					+'</div>'
 					+'<div class="form-group">'
-					+'<label>標示顏色</label>'
+					+'<label>'+gettext('標示顏色')+'</label>'
 					+'<select id="' + baseID_BOX + '_item_color" class="form-control select2" style="width:100%">'
-					+'<option value="box box-default">灰</option>'
-					+'<option value="box box-danger">紅</option>'
-					+'<option value="box box-warning">黃</option>'
-					+'<option value="box box-primary">藍</option>'
-					+'<option value="box box-info">水藍</option>'
-					+'<option value="box box-success">綠</option>'
-					+'<option value="box">無色區塊</option>'
+					+'<option value="box box-default">'+gettext('灰')+'</option>'
+					+'<option value="box box-danger">'+gettext('紅')+'</option>'
+					+'<option value="box box-warning">'+gettext('黃')+'</option>'
+					+'<option value="box box-primary">'+gettext('藍')+'</option>'
+					+'<option value="box box-info">'+gettext('水藍')+'</option>'
+					+'<option value="box box-success">'+gettext('綠')+'</option>'
+					+'<option value="box">'+gettext('無色區塊')+'</option>'
 					+'</select>'
 					+'</div>'
 					+'<div class="form-group">'
 					+'<label>'
 					+'<input id="' + baseID_BOX + '_item_hidden" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_BOX + '_item_hidden"></label>'
-					+' 隱藏'
+					+' '+gettext('隱藏')+''
 					+'</label>'
 					+'</div>'
 					+'</div>'
 					+'<div class="modal-footer">'
-					+'<button type="button" class="btn btn-default pull-left" id="' + baseID_BOX + '_close">取消</button>'
-					+'<button type="button" class="btn btn-primary" id="' + baseID_BOX + '_submit">確定</button>'
+					+'<button type="button" class="btn btn-default pull-left" id="' + baseID_BOX + '_close">'+gettext('取消')+'</button>'
+					+'<button type="button" class="btn btn-primary" id="' + baseID_BOX + '_submit">'+gettext('確定')+'</button>'
 					+'</div>'
 					+'</div>'
 					+'</div><!-- /.modal-content -->'
@@ -6624,60 +7002,60 @@ var omformeng = function(div_id)
 					+'<div class="modal-header">'
 					+'<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
 					+'<span aria-hidden="true">&times;</span></button>'
-					+'<h4 class="modal-title"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;輸入格設定</h4>'
+					+'<h4 class="modal-title"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;'+gettext('輸入格設定')+'</h4>'
 					+'</div>'
 					+'<div class="modal-body">'
 					+'<div class="form-group">'
-					+'<label>欄位名稱</label>'
-					+'<input id="' + baseID_INPUT + '_item_title" type="text" class="form-control" placeholder="請輸入欄位名稱">'
+					+'<label>'+gettext('欄位名稱')+'</label>'
+					+'<input id="' + baseID_INPUT + '_item_title" type="text" class="form-control" placeholder="'+gettext('請輸入欄位名稱')+'">'
 					+'</div>'
 					+'<div class="form-group">'
-					+'<label>註解說明</label>'
-					+'<input id="' + baseID_INPUT + '_item_placeholder" type="text" class="form-control" placeholder="請輸入註解文字">'
+					+'<label>'+gettext('註解說明')+'</label>'
+					+'<input id="' + baseID_INPUT + '_item_placeholder" type="text" class="form-control" placeholder="'+gettext('請輸入註解文字')+'">'
 					+'</div>'
 					+'<div class="form-group">'
-					+'<label>預設值</label>'
-					+'<input id="' + baseID_INPUT + '_item_value" type="text" class="form-control" placeholder="請輸入預設值">'
+					+'<label>'+gettext('預設值')+'</label>'
+					+'<input id="' + baseID_INPUT + '_item_value" type="text" class="form-control" placeholder="'+gettext('請輸入預設值')+'">'
 					+'</div>'
 					+'<div class="form-group">'
-					+'<label>類型</label>'
+					+'<label>'+gettext('類型')+'</label>'
 					+'<select id="' + baseID_INPUT + '_item_type" class="form-control select2" style="width:100%">'
-					+'<option value="text">文字</option>'
-					+'<option value="number">數字</option>'
-					+'<option value="password">密碼</option>'
-					+'<option value="email">電子郵件</option>'
-					+'<option value="url">網址</option>'
-					+'<option value="unique">唯一值</option>'
+					+'<option value="text">'+gettext('文字')+'</option>'
+					+'<option value="number">'+gettext('數字')+'</option>'
+					+'<option value="password">'+gettext('密碼')+'</option>'
+					+'<option value="email">'+gettext('電子郵件')+'</option>'
+					+'<option value="url">'+gettext('網址')+'</option>'
+					+'<option value="unique">'+gettext('唯一值')+'</option>'
 					+'</select>'
 					+'</div>'
 					
 					+'<div class="form-group">'
-					+'<label>格式檢查(REGEX)</label>'
-					+'<input id="' + baseID_INPUT + '_item_regex" type="text" class="form-control" placeholder="請輸入regex語法">'
+					+'<label>'+gettext('格式檢查(REGEX)')+'</label>'
+					+'<input id="' + baseID_INPUT + '_item_regex" type="text" class="form-control" placeholder="'+gettext('請輸入regex語法')+'">'
 					+'</div>'
 					+'<div class="form-group">'
 					+'<label>'
 					+'<input id="' + baseID_INPUT + '_item_require" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_INPUT + '_item_require"></label>'
-					+' 必填'
+					+' '+gettext('必填')+''
 					+'</label>'
 					+'</div>'
 					+'<div class="form-group">'
 					+'<label>'
 					+'<input id="' + baseID_INPUT + '_item_readonly" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_INPUT + '_item_readonly"></label>'
-					+' 唯讀'
+					+' '+gettext('唯讀')+''
 					+'</label>'
 					+'</div>'
 					+'<div class="form-group">'
 					+'<label>'
 					+'<input id="' + baseID_INPUT + '_item_hidden" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_INPUT + '_item_hidden"></label>'
-					+' 隱藏'
+					+' '+gettext('隱藏')+''
 					+'</label>'
 					+'</div>'
 					
 					+'</div>'
 					+'<div class="modal-footer">'
-					+'<button type="button" class="btn btn-default pull-left" id="' + baseID_INPUT + '_close">取消</button>'
-					+'<button type="button" class="btn btn-primary" id="' + baseID_INPUT + '_submit">確定</button>'
+					+'<button type="button" class="btn btn-default pull-left" id="' + baseID_INPUT + '_close">'+gettext('取消')+'</button>'
+					+'<button type="button" class="btn btn-primary" id="' + baseID_INPUT + '_submit">'+gettext('確定')+'</button>'
 					+'</div>'
 					+'</div>'
 					+'</div><!-- /.modal-content -->'
@@ -6708,16 +7086,16 @@ var omformeng = function(div_id)
 					+'<div class="modal-header">'
 					+'<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
 					+'<span aria-hidden="true">&times;</span></button>'
-					+'<h4 class="modal-title"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;多行輸入設定</h4>'
+					+'<h4 class="modal-title"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;'+gettext('多行輸入設定')+'</h4>'
 					+'</div>'
 					+'<div class="modal-body">'
 					+'<div class="form-group">'
-					+'<label>欄位名稱</label>'
-					+'<input id="' + baseID_AREA + '_item_title" type="text" class="form-control" placeholder="請輸入欄位名稱">'
+					+'<label>'+gettext('欄位名稱')+'</label>'
+					+'<input id="' + baseID_AREA + '_item_title" type="text" class="form-control" placeholder="'+gettext('請輸入欄位名稱')+'">'
 					+'</div>'
 					
 					+'<div class="form-group">'
-					+'<label>行數</label>'
+					+'<label>'+gettext('行數')+'</label>'
 					+'<select id="' + baseID_AREA + '_item_rows" class="form-control select2" style="width:100%">'
 					+'<option value="3">3</option>'
 					+'<option value="4">4</option>'
@@ -6730,32 +7108,32 @@ var omformeng = function(div_id)
 					+'</div>'
 					
 					+'<div class="form-group">'
-					+'<label>格式檢查(REGEX)</label>'
-					+'<input id="' + baseID_AREA + '_item_regex" type="text" class="form-control" placeholder="請輸入regex語法">'
+					+'<label>'+gettext('格式檢查(REGEX)')+'</label>'
+					+'<input id="' + baseID_AREA + '_item_regex" type="text" class="form-control" placeholder="'+gettext('請輸入regex語法')+'">'
 					+'</div>'
 					+'<div class="form-group">'
 					+'<label>'
 					+'<input id="' + baseID_AREA + '_item_require" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_AREA + '_item_require"></label>'
-					+' 必填'
+					+' '+gettext('必填')+''
 					+'</label>'
 					+'</div>'
 					+'<div class="form-group">'
 					+'<label>'
 					+'<input id="' + baseID_AREA + '_item_readonly" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_AREA + '_item_readonly"></label>'
-					+' 唯讀'
+					+' '+gettext('唯讀')+''
 					+'</label>'
 					+'</div>'
 					+'<div class="form-group">'
 					+'<label>'
 					+'<input id="' + baseID_AREA + '_item_hidden" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_AREA + '_item_hidden"></label>'
-					+' 隱藏'
+					+' '+gettext('隱藏')+''
 					+'</label>'
 					+'</div>'
 					
 					+'</div>'
 					+'<div class="modal-footer">'
-					+'<button type="button" class="btn btn-default pull-left" id="' + baseID_AREA + '_close" >取消</button>'
-					+'<button type="button" class="btn btn-primary" id="' + baseID_AREA + '_submit">確定</button>'
+					+'<button type="button" class="btn btn-default pull-left" id="' + baseID_AREA + '_close" >'+gettext('取消')+'</button>'
+					+'<button type="button" class="btn btn-primary" id="' + baseID_AREA + '_submit">'+gettext('確定')+'</button>'
 					+'</div>'
 					+'</div>'
 					+'</div><!-- /.modal-content -->'
@@ -6787,51 +7165,51 @@ var omformeng = function(div_id)
 					+'<div class="modal-header">'
 					+'<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
 					+'<span aria-hidden="true">&times;</span></button>'
-					+'<h4 class="modal-title"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;標題設定</h4>'
+					+'<h4 class="modal-title"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;'+gettext('標題設定')+'</h4>'
 					+'</div>'
 					+'<div class="modal-body">'
 					
 					+'<div class="form-group">'
-					+'<label>欄位名稱</label>'
-					+'<input id="' + baseID_HTITLE + '_item_title" type="text" class="form-control" placeholder="請輸入欄位名稱">'
+					+'<label>'+gettext('欄位名稱')+'</label>'
+					+'<input id="' + baseID_HTITLE + '_item_title" type="text" class="form-control" placeholder="'+gettext('請輸入欄位名稱')+'">'
 					+'</div>'
 					
 					+'<div class="form-group">'
-					+'<label>註解說明</label>'
-					+'<input id="' + baseID_HTITLE + '_item_placeholder" type="text" class="form-control" placeholder="請輸入註解文字">'
+					+'<label>'+gettext('註解說明')+'</label>'
+					+'<input id="' + baseID_HTITLE + '_item_placeholder" type="text" class="form-control" placeholder="'+gettext('請輸入註解文字')+'">'
 					+'</div>'
 					+'<div class="form-group">'
-					+'<label>預設值</label>'
-					+'<input id="' + baseID_HTITLE + '_item_value" type="text" class="form-control" placeholder="請輸入預設值">'
+					+'<label>'+gettext('預設值')+'</label>'
+					+'<input id="' + baseID_HTITLE + '_item_value" type="text" class="form-control" placeholder="'+gettext('請輸入預設值')+'">'
 					+'</div>'
 					
 					+'<div class="form-group">'
-					+'<label>格式檢查(REGEX)</label>'
-					+'<input id="' + baseID_HTITLE + '_item_regex" type="text" class="form-control" placeholder="請輸入regex語法">'
+					+'<label>'+gettext('格式檢查(REGEX)')+'</label>'
+					+'<input id="' + baseID_HTITLE + '_item_regex" type="text" class="form-control" placeholder="'+gettext('請輸入regex語法')+'">'
 					+'</div>'
 					+'<div class="form-group">'
 					+'<label>'
 					+'<input id="' + baseID_HTITLE + '_item_require" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_HTITLE + '_item_require"></label>'
-					+' 必填'
+					+' '+gettext('必填')+''
 					+'</label>'
 					+'</div>'
 					+'<div class="form-group">'
 					+'<label>'
 					+'<input id="' + baseID_HTITLE + '_item_readonly" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_HTITLE + '_item_readonly"></label>'
-					+' 唯讀'
+					+' '+gettext('唯讀')+''
 					+'</label>'
 					+'</div>'
 					+'<div class="form-group">'
 					+'<label>'
 					+'<input id="' + baseID_HTITLE + '_item_hidden" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_HTITLE + '_item_hidden"></label>'
-					+' 隱藏'
+					+' '+gettext('隱藏')+''
 					+'</label>'
 					+'</div>'
 					
 					+'</div>'
 					+'<div class="modal-footer">'
-					+'<button type="button" class="btn btn-default pull-left" id="' + baseID_HTITLE + '_close" >取消</button>'
-					+'<button type="button" class="btn btn-primary" id="' + baseID_HTITLE + '_submit">確定</button>'
+					+'<button type="button" class="btn btn-default pull-left" id="' + baseID_HTITLE + '_close" >'+gettext('取消')+'</button>'
+					+'<button type="button" class="btn btn-primary" id="' + baseID_HTITLE + '_submit">'+gettext('確定')+'</button>'
 					+'</div>'
 					+'</div>'
 					+'</div><!-- /.modal-content -->'
@@ -6861,13 +7239,13 @@ var omformeng = function(div_id)
 						+' <div class="modal-content">'
 						+'  <div class="modal-header">'
 						+'   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-						+'   <h4 class="modal-title"> 狀態欄位</h4>'
+						+'   <h4 class="modal-title"> '+gettext('狀態欄位')+'</h4>'
 						+'  </div>'
 						+'  <div class="modal-body">'
 						+'   <div class="nav-tabs-custom">'
 						+'    <ul class="nav nav-tabs">'
-						+'     <li class="active"><a href="#' +baseID_HSTATUS + '_config" data-toggle="tab">設定</a></li>'
-						+'     <li><a href="#' + baseID_HSTATUS + '_status" data-toggle="tab">選項</a></li>'
+						+'     <li class="active"><a href="#' +baseID_HSTATUS + '_config" data-toggle="tab">'+gettext('設定')+'</a></li>'
+						+'     <li><a href="#' + baseID_HSTATUS + '_status" data-toggle="tab">'+gettext('選項')+'</a></li>'
 						+'    </ul>'
 						
 						+'    <div class="tab-content">'
@@ -6875,36 +7253,36 @@ var omformeng = function(div_id)
 						+'     <div class="tab-pane active" id="' +baseID_HSTATUS + '_config">'
 						
 						+'      <div class="form-group">'
-						+'       <label>欄位名稱</label>'
-						+'       <input id="' + baseID_HSTATUS + '_item_title" type="text" class="form-control" placeholder="請輸入欄位名稱">'
+						+'       <label>'+gettext('欄位名稱')+'</label>'
+						+'       <input id="' + baseID_HSTATUS + '_item_title" type="text" class="form-control" placeholder="'+gettext('請輸入欄位名稱')+'">'
 						+'      </div>'
 						
 						+'      <div class="form-group">'
-						+'       <label>預設值</label>'
-						+'       <input id="' + baseID_HSTATUS + '_item_value" type="text" class="form-control" placeholder="請輸入預設值">'
+						+'       <label>'+gettext('預設值')+'</label>'
+						+'       <input id="' + baseID_HSTATUS + '_item_value" type="text" class="form-control" placeholder="'+gettext('請輸入預設值')+'">'
 						+'      </div>'			
 						+'      <div class="form-group">'
 						+'       <label>'
 						+'       <input id="' + baseID_HSTATUS + '_item_require" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_HSTATUS + '_item_require"></label>'
-						+'        必填'
+						+'        '+gettext('必填')+''
 						+'       </label>'
 						+'      </div>'
 						+'<div class="form-group">'
 						+'<label>'
 						+'<input id="' + baseID_HSTATUS + '_item_readonly" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_HSTATUS + '_item_readonly"></label>'
-						+' 唯讀'
+						+' '+gettext('唯讀')+''
 						+'</label>'
 						+'</div>'
 						+'      <div class="form-group">'
 						+'       <label>'
 						+'        <input id="' + baseID_HSTATUS + '_item_hidden" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_HSTATUS + '_item_hidden"></label>'
-						+'        隱藏'
+						+'        '+gettext('隱藏')+''
 						+'       </label>'
 						+'      </div>'						
 						+'     </div>'
 						
 						+'     <div class="tab-pane " id="' + baseID_HSTATUS + '_status">'
-						+'      <button id="' + baseID_HSTATUS + '_status_content_add' + '" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> 新增</button>'
+						+'      <button id="' + baseID_HSTATUS + '_status_content_add' + '" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> '+gettext('新增')+'</button>'
 						+'      <ul id="' + baseID_HSTATUS +  '_status_content' + '" style="list-style-type: none; margin: 0; padding: 0">'
 						+'      </ul>'					
 						+'     </div>'
@@ -6915,8 +7293,8 @@ var omformeng = function(div_id)
 						+'   </div>'
 						+'  </div>'
 						+'  <div class="modal-footer">'
-						+'   <button type="button" class="btn btn-default pull-left" id="' + baseID_HSTATUS + '_close" >取消</button>'
-						+'   <button type="button" class="btn btn-primary"  id="' + baseID_HSTATUS + '_submit">確定</button>'
+						+'   <button type="button" class="btn btn-default pull-left" id="' + baseID_HSTATUS + '_close" >'+gettext('取消')+'</button>'
+						+'   <button type="button" class="btn btn-primary"  id="' + baseID_HSTATUS + '_submit">'+gettext('確定')+'</button>'
 						+'  </div>'
 						+' </div>'
 						+'</div>'
@@ -6954,13 +7332,13 @@ var omformeng = function(div_id)
 						+' <div class="modal-content">'
 						+'  <div class="modal-header">'
 						+'   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-						+'   <h4 class="modal-title"> 燈號設定</h4>'
+						+'   <h4 class="modal-title"> '+gettext('燈號設定')+'</h4>'
 						+'  </div>'
 						+'  <div class="modal-body">'
 						+'   <div class="nav-tabs-custom">'
 						+'    <ul class="nav nav-tabs">'
-						+'     <li class="active"><a href="#' +baseID_HLEVEL + '_config" data-toggle="tab">設定</a></li>'
-						+'     <li><a href="#' + baseID_HLEVEL + '_level" data-toggle="tab">選項</a></li>'
+						+'     <li class="active"><a href="#' +baseID_HLEVEL + '_config" data-toggle="tab">'+gettext('設定')+'</a></li>'
+						+'     <li><a href="#' + baseID_HLEVEL + '_level" data-toggle="tab">'+gettext('選項')+'</a></li>'
 						+'    </ul>'
 						
 						+'    <div class="tab-content">'
@@ -6968,30 +7346,30 @@ var omformeng = function(div_id)
 						+'     <div class="tab-pane active" id="' +baseID_HLEVEL + '_config">'
 						
 						+'      <div class="form-group">'
-						+'       <label>欄位名稱</label>'
-						+'       <input id="' + baseID_HLEVEL + '_item_title" type="text" class="form-control" placeholder="請輸入欄位名稱">'
+						+'       <label>'+gettext('欄位名稱')+'</label>'
+						+'       <input id="' + baseID_HLEVEL + '_item_title" type="text" class="form-control" placeholder="'+gettext('請輸入欄位名稱')+'">'
 						+'      </div>'
 						
 						+'      <div class="form-group">'
-						+'       <label>預設值</label>'
-						+'       <input id="' + baseID_HLEVEL + '_item_value" type="text" class="form-control" placeholder="請輸入預設值">'
+						+'       <label>'+gettext('預設值')+'</label>'
+						+'       <input id="' + baseID_HLEVEL + '_item_value" type="text" class="form-control" placeholder="'+gettext('請輸入預設值')+'">'
 						+'      </div>'			
 						+'      <div class="form-group">'
 						+'       <label>'
 						+'       <input id="' + baseID_HLEVEL + '_item_require" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_HLEVEL + '_item_require"></label>'
-						+'        必填'
+						+'        '+gettext('必填')+''
 						+'       </label>'
 						+'      </div>'
 						+'<div class="form-group">'
 						+'<label>'
 						+'<input id="' + baseID_HLEVEL + '_item_readonly" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_HLEVEL + '_item_readonly"></label>'
-						+' 唯讀'
+						+' '+gettext('唯讀')+''
 						+'</label>'
 						+'</div>'
 						+'      <div class="form-group">'
 						+'       <label>'
 						+'        <input id="' + baseID_HLEVEL + '_item_hidden" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_HLEVEL + '_item_hidden"></label>'
-						+'        隱藏'
+						+'        '+gettext('隱藏')+''
 						+'       </label>'
 						+'      </div>'						
 						+'     </div>'
@@ -7007,8 +7385,8 @@ var omformeng = function(div_id)
 						+'   </div>'
 						+'  </div>'
 						+'  <div class="modal-footer">'
-						+'   <button type="button" class="btn btn-default pull-left" id="' + baseID_HLEVEL + '_close" >取消</button>'
-						+'   <button type="button" class="btn btn-primary"  id="' + baseID_HLEVEL + '_submit">確定</button>'
+						+'   <button type="button" class="btn btn-default pull-left" id="' + baseID_HLEVEL + '_close" >'+gettext('取消')+'</button>'
+						+'   <button type="button" class="btn btn-primary"  id="' + baseID_HLEVEL + '_submit">'+gettext('確定')+'</button>'
 						+'  </div>'
 						+' </div>'
 						+'</div>'
@@ -7039,13 +7417,13 @@ var omformeng = function(div_id)
 						+' <div class="modal-content">'
 						+'  <div class="modal-header">'
 						+'   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-						+'   <h4 class="modal-title"> 下拉選單</h4>'
+						+'   <h4 class="modal-title"> '+gettext('下拉選單')+'</h4>'
 						+'  </div>'
 						+'  <div class="modal-body">'
 						+'   <div class="nav-tabs-custom">'
 						+'    <ul class="nav nav-tabs">'
-						+'     <li class="active"><a href="#' +baseID_LIST + '_config" data-toggle="tab">設定</a></li>'
-						+'     <li><a href="#' + baseID_LIST + '_list" data-toggle="tab">選項</a></li>'
+						+'     <li class="active"><a href="#' +baseID_LIST + '_config" data-toggle="tab">'+gettext('設定')+'</a></li>'
+						+'     <li><a href="#' + baseID_LIST + '_list" data-toggle="tab">'+gettext('選項')+'</a></li>'
 						+'    </ul>'
 						
 						+'    <div class="tab-content">'
@@ -7053,35 +7431,35 @@ var omformeng = function(div_id)
 						+'     <div class="tab-pane active" id="' +baseID_LIST + '_config">'
 						
 						+'      <div class="form-group">'
-						+'       <label>欄位名稱</label>'
-						+'       <input id="' + baseID_LIST + '_item_title" type="text" class="form-control" placeholder="請輸入欄位名稱">'
+						+'       <label>'+gettext('欄位名稱')+'</label>'
+						+'       <input id="' + baseID_LIST + '_item_title" type="text" class="form-control" placeholder="'+gettext('請輸入欄位名稱')+'">'
 						+'      </div>'
 						+'      <div class="form-group">'
-						+'       <label>預設值</label>'
-						+'       <input id="' + baseID_LIST + '_item_value" type="text" class="form-control" placeholder="請輸入預設值">'
+						+'       <label>'+gettext('預設值')+'</label>'
+						+'       <input id="' + baseID_LIST + '_item_value" type="text" class="form-control" placeholder="'+gettext('請輸入預設值')+'">'
 						+'      </div>'			
 						+'      <div class="form-group">'
 						+'       <label>'
 						+'       <input id="' + baseID_LIST + '_item_require" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_LIST + '_item_require"></label>'
-						+'        必填'
+						+'        '+gettext('必填')+''
 						+'       </label>'
 						+'      </div>'
 						+'      <div class="form-group">'
 						+'       <label>'
 						+'        <input id="' + baseID_LIST + '_item_readonly" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_LIST + '_item_readonly"></label>'
-						+'        唯讀'
+						+'        '+gettext('唯讀')+''
 						+'       </label>'
 						+'      </div>'
 						+'      <div class="form-group">'
 						+'       <label>'
 						+'        <input id="' + baseID_LIST + '_item_hidden" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_LIST + '_item_hidden"></label>'
-						+'        隱藏'
+						+'        '+gettext('隱藏')+''
 						+'       </label>'
 						+'      </div>'						
 						+'     </div>'
 						
 						+'     <div class="tab-pane" id="' + baseID_LIST + '_list">'
-						+'      <button id="' + baseID_LIST + '_list_content_add' + '" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> 新增</button>'
+						+'      <button id="' + baseID_LIST + '_list_content_add' + '" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> '+gettext('新增')+'</button>'
 						+'      <ul id="' + baseID_LIST +  '_list_content' + '" style="list-style-type: none; margin: 0; padding: 0">'
 						+'      </ul>'					
 						+'     </div>'
@@ -7091,8 +7469,8 @@ var omformeng = function(div_id)
 						+'   </div>'
 						+'  </div>'
 						+'  <div class="modal-footer">'
-						+'   <button type="button" class="btn btn-default pull-left" id="' + baseID_LIST + '_close" >取消</button>'
-						+'   <button type="button" class="btn btn-primary"  id="' + baseID_LIST + '_submit">確定</button>'
+						+'   <button type="button" class="btn btn-default pull-left" id="' + baseID_LIST + '_close" >'+gettext('取消')+'</button>'
+						+'   <button type="button" class="btn btn-primary"  id="' + baseID_LIST + '_submit">'+gettext('確定')+'</button>'
 						+'  </div>'
 						+' </div>'
 						+'</div>'
@@ -7130,13 +7508,13 @@ var omformeng = function(div_id)
 						+' <div class="modal-content">'
 						+'  <div class="modal-header">'
 						+'   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-						+'   <h4 class="modal-title"> 勾選欄位</h4>'
+						+'   <h4 class="modal-title"> '+gettext('勾選欄位')+'</h4>'
 						+'  </div>'
 						+'  <div class="modal-body">'
 						+'   <div class="nav-tabs-custom">'
 						+'    <ul class="nav nav-tabs">'
-						+'     <li class="active"><a href="#' +baseID_CHECKBOX + '_config" data-toggle="tab">設定</a></li>'
-						+'     <li><a href="#' + baseID_CHECKBOX + '_checkbox" data-toggle="tab">選項</a></li>'
+						+'     <li class="active"><a href="#' +baseID_CHECKBOX + '_config" data-toggle="tab">'+gettext('設定')+'</a></li>'
+						+'     <li><a href="#' + baseID_CHECKBOX + '_checkbox" data-toggle="tab">'+gettext('選項')+'</a></li>'
 						+'    </ul>'
 						
 						+'    <div class="tab-content">'
@@ -7144,41 +7522,41 @@ var omformeng = function(div_id)
 						+'     <div class="tab-pane active" id="' +baseID_CHECKBOX + '_config">'
 						
 						+'      <div class="form-group">'
-						+'       <label>欄位名稱</label>'
-						+'       <input id="' + baseID_CHECKBOX + '_item_title" type="text" class="form-control" placeholder="請輸入欄位名稱">'
+						+'       <label>'+gettext('欄位名稱')+'</label>'
+						+'       <input id="' + baseID_CHECKBOX + '_item_title" type="text" class="form-control" placeholder="'+gettext('請輸入欄位名稱')+'">'
 						+'      </div>'
 						+'      <div class="form-group">'
 						+'       <label>'
 						+'       <input id="' + baseID_CHECKBOX + '_item_multiple" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_CHECKBOX + '_item_multiple"></label>'
-						+'        複選'
+						+'        '+gettext('複選')+''
 						+'       </label>'
 						+'      </div>'
 						+'      <div class="form-group">'
-						+'       <label>預設值</label>'
-						+'       <input id="' + baseID_CHECKBOX + '_item_value" type="text" class="form-control" placeholder="預設值1,預設值2,預設值3">'
+						+'       <label>'+gettext('預設值')+'</label>'
+						+'       <input id="' + baseID_CHECKBOX + '_item_value" type="text" class="form-control" placeholder="'+gettext('預設值1,預設值2,預設值3')+'">'
 						+'      </div>'			
 						+'      <div class="form-group">'
 						+'       <label>'
 						+'       <input id="' + baseID_CHECKBOX + '_item_require" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_CHECKBOX + '_item_require"></label>'
-						+'        必填'
+						+'        '+gettext('必填')+''
 						+'       </label>'
 						+'      </div>'
 						+'<div class="form-group">'
 						+'<label>'
 						+'<input id="' + baseID_CHECKBOX + '_item_readonly" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_CHECKBOX + '_item_readonly"></label>'
-						+' 唯讀'
+						+' '+gettext('唯讀')+''
 						+'</label>'
 						+'</div>'
 						+'      <div class="form-group">'
 						+'       <label>'
 						+'        <input id="' + baseID_CHECKBOX + '_item_hidden" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_CHECKBOX + '_item_hidden"></label>'
-						+'        隱藏'
+						+'        '+gettext('隱藏')+''
 						+'       </label>'
 						+'      </div>'						
 						+'     </div>'
 						
-						+'     <div class="tab-pane active" id="' + baseID_CHECKBOX + '_checkbox">'
-						+'      <button id="' + baseID_CHECKBOX + '_checkbox_content_add' + '" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> 新增</button>'
+						+'     <div class="tab-pane" id="' + baseID_CHECKBOX + '_checkbox">'
+						+'      <button id="' + baseID_CHECKBOX + '_checkbox_content_add' + '" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> '+gettext('新增')+'</button>'
 						+'      <ul id="' + baseID_CHECKBOX +  '_checkbox_content' + '" style="list-style-type: none; margin: 0; padding: 0">'
 						+'      </ul>'					
 						+'     </div>'
@@ -7189,8 +7567,8 @@ var omformeng = function(div_id)
 						+'   </div>'
 						+'  </div>'
 						+'  <div class="modal-footer">'
-						+'   <button type="button" class="btn btn-default pull-left" id="' + baseID_CHECKBOX + '_close" >取消</button>'
-						+'   <button type="button" class="btn btn-primary"  id="' + baseID_CHECKBOX + '_submit">確定</button>'
+						+'   <button type="button" class="btn btn-default pull-left" id="' + baseID_CHECKBOX + '_close" >'+gettext('取消')+'</button>'
+						+'   <button type="button" class="btn btn-primary"  id="' + baseID_CHECKBOX + '_submit">'+gettext('確定')+'</button>'
 						+'  </div>'
 						+' </div>'
 						+'</div>'
@@ -7229,13 +7607,13 @@ var omformeng = function(div_id)
 						+' <div class="modal-content">'
 						+'  <div class="modal-header">'
 						+'   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-						+'   <h4 class="modal-title"> 受派人及組織</h4>'
+						+'   <h4 class="modal-title"> '+gettext('受派人及組織')+'</h4>'
 						+'  </div>'
 						+'  <div class="modal-body">'
 						+'   <div class="nav-tabs-custom">'
 						+'    <ul class="nav nav-tabs">'
-						+'     <li class="active"><a href="#' +baseID_HGROUP + '_config" data-toggle="tab">設定</a></li>'
-						+'     <li><a href="#' + baseID_HGROUP + '_group" data-toggle="tab">選項</a></li>'
+						+'     <li class="active"><a href="#' +baseID_HGROUP + '_config" data-toggle="tab">'+gettext('設定')+'</a></li>'
+						+'     <li><a href="#' + baseID_HGROUP + '_group" data-toggle="tab">'+gettext('選項')+'</a></li>'
 						+'    </ul>'
 						
 						+'    <div class="tab-content">'
@@ -7243,48 +7621,48 @@ var omformeng = function(div_id)
 						+'     <div class="tab-pane active" id="' +baseID_HGROUP + '_config">'
 						
 						+'      <div class="form-group">'
-						+'       <label>組織欄位名稱</label>'
-						+'       <input id="' + baseID_HGROUP + '_item_group_title" type="text" class="form-control" placeholder="請輸入欄位名稱">'
+						+'       <label>'+gettext('組織欄位名稱')+'</label>'
+						+'       <input id="' + baseID_HGROUP + '_item_group_title" type="text" class="form-control" placeholder="'+gettext('請輸入欄位名稱')+'">'
 						+'      </div>'
 						+'      <div class="form-group">'
 						+'       <label>'
-						+'       <input id="' + baseID_HGROUP + '_item_user" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_HGROUP + '_item_user"></label> 包含受派人欄位'
+						+'       <input id="' + baseID_HGROUP + '_item_user" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_HGROUP + '_item_user"></label> '+gettext('包含受派人欄位')+''
 						+'       </label>'
 						+'      </div>'
 						+'      <div class="form-group">'
-						+'       <label>受派人欄位名稱</label>'
-						+'       <input id="' + baseID_HGROUP + '_item_user_title" type="text" class="form-control" placeholder="請輸入欄位名稱">'
+						+'       <label>'+gettext('受派人欄位名稱')+'</label>'
+						+'       <input id="' + baseID_HGROUP + '_item_user_title" type="text" class="form-control" placeholder="'+gettext('請輸入欄位名稱')+'">'
 						+'      </div>'
 						+'      <div class="form-group">'
-						+'       <label>預設值</label>'
-						+'       <input id="' + baseID_HGROUP + '_item_value" type="text" class="form-control" placeholder="組織,受派人">'
+						+'       <label>'+gettext('預設值')+'</label>'
+						+'       <input id="' + baseID_HGROUP + '_item_value" type="text" class="form-control" placeholder="'+gettext('組織,受派人')+'">'
 						+'      </div>'			
 						+'      <div class="form-group">'
 						+'       <label>'
-						+'       <input id="' + baseID_HGROUP + '_item_require" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_HGROUP + '_item_require"></label> 組織必填'
+						+'       <input id="' + baseID_HGROUP + '_item_require" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_HGROUP + '_item_require"></label> '+gettext('組織必填')+''
 						+'       </label>'
 						+'      </div>'
 						+'      <div class="form-group">'
 						+'       <label>'
-						+'       <input id="' + baseID_HGROUP + '_item_user_require" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_HGROUP + '_item_user_require"></label> 受派人必填'
+						+'       <input id="' + baseID_HGROUP + '_item_user_require" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_HGROUP + '_item_user_require"></label> '+gettext('受派人必填')+''
 						+'       </label>'
 						+'      </div>'
 						+'<div class="form-group">'
 						+'<label>'
 						+'<input id="' + baseID_HGROUP + '_item_readonly" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_HGROUP + '_item_readonly"></label>'
-						+' 唯讀'
+						+' '+gettext('唯讀')+''
 						+'</label>'
 						+'</div>'
 						+'      <div class="form-group">'
 						+'       <label>'
 						+'        <input id="' + baseID_HGROUP + '_item_hidden" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_HGROUP + '_item_hidden"></label>'
-						+'        隱藏'
+						+'        '+gettext('隱藏')+''
 						+'       </label>'
 						+'      </div>'						
 						+'     </div>'
 						
 						+'     <div class="tab-pane" id="' + baseID_HGROUP + '_group">'
-						+'      <button id="' + baseID_HGROUP + '_group_content_add' + '" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> 新增</button>'
+						+'      <button id="' + baseID_HGROUP + '_group_content_add' + '" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> '+gettext('新增')+'</button>'
 						+'      <ul id="' + baseID_HGROUP +  '_group_content' + '" style="list-style-type: none; margin: 0; padding: 0">'
 						+'      </ul>'					
 						+'     </div>'
@@ -7295,8 +7673,8 @@ var omformeng = function(div_id)
 						+'   </div>'
 						+'  </div>'
 						+'  <div class="modal-footer">'
-						+'   <button type="button" class="btn btn-default pull-left" id="' + baseID_HGROUP + '_close" >取消</button>'
-						+'   <button type="button" class="btn btn-primary"  id="' + baseID_HGROUP + '_submit">確定</button>'
+						+'   <button type="button" class="btn btn-default pull-left" id="' + baseID_HGROUP + '_close" >'+gettext('取消')+'</button>'
+						+'   <button type="button" class="btn btn-primary"  id="' + baseID_HGROUP + '_submit">'+gettext('確定')+'</button>'
 						+'  </div>'
 						+' </div>'
 						+'</div>'
@@ -7327,10 +7705,6 @@ var omformeng = function(div_id)
 			});
 		}
 		
-		if(design_mode)
-		{
-			document.getElementById(active_id).ondrop = _self_.divdrop;
-		}
 	}
 	function group_sortable_add(ul_id)
 	{	
@@ -7338,7 +7712,7 @@ var omformeng = function(div_id)
 					+ '<table width="100%"><tr>'
 					+'  <td width="4%"><span class="fa fa-arrows-v"></span></td>'
 					+'  <td width="46%"><select id="' + ul_id + '_value__index_" class="form-control select2" style="width:100%"></select></td>'
-					+'  <td width="46%"><input id="' + ul_id + '_text__index_" class="form-control"  placeholder="顯示文字"></td>'
+					+'  <td width="46%"><input id="' + ul_id + '_text__index_" class="form-control"  placeholder="'+gettext('顯示文字')+'"></td>'
 					+'  <td width="4%" align="right" style="color:silver"><i class="far fa-trash-alt" id="remove_' + ul_id + '_li__index_"></i></td>'
 					+'</tr></table></li>';
 		var newindex = 0;
@@ -7376,8 +7750,8 @@ var omformeng = function(div_id)
 		var dropdown_item = '<li id="' + ul_id + '_li__index_" class="ui-state-default" style=" margin: 0 0 0 0;height:30px;">'
 					+ '<table width="100%"><tr>'
 					+'  <td width="4%"><span class="fa fa-arrows-v"></span></td>'
-					+'  <td width="46%"><input id="' + ul_id + '_value__index_" class="form-control" placeholder="值"></td>'
-					+'  <td width="46%"><input id="' + ul_id + '_text__index_" class="form-control"  placeholder="顯示文字"></td>'
+					+'  <td width="46%"><input id="' + ul_id + '_value__index_" class="form-control" placeholder="'+gettext('值')+'"></td>'
+					+'  <td width="46%"><input id="' + ul_id + '_text__index_" class="form-control"  placeholder="'+gettext('顯示文字')+'"></td>'
 					+'  <td width="4%" align="right" style="color:silver"><i class="far fa-trash-alt" id="remove_' + ul_id + '_li__index_"></i></td>'
 					+'</tr></table></li>';
 		var newindex = 0;
@@ -7399,8 +7773,8 @@ var omformeng = function(div_id)
 		var dropdown_item = '<li id="' + ul_id + '_li__index_" class="ui-state-default" style=" margin: 0 0 0 0;height:30px;">'
 					+ '<table width="100%"><tr>'
 					+'  <td width="4%"><span class="fa fa-arrows-v"></span></td>'
-					+'  <td width="43%"><input id="' + ul_id + '_value__index_" class="form-control" placeholder="值" readonly></td>'
-					+'  <td width="43%"><input id="' + ul_id + '_text__index_" class="form-control"  placeholder="顯示文字" readonly></td>'
+					+'  <td width="43%"><input id="' + ul_id + '_value__index_" class="form-control" placeholder="'+gettext('值')+'" readonly></td>'
+					+'  <td width="43%"><input id="' + ul_id + '_text__index_" class="form-control"  placeholder="'+gettext('顯示文字')+'" readonly></td>'
 					+'</tr></table></li>';
 		var newindex = 0;
 		while($( '#' + ul_id  + '_li_' + newindex).length !=0)
@@ -7862,6 +8236,7 @@ var omformeng = function(div_id)
 		 _p_id_
 		 _item_type_
 		 **/
+		 
 		var content = '';
 		
 		var drag = '';
@@ -7871,15 +8246,16 @@ var omformeng = function(div_id)
 		var add_button = '';
 		
 		var hidden = '';
+		var hidden_box = '';
 		var readonly = '';
 		var require = '';
 
 		if(design_mode)
 		{
 			//var drag = ' draggable="true" ondragstart="' + active_id + '.boxdrag(event)" ondragover="' + active_id + '.boxAllowDrop(event) "';
-			var drag = ' draggable="true" ';
+			drag = ' draggable="true" ';
 			//var drop = ' ondrop="' + active_id + '.boxdrop(event,this)" ';
-			var drop = ' ';
+			drop = ' ';
 			config_button = '<button type="button" class="btn btn-box-tool pull-right" id="_pid__box_config_button" ><i class="fa fa-gear"></i></button>';
 			remove_button = '<button type="button" class="btn btn-box-tool pull-right" id="_pid__box_remove_button" ><i class="fa fa-remove"></i></button>';
 			add_button = '<button type="button" class="btn btn-box-tool pull-right"  id="_pid__box_add_button" ><i class="fa fa-plus"></i></button>';
@@ -7887,14 +8263,17 @@ var omformeng = function(div_id)
 		else
 		{
 			//user mode
-			if(form_item.config.readonly)
-			{
-				readonly = 'readonly';
-			}
-			if(form_item.config.hidden)
+			
+			if(form_item.hidden)
 			{
 				hidden = 'style="display:none"';
+				hidden_box = 'hidden'
 			}
+		}
+		
+		if(form_item.config.readonly)
+		{
+			readonly = 'readonly';
 		}
 
 		if(form_item.config.require)
@@ -7940,7 +8319,7 @@ var omformeng = function(div_id)
 						+'</div>';
 				break;
 			case 'box6':
-				content ='<div id="_pid_" class="col-md-6"' + drag + drop + ' ' + hidden + '>'
+				content ='<div id="_pid_" class="col-md-6 ' + hidden_box + '"' + drag + ' ' + drop + '>'
 						+'<div id="_pid__color" class="' + form_item.config.color + '" >'
 						+'<div class="box-header with-border"><span id="_pid__title">' + form_item.config.title + '</span>'
 						+ remove_button + config_button + add_button
@@ -7949,7 +8328,7 @@ var omformeng = function(div_id)
 						+'</div></div>';
 				break;
 			case 'box12':
-				content ='<div id="_pid_" class="col-md-12"' + drag + drop + ' ' + hidden + '>'
+				content ='<div id="_pid_" class="col-md-12 ' + hidden_box + '"' + drag + ' ' + drop + '>'
 						+'<div id="_pid__color" class="' + form_item.config.color + '" >'
 						+'<div class="box-header with-border"><span id="_pid__title">' + form_item.config.title + '</span>'
 						+ remove_button + config_button + add_button
@@ -8010,7 +8389,6 @@ var omformeng = function(div_id)
 		//content = '<!--start _pid_-->' + content + '<!--end _pid_-->';
 		content = content.replace(/_pid_/g,active_id + '_' + form_item.id);
 		
-		
 		if(form_item.parent == 'public')
 		{
 			formcontent.append(content);
@@ -8035,9 +8413,19 @@ var omformeng = function(div_id)
 					$( '#' + active_id + '_' + form_item.id + '_item').select2({tags: false , placeholder: '',allowClear: true,dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}}});
 					$( '#' + active_id + '_' + form_item.id + '_item').val(null).trigger('change');
 				}
+				
+				if(form_item.config.readonly)
+				{
+					$( '#' + active_id + '_' + form_item.id + '_item').select2({disabled:true});
+				}
 				break;
 			case 'h_group':
 				$( '#' + active_id + '_' + form_item.id + '_user_item').select2({tags: false , placeholder: '',allowClear: true,dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}}});
+				if(form_item.config.readonly)
+				{
+					$( '#' + active_id + '_' + form_item.id + '_group_item').select2({disabled:true});
+					$( '#' + active_id + '_' + form_item.id + '_user_item').select2({disabled:true});
+				}
 				break;
 			
 			
@@ -8103,7 +8491,7 @@ var omformeng = function(div_id)
 		{
 			case 'inputbox':
 				confitem = new input_object();
-				confitem.title = '輸入';
+				confitem.title = gettext('輸入');
 				confitem.idcounter = formobject.form_item_counter;
 				confitem.require = false;
 				confitem.placeholder = '';
@@ -8113,7 +8501,7 @@ var omformeng = function(div_id)
 				break;
 			case 'areabox':
 				confitem = new area_object();
-				confitem.title = '多行輸入';
+				confitem.title = gettext('多行輸入');
 				confitem.idcounter = formobject.form_item_counter;
 				confitem.require = false;
 				confitem.rows = 3;
@@ -8121,14 +8509,14 @@ var omformeng = function(div_id)
 				break;
 			case 'list':
 				confitem = new h_status_object();
-				confitem.title = '選單';
+				confitem.title = gettext('選單');
 				confitem.idcounter = formobject.form_item_counter;
 				confitem.require = true;
 				confitem.readonly = false;
 				break;
 			case 'checkbox':
 				confitem = new h_status_object();
-				confitem.title = '勾選';
+				confitem.title = gettext('勾選');
 				confitem.idcounter = formobject.form_item_counter;
 				confitem.require = true;
 				confitem.multiple = false;
@@ -8137,13 +8525,13 @@ var omformeng = function(div_id)
 			case 'box6':
 			case 'box12':
 				 confitem = new box_object();
-				confitem.title = '未命名';
+				confitem.title = gettext('未命名');
 				confitem.idcounter = formobject.form_box_counter;
 				confitem.color = 'box box-primary';
 				break;
 			case 'h_title':
 				confitem = new h_title_object();
-				confitem.title = '標題';
+				confitem.title = gettext('標題');
 				confitem.idcounter = formobject.form_item_counter;
 				confitem.require = false;
 				confitem.placeholder = '';
@@ -8152,26 +8540,26 @@ var omformeng = function(div_id)
 				break;
 			case 'h_status':
 				confitem = new h_status_object();
-				confitem.title = '狀態';
+				confitem.title = gettext('狀態');
 				confitem.idcounter = formobject.form_item_counter;
 				confitem.require = true;
 				confitem.readonly = false;
 				break;
 			case 'h_level':
 				confitem = new h_level_object();
-				confitem.title = '燈號';
+				confitem.title = gettext('燈號');
 				confitem.idcounter = formobject.form_item_counter;
 				confitem.require = true;
 				confitem.lists = [];
 				var level_list0 = {};
 				level_list0['value'] = 'green';
-				level_list0['text'] = '綠燈';
+				level_list0['text'] = gettext('綠燈');
 				var level_list1 = {};
 				level_list1['value'] = 'yellow';
-				level_list1['text'] = '黃燈';
+				level_list1['text'] = gettext('黃燈');
 				var level_list2 = {};
 				level_list2['value'] = 'red';
-				level_list2['text'] = '紅燈';
+				level_list2['text'] = gettext('紅燈');
 				confitem.lists.push(level_list0);
 				confitem.lists.push(level_list1);
 				confitem.lists.push(level_list2);
@@ -8180,12 +8568,12 @@ var omformeng = function(div_id)
 			case 'h_group':
 				confitem = new h_group_object();
 				confitem.idcounter = formobject.form_item_counter;
-				confitem.group_title = '組織';
+				confitem.group_title = gettext('組織');
 				confitem.lists = [];
 				confitem.value = '';
 				confitem.require = true;
 				confitem.user = true;
-				confitem.user_title = '受派人';
+				confitem.user_title = gettext('受派人');
 				confitem.user_require = false;
 				confitem.readonly = false;
 				break;
@@ -8197,28 +8585,28 @@ var omformeng = function(div_id)
 	{
 		item_id = item_id.replace(active_id + '_' , '');
 		
-		var deafult_option = '<option selected="selected" value="inputbox">輸入方塊</option>'
-							+'<option value="areabox">多行輸入</option>'
-							+'<option value="list">下拉選單</option>'
-							+'<option value="checkbox">單選/複選選單</option>';
+		var deafult_option = '<option selected="selected" value="inputbox">'+gettext('輸入方塊')+'</option>'
+							+'<option value="areabox">'+gettext('多行輸入')+'</option>'
+							+'<option value="list">'+gettext('下拉選單')+'</option>'
+							+'<option value="checkbox">'+gettext('單選/複選選單')+'</option>';
 		var header_option = '';
-		var addtion_option = '<option value="box6">半區塊</option>';
+		var addtion_option = '<option value="box6">'+gettext('半區塊')+'</option>';
 		
 		if(!check_h_exist('h_title'))
 		{
-			header_option = header_option + '<option value="h_title">*標題</option>';
+			header_option = header_option + '<option value="h_title">'+gettext('*標題')+'</option>';
 		}
 		if(!check_h_exist('h_status'))
 		{
-			header_option = header_option + '<option value="h_status">*狀態</option>';
+			header_option = header_option + '<option value="h_status">'+gettext('*狀態')+'</option>';
 		}
 		if(!check_h_exist('h_level'))
 		{
-			header_option = header_option + '<option value="h_level">*燈號</option>';
+			header_option = header_option + '<option value="h_level">'+gettext('*燈號')+'</option>';
 		}
 		if(!check_h_exist('h_group'))
 		{
-			header_option = header_option + '<option value="h_group">*受派人及組織</option>';
+			header_option = header_option + '<option value="h_group">'+gettext('*受派人及組織')+'</option>';
 		}
 		
 		formobject.items.forEach(function(item, index, array)
@@ -8251,33 +8639,33 @@ var omformeng = function(div_id)
 				if((item.type == 'box6')||(item.type == 'box12'))
 				{
 					$('#' + baseID_BOX + '_item_title').val(item.config.title);
-					$('#' + baseID_BOX + '_item_color').val(item.config.color);
-					$('#' + baseID_BOX + '_item_hidden').val(item.hidden);
+					$('#' + baseID_BOX + '_item_color').val(item.config.color).trigger('change');
+					$('#' + baseID_BOX + '_item_hidden').prop("checked", item.hidden);
 					action_item_for_modal = item;
 					$('#' + baseID_BOX).modal('show');
 				}
 				else if(item.type == 'inputbox')
 				{
 					$('#' + baseID_INPUT + '_item_title').val(item.config.title);
-					$('#' + baseID_INPUT + '_item_require').attr("checked", item.config.require);
+					$('#' + baseID_INPUT + '_item_require').prop("checked", item.config.require);
 					$('#' + baseID_INPUT + '_item_placeholder').val(item.config.placeholder);
 					$('#' + baseID_INPUT + '_item_type').val(item.config.type).trigger('change');
 					$('#' + baseID_INPUT + '_item_value').val(item.config.value);
 					$('#' + baseID_INPUT + '_item_regex').val(item.config.regex);
-					$('#' + baseID_INPUT + '_item_hidden').attr("checked", item.hidden);
-					$('#' + baseID_INPUT + '_item_readonly').attr("checked", item.config.readonly);
+					$('#' + baseID_INPUT + '_item_hidden').prop("checked", item.hidden);
+					$('#' + baseID_INPUT + '_item_readonly').prop("checked", item.config.readonly);
 					action_item_for_modal = item;
 					$('#' + baseID_INPUT ).modal('show');
 				}
 				else if(item.type == 'areabox')
 				{
 					$('#' + baseID_AREA + '_item_title').val(item.config.title);
-					$('#' + baseID_AREA + '_item_require').attr("checked", item.config.require);
+					$('#' + baseID_AREA + '_item_require').prop("checked", item.config.require);
 					$('#' + baseID_AREA + '_item_rows').val(item.config.rows);
 					$('#' + baseID_AREA + '_item_value').val(item.config.value);
 					$('#' + baseID_AREA + '_item_regex').val(item.config.regex);
-					$('#' + baseID_AREA + '_item_hidden').attr("checked", item.hidden);
-					$('#' + baseID_AREA + '_item_readonly').attr("checked", item.config.readonly);
+					$('#' + baseID_AREA + '_item_hidden').prop("checked", item.hidden);
+					$('#' + baseID_AREA + '_item_readonly').prop("checked", item.config.readonly);
 					action_item_for_modal = item;
 					$('#' + baseID_AREA ).modal('show');
 					
@@ -8285,10 +8673,10 @@ var omformeng = function(div_id)
 				else if(item.type == 'list')
 				{
 					$('#' + baseID_LIST + '_item_title').val(item.config.title);
-					$('#' + baseID_LIST + '_item_require').attr("checked", item.config.require);
+					$('#' + baseID_LIST + '_item_require').prop("checked", item.config.require);
 					$('#' + baseID_LIST + '_item_value').val(item.config.value);
-					$('#' + baseID_LIST + '_item_hidden').attr("checked", item.hidden);
-					$('#' + baseID_LIST + '_item_readonly').attr("checked", item.config.readonly);
+					$('#' + baseID_LIST + '_item_hidden').prop("checked", item.hidden);
+					$('#' + baseID_LIST + '_item_readonly').prop("checked", item.config.readonly);
 					//clean all things
 					$('#' + baseID_LIST + '_list_content').html('');
 					//load object to real
@@ -8301,11 +8689,11 @@ var omformeng = function(div_id)
 				else if(item.type == 'checkbox')
 				{
 					$('#' + baseID_CHECKBOX + '_item_title').val(item.config.title);
-					$('#' + baseID_CHECKBOX + '_item_require').attr("checked", item.config.require);
+					$('#' + baseID_CHECKBOX + '_item_require').prop("checked", item.config.require);
 					$('#' + baseID_CHECKBOX + '_item_value').val(item.config.value);
-					$('#' + baseID_CHECKBOX + '_item_hidden').attr("checked", item.hidden);
-					$('#' + baseID_CHECKBOX + '_item_readonly').attr("checked", item.config.readonly);
-					$('#' + baseID_CHECKBOX + '_item_multiple').attr("checked",item.config.multiple);
+					$('#' + baseID_CHECKBOX + '_item_hidden').prop("checked", item.hidden);
+					$('#' + baseID_CHECKBOX + '_item_readonly').prop("checked", item.config.readonly);
+					$('#' + baseID_CHECKBOX + '_item_multiple').prop("checked",item.config.multiple);
 					//clean all things
 					$('#' + baseID_CHECKBOX + '_checkbox_content').html('');
 					//load object to real
@@ -8318,12 +8706,12 @@ var omformeng = function(div_id)
 				{
 					
 					$('#' + baseID_HTITLE + '_item_title').val(item.config.title);
-					$('#' + baseID_HTITLE + '_item_require').attr("checked", item.config.require);
+					$('#' + baseID_HTITLE + '_item_require').prop("checked", item.config.require);
 					$('#' + baseID_HTITLE + '_item_placeholder').val(item.config.placeholder);
 					$('#' + baseID_HTITLE + '_item_value').val(item.config.value);
 					$('#' + baseID_HTITLE + '_item_regex').val(item.config.regex);
-					$('#' + baseID_HTITLE + '_item_hidden').attr("checked",item.hidden);
-					$('#' + baseID_HTITLE + '_item_readonly').attr("checked",item.config.readonly);
+					$('#' + baseID_HTITLE + '_item_hidden').prop("checked",item.hidden);
+					$('#' + baseID_HTITLE + '_item_readonly').prop("checked",item.config.readonly);
 					action_item_for_modal = item;
 					$('#' + baseID_HTITLE ).modal('show');
 					
@@ -8331,10 +8719,10 @@ var omformeng = function(div_id)
 				else if(item.type == 'h_status')
 				{
 					$('#' + baseID_HSTATUS + '_item_title').val(item.config.title);
-					$('#' + baseID_HSTATUS + '_item_require').attr("checked", item.config.require);
+					$('#' + baseID_HSTATUS + '_item_require').prop("checked", item.config.require);
 					$('#' + baseID_HSTATUS + '_item_value').val(item.config.value);
-					$('#' + baseID_HSTATUS + '_item_hidden').attr("checked",item.hidden);
-					$('#' + baseID_HSTATUS + '_item_readonly').attr("checked",item.config.readonly);
+					$('#' + baseID_HSTATUS + '_item_hidden').prop("checked",item.hidden);
+					$('#' + baseID_HSTATUS + '_item_readonly').prop("checked",item.config.readonly);
 					//clean all things
 					$('#' + baseID_HSTATUS + '_status_content').html('');
 					//load object to real
@@ -8347,10 +8735,10 @@ var omformeng = function(div_id)
 				else if(item.type == 'h_level')
 				{
 					$('#' + baseID_HLEVEL + '_item_title').val(item.config.title);
-					$('#' + baseID_HLEVEL + '_item_require').attr("checked", item.config.require);
+					$('#' + baseID_HLEVEL + '_item_require').prop("checked", item.config.require);
 					$('#' + baseID_HLEVEL + '_item_value').val(item.config.value);
-					$('#' + baseID_HLEVEL + '_item_hidden').attr("checked",item.hidden);
-					$('#' + baseID_HLEVEL + '_item_readonly').attr("checked",item.config.readonly);
+					$('#' + baseID_HLEVEL + '_item_hidden').prop("checked",item.hidden);
+					$('#' + baseID_HLEVEL + '_item_readonly').prop("checked",item.config.readonly);
 					//clean all things
 					$('#' + baseID_HLEVEL + '_level_content').html('');
 					//load object to real
@@ -8364,12 +8752,12 @@ var omformeng = function(div_id)
 				{
 					$('#' + baseID_HGROUP + '_item_group_title').val(item.config.group_title);
 					$('#' + baseID_HGROUP + '_item_user_title').val(item.config.user_title);
-					$('#' + baseID_HGROUP + '_item_require').attr("checked", item.config.require);
-					$('#' + baseID_HGROUP + '_item_user').attr("checked", item.config.user);
-					$('#' + baseID_HGROUP + '_item_user_require').attr("checked", item.config.user_require);
+					$('#' + baseID_HGROUP + '_item_require').prop("checked", item.config.require);
+					$('#' + baseID_HGROUP + '_item_user').prop("checked", item.config.user);
+					$('#' + baseID_HGROUP + '_item_user_require').prop("checked", item.config.user_require);
 					$('#' + baseID_HGROUP + '_item_value').val(item.config.value);
-					$('#' + baseID_HGROUP + '_item_hidden').attr("checked",item.hidden);
-					$('#' + baseID_HGROUP + '_item_readonly').attr("checked",item.config.readonly);
+					$('#' + baseID_HGROUP + '_item_hidden').prop("checked",item.hidden);
+					$('#' + baseID_HGROUP + '_item_readonly').prop("checked",item.config.readonly);
 					//clean all things
 					$('#' + baseID_HGROUP + '_group_content').html('');
 					//load object to real
@@ -8513,6 +8901,7 @@ var omformeng = function(div_id)
 			//get modal data
 			item.config.color = $('#' + baseID_BOX + '_item_color').val();
 			item.config.title = $('#' + baseID_BOX + '_item_title').val();
+			item.hidden = $('#' + baseID_BOX + '_item_hidden').prop("checked");
 			//change ui object
 			$('#' + active_id + '_' + item.id + '_color').attr('class',item.config.color) ;
 			$('#' + active_id + '_' + item.id + '_title').html(item.config.title) ;
@@ -8540,6 +8929,7 @@ var omformeng = function(div_id)
 			}
 			$('#' + active_id + '_' + item.id + '_item').attr('placeholder',item.config.placeholder);
 			$('#' + active_id + '_' + item.id + '_item').prop('type',item.config.type);
+			$('#' + active_id + '_' + item.id + '_item').prop('readonly',item.config.readonly);
 			
 			$('#' + baseID_INPUT ).modal('hide');
 		}
@@ -8563,6 +8953,7 @@ var omformeng = function(div_id)
 				$('#' + active_id + '_' + item.id + '_title').html(item.config.title) ;
 			}
 			$('#' + active_id + '_' + item.id + '_item').prop('rows',item.config.rows);
+			$('#' + active_id + '_' + item.id + '_item').prop('readonly',item.config.readonly);
 			$('#' + baseID_AREA ).modal('hide');
 		}
 		else if(item.type == 'list')
@@ -8581,6 +8972,15 @@ var omformeng = function(div_id)
 			else
 			{
 				$('#' + active_id + '_' + item.id + '_title').html(item.config.title) ;
+			}
+			
+			if(item.config.readonly)
+			{
+				$('#' + active_id + '_' + item.id + '_item').select2({disabled:true});
+			}
+			else
+			{
+				$('#' + active_id + '_' + item.id + '_item').select2({disabled:false});
 			}
 			
 			modal_save_dropdown(baseID_LIST,item  , 'list');
@@ -8631,6 +9031,7 @@ var omformeng = function(div_id)
 			}
 			$('#' + active_id + '_' + item.id + '_item').attr('placeholder',item.config.placeholder);
 			$('#' + active_id + '_' + item.id + '_item').prop('type',item.config.type);
+			$('#' + active_id + '_' + item.id + '_item').prop('readonly',item.config.readonly);
 			
 			$('#' + baseID_HTITLE ).modal('hide');
 		}
@@ -8650,6 +9051,14 @@ var omformeng = function(div_id)
 			else
 			{
 				$('#' + active_id + '_' + item.id + '_title').html(item.config.title) ;
+			}
+			if(item.config.readonly)
+			{
+				$('#' + active_id + '_' + item.id + '_item').select2({disabled:true});
+			}
+			else
+			{
+				$('#' + active_id + '_' + item.id + '_item').select2({disabled:false});
 			}
 			
 			modal_save_dropdown(baseID_HSTATUS,item  , 'status');
@@ -8672,6 +9081,14 @@ var omformeng = function(div_id)
 			else
 			{
 				$('#' + active_id + '_' + item.id + '_title').html(item.config.title) ;
+			}
+			if(item.config.readonly)
+			{
+				$('#' + active_id + '_' + item.id + '_item').select2({disabled:true});
+			}
+			else
+			{
+				$('#' + active_id + '_' + item.id + '_item').select2({disabled:false});
 			}
 			
 			modal_save_dropdown(baseID_HLEVEL,item , 'level');
@@ -8717,6 +9134,17 @@ var omformeng = function(div_id)
 				$('#' + active_id + '_' + item.id + '_user_title').css('display','none');
 				$('#' + active_id + '_' + item.id + '_user_item').css('display','none');
 			}
+			
+			if(item.config.readonly)
+			{
+				$('#' + active_id + '_' + item.id + '_user_item').select2({disabled:true});
+				$('#' + active_id + '_' + item.id + '_group_item').select2({disabled:true});
+			}
+			else
+			{
+				$('#' + active_id + '_' + item.id + '_user_item').select2({disabled:false});
+				$('#' + active_id + '_' + item.id + '_group_item').select2({disabled:false});
+			}
 
 
 			modal_save_dropdown(baseID_HGROUP ,item  ,'group');
@@ -8737,107 +9165,109 @@ var omformeng = function(div_id)
 		ev.preventDefault();
 		var target_id = ev.target.id;
 		var source_id = ev.dataTransfer.getData("text");
-		target_id = target_id.replace('_item','').replace('_title','').replace('_color','').replace(active_id + '_' , '');
+		var move_record = [];
+		target_id = target_id.replace('_item','').replace('_title','').replace('_color','').replace(active_id + '_' , '').replace('select2-','').replace('-container','');
 		
-		
+		//fix target to box
 		if(target_id.indexOf('FORMBOX') >= 0)
 		{
-			//正確
+			
 		}
 		else
 		{
-			//find parent , 不正確 , 找父物件
-			formobject.items.forEach(function(item, index, array)
+			formobject.items.forEach(function(item)
 			{
 				if(item.id == target_id)
 				{
-					target_id = item.parent
+					target_id = item.parent;
 				}
 			});
 		}
 		
-		if((target_id != source_id)&&(target_id != ''))
-		{	
-			formobject.items.forEach(function(item)
-			{
-				if(item.id == source_id)
+		
+		//starting move
+		if(source_id.indexOf('FORMBOX') >= 0)
+		{
+			//box move
+			if((target_id != source_id)&&(target_id != ''))
+			{	
+				formobject.items.forEach(function(item1)
 				{
-					item.parent = target_id;
-					$('#' + active_id + '_' + source_id).remove();
-					item_create(item);
-					formobject.items.forEach(function(item2)
+					if(item1.id == source_id)
 					{
-						if(item2.parent == source_id)
+						item1.parent = target_id;
+						$('#' + active_id + '_' + source_id).remove();
+						item_create(item1);
+						move_record.push(item1.id);
+						formobject.items.forEach(function(item2)
 						{
-							$('#' + active_id + '_' + item2.id).remove();
-							item_create(item2);
-							formobject.items.forEach(function(item3)
+							if(item2.parent == source_id)
 							{
-								if(item3.parent == item2.id)
+								$('#' + active_id + '_' + item2.id).remove();
+								item_create(item2);
+								move_record.push(item2.id);
+								formobject.items.forEach(function(item3)
 								{
-									$('#' + active_id + '_' + item3.id).remove();
-									item_create(item3);
-									formobject.items.forEach(function(item4)
+									if(item3.parent == item2.id)
 									{
-										if(item4.parent == item3.id)
+										$('#' + active_id + '_' + item3.id).remove();
+										item_create(item3);
+										move_record.push(item3.id);
+										formobject.items.forEach(function(item4)
 										{
-											$('#' + active_id + '_' + item4.id).remove();
-											item_create(item4);
-										}
-									});
-								}
-							});
-						}
-					});
+											if(item4.parent == item3.id)
+											{
+												$('#' + active_id + '_' + item4.id).remove();
+												item_create(item4);
+												move_record.push(item4.id);
+											}
+										});
+									}
+								});
+							}
+						});
+					}
+				});
+			}
+			
+		}
+		else
+		{
+			//item move
+			if((target_id != source_id)&&(target_id != ''))
+			{	
+				formobject.items.forEach(function(item)
+				{
+					if(item.id == source_id)
+					{
+						item.parent = target_id;
+						$('#' + active_id + '_' + source_id).remove();
+						item_create(item);
+						move_record.push(item.id);
+					}
+				});
+			}
+		}
+		
+		//reorder
+		var tmp_item = null;
+		move_record.forEach(function(item_id)
+		{
+			formobject.items.forEach(function(item,index)
+			{
+				if(item.id == item_id)
+				{
+					tmp_item = JSON.parse(JSON.stringify(item));
+					formobject.items.splice(index,1);
+					
 				}
 			});
-		}
-
+			formobject.items.push(tmp_item);
+		});
+		
 	};
 	
-	_self_.divdrop = function(ev)
-	{
-		ev.preventDefault();
-		var target_id = 'public';
-		var source_id = ev.dataTransfer.getData("text");
-
-		if(source_id.indexOf('FORMBOX') >= 0)
-		{		
-			formobject.items.forEach(function(item)
-			{
-				if(item.id == source_id)
-				{
-					item.parent = target_id;
-					$('#' + active_id + '_' + source_id).remove();
-					item_create(item);
-					formobject.items.forEach(function(item2)
-					{
-						if(item2.parent == source_id)
-						{
-							$('#' + active_id + '_' + item2.id).remove();
-							item_create(item2);
-							formobject.items.forEach(function(item3)
-							{
-								if(item3.parent == item2.id)
-								{
-									$('#' + active_id + '_' + item3.id).remove();
-									item_create(item3);
-									formobject.items.forEach(function(item4)
-									{
-										if(item4.parent == item3.id)
-										{
-											$('#' + active_id + '_' + item4.id).remove();
-											item_create(item4);
-										}
-									});
-								}
-							});
-						}
-					});
-				}
-			});
-		}
-	};
+	
 	_self_.boxAllowDrop = function(ev)
 	{
 		ev.preventDefault();
@@ -8947,7 +9377,8 @@ var omformeng = function(div_id)
 						else
 						{
 							values= [];
-							values.push($('input[name="' + active_id + '_' + item.id + '_item"]:checked').val());
+							if($('input[name="' + active_id + '_' + item.id + '_item"]:checked').length)
+								values.push($('input[name="' + active_id + '_' + item.id + '_item"]:checked').val());
 						}
 						item_data['value'] = values;
 						data.values.push(item_data);
@@ -9213,7 +9644,6 @@ var omformeng = function(div_id)
 		return data;
 	}
 }	
-
 
 
 

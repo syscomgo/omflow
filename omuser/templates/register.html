@@ -6,9 +6,9 @@
 
     <form id="omform" onsubmit="omflowSubmit(); return false;">
     {% csrf_token %}
-        <input type="text" name="username" class="fadeIn second" placeholder="{% trans '帳號' %}" required="true" autocomplete="off" autofocus>
-        <input type="password" name="token"  class="fadeIn third" placeholder="{% trans '密碼'%}"  required="true" autocomplete="off">
-        <input type="password" name="token2" class="fadeIn third" placeholder="{% trans '密碼'%}"  required="true" autocomplete="off">
+        <input type="text"  pattern="[A-Za-z0-9_]{1,}" title="大小寫英文、數字及底線" name="username" class="fadeIn second" placeholder="{% trans '帳號' %}" required="true" autocomplete="off" autofocus >
+        <input type="password" name="token" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="至少一個大寫字母及小寫字母，至少8個字。" class="fadeIn third" placeholder="{% trans '密碼'%}"  required="true" autocomplete="off">
+        <input type="password" name="token2" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="至少一個大寫字母及小寫字母，至少8個字。" class="fadeIn third" placeholder="{% trans '密碼'%}"  required="true" autocomplete="off">
         <input type="email" name="email_@" class="fadeIn fourth" placeholder="{% trans '電子郵件'%}"  required="true" autocomplete="off"><br />
         <div class="row">
           <div class="col-xs-2">
@@ -65,7 +65,7 @@ function cactions(data)
 }
 function agree_modal(agree_type)
 {
-	var postbody = {csrfmiddlewaretoken: '{{ csrf_token }}', agree_type: agree_type};
+	var postbody = {agree_type: agree_type};
 	omflowJsonAjax(postbody, '{% url "getAgreeAjax" %}', callback);
 	function callback(data)
 	{

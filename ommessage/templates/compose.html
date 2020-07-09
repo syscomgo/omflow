@@ -175,7 +175,7 @@
 				}
 				$('#content').text( '\n\n\n\n\n'+'※※※※※※※※※※※※※※※\n'+
 									'From  :   '+from+'\n'+
-									'Time  :   '+data.result.reply_history.createtime+'\n'+
+									'Time  :   '+data.result.reply_history.createtime.slice(0,-7)+'\n'+
 									'To  :   '+data.result.receivers+'\n\n'+
 									data.result.reply_history.content);
 			}

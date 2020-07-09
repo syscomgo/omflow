@@ -15,7 +15,7 @@
       </h1>
       <ol class="breadcrumb">
         <li><a href="/"><i class="fa fa-dashboard"></i> 首頁</a></li>
-		<li>流程管理</li>
+		<li>應用管理</li>
 		<li><a href="/flowmanage/page/flow-app/">應用設計</a></li>
         
       </ol>
@@ -35,7 +35,7 @@
       	    </div>
       	    <!-- box-header -->
       	    <div class="box-body">
-      	      <table id="flow_table" class="table table-bordered table-striped table-hover">
+      	      <table id="flow_table" class="table table-bordered table-striped table-hover" width="100%">
 				<thead>
 				  <tr>
 					<th style="width:15px"><a><i class="fa fa-lg fa-check-square-o checkbox-toggle" style="color:SteelBlue"></i></a></th>
@@ -120,14 +120,15 @@
     var data_tmp;
 	var data_len;
 	var data_page;
+	var checkbox_status = [];
 	date.setDate(date.getDate() + 1);
 	select_time = date.getFullYear() +'-'+(date.getMonth()+1)+'-'+date.getDate();
     $(function () {
-    	var postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, w_app_id: '{{ app_id }}'};
+    	var postbody = {w_app_id: '{{ app_id }}'};
     	omflowJsonAjax(postbody, '{% url "getApplicationFlowNameAjax" %}', getname_action);
 		table = $('#flow_table').DataTable({
 			"autoWidth": false,
-			"order": [[ 3, "dsc" ]], 
+			"order": [[ 3, "desc" ]], 
 			"dom":"<<t>'row'<'col-sm-5'i><'col-sm-7'p>>",
 			"language": __const_language__,
 			"serverSide": true,							//	serverside data loading
@@ -136,13 +137,14 @@
 			"ajax": {
            		"url": "{% url 'listFlowWorkspaceAjax' %}",
             	"type": "POST",
+            	"headers": { "X-CSRFToken": csrfmiddlewaretoken },
+				"contentType": "application/json;charset=utf-8;",
             	"data": function ( d ) {
-							return $.extend( {}, d, {
-								csrfmiddlewaretoken: csrfmiddlewaretoken, 
+							return JSON.stringify($.extend( {}, d, {
 								updatetime: select_time,
 								datatable: 'True',
 								app_id: {{ app_id }}
-							});
+							}));
 						},
 				"dataSrc": function(data){
 						a = dataCompare(data,data_tmp,data_len,data_page,table);
@@ -177,7 +179,19 @@
 				$('.table input[type="checkbox"]').change(function(){
 			    	enablebtt();
 			    });
-			}
+			    $.each(checkbox_status, function(){
+					$('.table input[type="checkbox"]#'+this).prop('checked', true);
+				});
+			},
+			preDrawCallback: function(settings) {
+    			checkbox_status = []
+    			$.each($('.table input[type="checkbox"]'), function(){
+    				if (this.checked)
+    				{	
+    					checkbox_status.push(this.id)
+    				}
+    			});
+    		} 
 		});
 	});
 	
@@ -216,7 +230,7 @@
     }
 	
 	function filter_flowdesign(){
-		omflowFilter(['filter_search','filter_length','filter_date']);
+		omflowFilter(['filter_search','filter_length']);
 		$('#modal-default-filter-confirm').off("click").on("click",function(){
 			var searchkey = $.trim($('#modal-default-filter #search').val());
 			var page_length = $('#modal-default-filter #page_length').val();
@@ -227,18 +241,17 @@
 	}
 	
     function filter_default(){
-		select_time = date.getFullYear() +'-'+(date.getMonth()+1)+'-'+date.getDate();
+{#		select_time = date.getFullYear() +'-'+(date.getMonth()+1)+'-'+date.getDate();#}
 		table.page.len(10);
 		table.search('');
-    	table.draw()
+    	table.draw(false)
     }
     
 	function delete_flowdesign(){
 		omflowListDialogue('delete', '下列流程將被刪除');
 		
 		$('#modal-default-list button:eq(2)').off("click").on("click",function(){
-			postbody = {
-				csrfmiddlewaretoken : csrfmiddlewaretoken,
+			var postbody = {
 				flow_id			: [],
 			}
 			$.each($('.table input:checkbox:checked'), function(){
@@ -268,8 +281,7 @@
 			flow_id.push($(this).val());
 			$('#modal-copy_flow-text').prepend('<li class="list-group-item"><i class="fa fa-circle"></i>&nbsp;&nbsp;<b class="text-light-blue">'+$(this).data('value')+'</b></li>');
 		});
-		var postdata = {csrfmiddlewaretoken : csrfmiddlewaretoken}	
-		omflowJsonAjax(postdata, '{% url "listWorkspaceApplicationAjax"%}', callback)
+		omflowJsonAjax({}, '{% url "listWorkspaceApplicationAjax"%}', callback)
 		function callback(data)
 		{
 			if (data.status == 200)
@@ -288,7 +300,6 @@
 		$('#modal-copy_flow').modal('show');
 		$('#modal-copy_flow button:eq(2)').off("click").on("click",function(){
 			var postbody = {
-				csrfmiddlewaretoken : csrfmiddlewaretoken,
 				flow_id : flow_id,
 				app_id : $('#modal-copy_flow-select').val()
 			}
@@ -303,7 +314,7 @@
 		if(data.status == 200)
 		{
 			LSide();
-			table.draw();
+			table.draw(false);
 			Swal.fire({
 	      	  icon : 'success',
 	      	  title: '成功',
@@ -327,6 +338,6 @@
 		}
 	}
 	
-	var table_routine = setInterval(function(){ table.draw();}, {{user.frequency}}*1000);
+	var table_routine = setInterval(function(){ table.draw(false);}, {{user.frequency}}*1000);
     </script>
 {% endblock %}

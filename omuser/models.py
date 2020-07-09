@@ -24,14 +24,16 @@ class OmUser(AbstractUser):
     gender = models.CharField(verbose_name= _('性別'), max_length=10,choices=(('male',_('男')),('female',_('女'))), default='male')
     phone1 = models.CharField(verbose_name= _('電話'), max_length=20,null=True, blank=True)
     phone2 = models.CharField(verbose_name= _('手機'), max_length=20,null=True, blank=True)
-    department = models.CharField(verbose_name= _('部門名稱'), max_length=20,null=True, blank=True)
-    company = models.CharField(verbose_name= _('公司名稱'), max_length=20,null=True, blank=True)
+    department = models.CharField(verbose_name= _('部門名稱'), max_length=200,null=True, blank=True)
+    company = models.CharField(verbose_name= _('公司名稱'), max_length=200,null=True, blank=True)
     ad_flag = models.BooleanField(verbose_name = _('AD標記'), default=False)
-    ad_sid = models.CharField(verbose_name = _('AD_SID'), max_length=50, null=True, blank=True)
+    ad_sid = models.CharField(verbose_name = _('AD_SID'), max_length=100, null=True, blank=True)
     frequency = models.IntegerField(verbose_name= _('更新頻率'), default=5)
     updatetime = models.DateTimeField(verbose_name = _('更新時間'), auto_now=True)
     user_uuid = models.UUIDField(verbose_name = _('uuid'), default=uuid.uuid4, editable=False, unique=True)
     delete = models.BooleanField(verbose_name = _('刪除'), default=False)
+    default_group = models.TextField(verbose_name = _('預設群組'), null=True, blank = True)
+    substitute = models.TextField(verbose_name = _('職代人'), default='[]')
     
     objects = UserFormatManager()
     
@@ -60,7 +62,7 @@ class OmGroup(Group):
     functional_flag = models.BooleanField(verbose_name = _('功能群組標記'), default=False)
     ad_flag = models.BooleanField(verbose_name = _('AD標記'), default=False)
     description = models.TextField(verbose_name = _('說明'), blank = True)
-    display_name = models.CharField(verbose_name= _('顯示名稱'), max_length=20,null=True, blank=True)
+    display_name = models.CharField(verbose_name= _('顯示名稱'), max_length=200,null=True, blank=True)
     updatetime = models.DateTimeField(verbose_name = _('更新時間'), auto_now=True)
     group_uuid = models.UUIDField(verbose_name = _('uuid'), default=uuid.uuid4, editable=False, unique=True)
     class Meta:

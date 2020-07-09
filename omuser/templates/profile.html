@@ -47,7 +47,7 @@
 						  <label>{% trans '帳號' %}</label>
 						  <div class="input-group">	
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-							<form><input type="text" name="username" id="username" class="form-control" placeholder="{%trans '帳號'%}" required="true"/></form>					
+							<form><input type="text" pattern="[A-Za-z0-9_]{1,}" title="大小寫英文、數字及底線" name="username" id="username" class="form-control" placeholder="{%trans '帳號'%}" required="true"/></form>					
 						  </div>
 						</div>
 						<!-- /.form-group -->	
@@ -55,7 +55,15 @@
 						  <label>{% trans '密碼'%}</label>      
 						  <div class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-							<form><input type="password" name="token" id="token" class="form-control" placeholder="{% trans '密碼'%}" required="true" {% if username != 'newuser' %} readonly="true" {% endif %} autocomplete="off"/></form>				
+							<form><input type="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="至少一個大寫字母及小寫字母，至少8個字。" name="token" id="token" class="form-control" placeholder="{% trans '密碼'%}" required="true" {% if username != 'newuser' %} readonly="true" {% endif %} autocomplete="off"/></form>				
+						  </div>
+						</div>
+						<!-- /.form-group -->	
+						<div class="form-group has-warning">
+						  <label>{% trans '名稱'%}</label>
+						  <div class="input-group">
+							<span class="input-group-addon"><i class="fa fa-user"></i></span>
+							<input type="text" name="nick_name" id="nick_name" class="form-control" placeholder="{% trans '名稱'%}" required="true"/>					
 						  </div>
 						</div>
 						<!-- /.form-group -->	
@@ -66,38 +74,7 @@
 							<input type="email" name="email_@" id="email" class="form-control" placeholder="{% trans '電子郵件地址'%}"  required="true"/>
 						  </div>
 						</div>
-						<!-- /.form-group -->					
-						<div class="form-group">
-						  <label>{% trans '性別'%}</label>
-						  <div class="input-group">
-							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>														
-							<select name="gender" class="form-control">
-							  <option value=""></option>
-							  <option value="male">{% trans '男'%}</option>
-							  <option value="female">{% trans '女'%}</option>	                  		
-							</select>
-						  </div>
-						</div>
-						<!-- /.form-group -->	
-						<div class="form-group">
-						  <label>{% trans '生日' %}</label>
-						  <div class="input-group date" >
-							<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-							<input type="text" name="birthday_%Y" id="birthday" class="form-control" data-provide="datepicker" data-date-format="yyyy-mm-dd" data-date-language="zh-TW" data-date-enable-On-Readonly="false">
-						  </div>
-						</div>
-						<!-- /.form-group -->	
-					  </div>
-					  <!-- /.col -->
-					  <div class="col-md-4">
-					  	<div class="form-group has-warning">
-						  <label>{% trans '名稱'%}</label>
-						  <div class="input-group">
-							<span class="input-group-addon"><i class="fa fa-user"></i></span>
-							<input type="text" name="nick_name" id="nick_name" class="form-control" placeholder="{% trans '名稱'%}" required="true"/>					
-						  </div>
-						</div>
-						<!-- /.form-group -->	
+						<!-- /.form-group -->		
 						<div class="form-group">
 						  <label>{% trans '公司'%}</label>
 						  <div class="input-group">
@@ -106,14 +83,9 @@
 						  </div>
 						</div>
 						<!-- /.form-group -->	
-						<div class="form-group">
-						  <label>{% trans '部門'%}</label>
-						  <div class="input-group">
-							<span class="input-group-addon"><i class="fa fa-briefcase"></i></span>
-							<input type="text" name="department" id="department" class="form-control" placeholder="{% trans '部門'%}"/>					
-						  </div>
-						</div>
-						<!-- /.form-group -->	
+					  </div>
+					  <!-- /.col -->
+					  <div class="col-md-4">
 						<div class="form-group">
 						  <label>{% trans '電話'%}</label>
 						  <div class="input-group">
@@ -130,9 +102,46 @@
 						  </div>
 						</div>
 						<!-- /.form-group -->
+						<div class="form-group">
+						  <label>{% trans '性別'%}</label>
+						  <div class="input-group">
+							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>														
+							<select id="gender" name="gender" class="form-control">
+							  <option value=""></option>
+							  <option value="male">{% trans '男'%}</option>
+							  <option value="female">{% trans '女'%}</option>	                  		
+							</select>
+						  </div>
+						</div>
+						<!-- /.form-group -->	
+						<div class="form-group">
+						  <label>{% trans '生日' %}</label>
+						  <div class="input-group date" >
+							<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+							<input type="text" name="birthday" id="birthday" class="form-control" data-provide="datepicker" data-date-format="yyyy-mm-dd" data-date-language="zh-TW" data-date-enable-On-Readonly="false">
+						  </div>
+						</div>
+						<!-- /.form-group -->
+						<div class="form-group">
+						  <label>{% trans '職代人'%}</label><i class="fa fa-gear" style="color:silver;pull-right;cursor:pointer;" onclick="substitute_edit('show')"></i>
+						  <div class="input-group">
+							<span class="input-group-addon"><i class="fas fa-user-friends"></i></span>
+							<select id="substitute" class="form-control" style="height:108px" multiple disabled></select>
+							<input name="substitute" style="display:None;" value="[]"></input>					
+						  </div>
+						</div>
+						<!-- /.form-group -->
 					  </div>
 					  <!-- /.col -->
 					  <div class="col-md-4">
+					    <div class="form-group">
+						  <label>{% trans '預設組織'%}</label>
+						  <div class="input-group">
+							<span class="input-group-addon"><i class="fa fa-users"></i></span>														
+							<select id="default_group" name="default_group" class="form-control">
+							</select>
+						  </div>
+						</div>
 					  	<div class="form-group">
 						  <label>{% trans '組織'%}</label>
 						  <div class="input-group">
@@ -161,13 +170,6 @@
 				  </div>
 				  <!-- /.box-body -->
 				  <div class="box-footer">
-				    <div class="row">
-					  <div class="col-md-4">
-					    <button type="submit" title="儲存變更" class="btn btn-primary btn-block btn-flat" id="store_button" style="display:None">{% trans '儲存'%}</button>
-					  </div>
-					  <!-- /.col -->
-					</div>
-					<!-- /.row -->
 				  </div>
 				  <!-- /.box-footer -->
 				  </div>
@@ -264,310 +266,440 @@
       <!-- /.row -->
     </section>
     <!-- /.content -->
-<script>
-{% if username == "newuser"  %}		//新增使用者所需功能
-	{% if perms.omuser.OmUser_Add %}
-	$(function(){
-		$('#refresh_rate').ionRangeSlider({
-			min     : 5,
-		  	max     : 120,
-			step    : 5,
-			from	: 5,
-			type    : 'single',
-			postfix : ' {% trans "秒"%}',
-			prettify: false,
-			grid	: true,
-			grid_num: 6,
-	    });
-	    $('#store_button').show();
-	});
-	function omflowSubmit()		//addUserAjax 送出 omformProfile 新增使用者 
-	{	
-			omflowAjax('omformProfile','{% url 'addUserAjax' %}',actions);
-	}
-	function actions(data)		
-	{
-		if(data.status == 200)
+    
+    
+    <div class="modal fade" id="modal-substitute-set" data-backdrop="static">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title"><i class="fa fa-edit"></i>&nbsp;&nbsp;職代人設定</h4>
+		  </div>
+		  <div class="modal-body">
+			  <ul class="list-group list-group-unbordered">
+			    <li class="list-group-item">
+			      <div class="form-group">
+			      	<select id="substitute_select" class="select2 form-control" style="width:100%"></select>
+			      </div>
+			      <button id="substitute_add" class="btn btn-xs btn-default btn-block" type="button" onclick="substitute_edit('add')"><i class="fa fa-plus"></i></button>
+			    </li>
+			    <li class="list-group-item">
+				  <ul id="substitute_list" style="list-style-type: none; margin: 0; padding: 0">
+				  </ul>	
+				</li>
+			  </ul>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
+			<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="substitute_edit('save')">確定</button>
+		  </div>
+		</div>
+	  </div><!-- /.modal-content -->
+	</div>
+    
+	<script>
+	{% if username == "newuser"  %}		//新增使用者所需功能
+		{% if perms.omuser.OmUser_Add %}
+		$(function(){
+			$('#refresh_rate').ionRangeSlider({
+				min     : 5,
+			  	max     : 120,
+				step    : 5,
+				from	: 5,
+				type    : 'single',
+				postfix : ' {% trans "秒"%}',
+				prettify: false,
+				grid	: true,
+				grid_num: 6,
+		    });
+		    $('#store_button').show();
+		});
+		function omflowSubmit()		//addUserAjax 送出 omformProfile 新增使用者 
+		{	
+				omflowAjax('omformProfile','{% url 'addUserAjax' %}',actions);
+		}
+		function actions(data)		
 		{
-			omflowAlert('green', data.message);
-			$('#modal_green button:eq(1)').off('click').on('click',function(){
-				window.location.href='/accounts/page/user-management';
-				$('#modal_green').modal('hide');
+			if(data.status == 200)
+			{
+				omflowAlert('green', data.message);
+				$('#modal_green button:eq(1)').off('click').on('click',function(){
+					window.location.href='/accounts/page/user-management';
+					$('#modal_green').modal('hide');
+				});
+			}	
+			else
+			{
+				omflowAlert('blue', data.message, check_actions, data);
+			}
+		} 
+		function check_actions(data)
+		{
+			$.each(data.result.result, function(index, value){
+				$('input[name="'+value+'"]').css("border-color","rgb(253, 13, 77)")
 			});
-		}	
+		}
+		{% endif %}
+	{% else %}		//編輯使用者個人資料所需功能
+	var username="";
+	var grouplist=[];
+	var rolelist=[];
+	var substitutelist = []
+	var userlist="";
+	$(function (){
+		$('#subsitute').select2();
+		var user_edit = location.pathname.split('/');
+		var user_refresh = '';
+		var postdata = {  csrfmiddlewaretoken: '{{ csrf_token }}' , username_click: user_edit[4]};
+		$.ajax({
+			url: "{% url 'loadUserAjax' %}",
+			type: 'post',
+			headers: { "X-CSRFToken": "{{csrf_token}}" },
+			data: JSON.stringify(postdata),
+			contentType: "application/json;charset=utf-8;",
+			success: function (data) {
+				if (data.status==200){
+					username = data.result.user.username;
+					substitutelist = JSON.parse(data.result.user.substitute);
+					grouplist = data.result.group_list
+					rolelist = data.result.role_list
+					var usergroup = data.result.user_group_list;
+					var useradgroup = data.result.user_adgroup_list;
+					var userrole = data.result.user_role_list;
+					var ad_flag = data.result.user.ad_flag ;
+					$('#username').val(data.result.user.username);
+					$('#token').val(data.result.user.password);
+					$('#email').val(data.result.user.email);
+					$('#nick_name').val(data.result.user.nick_name);
+					$('#company').val(data.result.user.company);
+					$('#gender').val(data.result.user.gender).trigger('change');
+					$('#phone1').val(data.result.user.phone1);
+					$('#phone2').val(data.result.user.phone2);
+					$('#birthday').val(data.result.user.birthday);
+					$('#h1_small').text(data.result.user.username);
+					$('#username').prop('readonly',true);
+					user_refresh = data.result.user.frequency;
+					if ( user_edit[4] != '{{user.username}}'){
+						$('#token').prop('readonly',false);
+					};
+					$.each(usergroup, function(index, value){
+						$('#groups').append('<option>'+value.name+'</option>');
+						$('#default_group').append('<option value='+value.id+'>'+value.name+'</option>')
+					});
+					$.each(useradgroup, function(index, value){
+						$('#groups').append('<option>'+value.name+'  (AD)</option>');
+						$('#default_group').append('<option value='+value.id+'>'+value.name+'</option>')
+					});
+					if (data.result.user.default_group)	
+					{
+						$('#default_group').val(data.result.user.default_group).trigger('change');
+					}
+					$.each(substitutelist, function(index, value){
+						$('#substitute').append('<option>'+value.nick_name+'('+value.username+')</option>')
+					});
+					$.each(userrole, function(index, value){
+						$('#role').append('<option>'+value.name+'</option>');
+					});	
+					$.each(grouplist, function(index, value){
+						if (value.parent_group==null){
+							$('#group_table_body').prepend( '<tr data-node-id="'+value.id+'" id="group_id_'+value.id+'">'+
+								'<td><input type="checkbox" class="icheckbox_minimal-blue" data-name="checkbox" id="group_'+value.id+'" value="'+value.display_name+'"><label for="group_'+value.id+'"></label></td><td>&nbsp;&nbsp;'+value.display_name+'</td>'+
+								'</tr>')
+						}else{
+							$("#group_id_"+value.parent_group).after( '<tr data-node-id="'+value.id+'" data-node-pid="'+value.parent_group+'" id="group_id_'+value.id+'">'+
+								'<td><input type="checkbox" class="icheckbox_minimal-blue" data-name="checkbox" id="group_'+value.id+'" value="'+value.display_name+'"><label for="group_'+value.id+'"></label></td><td>&nbsp;&nbsp;'+value.display_name+'</td>'+
+								'</tr>')
+						}	
+					});
+					$.each(rolelist, function(index, value){
+						$('#role_table_body').prepend( '<tr data-node-id="'+value.id+'" id="group_id_'+value.id+'">'+
+							'<td><input type="checkbox" class="icheckbox_minimal-blue" data-name="checkbox" id="role_'+value.id+'" value="'+value.display_name+'"><label for="role_'+value.id+'"></label></td><td>&nbsp;&nbsp;'+value.display_name+'</td><td>'+value.description+'</td></tr>')
+					});
+					$.each(usergroup, function(index,value){
+						$('#group_'+value.id).trigger("click");
+					});
+					$.each(userrole, function(index,value){
+						$('#role_'+value.id).trigger("click");
+					});
+					$('#group_table').simpleTreeTable({
+					    expander: $('#expander'),
+					    collapser: $('#collapser'),
+					    iconPosition: ':eq(3)',
+					    opened: ''
+					});
+					$('ul.sidebar-menu ul.treeview-menu > li > a[href="/accounts/page/user-management/"]').parentsUntil(".sidebar-menu > .treeview-menu").siblings().removeClass('active menu-open').end().addClass('active menu-open');
+					check_permission(ad_flag);
+				}
+				else
+				{actions(data)}
+			},
+			error: function(req, status, err) {
+				$('#modal_error').modal('show');
+				console.log('Something went wrong', status, err);
+			},
+			complete: function(){
+				{% if perms.omuser.OmGroup_Add %}
+			  	$('.select2').select2();
+			  	{% endif %}
+			  	$('#refresh_rate').ionRangeSlider({
+					min     : 5,
+				  	max     : 60,
+					step    : 5,
+					from	: user_refresh,
+					type    : 'single',
+					postfix : ' {% trans "秒"%}',
+					prettify: false,
+					grid	: true,
+					grid_num: 11,
+			    });
+			}
+		});
+		
+		var postbody = {is_active: ['1'], ad_flag: ['1', '0']}
+		omflowJsonAjax(postbody, '{% url "listUserAjax"%}', userlist_callback)
+	});
+	
+	
+	function userlist_callback(data)
+	{
+		if (data.status == 200)
+		{
+			userlist = data.result;
+			userlist.forEach(function(item){
+				if (item.username != '{{user.username}}')
+				{
+					$('#substitute_select').append('<option value="'+item.id+'" data-username="'+item.username+'" data-nick_name="'+item.nick_name+'">'+item.nick_name+' ('+item.username+')</option>');
+				}
+			});
+			$('#substitute_select').change(function(){
+				if (this.value == '')
+				{
+					$('#substitute_add').prop('disabled', true);
+				}
+				else
+				{
+					$('#substitute_add').prop('disabled', false);				
+				}
+			})
+			$('#substitute_select').val('').trigger('change');
+			$('#substitute_list').sortable();
+		}
 		else
 		{
-			omflowAlert('blue', data.message, check_actions, data);
+			actions(data);
 		}
-	} 
-	function check_actions(data)
+	}
+	
+	
+	function check_permission(ad_flag)
+	{
+		{% if username != "newuser" %}
+			{% if perms.omuser.OmUser_View and not perms.omuser.OmUser_Modify and not username == request.user.username %}
+				$('form input').attr('readonly','true');
+				$('select').attr('disabled', 'disabled');
+			{% endif %}
+			{#如果有OmUser_Modify權限，將可儲存User資料#}
+			{% if username == user.username or perms.omuser.OmUser_Modify %}
+				$('#store_button').show();
+			{% endif %}
+			{#如果有OmGroup_View權限，將顯示組織設定、角色設定頁面#}
+			{% if perms.omuser.OmGroup_View %}
+				$('a[data-name="p2"]').show();
+				$('a[data-name="p3"]').show();
+			{% endif %}
+			{#如果有OmGroup_Modify權限，將顯示選取及儲存#}	
+			{% if perms.omuser.OmGroup_Modify %}
+				$('#store_group_button').show();
+				$('#store_role_button').show();
+			{% else %}
+				$('input[data-name="checkbox"]').attr('disabled','disabled');
+			{% endif %}
+		{% endif %}
+		if (ad_flag)
+		{
+			$('#token').prop('readonly',true).prop('required',false);
+		}
+	}
+	
+	function substitute_edit(action)
+	{
+		if (action == 'show')
+		{
+			$('#substitute_list').empty();
+			$.each(substitutelist, function(index, value){
+				$('#substitute_list').append('<li id="substitute_'+value.id+'" data-username="'+value.username+'" data-nick_name="'+value.nick_name+'" class="ui-state-default" style=" margin: 0 0 0 0;height:30px;">'
+					+ '<table width="100%"><tr>'
+					+'  <td width="4%" style="vertical-align:middle;"><span class="fa fa-arrows-v"></span></td>'
+					+'  <td width="92%">'+value.nick_name+' ('+value.username+')</td>'
+					+'  <td width="4%" align="right" style="color:silver;"><i class="far fa-trash-alt" onclick="substitute_edit(\'substitute_'+value.id+'\')" ></i></td>'
+					+'</tr></table></li>');
+				$('#substitute_select option[value="'+value.id+'"]').hide().prop('disabled', true);
+			});
+			$('#substitute_select').select2();
+			$('#substitute_select').val('').trigger('change');
+			$('#modal-substitute-set').modal('show');
+		}
+		else if (action == 'add')
+		{
+			var thisuser_id = $('#substitute_select').val();
+			var thisuser_id_username =  $('#substitute_select option:selected').data('username');
+			var thisuser_id_nick_name =  $('#substitute_select option:selected').data('nick_name');
+			$('#substitute_list').append('<li id="substitute_'+thisuser_id+'" data-username="'+thisuser_id_username+'" data-nick_name="'+thisuser_id_nick_name+'" class="ui-state-default" style=" margin: 0 0 0 0;height:30px;">'
+						+ '<table width="100%"><tr>'
+						+'  <td width="4%" style="vertical-align:middle;"><span class="fa fa-arrows-v"></span></td>'
+						+'  <td width="92%">'+thisuser_id_nick_name+' ('+thisuser_id_username+')</td>'
+						+'  <td width="4%" align="right" style="color:silver;"><i class="far fa-trash-alt" onclick="substitute_edit(\'substitute_'+thisuser_id+'\')" ></i></td>'
+						+'</tr></table></li>');
+			$('#substitute_select option:selected').hide().prop('disabled', true);
+			$('#substitute_select').select2();
+			$('#substitute_select').val('').trigger('change');
+		}
+		else if (action == 'save')
+		{
+			$('#substitute').empty();
+			substitutelist = [];
+			$('#substitute_list li').each(function(){
+				var select_id = this.id.slice(11);
+				var select_username = $(this).data('username');
+				var select_nick_name = $(this).data('nick_name');
+				substitutelist.push({'id': select_id, 'username': select_username, 'nick_name': select_nick_name});
+				$('#substitute').append('<option>'+select_nick_name+'('+select_username+')</option>');
+			})
+			$('input[name="substitute"]').val(JSON.stringify(substitutelist));
+		}
+		else
+		{
+			$('#'+action).remove();
+			$('#substitute_select option[value="'+action.slice(11)+'"]').show().prop('disabled', false);
+			$('#substitute_select').select2();
+			$('#substitute_select').val('').trigger('change');
+		}
+	}
+	
+	
+	function omflowSubmit()
+	{	
+			omflowAjax('omformProfile','{% url 'updateUserAjax' %}',actions);
+			Swal.fire({
+			  title: '處理中...',
+			  toast: true,
+			  position: 'bottom-start',
+			  showConfirmButton: false,
+			});
+			Swal.showLoading();
+	}
+	function actions(data)
+	{		
+		Swal.close();
+		if(data.status == 200)
+		{
+			Swal.fire({
+	      	  icon : 'success',
+	      	  title: data.message,
+	      	  toast: true,
+		  	  position: 'bottom-start',
+		  	  showConfirmButton: false,
+	      	  timer: 2000,
+		    });
+		}	
+		else if (data.status == 404)
+		{
+			omflowAlert('yellow', data.message, cactions, data);
+		}
+		else if (data.status == 500)
+		{
+			omflowAlert('blue', data.message);
+		}
+		else if (data.status == 403)
+		{
+			omflowAlert('red', data.message);
+		}
+	}
+	
+	function cactions(data)
 	{
 		$.each(data.result.result, function(index, value){
 			$('input[name="'+value+'"]').css("border-color","rgb(253, 13, 77)")
 		});
 	}
-	{% endif %}
-{% else %}		//編輯使用者個人資料所需功能
-var username="";
-var grouplist=[];
-var rolelist=[];
-$(function (){
-	var user_edit = location.pathname.split('/');
-	var user_refresh = '';
-	var postdata = {  csrfmiddlewaretoken: '{{ csrf_token }}' , username_click: user_edit[4]};
-	$.ajax({
-		url: "{% url 'loadUserAjax' %}",
-		type: 'post',
-		data: postdata,
-		success: function (data) {
-			if (data.status==200){
-				username = data.result.user.username;
-				datagrouplist = data.result.group_list;
-				$.each(datagrouplist, function(index, value){
-					if(value.functional_flag==false)
-					{
-						grouplist.push(value);
-					}
-					else
-					{
-						rolelist.push(value);
-					}
-				});
-				var usergroup = data.result.user_group_list;
-				var useradgroup = data.result.user_adgroup_list;
-				var userrole = data.result.user_role_list;
-				var ad_flag = data.result.user.ad_flag ;
-				$('#username').val(data.result.user.username);
-				$('#token').val(data.result.user.password);
-				$('#email').val(data.result.user.email);
-				$('#nick_name').val(data.result.user.nick_name);
-				$('#company').val(data.result.user.company);
-				$('#department').val(data.result.user.department);
-				$('select option[value="'+data.result.user.gender+'"]').prop('selected','selected');
-				$('#phone1').val(data.result.user.phone1);
-				$('#phone2').val(data.result.user.phone2);
-				$('#birthday').val(data.result.user.birthday);
-				$('#h1_small').text(data.result.user.username);
-				$('#username').prop('readonly',true);
-				user_refresh = data.result.user.frequency;
-				if ( user_edit[4] != '{{user.username}}'){
-					$('#token').prop('readonly',false);
-				};
-				$.each(usergroup, function(index, value){
-					$('#groups').append('<option>'+value+'</option>');
-				});
-				$.each(useradgroup, function(index, value){
-					$('#groups').append('<option>'+value+'  (AD)</option>');
-				});	
-				$.each(userrole, function(index, value){
-					$('#role').append('<option>'+value+'</option>');
-				});	
-				$.each(grouplist, function(index, value){
-					if (value.parent_group==null && value.functional_flag==false){
-						$('#group_table_body').prepend( '<tr data-node-id="'+value.id+'" id="group_id_'+value.id+'">'+
-							'<td><input type="checkbox" class="icheckbox_minimal-blue" data-name="checkbox" id="'+value.name+'" value="'+value.name+'"><label for="'+value.name+'"></label></td><td>&nbsp;&nbsp;'+value.name+'</td>'+
-							'</tr>')
-					}else if(value.functional_flag==false){
-						$("#group_id_"+value.parent_group).after( '<tr data-node-id="'+value.id+'" data-node-pid="'+value.parent_group+'" id="group_id_'+value.id+'">'+
-							'<td><input type="checkbox" class="icheckbox_minimal-blue" data-name="checkbox" id="'+value.name+'" value="'+value.name+'"><label for="'+value.name+'"></label></td><td>&nbsp;&nbsp;'+value.name+'</td>'+
-							'</tr>')
-					}	
-				});
-				$.each(rolelist, function(index, value){
-					$('#role_table_body').prepend( '<tr data-node-id="'+value.id+'" id="group_id_'+value.id+'">'+
-						'<td><input type="checkbox" class="icheckbox_minimal-blue" data-name="checkbox" id="'+value.name+'" value="'+value.name+'"><label for="'+value.name+'"></label></td><td>&nbsp;&nbsp;'+value.name+'</td><td>'+value.description+'</td></tr>')
-				});
-				$.each(usergroup, function(index,value){
-					$('#'+value).prop("checked", true);
-				});
-				$.each(userrole, function(index,value){
-					$('#'+value).prop("checked", true);
-				});
-				$('#group_table').simpleTreeTable({
-				    expander: $('#expander'),
-				    collapser: $('#collapser'),
-				    iconPosition: ':eq(3)',
-				    opened: ''
-				});
-				$('ul.sidebar-menu ul.treeview-menu > li > a[href="/accounts/page/user-management/"]').parentsUntil(".sidebar-menu > .treeview-menu").siblings().removeClass('active menu-open').end().addClass('active menu-open');
-				check_permission(ad_flag);
-			}
-			else
-			{actions(data)}
-		},
-		error: function(req, status, err) {
-			$('#modal_error').modal('show');
-			console.log('Something went wrong', status, err);
-		},
-		complete: function(){
-			{% if perms.omuser.OmGroup_Add %}
-		  	$('.select2').select2();
-		  	{% endif %}
-		  	$('#refresh_rate').ionRangeSlider({
-				min     : 5,
-			  	max     : 60,
-				step    : 5,
-				from	: user_refresh,
-				type    : 'single',
-				postfix : ' {% trans "秒"%}',
-				prettify: false,
-				grid	: true,
-				grid_num: 11,
-		    });
-		}
-	});
-});
-function check_permission(ad_flag)
-{
-	{% if username != "newuser" %}
-		{% if perms.omuser.OmUser_View and not perms.omuser.OmUser_Modify and not username == request.user.username %}
-			$('form input').attr('readonly','true');
-			$('select').attr('disabled', 'disabled');
-		{% endif %}
-		{#如果有OmUser_Modify權限，將可儲存User資料#}
-		{% if username == user.username or perms.omuser.OmUser_Modify %}
-			$('#store_button').show();
-		{% endif %}
-		{#如果有OmGroup_View權限，將顯示組織設定、角色設定頁面#}
-		{% if perms.omuser.OmGroup_View %}
-			$('a[data-name="p2"]').show();
-			$('a[data-name="p3"]').show();
-		{% endif %}
-		{#如果有OmGroup_Modify權限，將顯示選取及儲存#}	
-		{% if perms.omuser.OmGroup_Modify %}
-			$('#store_group_button').show();
-			$('#store_role_button').show();
-		{% else %}
-			$('input[data-name="checkbox"]').attr('disabled','disabled');
-		{% endif %}
-	{% endif %}
-	if (ad_flag)
-	{
-		$('#token').prop('readonly',true).prop('required',false);
-	}
-}
-function omflowSubmit()
-{	
-		omflowAjax('omformProfile','{% url 'updateUserAjax' %}',actions);
-		Swal.fire({
-		  title: '處理中...',
-		  toast: true,
-		  position: 'bottom-start',
-		  showConfirmButton: false,
-		});
-		Swal.showLoading();
-}
-function actions(data)
-{		
-	Swal.close();
-	if(data.status == 200)
-	{
-		Swal.fire({
-      	  icon : 'success',
-      	  title: data.message,
-      	  toast: true,
-	  	  position: 'bottom-start',
-	  	  showConfirmButton: false,
-      	  timer: 2000,
-	    });
-	}	
-	else if (data.status == 404)
-	{
-		omflowAlert('yellow', data.message, cactions, data);
-	}
-	else if (data.status == 500)
-	{
-		omflowAlert('blue', data.message);
-	}
-	else if (data.status == 403)
-	{
-		omflowAlert('red', data.message);
-	}
-}
-
-function cactions(data)
-{
-	$.each(data.result.result, function(index, value){
-		$('input[name="'+value+'"]').css("border-color","rgb(253, 13, 77)")
-	});
-}
-
-	function filter_group()		
-	{
-		omflowFilter(['filter_search']);
-		$('#modal-default-filter button:eq(2)').off("click").on("click",function(){
-			var searchkey = $('#modal-default-filter #search').val();
-			if (searchkey!=null && searchkey.length!=0)
-			{
-				$('tr').hide();
-				$.each($('tr:contains("'+searchkey+'")'),function(){
-					var thisDom = $(this).show();
-					var pid =  $(this).data("node-pid");
-					if(typeof(pid)!="undefined" && pid.length!="0"){
-						showParent(pid);
-					}
-				});
-				//
-				function showParent(pid){
-					$('tr[data-node-id="'+pid+'"]').show();
-					var thisPid = $('tr[data-node-id="'+pid+'"]').data("node-pid");
-					if(typeof(thisPid)!="undefined" && thisPid.length!="0"){
-						showParent(thisPid);
+	
+		function filter_group()		
+		{
+			omflowFilter(['filter_search']);
+			$('#modal-default-filter button:eq(2)').off("click").on("click",function(){
+				var searchkey = $('#modal-default-filter #search').val();
+				if (searchkey!=null && searchkey.length!=0)
+				{
+					$('tr').hide();
+					$.each($('tr:contains("'+searchkey+'")'),function(){
+						var thisDom = $(this).show();
+						var pid =  $(this).data("node-pid");
+						if(typeof(pid)!="undefined" && pid.length!="0"){
+							showParent(pid);
+						}
+					});
+					//
+					function showParent(pid){
+						$('tr[data-node-id="'+pid+'"]').show();
+						var thisPid = $('tr[data-node-id="'+pid+'"]').data("node-pid");
+						if(typeof(thisPid)!="undefined" && thisPid.length!="0"){
+							showParent(thisPid);
+						}
 					}
 				}
-			}
-			else
-			{
-				$('tr').show();
-				$('#group_table').data('simple-tree-table').collapse();
-			}
-			$('#modal-default-filter').modal('hide');
-		});
-	}
-	
-	function filter_role()		
-	{
-		omflowFilter(['filter_search']);
-		$('#modal-default-filter button:eq(2)').off("click").on("click",function(){
-			var searchkey = $.trim($('#modal-default-filter #search').val());
-			if (searchkey)
-			{
-				$('tr').hide();
-				$('tr:contains("'+searchkey+'")').show();
-			}
-			else
-			{
-				$('tr').show();
-			}			
-			$('#modal-default-filter').modal('hide');
-		});
-	}
-	
-	function filter_default()
-	{
-		$('tr').show();
-	}
-	
-	function store_group()
-	{	
-		var this_check = [];
-		$.each($('#group_table input:checkbox:checked'), function(){
-			this_check.push($(this).val());
-		});
-		var postbody = {'csrfmiddlewaretoken':"{{ csrf_token}}", 'username': username, 'group_list': this_check, 'functional_flag_%B':'False'} 
-		omflowJsonAjax(postbody, "{% url 'groupUserAjax'%}", actions);
-	}
-	
-	function store_role()
-	{
-		var this_check = [];
-		$.each($('#role_table input:checkbox:checked'), function(){
-			this_check.push($(this).val());
-		});
-		var postbody = {'csrfmiddlewaretoken':"{{ csrf_token}}", 'username': username, 'group_list': this_check, 'functional_flag_%B': 'True'} 
-		omflowJsonAjax(postbody, "{% url 'groupUserAjax'%}", actions);
+				else
+				{
+					$('tr').show();
+					$('#group_table').data('simple-tree-table').collapse();
+				}
+				$('#modal-default-filter').modal('hide');
+			});
+		}
 		
-	}
-{% endif %}
-</script>
+		function filter_role()		
+		{
+			omflowFilter(['filter_search']);
+			$('#modal-default-filter button:eq(2)').off("click").on("click",function(){
+				var searchkey = $.trim($('#modal-default-filter #search').val());
+				if (searchkey)
+				{
+					$('tr').hide();
+					$('tr:contains("'+searchkey+'")').show();
+				}
+				else
+				{
+					$('tr').show();
+				}			
+				$('#modal-default-filter').modal('hide');
+			});
+		}
+		
+		function filter_default()
+		{
+			$('tr').show();
+		}
+		
+		function store_group()
+		{	
+			var this_check = [];
+			$.each($('#group_table input:checkbox:checked'), function(){
+				this_check.push($(this).val());
+			});
+			var postbody = {'username': username, 'group_list': this_check, 'functional_flag':'False'} 
+			omflowJsonAjax(postbody, "{% url 'groupUserAjax'%}", actions);
+		}
+		
+		function store_role()
+		{
+			var this_check = [];
+			$.each($('#role_table input:checkbox:checked'), function(){
+				this_check.push($(this).val());
+			});
+			var postbody = {'username': username, 'group_list': this_check, 'functional_flag': 'True'} 
+			omflowJsonAjax(postbody, "{% url 'groupUserAjax'%}", actions);
+			
+		}
+	{% endif %}
+	</script>
 {% endblock %}

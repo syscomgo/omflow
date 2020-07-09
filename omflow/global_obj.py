@@ -5,14 +5,16 @@ Created on 2019年9月4日
 '''
 
 class GlobalObject():
-    __userObj__ = {}
-    __securityObj__ = {}
-    __sidebarDesignObj__ = {}
-    __chartCompileObj__ = {}
-    __ldapObj__ = {}
-    __statusObj__ = {"ldapRunning": False}
-
-
+    __userObj__ = {}                #api token物件
+    __securityObj__ = {}            #api token物件
+    __sidebarDesignObj__ = {}       #左側選單
+    __chartCompileObj__ = {}        #python點編譯物件
+    __ldapObj__ = {}                #ldap使用
+    __statusObj__ = {"ldapRunning": False,'server_start_time':None, 'first_migrate':False}     #server端狀態
+    __OmParameter__ = {}            #參數表
+    __OrganizationObj__ = {}        #組織圖拆解物件
+    __loadbalanceObj__ = {}         #分散運算uuid暫存區
+    __loadbalanceMissionObj__ = {}  #分散運算collector分配的任務
 
 
 class FlowActive():

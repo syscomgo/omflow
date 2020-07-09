@@ -31,10 +31,10 @@
 		          <div class="box-header with-border">
 		            <!-- Check all button -->
 		            <button type="button" class="btn btn-default" onclick="filter_mymission()" style="margin:1px 0px;"><i class="fa fa-filter"></i>{% trans ' 篩選'%}</button>
-		            <button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default" onclick="filter_default()" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
+		            <button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default" onclick="filter_mymission_default()" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
 		          </div>
 		          <div class="box-body">
-		            <table id="mymission_table" class="table table-bordered table-striped table-hover">
+		            <table id="mymission_table" class="table table-bordered table-striped table-hover" width="100%">
 		              <thead>
 		                <tr>
 		                  <th>{% trans '功能名稱' %}</th>
@@ -42,10 +42,10 @@
 		                  <th>{% trans '燈號' %}</th>
 		          	      <th>{% trans '標題' %}</th>
 		                  <th>{% trans '開單人' %}</th>
-		                  <th>{% trans '更新日期' %}</th>
-		                  <th>{% trans '受派單位' %}</th>
+		                  <th>{% trans '受派組織' %}</th>
 		                  <th>{% trans '受派人' %}</th>
 		                  <th>{% trans '狀態' %}</th>
+		                  <th>{% trans '更新日期' %}</th>
 		                  <th>{% trans '快速操作' %}</th>   
 		                </tr>
 		              </thead>
@@ -64,22 +64,28 @@
 	              <div class="box-header with-border">
 	                <!-- Check all button -->
 	                <button type="button" class="btn btn-default" onclick="filter_currentmission()" style="margin:1px 0px;"><i class="fa fa-filter"></i>{% trans ' 篩選'%}</button>
-	                <button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default" onclick="filter_default()" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
+	                <button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default" onclick="filter_currentmission_default()" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
+	                <div class="pull-right">
+	                  <select id="currentmission_group_select" class="select2 form-control" style="width:150px">
+	                  	<option value="">所有組織</option>
+	                  {% for group in user.groups.all %}<option value="{{group.id}}">{{group.name}}</option> {% endfor %}
+	                  </select>
+	                </div>
 	              </div>
 	              <div class="box-body">
-	                <table id="currentmission_table" class="table table-bordered table-striped table-hover">
+	                <table id="currentmission_table" class="table table-bordered table-striped table-hover" width="100%">
 	                  <thead>
 	                    <tr>
 	                      <th>{% trans '功能名稱' %}</th>
 	                      <th>{% trans '表單編號' %}</th>
 	                      <th>{% trans '燈號' %}</th>
 	                  	  <th>{% trans '標題' %}</th>
-	                  	  <th>{% trans '開單人' %}</th>
-	                  	  <th>{% trans '開單日期' %}</th>
-	                  	  <th>{% trans '更新日期' %}</th>
-	                  	  <th>{% trans '受派單位' %}</th>
+{#	                  	  <th>{% trans '開單人' %}</th>#}
+{#	                  	  <th>{% trans '更新日期' %}</th>#}
+	                  	  <th>{% trans '受派組織' %}</th>
 	                  	  <th>{% trans '受派人' %}</th>
 	                  	  <th>{% trans '狀態' %}</th>
+	                  	  <th>{% trans '開單日期' %}</th>
 	                    </tr>
 	                  </thead>
 	                  <tbody>
@@ -97,22 +103,28 @@
 	              <div class="box-header with-border">
 	                <!-- Check all button -->
 	                <button type="button" class="btn btn-default" onclick="filter_historymission()" style="margin:1px 0px;"><i class="fa fa-filter"></i>{% trans ' 篩選'%}</button>
-	                <button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default" onclick="filter_default()" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
+	                <button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default" onclick="filter_historymission_default()" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
+	                <div class="pull-right">
+	                  <select id="historymission_group_select" class="select2 form-control" style="width:150px">
+	                  	<option value="">所有組織</option>
+	                  {% for group in user.groups.all %}<option value="{{group.id}}">{{group.name}}</option> {% endfor %}
+	                  </select>
+	                </div>
 	              </div>
 	              <div class="box-body">
-	                <table id="historymission_table" class="table table-bordered table-striped table-hover">
+	                <table id="historymission_table" class="table table-bordered table-striped table-hover" width="100%">
 	                  <thead>
 	                    <tr>
 	                      <th>{% trans '功能名稱' %}</th>
-	                      <th>{% trans '表單編號' %}</th>
-	                      <th>{% trans '燈號' %}</th>
+	                      <th style="width:110px">{% trans '表單編號' %}</th>
+{#	                      <th>{% trans '燈號' %}</th>#}
 	                  	  <th>{% trans '標題' %}</th>
 	                  	  <th>{% trans '開單人' %}</th>
-	                  	  <th>{% trans '開單日期' %}</th>
-	                  	  <th>{% trans '更新日期' %}</th>
-	                  	  <th>{% trans '受派單位' %}</th>
+{#	                  	  <th>{% trans '開單日期' %}</th>#}
+	                  	  <th>{% trans '受派組織' %}</th>
 	                  	  <th>{% trans '受派人' %}</th>
-	                  	  <th>{% trans '狀態' %}</th>
+{#	                  	  <th>{% trans '狀態' %}</th>#}
+	                  	  <th>{% trans '更新日期' %}</th>
 	                    </tr>
 	                  </thead>
 	                  <tbody>
@@ -167,7 +179,14 @@
             <h4 class="modal-title"></h4>
           </div>
           <div class="modal-body" >
-            <div id="flowcontent" style="width:100%;height:430px"></div>
+            <div class="box box-default">
+              <div class="box-header">
+                
+              </div>
+              <div class="box-body">
+              	<div id="flowcontent" style="width:100%;height:430px"></div>
+              </div>
+            </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-primary pull-right" data-dismiss="modal">{% trans '關閉' %}</button>
@@ -189,8 +208,10 @@ table tr td:not(:last-child){
 	var csrfmiddlewaretoken="{{ csrf_token }}";
 	var date = new Date();
 	date.setDate(date.getDate() + 1);
-	var group_list = [];
-	{% for group in user.groups.all %} group_list.push({'id': '{{group.id}}', 'display_name': '{{group.name}}'}); {% endfor %}
+	var today = date.getFullYear() +'-'+('0'+(date.getMonth()+1)).substr(-2)+'-'+('0'+date.getDate()).substr(-2);
+	var startday = '1970-01-01'
+	var select_range = startday + ',' + today;
+	
 	var mymission_select_time;
 	var mymission_table;
 	var mymission_data_tmp;
@@ -202,28 +223,31 @@ table tr td:not(:last-child){
 	var historymission_data_tmp;
 	var historymission_data_len;
 	var historymission_data_page;
+	var historymission_group_id = '';
 	
 	var currentmission_select_time;
 	var currentmission_table;
 	var currentmission_data_tmp;
 	var currentmission_data_len;
 	var currentmission_data_page;	
+	var currentmission_group_id = '';
  	$(function () {
-    	mymission_select_time = date.getFullYear() +'-'+('0'+(date.getMonth()+1)).substr(-2)+'-'+('0'+date.getDate()).substr(-2);
+    	mymission_select_time = select_range;
     	mymission_table = $('#mymission_table').DataTable({
 			"autoWidth": false,
-			"order": [[ 5 , "dsc "]],
+			"order": [[ 8 , "desc"]],
 			"dom":"<<t>'row'<'col-sm-5'i><'col-sm-7'p>>",
 			"serverSide": true,							
 			"language": __const_language__,
 			"ajax": {
 				"url": "{% url 'listMyMissionAjax'%}",
 				"type": "POST",
+				"headers": { "X-CSRFToken": csrfmiddlewaretoken },
+				"contentType": "application/json;charset=utf-8;",
 	            	"data":	function ( d ) {
-						return $.extend( {}, d, {
-					        csrfmiddlewaretoken : csrfmiddlewaretoken,
+						return JSON.stringify($.extend( {}, d, {
 					        ticket_createtime	: mymission_select_time,
-					    }); 
+					    })); 
 					},
 					"dataSrc": function(data){
 						var mymission_compare = dataCompare(data,mymission_data_tmp,mymission_data_len,mymission_data_page,mymission_table);
@@ -234,7 +258,7 @@ table tr td:not(:last-child){
 						return data.data;
 					},
 					"error": function(xhr,status,error){
-							clearInterval(table_routine);
+							clearInterval(mymission_routine);
 					}
 			},
 			"columns":[
@@ -252,7 +276,7 @@ table tr td:not(:last-child){
 							{return '<div class="label label-warning">黃燈</div>'}
 						else if(data == 'red')
 							{return '<div class="label label-danger">紅燈</div>'}
-						else if(data == null)
+						else
 							{return '<div class="label label-success">綠燈</div>'}		
 					}
 				},
@@ -269,25 +293,17 @@ table tr td:not(:last-child){
 					}
 				},
 				{"data": "create_user_id__nick_name"},
-				{"data": "ticket_createtime", "width": "125px", "render": function(data)
+				{"data": "assign_group_id__display_name",},
+				{"data": "assignee_id__nick_name"},
+				{"data": "status"},
+				{"data": "ticket_createtime", "width": "70px", "render": function(data)
 					{
 						if(data)
-							{return data.slice(0,-15)}
+							{return data.slice(0,-7)}
 						else
 							{return data}
 					}
 				},
-{#				{"data": "createtime", "width": "125px", "render": function(data)#}
-{#					{#}
-{#						if(data)#}
-{#							{return data.slice(0,-15)}#}
-{#						else#}
-{#							{return data}#}
-{#					}#}
-{#				},#}
-				{"data": "assign_group_id__display_name",},
-				{"data": "assignee_id__nick_name"},
-				{"data": "status"},
 				{"data": "action", "orderable": false, "width": "25px", "render": function(data, type, row)
 					{	
 						var action1 = '';
@@ -295,7 +311,7 @@ table tr td:not(:last-child){
 						data = data.split(',');
 						if(data[0].length != 0)
 							{
-								action1 = '<a title="'+data[0]+'" onclick="quick_action(\'action1\', \''+row.flow_uuid+'\', \''+row.data_id+'\')" class="btn btn-xs bg-olive" style="width">'+data[0]+'</a>&nbsp;';
+								action1 = '<a title="'+data[0]+'" onclick="quick_action(\'action1\', \''+row.flow_uuid+'\', \''+row.data_id+'\')" class="btn btn-xs bg-olive" >'+data[0]+'</a>&nbsp;';
 							}
 						if(data[1].length != 0)
 							{
@@ -310,104 +326,24 @@ table tr td:not(:last-child){
 			}
 		});
 		
-		historymission_select_time = date.getFullYear() +'-'+('0'+(date.getMonth()+1)).substr(-2)+'-'+('0'+date.getDate()).substr(-2);
-		historymission_table = $('#historymission_table').DataTable({
-			"autoWidth": false,
-			"order": [[ 5 , "dsc "]],
-			"dom":"<<t>'row'<'col-sm-5'i><'col-sm-7'p>>",
-			"serverSide": true,							
-			"language": __const_language__,
-			"ajax": {
-				"url": "{% url 'listHistoryMissionAjax'%}",
-				"type": "POST",
-	            	"data":	function ( d ) {
-						return $.extend( {}, d, {
-					        csrfmiddlewaretoken : csrfmiddlewaretoken,
-					        ticket_createtime	: historymission_select_time,
-					    }); 
-					},
-					"dataSrc": function(data){
-						var historymission_compare = dataCompare(data,historymission_data_tmp,historymission_data_len,historymission_data_page,historymission_table);
-						historymission_data_tmp = historymission_compare['data_tmp']
-						historymission_data_len = historymission_compare['data_len']
-						historymission_data_page = historymission_compare['data_page']
-						data.data = historymission_compare['data.data']
-						return data.data;
-					},
-					"error": function(xhr,status,error){
-							clearInterval(table_routine);
-					}
-			},
-			"columns":[
-				{"data": "flow_name"},
-				{"data": "data_no", "render": function(data)
-					{
-						return paddingLeft(data,8)
-					}
-				},
-				{"data": "level", "render": function(data)
-					{
-						if(data == 'green')
-							{return '<div class="label label-success">綠燈</div>'}
-						else if(data == 'yellow')
-							{return '<div class="label label-warning">黃燈</div>'}
-						else if(data == 'red')
-							{return '<div class="label label-danger">紅燈</div>'}
-						else if(data == null)
-							{return '<div class="label label-success">綠燈</div>'}		
-					}
-				},
-				{"data": "title", "width": "150px", "render": function(data, type, row)
-					{
-						if(row.attachment)
-							{
-								return data+' <i class="fa fa-paperclip"></i>'
-							}
-						else
-							{
-								return data
-							}
-					}},
-				{"data": "create_user_id__nick_name"},
-				{"data": "ticket_createtime", "width": "90px", "render": function(data)
-					{
-						if(data)
-							{return data.slice(0,-15)}
-						else
-							{return data}
-					}
-				},
-				{"data": "createtime", "width": "90px", "render": function(data)
-					{
-						if(data)
-							{return data.slice(0,-15)}
-						else
-							{return data}
-					}
-				},
-				{"data": "assign_group_id__display_name",},
-				{"data": "assignee_id__nick_name"},
-				{"data": "status"},
-			],
-			"rowCallback": function(row, data){
-				$("td:not(:last)", row).attr("onclick", 'history_browser(\''+data.flow_uuid+'\', \''+data.data_id+'\')');
-			}
-		});
-		currentmission_select_time = date.getFullYear() +'-'+('0'+(date.getMonth()+1)).substr(-2)+'-'+('0'+date.getDate()).substr(-2);
+		
+		currentmission_select_time = select_range;
 		currentmission_table = $('#currentmission_table').DataTable({
 			"autoWidth": false,
-			"order": [[ 5 , "dsc "]],
+			"order": [[ 7 , "desc"]],
 			"dom":"<<t>'row'<'col-sm-5'i><'col-sm-7'p>>",
 			"serverSide": true,							
 			"language": __const_language__,
 			"ajax": {
 				"url": "{% url 'listHistoryMissionCurrentStateAjax'%}",
 				"type": "POST",
+				"headers": { "X-CSRFToken": csrfmiddlewaretoken },
+				"contentType": "application/json;charset=utf-8;",
 	            	"data":	function ( d ) {
-						return $.extend( {}, d, {
-					        csrfmiddlewaretoken : csrfmiddlewaretoken,
+						return JSON.stringify($.extend( {}, d, {
 					        ticket_createtime	: currentmission_select_time,
-					    }); 
+					        group_id			: currentmission_group_id
+					    }));
 					},
 					"dataSrc": function(data){
 						var currentmission_compare = dataCompare(data,currentmission_data_tmp,currentmission_data_len,currentmission_data_page,currentmission_table);
@@ -418,17 +354,17 @@ table tr td:not(:last-child){
 						return data.data;
 					},
 					"error": function(xhr,status,error){
-							clearInterval(table_routine);
+							clearInterval(currentmission_routine);
 					}
 			},
 			"columns":[
-				{"data": "flow_name"},
-				{"data": "data_no", "render": function(data)
+				{"data": "flow_name", "width": "150px"},
+				{"data": "data_no", "width": "60px", "render": function(data)
 					{
 						return paddingLeft(data,8)
 					}
 				},
-				{"data": "level", "render": function(data)
+				{"data": "level", "width": "30px", "render": function(data)
 					{
 						if(data == 'green')
 							{return '<div class="label label-success">綠燈</div>'}
@@ -436,38 +372,107 @@ table tr td:not(:last-child){
 							{return '<div class="label label-warning">黃燈</div>'}
 						else if(data == 'red')
 							{return '<div class="label label-danger">紅燈</div>'}
-						else if(data == null)
+						else
 							{return '<div class="label label-success">綠燈</div>'}		
 					}
 				},
-				{"data": "title"},
-				{"data": "create_user_id__nick_name"},
-				{"data": "ticket_createtime", "width": "90px", "render": function(data)
+				{"data": "title", "width": "200px",},
+				{"data": "assign_group_id__display_name", "width": "70px",},
+				{"data": "assignee_id__nick_name", "width": "70px"},
+				{"data": "status", "width": "70px",},
+				{"data": "ticket_createtime", "width": "70px", "render": function(data)
 					{
 						if(data)
-							{return data.slice(0,-15)}
+							{return data.slice(0,-7)}
 						else
 							{return data}
 					}
 				},
-				{"data": "createtime", "width": "90px", "render": function(data)
-					{
-						if(data)
-							{return data.slice(0,-15)}
-						else
-							{return data}
-					}
-				},
-				{"data": "assign_group_id__display_name",},
-				{"data": "assignee_id__nick_name"},
-				{"data": "status"},
 			],
 			"rowCallback": function(row, data){
-				$("td:not(:last)", row).attr("onclick", 'fp_show_browser(\''+data.flow_uuid+'\', \''+data.data_no+'\', \''+data.stop_uuid+'\')');
+				$("td:not(:last)", row).attr("onclick", 'fp_show_browser(\''+data.flow_uuid+'\', \''+data.data_no+'\', \''+data.stop_uuid+'\', \''+data.stop_chart_text+'\')');
+			},
+		});
+		
+		
+		historymission_select_time = select_range;
+		historymission_table = $('#historymission_table').DataTable({
+			"autoWidth": false,
+			"order": [[ 6 , "desc"]],
+			"dom":"<<t>'row'<'col-sm-5'i><'col-sm-7'p>>",
+			"serverSide": true,							
+			"language": __const_language__,
+			"ajax": {
+				"url": "{% url 'listHistoryMissionAjax'%}",
+				"type": "POST",
+				"headers": { "X-CSRFToken": csrfmiddlewaretoken },
+				"contentType": "application/json;charset=utf-8;",
+	            	"data":	function ( d ) {
+						return JSON.stringify($.extend( {}, d, {
+					        csrfmiddlewaretoken : csrfmiddlewaretoken,
+					        updatetime			: historymission_select_time,
+					        group_id			: historymission_group_id
+					    }));
+					},
+					"dataSrc": function(data){
+						var historymission_compare = dataCompare(data,historymission_data_tmp,historymission_data_len,historymission_data_page,historymission_table);
+						historymission_data_tmp = historymission_compare['data_tmp']
+						historymission_data_len = historymission_compare['data_len']
+						historymission_data_page = historymission_compare['data_page']
+						data.data = historymission_compare['data.data']
+						return data.data;
+					},
+					"error": function(xhr,status,error){
+							clearInterval(historymission_routine);
+					}
+			},
+			"columns":[
+				{"data": "flow_name", "width": "150px"},
+				{"data": "data_no", "width": "60px", "render": function(data)
+					{
+						return paddingLeft(data,8)
+					}
+				},
+				{"data": "title", "width": "150px"},
+				{"data": "create_user_id__nick_name", "width": "70px",},
+				{"data": "assign_group_id__display_name", "width": "70px",},
+				{"data": "assignee_id__nick_name", "width": "70px"},
+				{"data": "updatetime", "width": "70px", "render": function(data)
+					{
+						if(data)
+							{return data.slice(0,-7)}
+						else
+							{return data}
+					}
+				},
+			],
+			"rowCallback": function(row, data){
+				$("td:not(:last)", row).attr("onclick", 'history_browser(\''+data.flow_uuid+'\', \''+data.data_id+'\')');
 			}
 		});
+		
+		
 		function locationHashChanged() {
 		    var tab = window.location.hash.replace('#','');
+		    if (tab == 'mymission')
+		    { 
+		    	mymission_routine = setInterval(function(){ mymission_table.draw(false);}, {{user.frequency}}*1000);
+		    	clearInterval(historymission_routine);
+		    	clearInterval(currentmission_routine);
+		    }
+		    else if (tab == 'historymission')
+		    {
+		    	historymission_routine = setInterval(function(){ historymission_table.draw(false);}, {{user.frequency}}*1000);
+		    	clearInterval(mymission_routine);
+		    	clearInterval(currentmission_routine);
+		    }
+		    else if (tab == 'currentmission')
+		    {
+		    	currentmission_routine = setInterval(function(){ currentmission_table.draw(false);}, {{user.frequency}}*1000);
+		    	clearInterval(mymission_routine);
+		    	clearInterval(historymission_routine);
+		    }
+		    
 			$('.nav-tabs a[data-name="'+tab+'"]').tab('show');
 		}
 		
@@ -476,23 +481,34 @@ table tr td:not(:last-child){
 		$('.nav-tabs:first a').on('shown.bs.tab', function(event){
 	    	window.location.hash = $(event.target).data('name');
 	    });
+	    $('.select2').select2();
+	    $('#currentmission_group_select').change(function(){
+	    	currentmission_group_id = this.value;
+	    	currentmission_table.draw();
+	    });
+	    $('#historymission_group_select').change(function(){
+	    	historymission_group_id = this.value;
+	    	historymission_table.draw();
+	    });
 	});
  
+ 
 	function quick_action(action, flow_uuid, data_id){
-	 	var postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, 
-								flow_uuid: flow_uuid,
-								data_id	 : data_id,
-								action	 : 'update',
-								quick_action: action,
-				}
+	 	var postbody = {
+				flow_uuid: flow_uuid,
+				data_id	 : data_id,
+				action	 : 'update',
+				quick_action: action,
+		}
 		omflowJsonAjax(postbody, '{% url "editOmDataAjax"%}', actions)
  	}
+ 	
  	
  	var omdata_history_formcontent = new omformeng('omdata_history_formcontent');
 	omdata_history_formcontent.init(false);
  	function history_browser(flow_uuid, data_id)
     {	
-		var postbody = {csrfmiddlewaretoken: '{{ csrf_token }}', flow_uuid: flow_uuid, data_id: data_id}
+		var postbody = {flow_uuid: flow_uuid, data_id: data_id}
 		omflowJsonAjax(postbody, '{% url "loadOmDataAjax"%}', callback);
 		
 		function callback(data)
@@ -506,6 +522,7 @@ table tr td:not(:last-child){
 				omdata_history_formcontent.load(JSON.stringify(data.result.formobject));
 				omdata_history_formcontent.setData(data.result.formdata);
 				$('#omdata_history_formcontent input').prop('readonly', true);
+				$('#omdata_history_formcontent textarea').prop('readonly', true);
 				$('#omdata_history_formcontent select').prop('disabled', true);
 				$('#omdata_history_formcontent input[type="radio"]').prop('disabled', true);
 				$('#omdata_history_formcontent input[type="checkbox"]').prop('disabled', true);
@@ -547,13 +564,15 @@ table tr td:not(:last-child){
 	function load_group_list()
 	{
 		var grouplist=[];
-		var postbody = {csrfmiddlewaretoken: "{{ csrf_token }}", 'functional_flag_%B': 'False', 'ad_flag_%B': ['0']};
+		var postbody = {'functional_flag': 'False', 'ad_flag': ['1', '0']};
 		$.ajax({
 			url	: '{% url 'listGroupAjax' %}',
 			type: 'post',
-	        data: postbody,
+			headers: { "X-CSRFToken": csrfmiddlewaretoken },
+	        data: JSON.stringify(postbody),
 	        async:false,
 	        dataType: 'json',
+	        contentType: "application/json;charset=utf-8;",
 	        success: function (data) {
 	            grouplist = data.result;
 	        },
@@ -572,8 +591,11 @@ table tr td:not(:last-child){
 		$.ajax({
 			url: "{% url 'searchGroupUserAjax' %}",
 			type: 'post',
+			headers: { "X-CSRFToken": csrfmiddlewaretoken },
+			data: JSON.stringify({searchkey: group_id}),
 			async:false,
-			data: { csrfmiddlewaretoken: '{{ csrf_token }}' , searchkey: group_id},
+			dataType: 'json',
+	        contentType: "application/json;charset=utf-8;",
 			success: function (data) {
 				userlist = data.result;
 			},
@@ -592,7 +614,6 @@ table tr td:not(:last-child){
 		$('#modal_flow_browser #flowcontent').empty();
     	var level = 1;
     	var postdata = { 
-    			csrfmiddlewaretoken: csrfmiddlewaretoken,
     			flow_uuid: flow_uuid,
     			data_no	 : data_no,
     			flow_level	 : level
@@ -601,28 +622,33 @@ table tr td:not(:last-child){
     	
     	function callback(data)
     	{
+    		stop_uuid = stop_uuid.split('-').shift()
     		if (data.status == 200)
     		{
 	    		$('#modal_flow_browser .modal-title').text(data.result.flow_name)
 		      	flowcontent.load(data.result.flowobject);
-		      	flowcontent.setFocus(stop_uuid);
+		      	$('#modal_flow_browser').on('shown.bs.modal', function(){
+		      		flowcontent.setFocus(data.result.inoutput.pop().chart_id);
+		      	});
 		      	$('#flowcontent div').off('click');
+		      	$('#modal_flow_browser').modal('show');
 			}
 			else
 			{
 				omflowAlert('red', data.message)
 			}
 	    }
-      	$('#modal_flow_browser').modal('show');
     }
     
     
     function filter_mymission()
     {
     	omflowFilter(['filter_search','filter_length']);
+    	select_range = startday + ',' + today;
     	$('#modal-default-filter-confirm').off("click").on("click",function(){
 			var searchkey = $.trim($('#modal-default-filter #search').val());
 			var page_length = $('#modal-default-filter #page_length').val();
+{#			mymission_select_time = select_range;#}
  			mymission_table.page.len(page_length);
 			mymission_table.search(searchkey).draw();
 		});
@@ -630,17 +656,20 @@ table tr td:not(:last-child){
     
     function filter_mymission_default()
 	{
+{#		mymission_select_time = startday + ',' + today;#}
 		mymission_table.page.len(10);
 		mymission_table.search('');
-    	mymission_table.draw();	
+    	mymission_table.draw(false);	
 	}
     
     function filter_currentmission()
     {
     	omflowFilter(['filter_search','filter_length']);
+    	select_range = startday + ',' + today;
     	$('#modal-default-filter-confirm').off("click").on("click",function(){
 			var searchkey = $.trim($('#modal-default-filter #search').val());
 			var page_length = $('#modal-default-filter #page_length').val();
+{#			currentmission_select_time = select_range;#}
  			currentmission_table.page.len(page_length);
 			currentmission_table.search(searchkey).draw();
 		});
@@ -648,17 +677,20 @@ table tr td:not(:last-child){
     
     function filter_currentmission_default()
 	{
+		currentmission_select_time = startday + ',' + today;
 		currentmission_table.page.len(10);
 		mymission_table.search('');
-    	currentmission_table.draw();	
+    	currentmission_table.draw(false);	
 	}
     
     function filter_historymission()
     {
     	omflowFilter(['filter_search','filter_length']);
+    	select_range = startday + ',' + today;
     	$('#modal-default-filter-confirm').off("click").on("click",function(){
 			var searchkey = $.trim($('#modal-default-filter #search').val());
 			var page_length = $('#modal-default-filter #page_length').val();
+{#			historymission_select_time = select_range;#}
  			historymission_table.page.len(page_length);
 			historymission_table.search(searchkey).draw();
 		});
@@ -666,9 +698,10 @@ table tr td:not(:last-child){
     
     function filter_historymission_default()
 	{
+{#		historymission_select_time = startday + ',' + today;#}
 		historymission_table.page.len(10);
 		historymission_table.search('');
-    	historymission_table.draw();	
+    	historymission_table.draw(false);	
 	}
 	
 	
@@ -676,16 +709,18 @@ table tr td:not(:last-child){
 	{
 		if (data.status == 200)
 		{
-			mymission_table.draw(); 
-			historymission_table.draw(); 
-			currentmission_table.draw(); 
+			mymission_table.draw(false); 
+			historymission_table.draw(false); 
+			currentmission_table.draw(false); 
 		}
 		else
 		{
 			omflowAlert('red', data.message);
 		}
 	}
-	var table_routine = setInterval(function(){ mymission_table.draw();historymission_table.draw();currentmission_table.draw();}, {{user.frequency}}*1000);
+	var mymission_routine = '';
+	var historymission_routine = '';
+	var currentmission_routine = '';
 
 </script>
 {% endblock %}
