@@ -10,7 +10,9 @@ omflow的流程引擎是使用Python+Django開發,這代表除了方便的流程
 `omflow workflow engine is developed using Python + Django , `  
 也可以輕鬆的串接python程式碼和社群上的應用,達到自動化的效果.他非常適合用來做IT的維運管理和自動化以及企業的ERP和其他應用.  
 `You can easily integrate your python application in the workflow.`  
-  
+ 
+ documents : https://doc.omflow.com.tw/
+ 
 
 軟體功能(Functions)
 =================
