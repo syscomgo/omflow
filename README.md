@@ -44,7 +44,7 @@ omflow的流程引擎是使用Python+Django開發,這代表除了方便的流程
 
 *  支援Windows以及Linux系統 `support windows and linux system`
 *  Python3 以上的版本 `Python 3 or higher `
-*  Django 2.2 以上的版本 `Django 2.2 or higher `
+*  Django 2.X 的版本 `Django 2.X `
 
 使用pip安裝Django: `you can install django using pip`
 <pre><code>
