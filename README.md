@@ -70,7 +70,7 @@ python manage.py runserver 0.0.0.0:8000
 或是可以使用 docker 啟動
 `or you can start omflow with docker hub image.`  
 <pre><code>
-docker pull -a omflow/open
+docker pull omflow/open
 docker run -d --name omflow -p 0.0.0.0:80:80 omflow/open
 
 </code></pre>
