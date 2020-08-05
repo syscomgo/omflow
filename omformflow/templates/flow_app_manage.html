@@ -10,13 +10,13 @@
 	<!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-       	 應用設計
-        <small>應用列表</small>
+       	 {% trans '應用設計'%}
+        <small>{% trans '應用列表'%}</small>
       </h1>
       <ol class="breadcrumb">
-        <li><a href="/"><i class="fa fa-dashboard"></i> 首頁</a></li>
-		<li>應用管理</li>
-        <li class="active"><a href="/flowmanage/page/flow-app/">應用設計</a></li>
+        <li><a href="/"><i class="fa fa-dashboard"></i> {% trans '首頁'%}</a></li>
+		<li>{% trans '應用管理'%}</li>
+        <li class="active"><a href="/flowmanage/page/flow-app/">{% trans '應用設計'%}</a></li>
       </ol>
     </section>
     <section class="content">
@@ -25,17 +25,17 @@
       	  <div class="box box-primary">
       	    <div class="box-header with-border">
       	      <div class="pull-left">
-      	        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-flow-app-creat" style="margin:1px 0px;"><i class="fa fa-plus"></i> 新增</button>
-			    <button type="button" class="btn btn-default" onclick="omflowListDialogue('delete','{% trans "刪除下列應用"%}', flow_app_edit,'delete')" id="delete_flowapp" disabled="disabled" style="margin:1px 0px;"><i class="fa fa-trash-o"></i> 刪除</button>
-			    <button type="button" class="btn btn-default" onclick="deploy_flowapp()" id="deploy_flowapp" disabled="disabled" style="margin:1px 0px;"><i class="fa fa-sitemap"></i> 上架</button>
-			    <button type="button" class="btn btn-default" onclick="filter_flowapp()" style="margin:1px 0px;"><i class="fa fa-filter"></i> 篩選</button>
+      	        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-flow-app-creat" style="margin:1px 0px;"><i class="fa fa-plus"></i> {% trans '新增'%}</button>
+			    <button type="button" class="btn btn-default" onclick="omflowListDialogue('delete','{% trans "刪除下列應用"%}', flow_app_edit,'delete')" id="delete_flowapp" disabled="disabled" style="margin:1px 0px;"><i class="fa fa-trash-o"></i> {% trans '刪除'%}</button>
+			    <button type="button" class="btn btn-default" onclick="deploy_flowapp()" id="deploy_flowapp" disabled="disabled" style="margin:1px 0px;"><i class="fa fa-sitemap"></i> {% trans '上架'%}</button>
+			    <button type="button" class="btn btn-default" onclick="filter_flowapp()" style="margin:1px 0px;"><i class="fa fa-filter"></i> {% trans '篩選'%}</button>
                 <button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default" onclick="filter_default()" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
               </div>
               <div class="pull-right">
-                <button type="button" class="btn btn-default" id="flowapp_input" onclick="$('#file').click()" style="margin:1px 0px;"><i class="fa fa-download"></i> 匯入</button>
+                <button type="button" class="btn btn-default" id="flowapp_input" onclick="$('#file').click()" style="margin:1px 0px;"><i class="fa fa-download"></i> {% trans '匯入'%}</button>
                 <input type="file" id="file" onchange="flowapp_input(this.files)" style="display:none;"/>
-			    <button type="button" class="btn btn-default" id="flowapp_output" onclick="flowapp_output()" style="margin:1px 0px;" disabled="disabled"><i class="fa fa-upload"></i> 匯出</button>
-			    <button type="button" class="btn btn-info" id="cloud_input" onclick="cloud_input('','', 'root')" style="margin:1px 0px;"><i class="fa fa-cloud-download"></i> 下載</button>
+			    <button type="button" class="btn btn-default" id="flowapp_output" onclick="flowapp_output()" style="margin:1px 0px;" disabled="disabled"><i class="fa fa-upload"></i> {% trans '匯出'%}</button>
+			    <button type="button" class="btn btn-info" id="cloud_input" onclick="cloud_input('','', 'root')" style="margin:1px 0px;"><i class="fa fa-cloud-download"></i> {% trans '下載'%}</button>
 			  </div>
       	    </div>
       	    <!-- box-header -->
@@ -44,12 +44,10 @@
 				<thead>
 				  <tr>
 					<th style="width:15px"><a><i class="fa fa-lg fa-check-square-o checkbox-toggle" style="color:SteelBlue"></i></a></th>
-{#					<th></th>#}
-					<th>名稱</th>
-					<th>屬性</th>
-					<th>使用者</th>
-					<th>最後修改時間</th>
-{#					<th></th>#}
+					<th>{% trans '名稱' %}</th>
+					<th>{% trans '屬性' %}</th>
+					<th>{% trans '使用者' %}</th>
+					<th>{% trans '最後修改時間' %}</th>
 				  </tr>
 				</thead>
 				<tbody>
@@ -71,7 +69,7 @@
 		  <div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			  <span aria-hidden="true">&times;</span></button>
-			<h4 class="modal-title"><i class="fa fa-plus"></i>&nbsp;&nbsp;建立應用</h4>
+			<h4 class="modal-title"><i class="fa fa-plus"></i>&nbsp;&nbsp;{% trans '建立應用' %}</h4>
 		  </div>
 		  <div class="modal-body">
             <div class="form-group">
@@ -92,8 +90,8 @@
             {% endif %}
 		  </div>
 		  <div class="modal-footer">
-			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
-			<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="flow_app_edit('create')">確定</button>
+			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">{%trans '取消'%}</button>
+			<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="flow_app_edit('create')">{%trans '確定'%}</button>
 		  </div>
 		</div>
 	  </div><!-- /.modal-content -->
@@ -106,15 +104,15 @@
 		  <div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			  <span aria-hidden="true">&times;</span></button>
-			<h4 class="modal-title"><i class="fa fa-download"></i>&nbsp;&nbsp;流程匯入</h4>
+			<h4 class="modal-title"><i class="fa fa-download"></i>&nbsp;&nbsp;{%trans '流程匯入'%}</h4>
 		  </div>
 		  <div class="modal-body">
 		  	<ul class="mailbox-attachments clearfix" id="flow_input_name">
             </ul>
 		  </div>
 		  <div class="modal-footer">
-			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
-			<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="flowapp_input_save()">確定</button>
+			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">{%trans '取消'%}</button>
+			<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="flowapp_input_save()">{%trans '確定'%}</button>
 		  </div>
 		</div>
 	  </div><!-- /.modal-content -->
@@ -127,7 +125,7 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
-            <h4 class="modal-title"><i class="fa fa-lg  fa-sitemap" style="color:SteelBlue;"> 上架設定</i></h4>
+            <h4 class="modal-title"><i class="fa fa-lg  fa-sitemap" style="color:SteelBlue;"> {%trans '上架設定'%}</i></h4>
           </div>
           <div class="modal-body">
 			<ul class="list-group list-group-unbordered">
@@ -135,32 +133,32 @@
 			    <table class="table no-margin" width="100%">
 			      <thead>
 			        <tr>
-			          <th style="border-bottom:0px"><input type="radio" class="iradio_minimal-blue" name="choose_deploy" id="newdeploy" value="newdeploy" checked><label for="newdeploy"></label><label>   上架新應用</label></th>
-			  	  	  <th style="border-bottom:0px"><input type="radio" class="iradio_minimal-blue" name="choose_deploy" id="overwrite" value="overwrite" ><label for="overwrite"></label><label>   取代上架應用</label></th>
+			          <th style="border-bottom:0px"><input type="radio" class="iradio_minimal-blue" name="choose_deploy" id="newdeploy" value="newdeploy" checked><label for="newdeploy"></label><label>   {%trans '上架新應用'%}</label></th>
+			  	  	  <th style="border-bottom:0px"><input type="radio" class="iradio_minimal-blue" name="choose_deploy" id="overwrite" value="overwrite" ><label for="overwrite"></label><label>   {%trans '取代上架應用'%}</label></th>
 			  	  	</tr>
 			  	  </head>
 			  	</table>
 			  </li>
 			  <li class="list-group-item" id="newdeploybox" style="display:None;">
 				<div class="form-group has-warning">
-				  <label>應用名稱</label>
+				  <label>{%trans '應用名稱'%}</label>
 				  <br>
 				  <input type="text" name="flow_name" class="form-control" >
 				</div>
 				<div class="form-group">
-		          <label class="text-light-blue">上架位置 </label>
+		          <label class="text-light-blue">{%trans '上架位置'%} </label>
 				  <select id="deploy_pos" class="form-control">
 				  </select>
 				</div>
 			  </li>
 			  <li class="list-group-item" id="overwritebox" style="display:None;">
 				<div class="form-group has-warning">
-				  <label>應用名稱</label>
+				  <label>{%trans '應用名稱'%}</label>
 				  <br>
 				  <input type="text" name="flow_name" class="form-control" >
 				</div>
 				<div class="form-group">
-				  <label class="text-light-blue">應用選擇</label>
+				  <label class="text-light-blue">{%trans '應用選擇'%}</label>
 			  	  <select id="overwrite_select" class="form-control">
 			  	  	
 			  	  </select>
@@ -169,8 +167,8 @@
 			</ul>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
-            <button type="button" class="btn btn-primary" data-dismiss="modal">確定</button>
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">{%trans '取消'%}</button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal">{%trans '確定'%}</button>
           </div>
 		</div>
       </div>
@@ -221,17 +219,11 @@
 						data.data = a['data.data']
 						return data.data;
 					},
-				"error": function(xhr,status,error){
-							clearInterval(table_routine);
-					}
         	},   
 			"columns":[
 				{"width": "15px", "data": "app_name", "orderable": false, "render": function (data, type, row)
                 	{return '<input type="checkbox" class="icheckbox_minimal-blue" value="'+data+'" id="'+row.id+'" data-value="'+data+'"><label for='+row.id+'></label>'}
                 },
-{#                {"data": "id", "width": "15px", "orderable": false, "render": function(data, type, row)#}
-{#        			{return '<a href="/flowmanage/page/flowManagePage/'+data+'" title="編輯'+row.app_name+'" style="color:black;cursor: pointer;"><i class="fa fa-fw fa-edit" style="color:SteelBlue;"></i></a>'}#}
-{#        		},#}
 				{"data": "app_name"},
 				{"data":"app_attr"},
 				{"data":"user__username", "orderable": false},
@@ -310,7 +302,7 @@
 		
 		omflowJsonAjax(postdata, "{% url 'editWorkspaceApplicationAjax'%}", callback);
 		Swal.fire({
-		  title: '處理中...',
+		  title: '{% trans '處理中...'%}',
 		  toast: true,
 		  position: 'bottom-start',
 		  showConfirmButton: false,
@@ -326,7 +318,7 @@
 				table.draw(false);
 				Swal.fire({
 		      	  icon : 'success',
-		      	  title: '成功',
+		      	  title: '{% trans '成功'%}',
 		      	  toast: true,
 			  	  position: 'bottom-start',
 			  	  showConfirmButton: false,
@@ -430,7 +422,7 @@
 				$('#newdeploybox').hide();
 				if (data.result.length == 0)
 				{
-					$('select[id="overwrite_select"]').append('<option>無應用可取代</option>');
+					$('select[id="overwrite_select"]').append('<option>{% trans '無應用可取代'%}</option>');
 				}
 				else
 				{
@@ -470,7 +462,7 @@
 			$('#modal-flow-deploy').on('hidden.bs.modal', function () {
 				omflowJsonAjax(postdata, '{% url "deployWorkspaceApplicationAjax"%}', actions);
 				Swal.fire({
-				  title: '處理中...',
+				  title: '{% trans '處理中...'%}',
 				  toast: true,
 				  position: 'bottom-start',
 				  showConfirmButton: false,
@@ -556,7 +548,7 @@
     function flowapp_input_save(){
     	input_file = JSON.stringify(JSON.parse(input_file));
     	Swal.fire({
-		  title: '處理中...',
+		  title: '{% trans '處理中...'%}',
 		  toast: true,
 		  position: 'bottom-start',
 		  showConfirmButton: false,
@@ -605,7 +597,7 @@
 			table.draw(false);
 			Swal.fire({
 	      	  icon : 'success',
-	      	  title: '成功',
+	      	  title: '{% trans '成功'%}',
 	      	  toast: true,
 		  	  position: 'bottom-start',
 		  	  showConfirmButton: false,
@@ -631,30 +623,38 @@
 	var path_map = '';
 	function cloud_input(path, file, pos)
 	{
+		Swal.fire({
+		  title: '{% trans '讀取中'%}...',
+		  toast: true,
+		  position: 'bottom-start',
+		  showConfirmButton: false,
+		});
+		Swal.showLoading();
 		var cloud_postbody = {content: path+file}
 		omflowJsonAjax(cloud_postbody, '{% url "getCloudFlowAjax" %}', callback)
 		
 		function callback(data)
 		{	
+			Swal.close();
 			if (data.status == 200)
 			{
 				$('#cloud_flow_table tbody').empty();
 				if (pos != 'root' && path != '')
 				{
 					path_map = path.split('/').pop();
-					$('#cloud_flow_table tbody').append('<tr onclick="cloud_input(\''+path_map+'\', \''+file+'\', \'back\')"><th><i class="fa fa-folder"></i></th><th>..</th><th></th><th></th><th></th></tr>')
+					$('#cloud_flow_table tbody').append('<tr onclick="cloud_input(\''+path_map+'\', \''+file+'\', \'back\')" title="{% trans '回上一層'%}"><th><i class="fa fa-folder" style="color:#79b8ff"></i></th><th>..</th><th></th><th></th><th></th><th></th></tr>')
 				}
 				data.result.content.forEach(function(item){
+					var des = escapeHtml(item.description)
+					des = des.replaceAll('\n', '<br>');
 					if (item.type == 'main')
 					{
-						$('#cloud_flow_table tbody').append('<tr onclick="cloud_input(\''+item.path+'\', \''+item.file+'\', \'next\')"><th><i class="fa fa-folder"></i></th><th>'+item.name+'</th><th>'+item.description+'</th><th>'+item.version+'</th><th>'+item.update_time+'</th></tr>')
+						$('#cloud_flow_table tbody').append('<tr onclick="cloud_input(\''+item.path+'\', \''+item.file+'\', \'next\')" title="{% trans '檢視'%}'+item.name+'"><th><i class="fa fa-folder" style="color:#79b8ff"></i></th><th>'+item.name+'</th><th>'+des+'</th><th>'+item.version+'</th><th>'+item.update_time+'</th><th></th></tr>')
 					}
 					else if (item.type == 'flowobject')
 					{
-						$('#cloud_flow_table tbody').append('<tr onclick="cloud_import(\''+item.path+'\', \''+item.file+'\')"><th><i class="fas fa-file-code" title="{% trans '匯入'%}'+item.name+'"></i></th><th title="{% trans '匯入'%}'+item.name+'">'+item.name+'</th><th title="{% trans '匯入'%}'+item.name+'">'+item.description+'</th><th title="{% trans '匯入'%}'+item.name+'">'+item.version+'</th><th title="{% trans '匯入'%}'+item.name+'">'+item.update_time+'</th></tr>')
+						$('#cloud_flow_table tbody').append('<tr><th><i class="fas fa-file-code"></i></th><th>'+item.name+'</th><th>'+des+'</th><th>'+item.version+'</th><th>'+item.update_time+'</th><th><button onclick="cloud_import(\''+item.path+'\', \''+item.file+'\')" class="btn btn-xs btn-default" title="{% trans '匯入'%}'+item.name+'">{% trans '匯入'%}</button></th></tr>')
 					}
-					
-					
 				});
 				$('#modal-cloud-flow').modal('show');
 			}
@@ -668,12 +668,12 @@
 	function cloud_import(path, file)
 	{
 		Swal.fire({
-		  title: '處理中...',
+		  title: '{% trans '流程匯入中'%}...',
 		  toast: true,
 		  position: 'bottom-start',
 		  showConfirmButton: false,
 		});
-		Swal.showLoading() ;
+		Swal.showLoading();
 		var cloud_postbody = {content: path+file}
 		omflowJsonAjax(cloud_postbody, '{% url "getCloudFlowAjax" %}', callback)
 		
@@ -693,21 +693,30 @@
 	</script>
 	
 	<div class="modal fade" id="modal-cloud-flow" data-backdrop="static">
-	  <div class="modal-dialog">
+	  <div class="modal-dialog modal-lg">
 		<div class="modal-content">
 		  <div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			  <span aria-hidden="true">&times;</span></button>
-			<h4 class="modal-title"><i class="fa fa-cloud-download"></i>&nbsp;&nbsp;雲端流程</h4>
+			<h4 class="modal-title"><i class="fa fa-cloud-download" style="color:#00acd6"></i>&nbsp;&nbsp;{% trans "雲端流程" %}</h4>
 		  </div>
 		  <div class="modal-body">
 		  	<table id="cloud_flow_table" class="table no-margin table-hover" width="100%">
-		  	  <thead><tr><th></th><th>{% trans "名稱" %}</th><th>{% trans "說明" %}</th><th>{% trans "版本" %}</th><th>{% trans "修改日期" %}</th></tr></thead>	
+		  	  <thead>
+			    <tr>
+				  <th width="3%"></th>
+				  <th width="20%">{% trans "名稱" %}</th>
+				  <th width="40%">{% trans "說明" %}</th>
+				  <th width="10%">{% trans "版本" %}</th>
+				  <th width="20%">{% trans "修改日期" %}</th>
+				  <th width="7%"></th>
+				</tr>
+			  </thead>	
 		  	  <tbody></tbody>
 		  	</table>
 		  </div>
 		  <div class="modal-footer">
-			<button type="button" class="btn btn-default" data-dismiss="modal">關閉</button>
+			<button type="button" class="btn btn-default" data-dismiss="modal">{% trans "關閉" %}</button>
 		  </div>
 		</div>
 	  </div><!-- /.modal-content -->

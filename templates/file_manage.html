@@ -146,9 +146,6 @@
 						data.data = a['data.data']
 						return data.data;
 					},
-					"error": function(xhr,status,error){
-							clearInterval(table_routine);
-					}
 	        	},
 	        	"columns":[	
 	        		{"data": "file", "orderable": false, "render": function (data,type,row)
@@ -261,7 +258,7 @@
 			$('#modal-default-list').on('hidden.bs.modal', function () {
 				omflowJsonAjax(postbody,'{% url "deleteFilesAjax"%}', actions);
 				Swal.fire({
-				  title: '處理中...',
+				  title: '{% trans '處理中'%}...',
 				  toast: true,
 				  position: 'bottom-start',
 				  showConfirmButton: false,

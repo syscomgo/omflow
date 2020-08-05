@@ -47,7 +47,7 @@
 						  <label>{% trans '帳號' %}</label>
 						  <div class="input-group">	
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-							<form><input type="text" pattern="[A-Za-z0-9_]{1,}" title="大小寫英文、數字及底線" name="username" id="username" class="form-control" placeholder="{%trans '帳號'%}" required="true"/></form>					
+							<form><input type="text" pattern="[A-Za-z0-9_]{1,}" title="{% trans '大小寫英文、數字及底線'%}" name="username" id="username" class="form-control" placeholder="{%trans '帳號'%}" required="true"/></form>					
 						  </div>
 						</div>
 						<!-- /.form-group -->	
@@ -55,7 +55,7 @@
 						  <label>{% trans '密碼'%}</label>      
 						  <div class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-							<form><input type="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="至少一個大寫字母及小寫字母，至少8個字。" name="token" id="token" class="form-control" placeholder="{% trans '密碼'%}" required="true" {% if username != 'newuser' %} readonly="true" {% endif %} autocomplete="off"/></form>				
+							<form><input type="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="{% trans '至少一個大寫字母及小寫字母，至少8個字。'%}" name="token" id="token" class="form-control" placeholder="{% trans '密碼'%}" required="true" {% if username != 'newuser' %} readonly="true" {% endif %} autocomplete="off"/></form>				
 						  </div>
 						</div>
 						<!-- /.form-group -->	
@@ -274,7 +274,7 @@
 		  <div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			  <span aria-hidden="true">&times;</span></button>
-			<h4 class="modal-title"><i class="fa fa-edit"></i>&nbsp;&nbsp;職代人設定</h4>
+			<h4 class="modal-title"><i class="fa fa-edit"></i>&nbsp;&nbsp;{% trans '職代人設定'%}</h4>
 		  </div>
 		  <div class="modal-body">
 			  <ul class="list-group list-group-unbordered">
@@ -291,8 +291,8 @@
 			  </ul>
 		  </div>
 		  <div class="modal-footer">
-			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
-			<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="substitute_edit('save')">確定</button>
+			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">{% trans '取消'%}</button>
+			<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="substitute_edit('save')">{% trans '確定'%}</button>
 		  </div>
 		</div>
 	  </div><!-- /.modal-content -->
@@ -582,7 +582,7 @@
 	{	
 			omflowAjax('omformProfile','{% url 'updateUserAjax' %}',actions);
 			Swal.fire({
-			  title: '處理中...',
+			  title: '{% trans '處理中'%}...',
 			  toast: true,
 			  position: 'bottom-start',
 			  showConfirmButton: false,

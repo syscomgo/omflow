@@ -1,30 +1,31 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load i18n %} 
+{% load omflow_tags %}
 {% block content %}
 <!-- 
 	workflow.html workflowPage
 	author : Pei lin
 -->
-	<script src="/static/js/workflow.js"></script>
+	<script src="/static/js/workflow.js?version={%omflow_version%}"></script>
 	<!-- Content Header (Page header) -->
 	<section class="content-header">
       <h1 id="page_title">
       </h1>
       <ol class="breadcrumb">
-        <li><a href="/"><i class="fa fa-dashboard"></i> 首頁</a></li>
+        <li><a href="/"><i class="fa fa-dashboard"></i> {% trans '首頁' %}</a></li>
       </ol>
     </section>
     <section class="content">
   	<div class="box box-default">
   	  <div class="box-header with-border">
   	  	{% if 'omformmodel.Omdata_'|add:flow_uuid|add:'_Add' in perms %}
-  	    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-create_ticket"><i class="fa fa-plus"></i> 新增</button>
+  	    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-create_ticket"><i class="fa fa-plus"></i> {% trans '新增' %}</button>
   	    {% endif %}
   	    {% if 'omformmodel.Omdata_'|add:flow_uuid|add:'_Delete' in perms %}
-	    <button type="button" class="btn btn-default" onclick="delete_omdata()" id="delete_omdata" disabled="disabled" style="margin:1px 0px;"><i class="fa fa-trash-o"></i> 刪除</button>
+	    <button type="button" class="btn btn-default" onclick="delete_omdata()" id="delete_omdata" disabled="disabled" style="margin:1px 0px;"><i class="fa fa-trash-o"></i> {% trans '刪除' %}</button>
 	    {% endif %}
-	    <button type="button" class="btn btn-default" onclick="filter_omdata()" style="margin:1px 0px;"><i class="fa fa-filter"></i> 篩選</button>
+	    <button type="button" class="btn btn-default" onclick="filter_omdata()" style="margin:1px 0px;"><i class="fa fa-filter"></i> {% trans '篩選' %}</button>
         <button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default" onclick="filter_default()" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
   	  </div>
   	  <div class="box-body">
@@ -53,8 +54,8 @@
 	        <div id="formcontent"></div>
 		  </div>
 		  <div class="modal-footer">
-			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
-			<button type="button" class="btn btn-primary" id="modal-create_ticket-confirm">確定</button>
+			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">{% trans '取消' %}</button>
+			<button type="button" class="btn btn-primary" id="modal-create_ticket-confirm">{% trans '確定' %}</button>
 		  </div>
 		</div>
 	  </div><!-- /.modal-content -->
@@ -112,7 +113,7 @@
 			var display_field = JSON.parse(data.result.display_field);
 			$('#omdata_table thead tr').append('<th></th>');
 			table_column.push({"data": "id", "width": "15px", "orderable": false, "render": function(data, type, row)
-				{return '<input type="checkbox" class="icheckbox_minimal-blue" value="'+data+'" data-no="'+row.data_no+'" data-value="資料編號 : '+paddingLeft(row.data_no,8)+'" id="omdata_'+data+'"><label for=omdata_'+data+'></label>'}
+				{return '<input type="checkbox" class="icheckbox_minimal-blue" value="'+data+'" data-no="'+row.data_no+'" data-value="{% trans '資料編號'%} : '+paddingLeft(row.data_no,8)+'" id="omdata_'+data+'"><label for=omdata_'+data+'></label>'}
 			});
 			$.each(display_field, function(index, value){
 				$('#omdata_table thead tr').append('<th>'+value+'</th>');
@@ -129,9 +130,9 @@
 					table_column.push({"data": index, "render": function(data)
 						{
 							if(data)
-								{return '已關閉'}
+								{return '{% trans '已關閉'%}'}
 							else
-								{return '未關閉'}
+								{return '{% trans '未關閉'%}'}
 						}
 					});
 				}
@@ -140,9 +141,9 @@
 					table_column.push({"data": index, "render": function(data)
 						{
 							if(data)
-								{return '流程執行中'}
+								{return '{% trans '流程執行中'%}'}
 							else
-								{return '流程等待中'}		
+								{return '{% trans '流程等待中'%}'}		
 						}
 					});
 				}
@@ -151,9 +152,9 @@
 					table_column.push({"data": index, "render": function(data)
 						{
 							if(data)
-							{return '<div class="label label-danger">異常</div>'}
+							{return '<div class="label label-danger">{% trans '異常'%}</div>'}
 							else
-							{return '<div class="label label-success">正常</div>'}
+							{return '<div class="label label-success">{% trans '正常'%}</div>'}
 						}
 					});
 				}
@@ -162,11 +163,11 @@
 					table_column.push({"data": index, "render": function(data)
 						{
 							if(data == 'yellow')
-								{return '<div class="label label-warning">黃燈</div>'}
+								{return '<div class="label label-warning">{% trans '黃燈'%}</div>'}
 							else if(data == 'red')
-								{return '<div class="label label-danger">紅燈</div>'}
+								{return '<div class="label label-danger">{% trans '紅燈'%}</div>'}
 							else
-								{return '<div class="label label-success">綠燈</div>'}		
+								{return '<div class="label label-success">{% trans '綠燈'%}</div>'}		
 						}
 					});
 				}
@@ -253,9 +254,6 @@
 						data.data = a['data.data']
 						return data.data;
 					},
-					"error": function(xhr,status,error){
-							clearInterval(table_routine);
-					}
 	        	},
 	        	"columns":	table_column,
 	        	"rowCallback": function( row, data ) {
@@ -299,7 +297,7 @@
 	{
 		if(data.status == 200)
 		{ 
-			$('.content-header > h1').append(data.result.flow_name+'<small>表單列表</small>');
+			$('.content-header > h1').append(data.result.flow_name+'<small>{% trans '表單列表'%}</small>');
 			$('ol.breadcrumb').append('<li><a>'+data.result.app_name+'</a></li>');
 			$('ol.breadcrumb').append('<li class="active"><a href="javascript:location.reload();">'+data.result.flow_name+'</a></li>');
 		}
@@ -348,7 +346,7 @@
 					isAttachment = true;
 					put_upload_btt()
 				}
-    			$('#modal-create_ticket .modal-title').html('<i class="fa fa-plus"></i>&nbsp;&nbsp;'+data.result.flow_name+'-開單');
+    			$('#modal-create_ticket .modal-title').html('<i class="fa fa-plus"></i>&nbsp;&nbsp;'+data.result.flow_name+'-{% trans '開單'%}');
     			
     			$('#modal-create_ticket').on('hidden.bs.modal', function(){
 					if (formtype == 'startinput')
@@ -394,7 +392,7 @@
     	
     	function createOmdata(){
 			Swal.fire({
-			  title: '處理中...',
+			  title: '{% trans '處理中'%}...',
 			  toast: true,
 			  position: 'bottom-start',
 			  showConfirmButton: false,
@@ -463,7 +461,7 @@
 					            fileTotalSize = 0;
 					            Swal.fire({
 						      	  icon : 'success',
-						      	  title: '檔案上傳成功',
+						      	  title: '{% trans '檔案上傳成功'%}',
 						      	  toast: true,
 							  	  position: 'bottom-start',
 							  	  showConfirmButton: false,
@@ -491,7 +489,7 @@
 				Swal.close();
 				Swal.fire({
 		      	  icon : 'info',
-		      	  title: '請檢查必填欄位',
+		      	  title: '{% trans '請檢查必填欄位'%}',
 		      	  toast: true,
 			  	  position: 'bottom-start',
 			  	  showConfirmButton: false,
@@ -613,10 +611,10 @@
     
     function delete_omdata()
     {
-    	omflowListDialogue('delete', '下列表單將被刪除')
+    	omflowListDialogue('delete', '{% trans '下列表單將被刪除'%}')
     	$('#modal-default-list button:eq(2)').off("click").on("click",function(){
 	    	Swal.fire({
-			  title: '處理中...',
+			  title: '{% trans '處理中'%}...',
 			  toast: true,
 			  position: 'bottom-start',
 			  showConfirmButton: false,

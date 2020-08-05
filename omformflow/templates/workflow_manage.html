@@ -1,21 +1,22 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load i18n %} 
+{% load omflow_tags %}
 {% block content %}
 <!-- 
 	workflow_manage.html workflowManagePage
 	author : Pei lin
 -->
 
-	<script src="/static/js/workflow.js"></script>
+	<script src="/static/js/workflow.js?version={%omflow_version%}"></script>
 	<!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
       </h1>
       <ol class="breadcrumb">
-        <li><a href="/"><i class="fa fa-dashboard"></i> 首頁</a></li>
-		<li >流程管理</li>
-        <li><a href="/flowmanage/page/workflow-app/">已上架應用</a></li>
+        <li><a href="/"><i class="fa fa-dashboard"></i> {% trans '首頁'%}</a></li>
+		<li >{% trans '流程管理'%}</li>
+        <li><a href="/flowmanage/page/workflow-app/">{% trans '已上架應用'%}</a></li>
       </ol>
     </section>
     <section class="content">
@@ -24,10 +25,8 @@
 	  	<div class="box box-primary">
   	      <div class="box-header with-border">
   	      	<div class="pull-left">
-		      <button type="button" class="btn btn-default" onclick="active_flowdesign()" id="active_flowdesign" disabled="disabled" style="margin:1px 0px;"><i class="fa fa-play"></i> 啟用</button>
-		      <button type="button" class="btn btn-default" onclick="inactive_flowdesign()" id="inactive_flowdesign" disabled="disabled" style="margin:1px 0px;"><i class="fa fa-stop"></i> 停用</button>
-		      <button type="button" class="btn btn-default" onclick="delete_flowdesign()" id="inactive_flowdesign" disabled="disabled" style="margin:1px 0px;display:none;"><i class="fa fa-stop"></i> 刪除</button>
-		      <button type="button" class="btn btn-default" onclick="deploy_flowdesign()" id="inactive_flowdesign" disabled="disabled" style="margin:1px 0px;display:none;"><i class="fa fa-stop"></i> </button>
+		      <button type="button" class="btn btn-default" onclick="active_flowdesign()" id="active_flowdesign" disabled="disabled" style="margin:1px 0px;"><i class="fa fa-play"></i> {% trans '啟用'%}</button>
+		      <button type="button" class="btn btn-default" onclick="inactive_flowdesign()" id="inactive_flowdesign" disabled="disabled" style="margin:1px 0px;"><i class="fa fa-stop"></i> {% trans '停用'%}</button>
 		      <button type="button" class="btn btn-default" onclick="filter_flowdesign()" style="margin:1px 0px;"><i class="fa fa-filter"></i> 篩選</button>
               <button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default" onclick="filter_default()" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
           	</div>
@@ -38,10 +37,10 @@
 			  <thead>
 			  	<tr>
 				  <th style="width:15px"><a><i class="fa fa-lg fa-check-square-o checkbox-toggle" style="color:SteelBlue"></i></a></th>
-				  <th>流程名稱</th>
-				  <th>說明</th>
-                  <th>狀態</th>
-				  <th>版本</th>
+				  <th>{% trans '流程名稱'%}</th>
+				  <th>{% trans '說明'%}</th>
+                  <th>{% trans '狀態'%}</th>
+				  <th>{% trans '版本'%}</th>
 				  <th>LOG</th>
 				  <th>API</th>
 				  <th></th>
@@ -62,18 +61,20 @@
     
     
     <div class="modal fade" id="modal-workflow-set" data-backdrop="static">
-	  <div class="modal-dialog">
+	  <div class="modal-dialog modal-lg">
 		<div class="modal-content">
 		  <div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			  <span aria-hidden="true">&times;</span></button>
-			<h4 class="modal-title"><i class="fa fa-edit"></i>&nbsp;&nbsp;欄位設定</h4>
+			<h4 class="modal-title"><i class="fa fa-edit"></i>&nbsp;&nbsp;{% trans '設定'%}</h4>
 		  </div>
 		  <div class="modal-body">
 		    <div class="nav-tabs-custom">
 		      <ul class="nav nav-tabs">
-		        <li class="active"><a href="#p1" data-toggle="tab">欄位設定</a></li>
-                <li><a href="#p2" data-toggle="tab">API欄位</a></li>
+		        <li class="active"><a href="#p1" data-toggle="tab">{% trans '欄位設定'%}</a></li>
+                <li><a href="#p2" data-toggle="tab" data-value="create">{% trans '開單'%}API</a></li>
+                <li><a href="#p3" data-toggle="tab" data-value="query">{% trans '查詢'%}API</a></li>
+                <li><a href="#p4" data-toggle="tab" data-value="update">{% trans '推單'%}API</a></li>
 		      </ul>
 		      <div class="tab-content">
 		        <div class="tab-pane active" id="p1">
@@ -89,18 +90,117 @@
 				  <div class="box">
 				    <div class="box-body">		         
 			          <div class="form-group">
-			          	<select class="form-control" id="form_point">
-			          	  <option value="create">{% trans '開單'%}</option>
-			          	  <option value="update">{% trans '推單'%}</option>
-			          	</select>
+			          	<input class="form-control" id="create_URL" readonly="true"></input>
 			          </div>
 			          <div class="form-group">
-			          	<input class="form-control" id="URL" readonly="true"></input>
+			          	<input class="form-control" id="METHOD" value="POST" readonly="true"></input>
+			          </div>
+			          <div class="row">
+			            <div class="col-md-12">
+			              <div class="panel with-nav-tabs panel-default">
+			                <div class="panel-default panel-heading">
+			           	  	  <ul class="nav nav-tabs">
+			           	  		<li class="active"><a href="#create_p1" data-toggle="tab">{% trans '參數'%}</a></li>
+					 			<li><a href="#create_p2" data-toggle="tab">{% trans '回傳'%}</a></li>
+{#					 			<li><a href="#create_p3" data-toggle="tab">{% trans '回傳'%}</a></li>#}
+					 			<li><a href="#create_p4" data-toggle="tab">{% trans '錯誤'%}</a></li>
+					 		  </ul>
+					 		</div>
+					 		<div class="panel-body">
+			           	  	  <div class="tab-content">
+	              	 	  		<div class="tab-pane active" id="create_p1">
+	              	 	  		  <textarea row="9" id="create_api_text" style="width:100%;height:300px;resize:none;"></textarea>
+	              	 	  		</div>
+	              	 	  		<div class="tab-pane" id="create_p2">
+	              	 	  		  <textarea row="9" id="create_api_response" style="width:100%;height:300px;resize:none;"></textarea>
+	              	 	  	    </div>
+{#	              	 	  	    <div class="tab-pane" id="create_p3">#}
+{#	              	 	  	      <textarea row="9" id="create_api_response_1" style="width:100%;height:300px;resize:none;"></textarea>#}
+{#	              	 	  	    </div>#}
+	              	 	  	    <div class="tab-pane" id="create_p4">
+	              	 	  	      <textarea row="9" id="create_api_error" style="width:100%;height:300px;resize:none;"></textarea>
+	              	 	  	    </div>
+	              	 	  	  </div>
+	              	 	  	</div>
+					 	  </div>
+					 	</div>
+					  </div>
+			        </div>
+			      </div>
+		        </div>
+		        <div class="tab-pane" id="p3">
+				  <div class="box">
+				    <div class="box-body">		         
+			          <div class="form-group">
+			          	<input class="form-control" id="query_URL" readonly="true"></input>
 			          </div>
 			          <div class="form-group">
-			          	<input class="form-control" id="METHOD" readonly="true"></input>
+			          	<input class="form-control" id="METHOD" value="POST" readonly="true"></input>
 			          </div>
-			          <textarea row="9" id="flowapi_text" style="width:100%;height:300px;resize:none;"></textarea>
+			          <div class="row">
+			            <div class="col-md-12">
+			              <div class="panel with-nav-tabs panel-default">
+			                <div class="panel-default panel-heading">
+			           	  	  <ul class="nav nav-tabs">
+			           	  		<li class="active"><a href="#query_p1" data-toggle="tab">{% trans '參數'%}</a></li>
+					 			<li><a href="#query_p2" data-toggle="tab">{% trans '回傳'%}</a></li>
+					 			<li><a href="#query_p3" data-toggle="tab">{% trans '錯誤'%}</a></li>
+					 		  </ul>
+					 		</div>
+					 		<div class="panel-body">
+			           	  	  <div class="tab-content">
+	              	 	  		<div class="tab-pane active" id="query_p1">
+	              	 	  		  <textarea row="9" id="query_api_text" style="width:100%;height:300px;resize:none;"></textarea>
+	              	 	  		</div>
+	              	 	  		<div class="tab-pane" id="query_p2">
+	              	 	  		  <textarea row="9" id="query_api_response" style="width:100%;height:300px;resize:none;"></textarea>
+	              	 	  	    </div>
+	              	 	  	    <div class="tab-pane" id="query_p3">
+	              	 	  	      <textarea row="9" id="query_api_error" style="width:100%;height:300px;resize:none;"></textarea>
+	              	 	  	    </div>
+	              	 	  	  </div>
+	              	 	  	</div>
+					 	  </div>
+			            </div>
+			          </div>
+			        </div>
+			      </div>
+		        </div>
+		        <div class="tab-pane" id="p4">
+				  <div class="box">
+				    <div class="box-body">		         
+			          <div class="form-group">
+			          	<input class="form-control" id="update_URL" readonly="true"></input>
+			          </div>
+			          <div class="form-group">
+			          	<input class="form-control" id="METHOD" value="POST" readonly="true"></input>
+			          </div>
+			          <div class="row">
+			            <div class="col-md-12">
+			              <div class="panel with-nav-tabs panel-default">
+			                <div class="panel-default panel-heading">
+			           	  	  <ul class="nav nav-tabs">
+			           	  		<li class="active"><a href="#update_p1" data-toggle="tab">{% trans '參數'%}</a></li>
+					 			<li><a href="#update_p2" data-toggle="tab">{% trans '回傳'%}</a></li>
+					 			<li><a href="#update_p3" data-toggle="tab">{% trans '錯誤'%}</a></li>
+					 		  </ul>
+					 		</div>
+					 		<div class="panel-body">
+			           	  	  <div class="tab-content">
+	              	 	  		<div class="tab-pane active" id="update_p1">
+	              	 	  		  <textarea row="9" id="update_api_text" style="width:100%;height:300px;resize:none;"></textarea>
+	              	 	  		</div>
+	              	 	  		<div class="tab-pane" id="update_p2">
+	              	 	  		  <textarea row="9" id="update_api_response" style="width:100%;height:300px;resize:none;"></textarea>
+	              	 	  	    </div>
+	              	 	  	    <div class="tab-pane" id="update_p3">
+	              	 	  	      <textarea row="9" id="update_api_error" style="width:100%;height:300px;resize:none;"></textarea>
+	              	 	  	    </div>
+	              	 	  	  </div>
+	              	 	  	</div>
+					 	  </div>
+			            </div>
+			          </div>
 			        </div>
 			      </div>
 		        </div>
@@ -108,8 +208,8 @@
 		    </div>
 		  </div>
 		  <div class="modal-footer">
-			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
-			<button type="button" class="btn btn-primary" data-dismiss="modal" id="display_field_confirm">確定</button>
+			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">{% trans '取消'%}</button>
+			<button type="button" class="btn btn-primary" data-dismiss="modal" id="display_field_confirm">{% trans '確定'%}</button>
 		  </div>
 		</div>
 	  </div><!-- /.modal-content -->
@@ -137,7 +237,8 @@
     date.setDate(date.getDate() + 1);
 	select_time = date.getFullYear() +'-'+(date.getMonth()+1)+'-'+date.getDate();
 	var hello2 = new omformeng('hello2');
-	var myCodeMirror = CodeMirror.fromTextArea(document.getElementById('flowapi_text'), {
+	hello2.init(false)
+	var create_api_text = CodeMirror.fromTextArea(document.getElementById('create_api_text'), {
 		lineNumbers: true,
 		matchBrackets: true,
 	    autoCloseBrackets: true,
@@ -145,7 +246,78 @@
 	    lineWrapping: true,
 		indentUnit: 4,
 	});
-	hello2.init(false)
+	var create_api_response = CodeMirror.fromTextArea(document.getElementById('create_api_response'), {
+		lineNumbers: true,
+		matchBrackets: true,
+	    autoCloseBrackets: true,
+	    mode: "application/ld+json",
+	    lineWrapping: true,
+		indentUnit: 4,
+	});
+{#	var create_api_response_1 = CodeMirror.fromTextArea(document.getElementById('create_api_response_1'), {#}
+{#		lineNumbers: true,#}
+{#		matchBrackets: true,#}
+{#	    autoCloseBrackets: true,#}
+{#	    mode: "application/ld+json",#}
+{#	    lineWrapping: true,#}
+{#		indentUnit: 4,#}
+{#	});#}
+	var create_api_error = CodeMirror.fromTextArea(document.getElementById('create_api_error'), {
+		lineNumbers: true,
+		matchBrackets: true,
+	    autoCloseBrackets: true,
+	    mode: "application/ld+json",
+	    lineWrapping: true,
+		indentUnit: 4,
+	});
+	var update_api_text = CodeMirror.fromTextArea(document.getElementById('update_api_text'), {
+		lineNumbers: true,
+		matchBrackets: true,
+	    autoCloseBrackets: true,
+	    mode: "application/ld+json",
+	    lineWrapping: true,
+		indentUnit: 4,
+	});
+	var update_api_response = CodeMirror.fromTextArea(document.getElementById('update_api_response'), {
+		lineNumbers: true,
+		matchBrackets: true,
+	    autoCloseBrackets: true,
+	    mode: "application/ld+json",
+	    lineWrapping: true,
+		indentUnit: 4,
+	});
+	var update_api_error = CodeMirror.fromTextArea(document.getElementById('update_api_error'), {
+		lineNumbers: true,
+		matchBrackets: true,
+	    autoCloseBrackets: true,
+	    mode: "application/ld+json",
+	    lineWrapping: true,
+		indentUnit: 4,
+	});
+	var query_api_text = CodeMirror.fromTextArea(document.getElementById('query_api_text'), {
+		lineNumbers: true,
+		matchBrackets: true,
+	    autoCloseBrackets: true,
+	    mode: "application/ld+json",
+	    lineWrapping: true,
+		indentUnit: 4,
+	});
+	var query_api_response = CodeMirror.fromTextArea(document.getElementById('query_api_response'), {
+		lineNumbers: true,
+		matchBrackets: true,
+	    autoCloseBrackets: true,
+	    mode: "application/ld+json",
+	    lineWrapping: true,
+		indentUnit: 4,
+	});
+	var query_api_error = CodeMirror.fromTextArea(document.getElementById('query_api_error'), {
+		lineNumbers: true,
+		matchBrackets: true,
+	    autoCloseBrackets: true,
+	    mode: "application/ld+json",
+	    lineWrapping: true,
+		indentUnit: 4,
+	});
     $(function () {
     	var postbody = {a_app_id: '{{ app_id }}'};
     	omflowJsonAjax(postbody, '{% url "getApplicationFlowNameAjax" %}', getname_action);
@@ -157,7 +329,7 @@
 		if(data.status == 200)
 		{ 
 			app_name = data.result
-			$('.content-header > h1').append(app_name+'<small>流程列表</small>');
+			$('.content-header > h1').append(app_name+'<small>{% trans '流程列表'%}</small>');
 			$('ol.breadcrumb').append('<li class="active"><a href="javascript:location.reload();">'+app_name+'</a></li>')
 		}
 		else
@@ -197,9 +369,6 @@
 						data.data = a['data.data']
 						return data.data;
 					},
-				"error": function(xhr,status,error){
-							clearInterval(table_routine);
-					}
         	},   
 			"columns":[ 
 				{"width": "15px", "data": "id", "orderable": false, "render": function (data, type, row)
@@ -210,31 +379,31 @@
 				{"data":"is_active", "width": "45px", "orderable": false, "render": function(data,type,row)
 					{	
 						if(data)
-	        				{return '<button class="btn btn-xs btn-success" onclick="update_FlowActive(this,\''+row.flow_name+'\',\'is_active\')">啟用</button>'}
+	        				{return '<button class="btn btn-xs btn-success" onclick="update_FlowActive(this,\''+row.flow_name+'\',\'is_active\')">{% trans '啟用'%}</button>'}
 	        			else	
-	        				{return '<button class="btn btn-xs btn-warning" onclick="update_FlowActive(this,\''+row.flow_name+'\',\'is_active\')">停用</button>'}
+	        				{return '<button class="btn btn-xs btn-warning" onclick="update_FlowActive(this,\''+row.flow_name+'\',\'is_active\')">{% trans '停用'%}</button>'}
 	        		}
 				},
 				{"data":"version","width": "45px", "orderable": false},
 				{"data":"flowlog", "orderable": false, "width": "45px", "render": function(data,type,row)
 					{	
 						if(data)
-	        				{return '<button class="btn btn-xs btn-success" onclick="update_FlowActive(this,\''+row.flow_name+'\',\'flowlog\')">啟用</button>'}
+	        				{return '<button class="btn btn-xs btn-success" onclick="update_FlowActive(this,\''+row.flow_name+'\',\'flowlog\')">{% trans '啟用'%}</button>'}
 	        			else	
-	        				{return '<button class="btn btn-xs btn-warning" onclick="update_FlowActive(this,\''+row.flow_name+'\',\'flowlog\')">停用</button>'}
+	        				{return '<button class="btn btn-xs btn-warning" onclick="update_FlowActive(this,\''+row.flow_name+'\',\'flowlog\')">{% trans '停用'%}</button>'}
 		        		
 	        		}
 	        	},
 				{"data":"api", "orderable": false, "width": "45px", "render": function(data,type,row)
 					{	
 						if(data)
-	        				{return '<button class="btn btn-xs btn-success" onclick="update_FlowActive(this,\''+row.flow_name+'\',\'api\')">啟用</button>'}
+	        				{return '<button class="btn btn-xs btn-success" onclick="update_FlowActive(this,\''+row.flow_name+'\',\'api\')">{% trans '啟用'%}</button>'}
 	        			else	
-	        				{return '<button class="btn btn-xs btn-warning" onclick="update_FlowActive(this,\''+row.flow_name+'\',\'api\')">停用</button>'}
+	        				{return '<button class="btn btn-xs btn-warning" onclick="update_FlowActive(this,\''+row.flow_name+'\',\'api\')">{% trans '停用'%}</button>'}
 	        		}
 	        	},
 	        	{"data":"flow_name", "orderable": false, "width": "45px", "render": function(data, type, row)
-					{return '<button class="btn btn-xs btn-default" onclick="workflow_set(\''+data+'\')">設定</button>'}
+					{return '<button class="btn btn-xs btn-default" onclick="workflow_set(\''+data+'\')">{% trans '設定'%}</button>'}
 				},
 			],
 			rowCallback: function(row, data){
@@ -305,7 +474,7 @@
     
     
     function active_flowdesign(){
-    	omflowListDialogue('delete', '下列流程將被啟用');
+    	omflowListDialogue('delete', '{% trans '下列流程將被啟用'%}');
 		
 		$('#modal-default-list button:eq(2)').off("click").on("click",function(){
 			postbody = {
@@ -319,7 +488,7 @@
 			$('#modal-default-list').on('hidden.bs.modal', function () {
 				omflowJsonAjax(postbody,'{% url "activeFlowActiveAjax"%}', actions);
 				Swal.fire({
-				  title: '處理中...',
+				  title: '{% trans '處理中'%}...',
 				  toast: true,
 				  position: 'bottom-start',
 				  showConfirmButton: false,
@@ -332,7 +501,7 @@
     
     
     function inactive_flowdesign(){
-    	omflowListDialogue('delete', '下列流程將被停用');
+    	omflowListDialogue('delete', '{% trans '下列流程將被停用'%}');
 		
 		$('#modal-default-list button:eq(2)').off("click").on("click",function(){
 			postbody = {
@@ -346,7 +515,7 @@
 				$('#modal-default-list').on('hidden.bs.modal', function () {
 					omflowJsonAjax(postbody,'{% url "activeFlowActiveAjax"%}', actions);
 					Swal.fire({
-					  title: '處理中...',
+					  title: '{% trans '處理中'%}...',
 					  toast: true,
 					  position: 'bottom-start',
 					  showConfirmButton: false,
@@ -430,7 +599,7 @@
 		    			var postdata = {field: 'display_field', app_name: app_name, flow_name: flow_name, display_field: JSON.stringify(display_field)}
 		    			omflowJsonAjax(postdata, '{% url "updateFlowActiveAjax" %}', actions);
 		    			Swal.fire({
-						  title: '處理中...',
+						  title: '{% trans '處理中'%}...',
 						  toast: true,
 						  position: 'bottom-start',
 						  showConfirmButton: false,
@@ -447,28 +616,96 @@
 		    	}
 	    	}
 	    	
-	    	$('#form_point').attr('onChange', 'getApi("'+app_name+'", "'+flow_name+'", this)')
-	    	$('#form_point').val('create').trigger('change');
-	    	$('a[href="#p2"]').on('shown.bs.tab', function(){
-				myCodeMirror.refresh();
+	    	
+			$('#modal-workflow-set .nav-tabs:not(:first) a').off('shown.bs.tab').on('shown.bs.tab', function(){
+				var a = $($(this).attr('href')).children().attr('id');
+				eval(a+'.refresh()')
+			});
+			$('#modal-workflow-set .nav-tabs:first a:not(:first)').off('shown.bs.tab').on('shown.bs.tab', function(){
+	    		getApi(app_name, flow_name, $(this).data('value'))
 			});
 	    }
 	    
 	    
-	    function getApi(app_name, flow_name, obj)
+	    function getApi(app_name, flow_name, action)
 	    {
-			var form_postbody = {app_name: app_name, flow_name: flow_name, action: obj.value};
-    		omflowJsonAjax(form_postbody, '{% url "getFlowAPIFormatAjax" %}', form_callback)    	
+	    	if (action == 'query')
+	    	{
+	    		var data = {
+	    			'status':200,
+	    			'result':{
+	    				'input':{
+		    				"security": "<security>",
+		    				'app_name': app_name,
+							'flow_name': flow_name,
+							'data_no': '<{% trans '單號'%}>',
+							"omflow_restapi": 1,
+						},
+						'output':{
+							'success':{
+								'status': '200',
+								'message': '{% trans '查詢成功'%}',
+								'result': [{
+										"data_id": "<{% trans '資料的唯一編號，推單時使用'%}>",
+										"stop_chart_text": "<{% trans '停留的關卡名稱(人工處理點名稱'%})>"
+									},{
+										"data_id": "<{% trans '資料的唯一編號，推單時使用'%}>",
+										"stop_chart_text": "<{% trans '停留的關卡名稱(人工處理點名稱'%})>"
+									}
+								]
+							},
+							'error':{
+								'status': '404',
+								'message': '{% trans '查詢失敗'%}'
+							}
+						}
+	    			}
+	    		}
+	    		form_callback(data)
+	    	}
+	    	else
+	    	{
+				var form_postbody = {app_name: app_name, flow_name: flow_name, action: action};
+	    		omflowJsonAjax(form_postbody, '{% url "getFlowAPIFormatAjax" %}', form_callback)
+	    	}  	
 	    	
 	    	
 	    	function form_callback(data)
 	    	{
 	    		if (data.status == 200)
 	    		{
-	    			$('#URL').val('http:\//'+location.host+'/rest/flowmanage/api/omdata/edit/');
-	    			$('#METHOD').val('POST');
-	    			var api = data.result;
-	    			myCodeMirror.setValue(JSON.stringify(api, undefined, 2))
+	    			if (action == 'create')
+	    			{
+		    			$('#'+action+'_URL').val('http:\//'+location.host+'/rest/flowmanage/api/omdata/edit/');
+		    			var api = data.result.input;
+		    			var response = data.result.output.success1;
+						var response_1 = data.result.output.success2;
+						var error = data.result.output.error;
+		    			create_api_text.setValue(JSON.stringify(api, undefined, 2));
+		    			create_api_response.setValue(JSON.stringify(response, undefined, 2));
+{#		    			create_api_response_1.setValue(JSON.stringify(response_1, undefined, 2));#}
+		    			create_api_error.setValue(JSON.stringify(error, undefined, 2));
+		    		}
+		    		else if (action == 'update')
+		    		{
+		    			$('#'+action+'_URL').val('http:\//'+location.host+'/rest/flowmanage/api/omdata/edit/');
+		    			var api = data.result.input;
+		    			var response = data.result.output.success;
+						var error = data.result.output.error;
+		    			update_api_text.setValue(JSON.stringify(api, undefined, 2));
+		    			update_api_response.setValue(JSON.stringify(response, undefined, 2));
+		    			update_api_error.setValue(JSON.stringify(error, undefined, 2));
+		    		}
+		    		else
+		    		{
+		    			$('#'+action+'_URL').val('http:\//'+location.host+'/rest/flowmanage/api/omdata-data-id/get/');
+		    			var api = data.result.input;
+		    			var response = data.result.output.success;
+						var error = data.result.output.error;
+		    			query_api_text.setValue(JSON.stringify(api, undefined, 2));
+		    			query_api_response.setValue(JSON.stringify(response, undefined, 2));
+		    			query_api_error.setValue(JSON.stringify(error, undefined, 2));
+		    		}
 	    		}
 	    		else
 		    	{
@@ -505,7 +742,7 @@
 				table.draw(false);
 				Swal.fire({
 		      	  icon : 'success',
-		      	  title: '成功',
+		      	  title: '{% trans '成功'%}',
 		      	  toast: true,
 			  	  position: 'bottom-start',
 			  	  showConfirmButton: false,

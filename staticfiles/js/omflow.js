@@ -440,13 +440,13 @@ function omflowFilter(){
 	var filter_search = '<li class="list-group-item" name="filter_search">'+
       					'<div class="input-group">'+
       					'<span class="input-group-addon"><i class="fa fa-search"></i></span>'+
-      					'<input type="text" id="search" name="search" class="form-control" placeholder=" 搜尋..." autofocus />'+
+      					'<input type="text" id="search" name="search" class="form-control" placeholder=" ' + gettext('搜尋') + '..." autofocus />'+
       					'</div>'+
       					'</li>';
 	
 	var filter_type = 	'<li class="list-group-item" name="filter_type">'+
 						'<div class="form-group" style="margin:0px;">'+
-						'<label class="text-light-blue">屬性 ：</label>'+
+						'<label class="text-light-blue">' + gettext('屬性') + '：</label>'+
 						'<br>'+
            				'<input type="checkbox" class="icheckbox_minimal-blue" name="filter_type" data-value="lib" id="filter_lib" checked><label for="filter_lib"></label>&nbsp;&nbsp;&nbsp;lib&nbsp;&nbsp;&nbsp;'+
            				'<input type="checkbox" class="icheckbox_minimal-blue" name="filter_type" data-value="sys" id="filter_sys" checked><label for="filter_sys"></label>&nbsp;&nbsp;&nbsp;sys&nbsp;&nbsp;&nbsp;'+
@@ -457,7 +457,7 @@ function omflowFilter(){
 	
 	var filter_utype = 	'<li class="list-group-item" name="filter_utype">'+
 						'<div class="form-group" style="margin:0px;">'+
-						'<label class="text-light-blue">類別 ：</label>'+
+						'<label class="text-light-blue">' + gettext('類別') + '：</label>'+
 						'<br>'+
 						'<input type="checkbox" class="icheckbox_minimal-blue" name="filter_utype" data-value="1" id="filter_type_1" checked><label for="filter_type_1"></label>&nbsp;&nbsp;&nbsp;外部&nbsp;&nbsp;&nbsp;'+
 			            '<input type="checkbox" class="icheckbox_minimal-blue" name="filter_utype" data-value="0" id="filter_type_0" checked><label for="filter_type_0"></label>&nbsp;&nbsp;&nbsp;系統&nbsp;&nbsp;&nbsp;'+
@@ -466,7 +466,7 @@ function omflowFilter(){
 	
 	var filter_status = '<li class="list-group-item" name="filter_status">'+
 						'<div class="form-group" style="margin:0px;">'+
-						'<label class="text-light-blue">狀態 ：</label>'+
+						'<label class="text-light-blue">' + gettext('狀態') + '：</label>'+
 						'<br>'+
 			            '<input type="checkbox" class="icheckbox_minimal-blue" name="filter_status" data-value="1" id="filter_status_1" checked><label for="filter_status_1"></label>&nbsp;&nbsp;&nbsp;啟用&nbsp;&nbsp;&nbsp;'+
 			            '<input type="checkbox" class="icheckbox_minimal-blue" name="filter_status" data-value="0" id="filter_status_0" checked><label for="filter_status_0"></label>&nbsp;&nbsp;&nbsp;停用&nbsp;&nbsp;&nbsp;'+
@@ -475,7 +475,7 @@ function omflowFilter(){
 	
 	var filter_closed = '<li class="list-group-item" name="filter_closed">'+
 						'<div class="form-group" style="margin:0px;">'+
-						'<label class="text-light-blue">已關單/未關單 ：</label>'+
+						'<label class="text-light-blue">' + gettext('已關單') + '/' + gettext('未關單') + '：</label>'+
 						'<br>'+
 					    '<input type="checkbox" class="icheckbox_minimal-blue" name="filter_closed" data-value="1" id="filter_closed_1"><label for="filter_closed_1"></label>&nbsp;&nbsp;&nbsp;已關單&nbsp;&nbsp;&nbsp;'+
 					    '<input type="checkbox" class="icheckbox_minimal-blue" name="filter_closed" data-value="0" id="filter_closed_0" checked><label for="filter_closed_0"></label>&nbsp;&nbsp;&nbsp;未關單&nbsp;&nbsp;&nbsp;'+
@@ -484,7 +484,7 @@ function omflowFilter(){
 
 	var filter_length = '<li class="list-group-item" name="filter_length">'+
 						'<div class="form-group" style="margin:0px;">'+
-		            	'<label class="text-light-blue">每頁顯示筆數 :</label>'+
+		            	'<label class="text-light-blue">' + gettext('每頁顯示筆數 ') + ':</label>'+
 		            	'<br>'+
 						'<select id="page_length" class="form-control">'+
 					  	'	<option value="10">10</option>'+
@@ -497,11 +497,11 @@ function omflowFilter(){
 	
 	var filter_date =	'<li class="list-group-item" name="filter_date">'+
 						'<div class="form-group" style="margin:0px;">'+
-						'<label class="text-light-blue">選擇檔案日期範圍 :</label>'+
+						'<label class="text-light-blue">' + gettext('選擇檔案日期範圍') + ':</label>'+
 						'<br>'+
 						'<button type="button" class="btn btn-default" id="daterange">'+
 						'<span>'+
-						'<i class="fa fa-calendar"></i> 選擇日期 '+
+						'<i class="fa fa-calendar"></i> ' + gettext('選擇日期') + 
 						'</span>'+
 						'<i class="fa fa-caret-down"></i>'+
 						'</button>'+
@@ -510,10 +510,10 @@ function omflowFilter(){
 	
 	var filter_drange = '<li class="list-group-item" name="filter_date">'+
 						'<div class="form-group" style="margin:0px;">'+
-					    '<label class="text-light-blue">選擇日期範圍:</label>(測試中)'+
+					    '<label class="text-light-blue">' + gettext('選擇日期範圍') + ':</label>(測試中)'+
 					    '<div class="input-group">'+
 					    '<button type="button" class="btn btn-default pull-right" id="daterange-btn">'+
-					    '<span><i class="fa fa-calendar"></i> 選擇日期範圍</span>'+
+					    '<span><i class="fa fa-calendar"></i> ' + gettext('選擇日期範圍') + '</span>'+
 					    '<i class="fa fa-caret-down"></i>'+
 					    '</button>'+
 					    '</div>'+
@@ -522,7 +522,7 @@ function omflowFilter(){
 	
 	var filter_flow = 	'<li class="list-group-item" name="filter_flow">'+
 						'<div class="form-group" style="margin:0px;">'+
-						'<label class="text-light-blue">查詢特定流程 :</label>'+
+						'<label class="text-light-blue">' + gettext('查詢特定流程') + ' :</label>'+
 						'<br>'+
 						'<select id="select_flow_uuid" class="form-control" style="width:100%; margin-bottom:10px;">'+                  		
 						'</select>'+
@@ -549,38 +549,36 @@ function omflowFilter(){
 	
 	if (filter_item.indexOf('filter_date')　>= 0){
 		//Date range as a button
+		var ranges = {};
+		ranges[gettext('顯示所有檔案')] = [moment().toDate()];
+		ranges[gettext('30  天') + '&nbsp;&nbsp;&nbsp;' + gettext('前所有檔案')] = [moment().subtract(30, 'days')];
+		ranges[gettext('60  天') + '&nbsp;&nbsp;&nbsp;' + gettext('前所有檔案')] = [moment().subtract(60, 'days')];
+		ranges[gettext('120  天')+ '&nbsp;' + gettext('前所有檔案')] = [moment().subtract(120, 'days')];
+		ranges[gettext('6 個月') + '&nbsp;' + gettext('前所有檔案')] = [moment().subtract(6, 'month')];
+		ranges[gettext('一年')  + '&nbsp;&nbsp;&nbsp;&nbsp;' + gettext('前所有檔案')] =[moment().subtract(1, 'year')];
 	    $('#daterange').daterangepicker(
 			{
-				ranges   : 
-				{
-					'顯示所有檔案' : [moment().toDate()],
-					'30  天&nbsp;&nbsp;&nbsp;前所有檔案' : [moment().subtract(30, 'days')],
-					'60  天&nbsp;&nbsp;&nbsp;前所有檔案' : [moment().subtract(60, 'days')],
-					'120  天&nbsp;前所有檔案': [moment().subtract(120, 'days')],
-					'6 個月&nbsp;前所有檔案'  : [moment().subtract(6, 'month')],
-					'一年&nbsp;&nbsp;&nbsp;&nbsp;	前所有檔案'  : [moment().subtract(1, 'year')]
-				},
+				ranges   : ranges,
 				startDate: moment().subtract(29, 'days'),
 			},
 			function (start) {
-				$('#daterange'+' span').html(start.format('Y-MM-DD')+' 前所有檔案 ');
+				$('#daterange'+' span').html(start.format('Y-MM-DD') + gettext('前所有檔案 '));
 		      	select_time = start.add(1,'days').format('Y-MM-DD');
 			}
 		);
 	}
 	
 	if(filter_item.indexOf('filter_drange')　>= 0){
+		var ranges = {};
+		ranges[gettext('今天')]     = [moment(), moment()];
+		ranges[gettext('昨天')]     = [moment().subtract(1, 'days'), moment().subtract(1, 'days')];
+		ranges[gettext('最近一周')]  = [moment().subtract(6, 'days'), moment()];
+		ranges[gettext('最近30天')]  = [moment().subtract(29, 'days'), moment()];
+		ranges[gettext('本月')]     = [moment().startOf('month'), moment().endOf('month')];
+		ranges[gettext('上個月')]    = [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')];
 		$('#daterange-btn').daterangepicker(
 			{
-				ranges   : 
-				{
-					'今天'       : [moment(), moment()],
-					'昨天'   		: [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-					'最近一周' 	: [moment().subtract(6, 'days'), moment()],
-					'最近30天'	: [moment().subtract(29, 'days'), moment()],
-					'本月'  		: [moment().startOf('month'), moment().endOf('month')],
-					'上個月'  	: [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-				},
+				ranges   : ranges,
 				startDate: moment().subtract(29, 'days'),
 				endDate  : moment()
 			},

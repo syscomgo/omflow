@@ -10,7 +10,7 @@
             <h4 class="modal-title">{% trans '提示' %}</h4>
           </div>
           <div class="modal-body">
-            <p>帳號已登入，是否登出其他使用者後登入</p>
+            <p>{% trans '帳號已登入，是否登出其他使用者後登入'%}</p>
           </div>
           <div class="modal-footer">
           	<button type="button" class="btn btn-default pull-left" data-dismiss="modal">{% trans '取消' %}</button>
@@ -37,8 +37,8 @@
 		  	</ul>
 		  </div>
 		  <div class="modal-footer">
-			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
-			<button type="button" 	class="btn btn-primary" data-dismiss="modal">確定</button>
+			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">{% trans '取消'%}</button>
+			<button type="button" 	class="btn btn-primary" data-dismiss="modal">{% trans '確定'%}</button>
 		  </div>
 		</div>
 	  </div><!-- /.modal-content -->
@@ -71,15 +71,15 @@
 		  <div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			  <span aria-hidden="true">&times;</span></button>
-			<h4 class="modal-title"><i class="fa fa-filter"></i>&nbsp;&nbsp;篩選設定</h4>
+			<h4 class="modal-title"><i class="fa fa-filter"></i>&nbsp;&nbsp;{% trans '篩選設定'%}</h4>
 		  </div>
 		  <div class="modal-body">
 	        <ul class="list-group list-group-unbordered">
 	        </ul>
 		  </div>
 		  <div class="modal-footer">
-			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
-			<button type="button" class="btn btn-primary" id="modal-default-filter-confirm" data-dismiss="modal">確定</button>
+			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">{% trans '取消'%}</button>
+			<button type="button" class="btn btn-primary" id="modal-default-filter-confirm" data-dismiss="modal">{% trans '確定'%}</button>
 		  </div>
 		</div>
 	  </div><!-- /.modal-content -->
@@ -93,23 +93,23 @@
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title">選擇</h4>
+            <h4 class="modal-title">{% trans '選擇'%}</h4>
           </div>
           <div class="modal-body">
 	        <div class="form-group">
 			  <div class="input-group" style="width:100%">
 			    <span class="input-group-btn" style="width:20%">
 			      <select class="form-control" name="search_type" id="search_type">
-			        <option value="" disabled="disabled">搜尋類型</option>
-			        <option id="withuser" value="withuser">名稱</option>
-			        <option id="withgroup" value="withgroup">組織</option>
+			        <option value="" disabled="disabled">{% trans '搜尋類型'%}</option>
+			        <option id="withuser" value="withuser">{% trans '名稱'%}</option>
+			        <option id="withgroup" value="withgroup">{% trans '組織'%}</option>
 			      </select>
 			    </span>
 			    <span class="input-group-btn"  style="width:70%">
 			      <input type="text" class="form-control" placeholder="" name="search_detail" id="search_detail">
 			    </span>
 			    <span class="input-group-btn"  style="width:10%">
-			      <button type="button" class="btn btn-default" onclick="search_user()">搜尋</button>
+			      <button type="button" class="btn btn-default" onclick="search_user()">{% trans '搜尋'%}</button>
 			    </span>
 			  </div>
 			</div>  	
@@ -128,8 +128,8 @@
 		  </table>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
-            <button type="button" id="select_user_grop_button" class="btn btn-primary" onclick="select_receiver()">確定</button>
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">{% trans '取消'%}</button>
+            <button type="button" id="select_user_grop_button" class="btn btn-primary" onclick="select_receiver()">{% trans '確定'%}</button>
           </div>
         </div>
         <!-- /.modal-content -->
@@ -155,38 +155,6 @@
 	</div>
 	
 	
-	<div class="modal fade" id="modal-default-cloud" data-backdrop="static">
-	  <div class="modal-dialog">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-	          <span aria-hidden="true">&times;</span>
-	        </button>
-	        <h4 class="modal-title"><i class="fa fa-cloud-download"></i>&nbsp;&nbsp;下載流程</h4>
-	      </div>
-	      <div class="modal-body">
-	        <ul class="list-group list-group-unbordered">
-	          <li class="list-group-item">
-	            <div class="input-group">
-	              <div class="input-group-addon" onclick="alert('search');">
-	                <i class="fa fa-search"></i>
-	              </div>
-	              <input type="text" class="form-control" placeholder="搜尋...">
-	            </div>
-              </li>
-              <li class="list-group-item">
-                <b class="text-light-blue">未定-暫時保留</b>
-              </li>
-            </ul>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
-            <button type="button" class="btn btn-primary" data-dismiss="modal">確定</button>
-          </div>
-        </div>
-      </div>
-	</div>
-	
 	<div class="modal fade" id="modal-box-config">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -194,60 +162,33 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
       	      <span aria-hidden="true">&times;</span>
       	    </button>
-            <h4 class="modal-title"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;區塊設定</h4>
+            <h4 class="modal-title"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;{% trans '區塊設定'%}</h4>
           </div>
           <div class="modal-body">
             <div class="form-group has-warning">
-              <label>標題文字</label>
-              <input id="box_config_modal_title" type="text" class="form-control" placeholder="請輸入標題文字">
+              <label>{% trans '標題文字'%}</label>
+              <input id="box_config_modal_title" type="text" class="form-control" placeholder="{% trans '請輸入標題文字'%}">
             </div>
             <div class="form-group">
-              <label>標示顏色</label>
+              <label>{% trans '標示顏色'%}</label>
               <select id="box_config_modal_color" class="form-control select2" >
-                <option value='box box-default'>灰</option>
-                <option value='box box-danger'>紅</option>
-                <option value='box box-warning'>黃</option>
-                <option value='box box-primary'>藍</option>
-                <option value='box box-info'>水藍</option>
-                <option value='box box-success'>綠</option>
+                <option value='box box-default'>{% trans '灰'%}</option>
+                <option value='box box-danger'>{% trans '紅'%}</option>
+                <option value='box box-warning'>{% trans '黃'%}</option>
+                <option value='box box-primary'>{% trans '藍'%}</option>
+                <option value='box box-info'>{% trans '水藍'%}</option>
+                <option value='box box-success'>{% trans '綠'%}</option>
               </select>
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
-            <button type="button" class="btn btn-primary" onclick="modal_config_box_sumbit()">確定</button>
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">{% trans '取消'%}</button>
+            <button type="button" class="btn btn-primary" onclick="modal_config_box_sumbit()">{% trans '確定'%}</button>
           </div>
         </div>
 	  </div>
 	</div>
-	
-	
-	<div class="modal fade" id="modal-default-delete">
-	  <div class="modal-dialog">
-		<div class="modal-content">
-		  <div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-			  <span aria-hidden="true">&times;</span>
-			</button>
-	        <h4 class="modal-title"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;下列組織將被刪除</h4>
-		  </div>
-		  <div class="modal-body">
-			<ul class="list-group list-group-unbordered">
-				<li class="list-group-item">
-				  <b class="text-light-blue">事故管理員</b> <a class="pull-right">eventmgr</a>
-				</li>
-				<li class="list-group-item">
-				  <b class="text-light-blue">測試者</b> <a class="pull-right">testing</a>
-				</li>
-			</ul>
-		  </div>
-		  <div class="modal-footer">
-			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
-			<button type="button" class="btn btn-primary" data-dismiss="modal">確定</button>
-		  </div>
-		</div>
-	  </div>
-	</div>
+
 	
 	<div class="modal fade" id="modal-box-add">
       <div class="modal-dialog">
@@ -256,18 +197,18 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
-            <h4 class="modal-title"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;新增項目</h4>
+            <h4 class="modal-title"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;{% trans '新增項目'%}</h4>
           </div>
           <div class="modal-body">
 			<div class="form-group">
-              <label>選擇新增項目</label>
+              <label>{% trans '選擇新增項目'%}</label>
                 <select id="box_add_modal_select" class="form-control select2" style="width: 100%;">
                 </select>
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
-            <button type="button" class="btn btn-primary" onclick="modal_add_sumbit()">確定</button>
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">{% trans '取消'%}</button>
+            <button type="button" class="btn btn-primary" onclick="modal_add_sumbit()">{% trans '確定'%}</button>
           </div>
 		</div>
       </div>
@@ -287,12 +228,12 @@
 			<ul class="list-group list-group-unbordered">
 			  <li class="list-group-item">
 				<div class="form-group">
-				  <label >版本</label>
+				  <label >{% trans '版本'%}</label>
 				  <br>
 				  <input type="text" name="version" class="form-control">
 				</div>
 				<div class="form-group">
-				  <label>備註</label>
+				  <label>{% trans '備註'%}</label>
 				  <br>
 				  <textarea rows="3" name="notes" class="form-control" style="resize:none;"></textarea>
 				</div>
@@ -300,8 +241,8 @@
 			</ul>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
-            <button type="button" class="btn btn-primary" data-dismiss="modal">確定</button>
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">{% trans '取消'%}</button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal">{% trans '確定'%}</button>
           </div>
 		</div>
       </div>
@@ -321,14 +262,14 @@
 			<ul class="list-group list-group-unbordered">
 			   <li class="list-group-item">
 				<div class="form-group">
-				  <label class="text-light-blue">資料夾名稱</label>
+				  <label class="text-light-blue">{% trans '資料夾名稱'%}</label>
 				  <br>
-				  <input name="folder_name" class="form-control" placeholder="資料夾名稱">
+				  <input name="folder_name" class="form-control" placeholder="{% trans '資料夾名稱'%}">
 				</div>
 			  </li>
 			  <li class="list-group-item">
 				<div class="form-group">
-		          <label class="text-light-blue">資料夾圖示</label>
+		          <label class="text-light-blue">{% trans '資料夾圖示'%}</label>
 		          <br>
 		          <table class="table mo-margin">
 				  	<tr>
@@ -357,8 +298,8 @@
 			</ul>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
-            <button type="button" class="btn btn-primary" data-dismiss="modal">確定</button>
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">{% trans '取消'%}</button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal">{% trans '確定'%}</button>
           </div>
 		</div>
       </div>
@@ -380,8 +321,8 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default pull-left" data-dismiss="modal">{% trans '取消'%}</button>
-            <button type="button" id="showAdvance" style="display:none;" class="btn btn-default" onclick="Grid_showAdvance()">進階設定&nbsp;<i class="fa fa-caret-right"></i></button>
-            <button type="button" id="showSearch" style="display:none;" class="btn btn-default" onclick="Grid_showSearch()"><i class="fa fa-caret-left"></i>&nbsp;資料設定</button>
+            <button type="button" id="showAdvance" style="display:none;" class="btn btn-default" onclick="Grid_showAdvance()">{% trans '進階設定'%}&nbsp;<i class="fa fa-caret-right"></i></button>
+            <button type="button" id="showSearch" style="display:none;" class="btn btn-default" onclick="Grid_showSearch()"><i class="fa fa-caret-left"></i>&nbsp;{% trans '資料設定'%}</button>
             <button type="button" class="btn btn-primary" onclick="Grid_submit()">{% trans '確定'%}</button>
           </div>
         </div>
@@ -396,17 +337,17 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
       	      <span aria-hidden="true">&times;</span>
       	    </button>
-            <h4 class="modal-title"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;內容設定</h4>
+            <h4 class="modal-title"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;{% trans '內容設定'%}</h4>
           </div>
           <div class="modal-body">
             <div class="form-group">
-              <label>輸入設計</label>
+              <label>{% trans '輸入設計'%}</label>
               <textarea rows="3" class="form-control" id="dashboard_content" ></textarea>
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
-            <button type="button" class="btn btn-primary" onclick="Dashboard_importJson()">確定</button>
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">{% trans '取消'%}</button>
+            <button type="button" class="btn btn-primary" onclick="Dashboard_importJson()">{% trans '確定'%}</button>
           </div>
         </div>
 	  </div>
@@ -642,7 +583,7 @@
             <h4 class="modal-title">{% trans '錯誤' %}</h4>
           </div>
           <div class="modal-body" id="modal_error_text">
-            <p>{% trans '系統發生嚴重的錯誤' %}</p>
+            <p>{% trans '連線發生錯誤，請檢查網路連線是否正常，或與系統管理員聯絡' %}</p>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">{% trans '關閉' %}</button>

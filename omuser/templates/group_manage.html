@@ -67,11 +67,11 @@
 		  <div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			  <span aria-hidden="true">&times;</span></button>
-			<h4 class="modal-title" id="modal-create-group-title"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增組織</h4>
+			<h4 class="modal-title" id="modal-create-group-title"><i class="fa fa-plus"></i>&nbsp;&nbsp;{% trans '新增組織'%}</h4>
 		  </div>
 		  <div class="modal-body">
 		    <div class="form-group">
-              <label>選擇所屬組織</label>
+              <label>{% trans '選擇所屬組織'%}</label>
               <select class="form-control select2" style="width: 100%;" id="modal-create-group-text">
 	              </select>
             </div>
@@ -83,8 +83,8 @@
             <!-- /.form-group -->
 		  </div>
 		  <div class="modal-footer">
-			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
-			<button type="button" class="btn btn-primary" data-dismiss="modal">確定</button>
+			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">{% trans '取消'%}</button>
+			<button type="button" class="btn btn-primary" data-dismiss="modal">{% trans '確定'%}</button>
 		  </div>
 		</div>
 	  </div><!-- /.modal-content -->
@@ -105,24 +105,26 @@
 			{
 				$('#group_table_body').empty();
 				grouplist = data.result;
+				var output = ''
 				$.each(grouplist, function(index, value){
 					if (value.parent_group==null)
 					{
-						$('#group_table_body').prepend( '<tr data-node-id="'+value.id+'" id="group_id_'+value.id+'">'+
+						output += '<tr data-node-id="'+value.id+'" id="group_id_'+value.id+'">'+
 							'<td><input type="checkbox" class="icheckbox_minimal-blue" data-name="checkbox" id="'+value.display_name+'" value="'+value.display_name+'" data-value="'+value.display_name+'"><label for="'+value.display_name+'"></label></td>'+
 							'<td>'+value.id+'</td>'+
-							'<td>&nbsp;&nbsp;<a href="/accounts/page/group-detail/'+value.id+'/" title="編輯'+value.display_name+'" style="color:black;"><i class="fa fa-fw fa-edit" style="color:SteelBlue"></i>' +value.display_name+'</a></td>'+
-							'</tr>')
+							'<td>&nbsp;&nbsp;<a href="/accounts/page/group-detail/'+value.id+'/" title="{% trans '編輯'%}'+value.display_name+'" style="color:black;"><i class="fa fa-fw fa-edit" style="color:SteelBlue"></i>' +value.display_name+'</a></td>'+
+							'</tr><!--'+value.id+'-->';
 					}
 					else
 					{
-						$("#group_id_"+value.parent_group).after( '<tr data-node-id="'+value.id+'" data-node-pid="'+value.parent_group+'" id="group_id_'+value.id+'">'+
+						output = output.replace('<!--'+value.parent_group+'-->', '<tr data-node-id="'+value.id+'" data-node-pid="'+value.parent_group+'" id="group_id_'+value.id+'">'+
 							'<td><input type="checkbox" class="icheckbox_minimal-blue" data-name="checkbox" id="'+value.display_name+'" value="'+value.display_name+'" data-value="'+value.display_name+'"><label for="'+value.display_name+'"></label></td>'+
 							'<td>'+value.id+'</td>'+
-							'<td>&nbsp;&nbsp;<a href="/accounts/page/group-detail/'+value.id+'/" title="編輯'+value.display_name+'" style="color:black;"><i class="fa fa-fw fa-edit" style="color:SteelBlue"></i>' +value.display_name+'</a></td>'+
-							'</tr>')
+							'<td>&nbsp;&nbsp;<a href="/accounts/page/group-detail/'+value.id+'/" title="{% trans '編輯'%}'+value.display_name+'" style="color:black;"><i class="fa fa-fw fa-edit" style="color:SteelBlue"></i>' +value.display_name+'</a></td>'+
+							'</tr><!--'+value.id+'--><!--'+value.parent_group+'-->');
 					}	
 				});
+				$('#group_table_body').append(output);
 				$('#group_table').simpleTreeTable({
 				    expander: $('#expander'),
 				    collapser: $('#collapser'),
@@ -220,7 +222,7 @@
 			postdata['functional_flag']="False";
 			omflowJsonAjax(postdata, '{% url 'addGroupAjax'%}', actions);
 			Swal.fire({
-			  title: '處理中...',
+			  title: '{% trans '處理中'%}...',
 			  toast: true,
 			  position: 'bottom-start',
 			  showConfirmButton: false,
@@ -242,7 +244,7 @@
 			$('#modal-default-list').on('hidden.bs.modal', function () {
 				omflowJsonAjax(postdata, '{% url 'deleteGroupAjax'%}', actions);
 				Swal.fire({
-				  title: '處理中...',
+				  title: '{% trans '處理中'%}...',
 				  toast: true,
 				  position: 'bottom-start',
 				  showConfirmButton: false,
@@ -261,7 +263,7 @@
 			listgroup();
 			Swal.fire({
 	      	  icon : 'success',
-	      	  title: '成功',
+	      	  title: '{% trans '成功'%}',
 	      	  toast: true,
 		  	  position: 'bottom-start',
 		  	  showConfirmButton: false,

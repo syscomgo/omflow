@@ -291,12 +291,12 @@ var organizer = function(div_id)
 				//no function assign
 				role_data_source = 
 						[
-							{id: 1, display_name: "預算主管"},
-							{id: 2, display_name: "主管"},
-							{id: 7, display_name: "工程師"},
-							{id: 3, display_name: "一般員工"},
-							{id: 6, display_name: "經理"},
-							{id: 5, display_name: "處長"}
+							{id: 1, display_name: gettext("預算主管")},
+							{id: 2, display_name: gettext("主管")},
+							{id: 7, display_name: gettext("工程師")},
+							{id: 3, display_name: gettext("一般員工")},
+							{id: 6, display_name: gettext("經理")},
+							{id: 5, display_name: gettext("處長")}
 						];
 			}
 			else
@@ -373,12 +373,12 @@ var organizer = function(div_id)
 				//no function assign
 				user_data_source = 
 						[
-							{id: 1, nick_name: "林先生"},
-							{id: 2, nick_name: "李先生"},
-							{id: 7, nick_name: "張小姐"},
-							{id: 3, nick_name: "王先生"},
-							{id: 6, nick_name: "徐先生"},
-							{id: 5, nick_name: "池先生"}
+							{id: 1, nick_name: gettext("林先生")},
+							{id: 2, nick_name: gettext("李先生")},
+							{id: 7, nick_name: gettext("張小姐")},
+							{id: 3, nick_name: gettext("王先生")},
+							{id: 6, nick_name: gettext("徐先生")},
+							{id: 5, nick_name: gettext("池先生")}
 						];
 			}
 			else
@@ -741,19 +741,19 @@ var organizer = function(div_id)
                 if(item.type == 'dept')
                 {
                                  new_item.type = 'role';
-                                 new_item.text = '選擇職務';
+                                 new_item.text = gettext('選擇職務');
                                  new_item.config = new role_object();
                 }
                 if(item.type == 'role')
                 {
                                  new_item.type = 'people';
-                                 new_item.text = '選擇人';
+                                 new_item.text = gettext('選擇人');
                                  new_item.config = new people_object();
                 }
                 if(item.type == 'people')
                 {
                                  new_item.type = 'people';
-                                 new_item.text = '選擇人';
+                                 new_item.text = gettext('選擇人');
                                  new_item.config = new people_object();
                 }
 				

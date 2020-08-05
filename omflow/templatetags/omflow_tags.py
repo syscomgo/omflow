@@ -18,7 +18,7 @@ def get_org_bool():
     return boolstr
 
 @register.simple_tag
-def onflow_version():
+def omflow_version():
     version = License().getVersion()
     return version
 

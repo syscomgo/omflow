@@ -43,7 +43,7 @@ def saveDashboardAjax(request):
             return ResponseAjax(statusEnum.success, _('儲存成功')).returnJSON()
         else:
             info(request,'%s update Dashboard error' % username)
-            return ResponseAjax(statusEnum.not_found, _(checker.get('message')), checker).returnJSON()
+            return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
     else:
         info(request,'%s update Dashboard with no permission' % username)
         return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
@@ -378,7 +378,7 @@ def updateGridAjax(request):
             else:
                 return ResponseAjax(statusEnum.error, _('查詢失敗')).returnJSON()
         else:
-            return ResponseAjax(statusEnum.error, _(error_message)).returnJSON()
+            return ResponseAjax(statusEnum.error, error_message).returnJSON()
     else:
         return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
          
@@ -458,13 +458,13 @@ def getColumnListAjax(request):
                         result[field.name] = field.verbose_name
                     
                 info(request,'%s get Column-List success' % username)
-                return ResponseAjax(statusEnum.success, _('讀取成功'),result).returnJSON()
+                return ResponseAjax(statusEnum.success, _('讀取成功。'),result).returnJSON()
             else:
                 info(request,'%s get Column-List with no permission' % username)
                 return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
         else:
             info(request,'%s get Column-List error' % username)
-            return ResponseAjax(statusEnum.not_found, _(checker.get('message')), checker).returnJSON()
+            return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
     else:
         info(request,'%s get Column-List with no permission' % username)
         return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()

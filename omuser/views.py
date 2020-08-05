@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.contrib import auth
 from django.utils.translation import gettext as _
 from omflow.syscom.message import ResponseAjax, statusEnum
-from omflow.syscom.common import checkEmailFormat, DatatableBuilder, try_except, DataChecker, check_app, DataFormat, getPostdata
+from omflow.syscom.common import checkEmailFormat, DatatableBuilder, try_except, DataChecker, check_app, DataFormat, getPostdata, getModel, listQueryBuilder
 from omflow.views import checkLicense
 from omuser.models import OmUser, OmGroup
 from django.contrib.auth.decorators import login_required, permission_required
@@ -66,7 +66,7 @@ def loginAjax(request):
             if check_LDAP_auth(username_db, password) and check_app('omldap'):
                 user = OmUser.objects.get(username=username_db)
             else:
-                return ResponseAjax(statusEnum.no_permission ,  _('登入失敗')).returnJSON()
+                return ResponseAjax(statusEnum.no_permission ,  _('登入失敗。')).returnJSON()
         else:
             user = auth.authenticate(username=username_db, password=password)
         if user is not None and user.is_active:
@@ -82,10 +82,10 @@ def loginAjax(request):
             request.session['web_login'] = True
             request.session.set_expiry(130)
             info(request ,'%s Login success' % request.user.username)
-            return ResponseAjax(statusEnum.success,  _('登入成功')).returnJSON()
+            return ResponseAjax(statusEnum.success,  _('登入成功。')).returnJSON()
         else:
             info(request ,'%s Login failure' % request.user.username)
-            return ResponseAjax(statusEnum.no_permission ,  _('登入失敗')).returnJSON()
+            return ResponseAjax(statusEnum.no_permission ,  _('登入失敗。')).returnJSON()
     except Exception as e:
         error(request,e)
         return ResponseAjax(statusEnum.no_permission ,  _('登入失敗，查無此使用者帳號。')).returnJSON()
@@ -117,7 +117,7 @@ def checkMultipleLoginAjax(request):
             if check_LDAP_auth(username_db, password) and check_app('omldap'):
                 user = OmUser.objects.get(username=username_db)
             else:
-                return ResponseAjax(statusEnum.no_permission ,  _('登入失敗')).returnJSON()
+                return ResponseAjax(statusEnum.no_permission ,  _('登入失敗。')).returnJSON()
         else:
             user = auth.authenticate(username=username_db, password=password)
         if user is not None and user.is_active:
@@ -136,7 +136,7 @@ def checkMultipleLoginAjax(request):
                         session_obj.delete()
                         break
             if already_login:
-                return ResponseAjax(statusEnum.success,  _('重複登入'), already_login).returnJSON()
+                return ResponseAjax(statusEnum.success,  _('重複登入。'), already_login).returnJSON()
             else:
                 auth.login(request, user)
                 request.session['web_login'] = True
@@ -145,7 +145,7 @@ def checkMultipleLoginAjax(request):
                 return ResponseAjax(statusEnum.success,  already_login_message, already_login).returnJSON()
         else:
             info(request ,'%s Login failure' % request.user.username)
-            return ResponseAjax(statusEnum.no_permission ,  _('登入失敗')).returnJSON()
+            return ResponseAjax(statusEnum.no_permission ,  _('登入失敗。')).returnJSON()
     except Exception as e:
         error(request,e)
         return ResponseAjax(statusEnum.no_permission ,  _('登入失敗，查無此使用者帳號。')).returnJSON()
@@ -173,6 +173,7 @@ def registerPage(request):
 
 
 @csrf_exempt
+@try_except
 def registerAjax(request):
     '''
     register a new user , superuser permission for first register
@@ -217,7 +218,7 @@ def registerAjax(request):
                             error_message += _('電子郵件已被註冊。')
                     
                 if user is not None:
-                    return ResponseAjax(statusEnum.success,  _('註冊成功')).returnJSON()
+                    return ResponseAjax(statusEnum.success,  _('註冊成功。')).returnJSON()
                 else:
                     return ResponseAjax(statusEnum.no_permission, error_message).returnJSON()
             else:
@@ -282,13 +283,13 @@ def loadUserAjax(request):
                 result['group_list'] = group_list
                 result['role_list'] = role_list
             info(request ,'%s load user success' % request.user.username)
-            return ResponseAjax(statusEnum.success , _('讀取成功'), result).returnJSON()
+            return ResponseAjax(statusEnum.success, _('讀取成功。'), result).returnJSON()
         else:
             info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
             return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
     else:
         info(request ,'%s has no permission.' % request.user.username)
-        return ResponseAjax(statusEnum.no_permission ,  _('您沒有權限進行此操作。')).returnJSON()
+        return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
     
 
 @login_required
@@ -334,10 +335,10 @@ def updateUserAjax(request):
         
     if user is not None:
         info(request ,'%s update user success' % request.user.username)
-        return ResponseAjax(statusEnum.success,  _('更新成功')).returnJSON()
+        return ResponseAjax(statusEnum.success, _('更新成功。')).returnJSON()
     else:
         info(request ,'%s update user success' % request.user.username)
-        return ResponseAjax(statusEnum.no_permission ,  _('更新失敗')).returnJSON()
+        return ResponseAjax(statusEnum.no_permission, _('更新失敗。')).returnJSON()
     
 
 @login_required
@@ -365,22 +366,34 @@ def listUserAjax(request):
     is_active = postdata.get('is_active',['1','0'])
     ad_flag = postdata.get('ad_flag',['1','0'])
     datatable = postdata.get('datatable', None)
-    if datatable:
-        if request.user.has_perm('omuser.OmUser_View'):
-            filed_list=['username__icontains','nick_name__icontains','email__icontains','company__icontains','department__icontains']
-            display_field = ['username','email','nick_name','company','is_active','department','ad_flag','last_login','id','is_superuser']
-            userquery = OmUser.objects.filter(is_active__in=is_active, ad_flag__in=ad_flag, delete=False).exclude(id=1).values(*display_field)
-            result = DatatableBuilder(request, userquery, filed_list)
-            info(request ,'%s list user success' % request.user.username)
-            return JsonResponse(result)
+    omflow_restapi = postdata.get('omflow_restapi','')
+    if not omflow_restapi:
+        if datatable:
+            if request.user.has_perm('omuser.OmUser_View'):
+                filed_list=['username__icontains','nick_name__icontains','email__icontains','company__icontains','department__icontains']
+                display_field = ['username','email','nick_name','company','is_active','department','ad_flag','last_login','id','is_superuser']
+                userquery = OmUser.objects.filter(is_active__in=is_active, ad_flag__in=ad_flag, delete=False).exclude(id=1).values(*display_field)
+                result = DatatableBuilder(request, userquery, filed_list)
+                info(request ,'%s list user success' % request.user.username)
+                return JsonResponse(result)
+            else:
+                info(request ,'%s has no permission.' % request.user.username)
+                return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
         else:
-            info(request ,'%s has no permission.' % request.user.username)
-            return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
+            display_field = ['id','username','nick_name']
+            result = list(OmUser.objects.filter(is_active=True,delete=False).exclude(id=1).values(*display_field))
+            info(request ,'%s list user success.' % request.user.username)
+            return ResponseAjax(statusEnum.success, _('讀取成功。'), result).returnJSON()
     else:
-        display_field = ['id','username','nick_name']
-        result = list(OmUser.objects.filter(is_active=True,delete=False).exclude(id=1).values(*display_field))
-        info(request ,'%s list user success.' % request.user.username)
-        return ResponseAjax(statusEnum.success, _('讀取成功'), result).returnJSON()
+        #api使用
+        omdata_model = getModel('omuser','OmUser')
+        result = listQueryBuilder(omdata_model, postdata)
+        if result['status']:
+            info(request ,'%s list user success.' % request.user.username)
+            return ResponseAjax(statusEnum.success, result['message'], result['result']).returnJSON()
+        else:
+            info(request ,'%s list user error.' % request.user.username)
+            return ResponseAjax(statusEnum.not_found, result['message']).returnJSON()
 
 
 @login_required
@@ -420,9 +433,9 @@ def addUserAjax(request):
                     return ResponseAjax(statusEnum.no_permission,  _('新增使用者失敗: ') + e.__str__()).returnJSON()
             else:
                 info(request ,'%s add user error' % request.user.username)
-                return ResponseAjax(statusEnum.no_permission ,  _('該使用者名稱已經被使用')).returnJSON()
+                return ResponseAjax(statusEnum.no_permission, _('該使用者名稱已經被使用。')).returnJSON()
             info(request ,'%s add user success' % request.user.username)
-            return ResponseAjax(statusEnum.success,  _('新增使用者成功')).returnJSON()
+            return ResponseAjax(statusEnum.success, _('新增使用者成功。')).returnJSON()
         else:
             info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
             return ResponseAjax(statusEnum.not_found, checker.get('message',''), checker).returnJSON()
@@ -451,7 +464,7 @@ def deleteUserAjax(request):
             for username in user_arr:
                 user = OmUser.objects.get(username=username)
                 if user.is_superuser:
-                    return ResponseAjax(statusEnum.no_permission,  _('無法刪除系統管理員')).returnJSON()
+                    return ResponseAjax(statusEnum.no_permission, _('無法刪除系統管理員。')).returnJSON()
                 #修改該使用者所有關聯的message history
                 his_id_list = list(HistoryMembers.objects.filter(user_id=user.id).values_list('id',flat=True))
                 for his_id in his_id_list:
@@ -466,7 +479,7 @@ def deleteUserAjax(request):
                 user.delete = True
                 user.save()
             info(request ,'%s delete user success' % request.user.username)
-            return ResponseAjax(statusEnum.success, _('刪除使用者成功'), user_arr).returnJSON()
+            return ResponseAjax(statusEnum.success, _('刪除使用者成功。'), user_arr).returnJSON()
         except Exception as e:
             error(request,e)
             return ResponseAjax(statusEnum.error, e.__str__()).returnJSON()
@@ -496,23 +509,23 @@ def activeUserAjax(request):
         for superuser_name in superuser_name_list:
             if superuser_name in user_arr:
                 info(request ,'%s cannot inactive superuser.' % request.user.username)
-                return ResponseAjax(statusEnum.error,  _('無法停用系統管理員')).returnJSON()
+                return ResponseAjax(statusEnum.error, _('無法停用系統管理員。')).returnJSON()
         if status == 'active':
             omlicense = checkLicense('user')
             if omlicense:
                 OmUser.objects.filter(username__in=user_arr).update(is_active=True)
                 info(request ,'%s active user success' % request.user.username)
-                return ResponseAjax(statusEnum.success,  _('啟用使用者成功'), user_arr).returnJSON()
+                return ResponseAjax(statusEnum.success, _('啟用使用者成功。'), user_arr).returnJSON()
             else:
                 info(request ,'%s the license error.' % request.user.username)
                 return ResponseAjax(statusEnum.not_found, _('使用者數量已達上限。')).returnJSON()
         elif status == 'inactive':
             OmUser.objects.filter(username__in=user_arr).update(is_active=False)
             info(request ,'%s inactive user success' % request.user.username)
-            return ResponseAjax(statusEnum.success,  _('停用使用者成功'), user_arr).returnJSON()
+            return ResponseAjax(statusEnum.success, _('停用使用者成功。'), user_arr).returnJSON()
         else:
             info(request ,'%s active user error' % request.user.username)
-            return ResponseAjax(statusEnum.error,  _('請選擇停用或啟用')).returnJSON()
+            return ResponseAjax(statusEnum.error, _('請選擇停用或啟用。')).returnJSON()
     else:
         info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
         return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
@@ -545,14 +558,14 @@ def addGroupAjax(request):
                 p_group = OmGroup.objects.get(id=parent_group_id)
             except:
                 info(request ,'%s add group error' % request.user.username)
-                return ResponseAjax(statusEnum.no_permission , _('父群組名稱錯誤')).returnJSON()
+                return ResponseAjax(statusEnum.no_permission, _('父群組錯誤')).returnJSON()
         if group_name:
             OmGroup.objects.create(name=group_name,display_name=group_name,parent_group=p_group,functional_flag=functional_flag,description=description)
             info(request ,'%s add group success' % request.user.username)
-            return ResponseAjax(statusEnum.success, _('建立群組成功')).returnJSON()
+            return ResponseAjax(statusEnum.success, _('建立成功。')).returnJSON()
         else:
             info(request ,'%s add group error' % request.user.username)
-            return ResponseAjax(statusEnum.no_permission, _('群組名稱不得為空')).returnJSON()
+            return ResponseAjax(statusEnum.no_permission, _('名稱不得為空。')).returnJSON()
     else:
         info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
         return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
@@ -576,7 +589,7 @@ def deleteGroupAjax(request):
     if checker.get('status') == 'success':
         OmGroup.objects.filter(name__in=group_name_list,ad_flag=False).delete()
         info(request ,'%s delete group success' % request.user.username)
-        return ResponseAjax(statusEnum.success , _('刪除成功')).returnJSON()
+        return ResponseAjax(statusEnum.success , _('刪除成功。')).returnJSON()
     else:
         info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
         return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
@@ -605,7 +618,7 @@ def groupUserAjax(request):
             user = OmUser.objects.get(username=username)
         except Exception as e:
             error(request,e)
-            return ResponseAjax(statusEnum.no_permission ,  _('使用者錯誤')).returnJSON()
+            return ResponseAjax(statusEnum.no_permission, _('使用者錯誤。')).returnJSON()
         user_group_list = list(user.groups.filter(omgroup__functional_flag=functional_flag,omgroup__ad_flag=False).values_list('name',flat=True))
         if set(group_list) == set(user_group_list):
             pass
@@ -619,7 +632,7 @@ def groupUserAjax(request):
                 a_group = Group.objects.filter(name__in=add_list)
                 user.groups.add(*a_group)
         info(request ,'%s add an user to groups success' % request.user.username)
-        return ResponseAjax(statusEnum.success , _('更新成功')).returnJSON()
+        return ResponseAjax(statusEnum.success, _('更新成功。')).returnJSON()
     else:
         info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
         return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
@@ -664,7 +677,7 @@ def listGroupAjax(request):
         group_list = group_list_parent + group_list_childs
         group_list = DataFormat(group_list)
         info(request ,'%s list group success' % request.user.username)
-        return ResponseAjax(statusEnum.success, _('讀取成功'), group_list).returnJSON()
+        return ResponseAjax(statusEnum.success, _('讀取成功。'), group_list).returnJSON()
 
 
 @login_required
@@ -721,7 +734,7 @@ def loadGroupAjax(request):
         result['description'] = group_obj.description
         result['group_user_list'] = group_user_list
         info(request ,'%s load group success' % request.user.username)
-        return ResponseAjax(statusEnum.success, _('讀取成功'), result).returnJSON()
+        return ResponseAjax(statusEnum.success, _('讀取成功。'), result).returnJSON()
     else:
         info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
         return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
@@ -758,10 +771,10 @@ def updateGroupAjax(request):
                 group_obj.description = description
             group_obj.save()
             info(request ,'%s update group success' % request.user.username)
-            return ResponseAjax(statusEnum.success, _('更新成功')).returnJSON()
+            return ResponseAjax(statusEnum.success, _('更新成功。')).returnJSON()
         except:
             info(request ,'%s update group error' % request.user.username)
-            return ResponseAjax(statusEnum.not_found, _('更新失敗')).returnJSON()
+            return ResponseAjax(statusEnum.not_found, _('更新失敗。')).returnJSON()
     else:
         info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
         return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
@@ -783,7 +796,7 @@ def groupUsersAjax(request):
     try:
         group = OmGroup.objects.get(id=group_id)
     except:
-        return ResponseAjax(statusEnum.no_permission ,  _('組織錯誤')).returnJSON()
+        return ResponseAjax(statusEnum.no_permission, _('組織錯誤。')).returnJSON()
     #Server Side Rule Check
     require_field = ['group_id']
     checker = DataChecker(postdata, require_field)
@@ -801,7 +814,7 @@ def groupUsersAjax(request):
                 a_users = OmUser.objects.filter(username__in=add_list)
                 group.user_set.add(*a_users)
         info(request ,'%s add users to group success' % request.user.username)
-        return ResponseAjax(statusEnum.success , _('更新成功')).returnJSON()
+        return ResponseAjax(statusEnum.success, _('更新成功。')).returnJSON()
     else:
         info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
         return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
@@ -827,7 +840,7 @@ def rolePermissionAjax(request):
         try:
             group = OmGroup.objects.get(id=group_id)
         except:
-            return ResponseAjax(statusEnum.no_permission ,  _('角色錯誤')).returnJSON()
+            return ResponseAjax(statusEnum.no_permission, _('角色錯誤。')).returnJSON()
         group_per_list = list(group.permissions.all().values_list('codename',flat=True))
         if set(per_list) == set(group_per_list):
             pass
@@ -841,7 +854,7 @@ def rolePermissionAjax(request):
                 a_pers = Permission.objects.filter(codename__in=add_list)
                 group.permissions.add(*a_pers)
         info(request ,'%s add permissions to group success' % request.user.username)
-        return ResponseAjax(statusEnum.success , _('更新成功')).returnJSON()
+        return ResponseAjax(statusEnum.success, _('更新成功。')).returnJSON()
     else:
         info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
         return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
@@ -901,19 +914,20 @@ def changePasswordAjax(request):
                 this_user.set_password(input_new)
                 this_user.save()
                 info(request ,'%s change password success' % request.user.username)
-                return ResponseAjax(statusEnum.success , _('密碼修改成功')).returnJSON()
+                return ResponseAjax(statusEnum.success, _('密碼修改成功。')).returnJSON()
             else:
                 info(request ,'%s change password error' % request.user.username)
-                return ResponseAjax(statusEnum.no_permission , _('請輸入相同密碼')).returnJSON()
+                return ResponseAjax(statusEnum.no_permission, _('請輸入相同密碼。')).returnJSON()
         else:
             info(request ,'%s change password error' % request.user.username)
-            return ResponseAjax(statusEnum.no_permission , _('舊密碼輸入錯誤')).returnJSON()
+            return ResponseAjax(statusEnum.no_permission, _('舊密碼輸入錯誤。')).returnJSON()
     else:
         info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
         return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
 
 
 @csrf_exempt
+@try_except
 def getSecurityAjax(request):
     '''
     api get security
@@ -922,8 +936,13 @@ def getSecurityAjax(request):
     author: Kolin Hsu
     ''' 
     #get request headers
-    basic_auth_str = request.META['HTTP_AUTHORIZATION'][6:]
-    username, password = base64.b64decode(basic_auth_str).decode('utf-8').split(':')
+    basic_auth_str = request.META.get('HTTP_AUTHORIZATION','')
+    if basic_auth_str:
+        basic_auth_str = basic_auth_str[6:]
+        username, password = base64.b64decode(basic_auth_str).decode('utf-8').split(':')
+    else:
+        username = ''
+        password = ''
     #Server Side Rule Check
     if checkEmailFormat(username):
         usersearch = OmUser.objects.get(email=username)
@@ -958,10 +977,10 @@ def getSecurityAjax(request):
         tokenObj = {}
         tokenObj['security'] = security
         info(request ,'%s api get security success' % request.user.username)
-        return ResponseAjax(statusEnum.success,  _('取得成功'), tokenObj).returnJSON()
+        return ResponseAjax(statusEnum.success, _('取得成功。'), tokenObj).returnJSON()
     else:
         info(request ,'%s api get security error' % request.user.username)
-        return ResponseAjax(statusEnum.no_permission ,  _('使用者不存在或未啟用。')).returnJSON()
+        return ResponseAjax(statusEnum.no_permission, _('使用者不存在或未啟用。')).returnJSON()
     
 
 @login_required
@@ -1017,6 +1036,7 @@ def adGroupDetailPage(request, group_id):
         return render(request,'home.html')
 
 
+@try_except
 def getAgreeAjax(request):
     '''
     load agree detial
@@ -1027,4 +1047,5 @@ def getAgreeAjax(request):
     postdata = getPostdata(request)
     agree_type = postdata.get('agree_type', '')
     agree_detail = SystemSetting.objects.get(name=agree_type).value
-    return ResponseAjax(statusEnum.success,  _('取得成功'), agree_detail).returnJSON()
+    return ResponseAjax(statusEnum.success, _('取得成功。'), agree_detail).returnJSON()
+    

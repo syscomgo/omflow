@@ -15,8 +15,8 @@ def servicePage(request):
     return render(request, 'list.html')
 
 
-@permission_required('omservice.OmServiceDesign_Manage','/page/403/')
 @login_required
+@permission_required('omservice.OmServiceDesign_Manage','/page/403/')
 @try_except
 def saveServiceAjax(request):
     '''
@@ -56,15 +56,16 @@ def saveServiceAjax(request):
             OmService.objects.bulk_create(ServiceList)
             
             info(request,'%s update Service success' % username)
-            return ResponseAjax(statusEnum.success, _('儲存成功')).returnJSON()
+            return ResponseAjax(statusEnum.success, _('儲存成功。')).returnJSON()
         else:
             info(request,'%s update Service error' % username)
-            return ResponseAjax(statusEnum.not_found, _(checker.get('message')), checker).returnJSON()
+            return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
     else:
         info(request,'%s update Service with no permission' % username)
         return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
 
 
+@login_required
 @try_except
 def loadServiceAjax(request):
     '''
@@ -121,14 +122,14 @@ def loadServiceAjax(request):
             
             result[0]["content"] = json.dumps(box_object)            
 
-        return ResponseAjax(statusEnum.success , _('讀取成功'), result).returnJSON()
+        return ResponseAjax(statusEnum.success , _('讀取成功。'), result).returnJSON()
     else:
         error(request,'%s load Service with no permission' % username)
         return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
 
-
-#@permission_required('omservice.OmServiceDesign_Manage','/page/403/')         
+ 
 @login_required
+#@permission_required('omservice.OmServiceDesign_Manage','/page/403/')        
 @try_except
 def getFormListAjax(request):
     '''
@@ -146,7 +147,7 @@ def getFormListAjax(request):
         for thisRow in thisQuery:
             #result[re.findall("^Omdata_(.+)$", this_model.__name__)[0]] = this_model.table_name
             result[thisRow["flow_uuid"]] = thisRow["flow_name"]
-        return ResponseAjax(statusEnum.success , _('讀取成功'), result).returnJSON()
+        return ResponseAjax(statusEnum.success, _('讀取成功。'), result).returnJSON()
     else:
         error(request,'%s load form_list with no permission' % username)
         return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
@@ -173,7 +174,7 @@ def getFormObjAjax(request):
             if len(thisQuery):
                 result = thisQuery[0]
                 
-        return ResponseAjax(statusEnum.success , _('讀取成功'), result).returnJSON()
+        return ResponseAjax(statusEnum.success , _('讀取成功。'), result).returnJSON()
     else:
         error(request,'%s get form_object with no permission' % username)
         return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
@@ -210,7 +211,7 @@ def requestAjax(request):
                 postdata["formdata"] = json.dumps(postdata["formdata"])
             else:
                 info(request,'%s update Service error' % username)
-                return ResponseAjax(statusEnum.error, _('查無此服務')).returnJSON()
+                return ResponseAjax(statusEnum.error, _('查無此服務。')).returnJSON()
             
             result = createOmData(postdata,request.user.username,files)
             if result['status']:
@@ -218,7 +219,7 @@ def requestAjax(request):
             else:
                 return ResponseAjax(statusEnum.not_found, result['message']).returnJSON()
         else:
-            return ResponseAjax(statusEnum.not_found, _('缺少必填欄位')).returnJSON()
+            return ResponseAjax(statusEnum.not_found, _('缺少必填欄位。')).returnJSON()
     else:
         error(request,'%s request_service with no permission' % username)
         return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()

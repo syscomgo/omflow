@@ -2,7 +2,7 @@ import json
 from django.shortcuts import render
 from django.utils.translation import gettext as _
 from django.contrib.auth.decorators import login_required
-from omflow.syscom.common import try_except, DataChecker, DatatableBuilder, getPostdata
+from omflow.syscom.common import try_except, DataChecker, DatatableBuilder, getPostdata, listQueryBuilder
 from omflow.syscom.message import ResponseAjax, statusEnum
 from django.http.response import JsonResponse
 from ommission.models import Missions
@@ -112,15 +112,28 @@ def listMyMissionAjax(request):
     '''
     #get post data
     postdata = getPostdata(request)
-    ticket_createtime = postdata.get('ticket_createtime','')
-    ticket_createtime = ticket_createtime.split(',')
-    field_list = ['title__icontains','flow_name__icontains','status__icontains','create_user_id__nick_name__icontains']
-    display_field = ['flow_name','flow_uuid','level','status','title','create_user_id__nick_name','assign_group_id__display_name','assignee_id__nick_name','ticket_createtime','data_id','data_no','action','attachment']
-    group_id_list = list(request.user.groups.all().values_list('id',flat=True))
-    query = Missions.objects.filter((Q(assignee_id=request.user.id) | (Q(assign_group_id__in=group_id_list) & Q(assignee_id=None))) & Q(history=False) & Q(ticket_createtime__range=ticket_createtime)).values(*display_field)
-    result = DatatableBuilder(request, query, field_list)
-    info(request ,'%s list Mission success.' % request.user.username)
-    return JsonResponse(result)
+    omflow_restapi = postdata.get('omflow_restapi','')
+    if not omflow_restapi:
+        ticket_createtime = postdata.get('ticket_createtime','')
+        ticket_createtime = ticket_createtime.split(',')
+        field_list = ['title__icontains','flow_name__icontains','status__icontains','create_user_id__nick_name__icontains']
+        display_field = ['flow_name','flow_uuid','level','status','title','create_user_id__nick_name','assign_group_id__display_name','assignee_id__nick_name','ticket_createtime','data_id','data_no','action','attachment']
+        group_id_list = list(request.user.groups.all().values_list('id',flat=True))
+        query = Missions.objects.filter((Q(assignee_id=request.user.id) | (Q(assign_group_id__in=group_id_list) & Q(assignee_id=None))) & Q(history=False) & Q(ticket_createtime__range=ticket_createtime)).values(*display_field)
+        result = DatatableBuilder(request, query, field_list)
+        info(request ,'%s list Mission success.' % request.user.username)
+        return JsonResponse(result)
+    else:
+        #api使用
+        group_id_list = list(request.user.groups.all().values_list('id',flat=True))
+        query = Missions.objects.filter((Q(assignee_id=request.user.id) | (Q(assign_group_id__in=group_id_list) & Q(assignee_id=None))) & Q(history=False))
+        result = listQueryBuilder(None, postdata, query)
+        if result['status']:
+            info(request ,'%s list Mission success.' % request.user.username)
+            return ResponseAjax(statusEnum.success, result['message'], result['result']).returnJSON()
+        else:
+            info(request ,'%s list Mission error.' % request.user.username)
+            return ResponseAjax(statusEnum.not_found, result['message']).returnJSON()
 
 
 @login_required

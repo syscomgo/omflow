@@ -14,9 +14,9 @@
         
       </h1>
       <ol class="breadcrumb">
-        <li><a href="/"><i class="fa fa-dashboard"></i> 首頁</a></li>
-		<li>應用管理</li>
-		<li><a href="/flowmanage/page/flow-app/">應用設計</a></li>
+        <li><a href="/"><i class="fa fa-dashboard"></i> {% trans '首頁'%}</a></li>
+		<li>{% trans '應用管理'%}</li>
+		<li><a href="/flowmanage/page/flow-app/">{% trans '應用設計'%}</a></li>
         
       </ol>
     </section>
@@ -26,10 +26,10 @@
       	  <div class="box box-primary">
       	    <div class="box-header with-border">
       	      <div class="pull-left">
-      	        <button type="button" class="btn btn-default" onclick="create_flowdesign()" style="margin:1px 0px;"><i class="fa fa-plus"></i> 新增</button>
-      	        <button type="button" class="btn btn-default" onclick="copy_flowdesign()" id="copy_flowdesign" disabled="disabled" style="margin:1px 0px;"><i class="fas fa-copy"></i> 複製</button>
-			    <button type="button" class="btn btn-default" onclick="delete_flowdesign()" id="delete_flowdesign" disabled="disabled" style="margin:1px 0px;"><i class="fa fa-trash-o"></i> 刪除</button>
-			    <button type="button" class="btn btn-default" onclick="filter_flowdesign()" style="margin:1px 0px;"><i class="fa fa-filter"></i> 篩選</button>
+      	        <button type="button" class="btn btn-default" onclick="create_flowdesign()" style="margin:1px 0px;"><i class="fa fa-plus"></i> {% trans '新增'%}</button>
+      	        <button type="button" class="btn btn-default" onclick="copy_flowdesign()" id="copy_flowdesign" disabled="disabled" style="margin:1px 0px;"><i class="fas fa-copy"></i> {% trans '複製'%}</button>
+			    <button type="button" class="btn btn-default" onclick="delete_flowdesign()" id="delete_flowdesign" disabled="disabled" style="margin:1px 0px;"><i class="fa fa-trash-o"></i> {% trans '刪除'%}</button>
+			    <button type="button" class="btn btn-default" onclick="filter_flowdesign()" style="margin:1px 0px;"><i class="fa fa-filter"></i> {% trans '篩選'%}</button>
                 <button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default" onclick="filter_default()" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
               </div>
       	    </div>
@@ -39,10 +39,9 @@
 				<thead>
 				  <tr>
 					<th style="width:15px"><a><i class="fa fa-lg fa-check-square-o checkbox-toggle" style="color:SteelBlue"></i></a></th>
-					<th>流程名稱</th>
-					<th>最後修改時間</th>
-					<th>說明</th>
-{#					<th></th>#}
+					<th>{% trans '流程名稱' %}</th>
+					<th>{% trans '最後修改時間' %}</th>
+					<th>{% trans '說明' %}</th>
 				  </tr>
 				</thead>
 				<tbody>
@@ -64,15 +63,15 @@
 		  <div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			  <span aria-hidden="true">&times;</span></button>
-			<h4 class="modal-title"><i class="fa fa-download"></i>&nbsp;&nbsp;流程匯入</h4>
+			<h4 class="modal-title"><i class="fa fa-download"></i>&nbsp;&nbsp;{% trans '流程匯入' %}</h4>
 		  </div>
 		  <div class="modal-body">
 		  	<ul class="mailbox-attachments clearfix" id="flow_input_name">
             </ul>
 		  </div>
 		  <div class="modal-footer">
-			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
-			<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="flow_input_save()">確定</button>
+			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">{% trans '取消' %}</button>
+			<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="flow_input_save()">{% trans '確定' %}</button>
 		  </div>
 		</div>
 	  </div><!-- /.modal-content -->
@@ -86,7 +85,7 @@
 		  <div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			  <span aria-hidden="true">&times;</span></button>
-	        <h4 class="modal-title"><i class="fas fa-copy"></i>&nbsp;&nbsp;流程複製</h4>
+	        <h4 class="modal-title"><i class="fas fa-copy"></i>&nbsp;&nbsp;{% trans '流程複製'%}</h4>
 		  </div>
 		  <div class="modal-body">
 		  	<div class="form-group">
@@ -97,8 +96,8 @@
 		  	</ul>
 		  </div>
 		  <div class="modal-footer">
-			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
-			<button type="button" 	class="btn btn-primary" data-dismiss="modal">確定</button>
+			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">{% trans '取消'%}</button>
+			<button type="button" 	class="btn btn-primary" data-dismiss="modal">{% trans '確定'%}</button>
 		  </div>
 		</div>
 	  </div><!-- /.modal-content -->
@@ -154,9 +153,6 @@
 						data.data = a['data.data']
 						return data.data;
 					},
-				"error": function(xhr,status,error){
-							clearInterval(table_routine);
-					}
         	},   
 			"columns":[
 				{"width": "15px", "data": "id", "orderable": false, "render": function (data, type, row)
@@ -168,7 +164,7 @@
 				},
 				{"data":"description", "orderable": false},
 {#				{"data": "id", "width": "15px", "orderable": false, "render": function(data, type, row)#}
-{#        			{return '<a href="/flowmanage/page/flowDesignPage/{{ app_id }}/'+data+'" title="編輯'+row.flow_name+'" style="color:black;cursor: pointer;"><i class="fa fa-fw fa-edit" style="color:SteelBlue;"></i></a>'}#}
+{#        			{return '<a href="/flowmanage/page/flowDesignPage/{{ app_id }}/'+data+'" title="{% trans '編輯'%}'+row.flow_name+'" style="color:black;cursor: pointer;"><i class="fa fa-fw fa-edit" style="color:SteelBlue;"></i></a>'}#}
 {#        		}#}
 			],
 			rowCallback: function( row, data ) {
@@ -201,7 +197,7 @@
 		if(data.status == 200)
 		{ 
 			app_name = data.result
-			$('.content-header > h1').append(app_name+'<small>流程列表</small>');
+			$('.content-header > h1').append(app_name+'<small>{% trans '流程列表'%}</small>');
 			$('ol.breadcrumb').append('<li class="active"><a href="javascript:location.reload();">'+app_name+'</a></li>')
 		}
 		else
@@ -248,7 +244,7 @@
     }
     
 	function delete_flowdesign(){
-		omflowListDialogue('delete', '下列流程將被刪除');
+		omflowListDialogue('delete', '{% trans '下列流程將被刪除'%}');
 		
 		$('#modal-default-list button:eq(2)').off("click").on("click",function(){
 			var postbody = {
@@ -317,7 +313,7 @@
 			table.draw(false);
 			Swal.fire({
 	      	  icon : 'success',
-	      	  title: '成功',
+	      	  title: '{% trans '成功'%}',
 	      	  toast: true,
 		  	  position: 'bottom-start',
 		  	  showConfirmButton: false,

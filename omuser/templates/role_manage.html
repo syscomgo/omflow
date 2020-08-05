@@ -40,7 +40,6 @@
                   	<th>{% trans '編號' %}</th>
                   	<th>{% trans '權限角色' %}</th>
                   	<th>{% trans '說明' %}</th>
-{#                  	<th></th>#}
 	              </tr>
                 </thead>
               </table>
@@ -62,17 +61,17 @@
 		  <div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			  <span aria-hidden="true">&times;</span></button>
-			<h4 class="modal-title" id="modal-create-role-title"><i class="fa fa-plus"></i>&nbsp;&nbsp;建立權限角色</h4>
+			<h4 class="modal-title" id="modal-create-role-title"><i class="fa fa-plus"></i>&nbsp;&nbsp;{% trans '建立權限角色'%}</h4>
 		  </div>
 		  <div class="modal-body">
 			  <div class="row">
 	            <div class="col-md-12">
 	              <div class="form-group">
-	              	<label>角色名稱</label>
+	              	<label>{% trans '角色名稱'%}</label>
 	              	<input type="text" name="create_role" id="create_role" class="form-control" placeholder="{%trans '角色名稱'%}" required="true"/>
 	              </div>
 	              <div class="form-group">
-	              	<label>說明</label>
+	              	<label>{% trans '說明'%}</label>
 	              	<input type="text" name="create_role_description" id="create_role_description" class="form-control" placeholder="{%trans '說明'%}" required="true"/>
 	              </div>
 	              <!-- /.form-group -->
@@ -82,8 +81,8 @@
 	          <!-- /.row -->
 		  </div>
 		  <div class="modal-footer">
-			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
-			<button type="button" class="btn btn-primary" data-dismiss="modal">確定</button>
+			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">{% trans '取消'%}</button>
+			<button type="button" class="btn btn-primary" data-dismiss="modal">{% trans '確定'%}</button>
 		  </div>
 		</div>
 	  </div><!-- /.modal-content -->
@@ -127,9 +126,6 @@
 						data.data = a['data.data']
 						return data.data;
 					},
-				"error": function(xhr,status,error){
-							clearInterval(table_routine);
-					}
         	}, 
         	"columns": [
         		{"data": "display_name", "width": "15px", "orderable": false, "render": function(data)
@@ -138,9 +134,6 @@
         		{"data": "id", "width": "30px"},
                 {"data": "display_name", "width": "30%"},
         		{"data": "description", "orderable": false},
-{#        		{"data": "id", "width": "15px", "orderable": false, "render": function(data, type, row)#}
-{#                	{return '<a href="/accounts/page/role-detail/'+data+'/" title="編輯'+row.name+'" style="color:black;"><i class="fa fa-fw fa-edit" style="color:SteelBlue"></i></a>'}#}
-{#                }#}
         	],
         	"language": __const_language__,
         	rowCallback: function( row, data ) {
@@ -213,7 +206,7 @@
 			$('#modal-create-role').on('hidden.bs.modal', function () {
 				omflowJsonAjax(postdata, '{% url 'addGroupAjax'%}', actions);
 				Swal.fire({
-				  title: '處理中...',
+				  title: '{% trans '處理中'%}...',
 				  toast: true,
 				  position: 'bottom-start',
 				  showConfirmButton: false,
@@ -236,7 +229,7 @@
 			$('#modal-default-list').on('hidden.bs.modal', function () {
 				omflowJsonAjax(postdata, '{% url 'deleteGroupAjax'%}', actions);
 				Swal.fire({
-				  title: '處理中...',
+				  title: '{% trans '處理中'%}...',
 				  toast: true,
 				  position: 'bottom-start',
 				  showConfirmButton: false,

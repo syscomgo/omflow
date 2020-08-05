@@ -71,6 +71,7 @@ def sidebarManagementPage(request):
 
 
 @csrf_exempt
+@try_except
 def restapi(request,url):
     '''
     omflow api home page
@@ -115,11 +116,11 @@ def restapi(request,url):
                     auth.logout(request)
                     return output
                 else:
-                    return ResponseAjax(statusEnum.no_permission, _('授權碼過期，請重新登入。')).returnJSON()
+                    return ResponseAjax(statusEnum.no_permission, _('安全碼過期，請重新取得新的安全碼。')).returnJSON()
             else:
-                return ResponseAjax(statusEnum.no_permission, _('授權碼錯誤，請確認授權碼或重新登入取得新的授權碼。')).returnJSON()
+                return ResponseAjax(statusEnum.no_permission, _('安全碼錯誤，請確認安全碼或重新取得新的安全碼。')).returnJSON()
         else:
-            return ResponseAjax(statusEnum.no_permission, _('取得授權碼失敗，請提供授權碼或登入取得授權碼。')).returnJSON()
+            return ResponseAjax(statusEnum.no_permission, _('缺少安全碼。')).returnJSON()
     else:
         return ResponseAjax(statusEnum.no_permission, _('缺少參數：')+'omflow_restapi').returnJSON()
     
@@ -480,7 +481,7 @@ def updateSidebarDesignAjax(request):
         default_count = 0
         name_list = []
         check = True
-        error_message = '參數錯誤：'
+        error_message = _('參數錯誤：')
         #server side rule check
         postdata = getPostdata(request)
         #get postdata
@@ -495,7 +496,7 @@ def updateSidebarDesignAjax(request):
             if flow_uuid == 'default' or flow_uuid == 'custom':
                 if format_name in name_list:
                     check = False
-                    error_message += '重複名稱 -- ' + format_name
+                    error_message += _('重複名稱 -- ') + format_name
                     break
                 else:
                     name_list.append(format_name)
@@ -504,17 +505,17 @@ def updateSidebarDesignAjax(request):
             if flow_uuid == 'default':
                 if p_id:
                     check = False
-                    error_message += '無法移動預設選單至選單第二層。'
+                    error_message += _('無法移動預設選單至選單第二層。')
                     break
                 if format_id not in default_folder:
                     check = False
-                    error_message += '無法新增預設類型選單。'
+                    error_message += _('無法新增預設類型選單。')
                     break
                 default_count += 1
             elif flow_uuid == 'custom':
                 if p_id in default_folder:
                     check = False
-                    error_message += '無法在預設選單內新增選項。'
+                    error_message += _('無法在預設選單內新增選項。')
                     break
         if check:
             if default_count == len(default_folder):
@@ -545,7 +546,7 @@ def updateSidebarDesignAjax(request):
                 return ResponseAjax(statusEnum.success, _('更新成功。')).returnJSON()
             else:
                 info(request ,'%s update SidebarDesign error.' % request.user.username)
-                error_message += '無法刪除預設項目。'
+                error_message += _('無法刪除預設項目。')
                 return ResponseAjax(statusEnum.not_found, error_message).returnJSON()
         else:
             info(request ,'%s update SidebarDesign error.' % request.user.username)
@@ -826,7 +827,3 @@ def uploadLicenseFileAjax(request):
     else:
         info(request ,'%s has no permission.' % request.user.username)
         return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
-
-            
-
-    

@@ -7,17 +7,17 @@
     <form id="omform" onsubmit="omflowSubmit(); return false;">
     {% csrf_token %}
         <input type="text"  pattern="[A-Za-z0-9_]{1,}" title="大小寫英文、數字及底線" name="username" class="fadeIn second" placeholder="{% trans '帳號' %}" required="true" autocomplete="off" autofocus >
-        <input type="password" name="token" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="至少一個大寫字母及小寫字母，至少8個字。" class="fadeIn third" placeholder="{% trans '密碼'%}"  required="true" autocomplete="off">
-        <input type="password" name="token2" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="至少一個大寫字母及小寫字母，至少8個字。" class="fadeIn third" placeholder="{% trans '密碼'%}"  required="true" autocomplete="off">
+        <input type="password" name="token" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="{% trans '至少一個大寫字母及小寫字母，至少8個字。'%}" class="fadeIn third" placeholder="{% trans '密碼'%}"  required="true" autocomplete="off">
+        <input type="password" name="token2" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="{% trans '至少一個大寫字母及小寫字母，至少8個字。'%}" class="fadeIn third" placeholder="{% trans '密碼'%}"  required="true" autocomplete="off">
         <input type="email" name="email_@" class="fadeIn fourth" placeholder="{% trans '電子郵件'%}"  required="true" autocomplete="off"><br />
         <div class="row">
           <div class="col-xs-2">
           </div>
           <div class="col-xs-4">
-          	<input type="checkbox" id="PI_agree" name="agree" class="icheckbox_minimal-blue"><label for="PI_agree"></label><label><a onclick="agree_modal('PI_agree')">&nbsp;個資使用同意</a></label>
+          	<input type="checkbox" id="PI_agree" name="agree" class="icheckbox_minimal-blue"><label for="PI_agree"></label><label><a onclick="agree_modal('PI_agree')">&nbsp;{% trans '個資使用同意'%}</a></label>
           </div>
           <div class="col-xs-4">
-          	<input type="checkbox" id="SU_agree" name="agree" class="icheckbox_minimal-blue"><label for="SU_agree"></label><label><a onclick="agree_modal('SU_agree')">&nbsp;軟體使用同意 </a></label>
+          	<input type="checkbox" id="SU_agree" name="agree" class="icheckbox_minimal-blue"><label for="SU_agree"></label><label><a onclick="agree_modal('SU_agree')">&nbsp;{% trans '軟體使用同意'%} </a></label>
           </div>
           <div class="col-xs-2">
           </div>
@@ -71,7 +71,7 @@ function agree_modal(agree_type)
 	{
 		if (data.status == 200)
 		{
-			$('#modal_white .modal-title').text('使用同意書')
+			$('#modal_white .modal-title').text('{% trans '使用同意書'%}')
 			$('#modal_white .modal-body').html('<textarea class="form-control" style="height:300px;resize:none;" readonly>'+data.result+'</textarea>');
 			$('#modal_white').modal('show');
 		}

@@ -1,32 +1,33 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load i18n %} 
+{% load omflow_tags %}
 {% block content %}
 <!-- 
 	scheduleflow_manage.html scheduleflowManagePage
 	author : Pei lin
 -->
 
-	<script src="/static/js/workflow.js"></script>
+	<script src="/static/js/workflow.js?version={%omflow_version%}"></script>
 	<!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-       	排程設定
+       	{% trans '排程設定'%}
         <small></small>
       </h1>
       <ol class="breadcrumb">
-        <li><a href="/"><i class="fa fa-dashboard"></i> 首頁</a></li>
-		<li >應用管理</li>
-        <li class="active"><a href="/flowmanage/page/flowManagePage/">排程設定</a></li>
+        <li><a href="/"><i class="fa fa-dashboard"></i> {% trans '首頁'%}</a></li>
+		<li >{% trans '應用管理'%}</li>
+        <li class="active"><a href="/flowmanage/page/flowManagePage/">{% trans '排程設定'%}</a></li>
       </ol>
     </section>
     <section class="content">
   	<div class="box box-default">
       <div class="box-header with-border">
       	<div class="pull-left">
-      	<button type="button" class="btn btn-default" onclick="schedule_flowactive('create','none','none','none','none','none')" id="schedule_flowactive" style="margin:1px 0px;"><i class="fa fa-plus"></i> 新增</button>
-	      <button type="button" class="btn btn-default" onclick="unschedule_flowactive()" id="unschedule_flowactive" disabled="disabled" style="margin:1px 0px;"><i class="fa fa-trash-o"></i> 刪除</button>
-	      <button type="button" class="btn btn-default" onclick="filter_flowdesign()" style="margin:1px 0px;"><i class="fa fa-filter"></i> 篩選</button>
+      	<button type="button" class="btn btn-default" onclick="schedule_flowactive('create','none','none','none','none','none')" id="schedule_flowactive" style="margin:1px 0px;"><i class="fa fa-plus"></i> {% trans '新增'%}</button>
+	      <button type="button" class="btn btn-default" onclick="unschedule_flowactive()" id="unschedule_flowactive" disabled="disabled" style="margin:1px 0px;"><i class="fa fa-trash-o"></i> {% trans '刪除'%}</button>
+	      <button type="button" class="btn btn-default" onclick="filter_flowdesign()" style="margin:1px 0px;"><i class="fa fa-filter"></i> {% trans '篩選'%}</button>
           <button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default" onclick="filter_default()" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
       	</div>
       </div>
@@ -36,11 +37,11 @@
 		  <thead>
 		  	<tr>
 			  <th style="width:15px"><a><i class="fa fa-lg fa-check-square-o checkbox-toggle" style="color:SteelBlue"></i></a></th>
-			  <th>流程名稱</th>
-			  <th>狀態</th>
-			  <th>下次執行時間</th>
-              <th>排程設定</th>
-			  <th>上次執行時間</th>
+			  <th>{% trans '流程名稱'%}</th>
+			  <th>{% trans '狀態'%}</th>
+			  <th>{% trans '下次執行時間'%}</th>
+              <th>{% trans '排程設定'%}</th>
+			  <th>{% trans '上次執行時間'%}</th>
 			  <th></th>
 		  	</tr>
 		  </thead>
@@ -69,14 +70,14 @@
 		      <col width="20%">
 		      <tbody>
 		        <tr>
-		      	  <td style="vertical-align:middle;">流程名稱 : </td>
+		      	  <td style="vertical-align:middle;">{% trans '流程名稱'%} : </td>
 		      	  <td style="vertical-align:middle;">
 		      	  	<select class="form-control" name="flowactive_select" style="width:100%;">
 		      	  	</select>
 		      	  </td>
 		      	  <td>
-		      	  	<button type="button" class="btn btn-default" id="form_setting" onclick="switch_scheduleform('form')" style="display:none;">表單內容</button>
-          			<button type="button" class="btn btn-default" id="schedule_setting" onclick="switch_scheduleform('schedule')" style="display:none;">排程時間</button>
+		      	  	<button type="button" class="btn btn-default" id="form_setting" onclick="switch_scheduleform('form')" style="display:none;">{% trans '表單內容'%}</button>
+          			<button type="button" class="btn btn-default" id="schedule_setting" onclick="switch_scheduleform('schedule')" style="display:none;">{% trans '排程時間'%}</button>
 		      	  </td>
 		      	</tr>
 			  </tbody>
@@ -86,7 +87,7 @@
 		      <col width="15%">
 		      <tbody>
 		      	<tr>
-		    	  <td style="vertical-align:middle;">排程時間 : </td>
+		    	  <td style="vertical-align:middle;">{% trans '排程時間'%} : </td>
 		    	  <td>
 		    	  	<div class="form-group" style="margin:0px">
             	  	  <div class="input-group date">
@@ -112,14 +113,14 @@
 		      <col width="15%">
 		      <tbody>
 		      	<tr>
-		    	  <td>週期 : </td>
-		    	  <td><input type="radio" name="cycle_type" class="iradio_minimal-blue form-control" value="Once" id="Once" checked="true"><label for="Once"></label>&nbsp;單次</td>
-		    	  <td><input type="radio" name="cycle_type" class="iradio_minimal-blue form-control" value="Secondly" id="Secondly"><label for="Secondly"></label>&nbsp;秒</td>
-		    	  <td><input type="radio" name="cycle_type" class="iradio_minimal-blue form-control" value="Minutely" id="Minutely"><label for="Minutely"></label>&nbsp;分</td>
-		    	  <td><input type="radio" name="cycle_type" class="iradio_minimal-blue form-control" value="Hourly" id="Hourly"><label for="Hourly"></label>&nbsp;小時</td>
-		    	  <td><input type="radio" name="cycle_type" class="iradio_minimal-blue form-control" value="Daily" id="Daily"><label for="Daily"></label>&nbsp;日</td>
-		    	  <td><input type="radio" name="cycle_type" class="iradio_minimal-blue form-control" value="Weekly" id="Weekly"><label for="Weekly"></label>&nbsp;週</td>
-		    	  <td><input type="radio" name="cycle_type" class="iradio_minimal-blue form-control" value="Monthly" id="Monthly"><label for="Monthly"></label>&nbsp;月	</td>
+		    	  <td>{% trans '週期'%} : </td>
+		    	  <td><input type="radio" name="cycle_type" class="iradio_minimal-blue form-control" value="Once" id="Once" checked="true"><label for="Once"></label>&nbsp;{% trans '單次'%}</td>
+		    	  <td><input type="radio" name="cycle_type" class="iradio_minimal-blue form-control" value="Secondly" id="Secondly"><label for="Secondly"></label>&nbsp;{% trans '秒'%}</td>
+		    	  <td><input type="radio" name="cycle_type" class="iradio_minimal-blue form-control" value="Minutely" id="Minutely"><label for="Minutely"></label>&nbsp;{% trans '分'%}</td>
+		    	  <td><input type="radio" name="cycle_type" class="iradio_minimal-blue form-control" value="Hourly" id="Hourly"><label for="Hourly"></label>&nbsp;{% trans '小時'%}</td>
+		    	  <td><input type="radio" name="cycle_type" class="iradio_minimal-blue form-control" value="Daily" id="Daily"><label for="Daily"></label>&nbsp;{% trans '日'%}</td>
+		    	  <td><input type="radio" name="cycle_type" class="iradio_minimal-blue form-control" value="Weekly" id="Weekly"><label for="Weekly"></label>&nbsp;{% trans '週'%}</td>
+		    	  <td><input type="radio" name="cycle_type" class="iradio_minimal-blue form-control" value="Monthly" id="Monthly"><label for="Monthly"></label>&nbsp;{% trans '月'%}</td>
 		      	</tr>
 		      </tbody>
 		  	</table>
@@ -128,9 +129,9 @@
 		  	  <col width="40%">
 		      <tbody>
 		      	<tr>
-		    	  <td style="vertical-align:middle;">每隔 : </td>
+		    	  <td style="vertical-align:middle;">{% trans '每隔'%} : </td>
 		    	  <td><input type="number" min="1" step="1" value="1" name="every" class="form-control" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"></td>
-		    	  <td style="vertical-align:middle;" name="period">秒執行</td>
+		    	  <td style="vertical-align:middle;" name="period">{% trans '秒執行'%}</td>
 		      	</tr>
 		      </tbody>
 		  	</table>
@@ -138,15 +139,15 @@
 		  	  <col width="15%">
 		      <tbody>
 		      	<tr>
-		    	  <td style="vertical-align:middle;">每週 : </td>
-		    	  <td><input type="checkbox" name="cycle_date_week" class="icheckbox_minimal-blue form-control" value="Monday" id="Monday"><label for="Monday"></label>&nbsp;一</td>
-		    	  <td><input type="checkbox" name="cycle_date_week" class="icheckbox_minimal-blue form-control" value="Tuesday" id="Tuesday"><label for="Tuesday"></label>&nbsp;二</td>
-		    	  <td><input type="checkbox" name="cycle_date_week" class="icheckbox_minimal-blue form-control" value="Wednesday" id="Wednesday"><label for="Wednesday"></label>&nbsp;三</td>
-		    	  <td><input type="checkbox" name="cycle_date_week" class="icheckbox_minimal-blue form-control" value="Thursday" id="Thursday"><label for="Thursday"></label>&nbsp;四</td>
-		    	  <td><input type="checkbox" name="cycle_date_week" class="icheckbox_minimal-blue form-control" value="Friday" id="Friday"><label for="Friday"></label>&nbsp;五</td>
-		    	  <td><input type="checkbox" name="cycle_date_week" class="icheckbox_minimal-blue form-control" value="Saturday" id="Saturday"><label for="Saturday"></label>&nbsp;六</td>
-		    	  <td><input type="checkbox" name="cycle_date_week" class="icheckbox_minimal-blue form-control" value="Sunday" id="Sunday"><label for="Sunday"></label>&nbsp;日</td>
-		    	  <td style="vertical-align:middle;">執行</td>
+		    	  <td style="vertical-align:middle;">{% trans '每週'%} : </td>
+		    	  <td><input type="checkbox" name="cycle_date_week" class="icheckbox_minimal-blue form-control" value="Monday" id="Monday"><label for="Monday"></label>&nbsp;{% trans '一'%}</td>
+		    	  <td><input type="checkbox" name="cycle_date_week" class="icheckbox_minimal-blue form-control" value="Tuesday" id="Tuesday"><label for="Tuesday"></label>&nbsp;{% trans '二'%}</td>
+		    	  <td><input type="checkbox" name="cycle_date_week" class="icheckbox_minimal-blue form-control" value="Wednesday" id="Wednesday"><label for="Wednesday"></label>&nbsp;{% trans '三'%}</td>
+		    	  <td><input type="checkbox" name="cycle_date_week" class="icheckbox_minimal-blue form-control" value="Thursday" id="Thursday"><label for="Thursday"></label>&nbsp;{% trans '四'%}</td>
+		    	  <td><input type="checkbox" name="cycle_date_week" class="icheckbox_minimal-blue form-control" value="Friday" id="Friday"><label for="Friday"></label>&nbsp;{% trans '五'%}</td>
+		    	  <td><input type="checkbox" name="cycle_date_week" class="icheckbox_minimal-blue form-control" value="Saturday" id="Saturday"><label for="Saturday"></label>&nbsp;{% trans '六'%}</td>
+		    	  <td><input type="checkbox" name="cycle_date_week" class="icheckbox_minimal-blue form-control" value="Sunday" id="Sunday"><label for="Sunday"></label>&nbsp;{% trans '日'%}</td>
+		    	  <td style="vertical-align:middle;">{% trans '執行'%}</td>
 		      	</tr>
 		      </tbody>
 		  	</table>
@@ -161,11 +162,11 @@
 		  	  <col width="10%">
 		      <tbody>
 		      	<tr>
-		    	  <td style="vertical-align:middle;">每隔 : </td>
+		    	  <td style="vertical-align:middle;">{% trans '每隔'%} : </td>
 		    	  <td colspan="2"><input type="number" min="1" max="12" step="1" value="1" name="every" class="form-control" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"></td>
-		    	  <td style="vertical-align:middle;" align="center">月</td>
+		    	  <td style="vertical-align:middle;" align="center">{% trans '月'%}</td>
 		    	  <td colspan="4"><input type="text" class="form-control" name="cycle_date" readonly="true"></td>
-		    	  <td style="vertical-align:middle;">執行</td>
+		    	  <td style="vertical-align:middle;">{% trans '執行'%}</td>
 		      	</tr>
     			<tr>
     			  <td></td>
@@ -232,8 +233,8 @@
 		  	
           </div>
           <div class="modal-footer">
-          	<button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
-          	<button type="button" class="btn btn-primary" id="schedule_confirm" data-dismiss="modal">確定</button>
+          	<button type="button" class="btn btn-default pull-left" data-dismiss="modal">{% trans '取消'%}</button>
+          	<button type="button" class="btn btn-primary" id="schedule_confirm" data-dismiss="modal">{% trans '確定'%}</button>
           </div>
 	    </div>
       </div>
@@ -284,9 +285,6 @@
 						data.data = a['data.data']
 						return data.data;
 					},
-				"error": function(xhr,status,error){
-							clearInterval(table_routine);
-					}
         	},   
 			"columns":[ 
 				{"width": "15px", "data": "id", "orderable": false, "render": function (data, type, row)
@@ -296,33 +294,33 @@
 				{"data":"is_active", "orderable": false, "width": "45px", "render": function(data,type,row)
 					{	
 						if(data)
-	        				{return '<button class="btn btn-xs btn-success" onclick="active_flowdesign(this,'+row.id+')">啟用</button>'}
+	        				{return '<button class="btn btn-xs btn-success" onclick="active_flowdesign(this,'+row.id+')">{% trans '啟用'%}</button>'}
 	        			else	
-	        				{return '<button class="btn btn-xs btn-warning" onclick="active_flowdesign(this,'+row.id+')">停用</button>'}
+	        				{return '<button class="btn btn-xs btn-warning" onclick="active_flowdesign(this,'+row.id+')">{% trans '停用'%}</button>'}
 	        		}
 				},
 				{"data":"next_exec_time", "width": "150px"},
 				{"data":"cycle", "orderable": false, "render": function(data,type,row)
 					{
 						if (data == "Once")
-							{return '單次'}
+							{return '{% trans '單次'%}'}
 						else if (data == "Secondly")
-							{return '每隔'+row.every+'秒'}
+							{return '{% trans '每隔'%}'+row.every+'{% trans '秒'%}'}
 						else if (data == "Minutely")
-							{return '每隔'+row.every+'分'}
+							{return '{% trans '每隔'%}'+row.every+'{% trans '分'%}'}
 						else if (data == "Hourly")
-							{return '每隔'+row.every+'小時'}
+							{return '{% trans '每隔'%}'+row.every+'{% trans '小時'%}'}
 						else if (data == "Daily")
-							{return '每隔'+row.every+'天'}
+							{return '{% trans '每隔'%}'+row.every+'{% trans '天'%}'}
 						else if (data == "Weekly")
-							{return '每隔'+row.every+'週  '+ row.cycle_date.replace(/\'Monday'/g,'周一').replace(/\'Tuesday'/g,'週二').replace(/\'Wednesday'/g,'週三').replace(/\'Thursday'/g,'週四').replace(/\'Friday'/g,'週五').replace(/\'Saturday'/g,'週六').replace(/\'Sunday'/g,'週日')}
+							{return '{% trans '每隔'%}'+row.every+'{% trans '週'%}  '+ row.cycle_date.replace(/\'Monday'/g,'{% trans '周一'%}').replace(/\'Tuesday'/g,'{% trans '週二'%}').replace(/\'Wednesday'/g,'{% trans '週三'%}').replace(/\'Thursday'/g,'{% trans '週四'%}').replace(/\'Friday'/g,'{% trans '週五'%}').replace(/\'Saturday'/g,'{% trans '週六'%}').replace(/\'Sunday'/g,'{% trans '週日'%}')}
 						else if (data == "Monthly")
-							{return '每隔'+row.every+'月  '+row.cycle_date.replace(/\'/g,'')}
+							{return '{% trans '每隔'%}'+row.every+'{% trans '月'%}  '+row.cycle_date.replace(/\'/g,'')}
 					}
 				},
 				{"data":"last_exec_time", "width": "150px"},
 				{"data": "flowactive_id__flow_name", "width": "45px", "orderable": false, "render": function(data,type,row)
-					{return '<button class="btn btn-xs btn-default" onclick="schedule_flowactive(\'update\',\''+row.id+'\',\''+row.flowactive_id__flow_uuid+'\','+row.every+',\''+row.cycle+'\','+row.cycle_date+',\''+row.exec_time+'\')">編輯</button>'}
+					{return '<button class="btn btn-xs btn-default" onclick="schedule_flowactive(\'update\',\''+row.id+'\',\''+row.flowactive_id__flow_uuid+'\','+row.every+',\''+row.cycle+'\','+row.cycle_date+',\''+row.exec_time+'\')">{% trans '編輯'%}</button>'}
 				}
 			],
 			rowCallback: function( row, data ) {
@@ -409,7 +407,7 @@
     }
     
     function unschedule_flowactive(){
-    	omflowListDialogue('delete', '下列排程將被刪除');
+    	omflowListDialogue('delete', '{% trans '下列排程將被刪除'%}');
 		
 		$('#modal-default-list button:eq(2)').off("click").on("click",function(){
 			postbody = {
@@ -449,7 +447,7 @@
 		{
 			Swal.fire({
 	      	  icon : 'success',
-	      	  title: '成功',
+	      	  title: '{% trans '成功'%}',
 	      	  toast: true,
 		  	  position: 'bottom-start',
 		  	  showConfirmButton: false,
@@ -539,7 +537,7 @@
 		
 		$('#schedule_confirm').off("click").on("click",function(){
 			Swal.fire({
-			  title: '處理中...',
+			  title: '{% trans '處理中'%}...',
 			  toast: true,
 			  position: 'bottom-start',
 			  showConfirmButton: false,
@@ -609,7 +607,7 @@
 					$('#formcontent_'+item).addClass('has-warning');
 				});
 				Swal.close();
-				omflowAlert('blue', '缺少必填欄位', callback);
+				omflowAlert('blue', '{% trans '缺少必填欄位'%}', callback);
 				function callback()
 				{
 					$('#modal_blue').on('hidden.bs.modal', function () {
@@ -632,7 +630,7 @@
 				$('#modal-flow-schedule table[name="week_period"]').hide();
 				$('#modal-flow-schedule table[name="month_period"]').hide();
 				$('#modal-flow-schedule table[name="short_period"] input').val(10);
-				$('#modal-flow-schedule table[name="short_period"] td[name="period"]').empty().append('秒鐘執行')
+				$('#modal-flow-schedule table[name="short_period"] td[name="period"]').empty().append('{% trans '秒鐘執行'%}')
 				$('#modal-flow-schedule table[name="short_period"]').show();
 			}
 			else if (cycle_type == 'Minutely')
@@ -640,7 +638,7 @@
 				$('#modal-flow-schedule table[name="week_period"]').hide();
 				$('#modal-flow-schedule table[name="month_period"]').hide();
 				$('#modal-flow-schedule table[name="short_period"] input').val(5);
-				$('#modal-flow-schedule table[name="short_period"] td[name="period"]').empty().append('分鐘執行')
+				$('#modal-flow-schedule table[name="short_period"] td[name="period"]').empty().append('{% trans '分鐘執行'%}')
 				$('#modal-flow-schedule table[name="short_period"]').show();
 			}
 			else if (cycle_type == 'Hourly')
@@ -648,7 +646,7 @@
 				$('#modal-flow-schedule table[name="week_period"]').hide();
 				$('#modal-flow-schedule table[name="month_period"]').hide();
 				$('#modal-flow-schedule table[name="short_period"] input').val(1);
-				$('#modal-flow-schedule table[name="short_period"] td[name="period"]').empty().append('小時執行')
+				$('#modal-flow-schedule table[name="short_period"] td[name="period"]').empty().append('{% trans '小時執行'%}')
 				$('#modal-flow-schedule table[name="short_period"]').show();
 			}
 			else if (cycle_type == 'Daily')
@@ -656,7 +654,7 @@
 				$('#modal-flow-schedule table[name="week_period"]').hide();
 				$('#modal-flow-schedule table[name="month_period"]').hide();
 				$('#modal-flow-schedule table[name="short_period"] input').val(1);
-				$('#modal-flow-schedule table[name="short_period"] td[name="period"]').empty().append('天執行')
+				$('#modal-flow-schedule table[name="short_period"] td[name="period"]').empty().append('{% trans '天執行'%}')
 				$('#modal-flow-schedule table[name="short_period"]').show();
 			}
 			else if (cycle_type == 'Weekly')

@@ -1,5 +1,6 @@
 {% load static %}
 {% load i18n %} 
+{% load omflow_tags %}	
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>OMFLOW</title>
@@ -9,7 +10,6 @@
 	<link rel="stylesheet" href="{% static 'components/bootstrap/dist/css/bootstrap.min.css' %}">
 	<link rel="stylesheet" href="{% static 'plugins/fontawesome-free-5.13.0-web/css/all.css' %}">
 	<link rel="stylesheet" href="{% static 'plugins/fontawesome-free-5.13.0-web/css/v4-shims.css' %}">
-	<link rel="stylesheet" href="{% static 'components/Ionicons/css/ionicons.min.css' %}">
 	
 	<link rel="stylesheet" href="{% static 'components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css'%}">
 	<link rel="stylesheet" href="{% static 'plugins/timepicker/bootstrap-timepicker.min.css'%}">
@@ -38,7 +38,7 @@
 	<link rel="stylesheet" href="{% static 'plugins/select2-to-tree-master/src/select2totree.css' %}">
 	
 	<link rel="stylesheet" href="{% static 'css/AdminLTE.min.css' %}">
-	<link rel="stylesheet" href="{% static 'css/omflow.css' %}">
+	<link rel="stylesheet" href="{% static 'css/omflow.css'%}?version={%omflow_version%}">
 	
 	<!-- jQuery 3 -->
 	<script src="{% static 'components/jquery/dist/jquery.min.js'%}"></script>
@@ -47,9 +47,9 @@
 	<!-- Bootstrap 3.3.7 -->
 	<script src="{% static 'components/bootstrap/dist/js/bootstrap.min.js'%}"></script>
 	<!-- omflow_constant -->
-	<script src="{% static 'js/constant.js'%}"></script>
+	<script src="{% static 'js/constant.js'%}?version={%omflow_version%}"></script>
 	<!-- omflow -->
-	<script src="{% static 'js/omflow.js'%}"></script>
+	<script src="{% static 'js/omflow.js'%}?version={%omflow_version%}"></script>
 	<!-- datepicker -->
 	<script src="{% static 'components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js'%}"></script>
 	<script src="{% static 'components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.zh-TW.min.js'%}"></script>
@@ -68,12 +68,12 @@
 	<script src="{% static 'components/bootstrap-daterangepicker/sum().js' %}"></script>
 {#	<script src="{% static 'js/workflow.js'%}"></script>#}
 	<script src="{% static 'plugins/CodeMirror/lib/codemirror.js'%}"></script>
-	<script src="{% static 'plugins/CodeMirror/mode/python/python.js'%}"></script>
-	<script src="{% static 'plugins/CodeMirror/mode/javascript/javascript.js'%}"></script>
-	<script src="{% static 'plugins/CodeMirror/addon/display/placeholder.js'%}"></script>
-	<script src="{% static 'plugins/CodeMirror/addon/edit/matchbrackets.js'%}"></script>
-	<script src="{% static 'plugins/CodeMirror/addon/comment/continuecomment.js'%}"></script>
-	<script src="{% static 'plugins/CodeMirror/addon/comment/comment.js'%}"></script>
+	<script src="{% static 'plugins/CodeMirror/lib/python.js'%}"></script>
+	<script src="{% static 'plugins/CodeMirror/lib/javascript.js'%}"></script>
+	<script src="{% static 'plugins/CodeMirror/lib/placeholder.js'%}"></script>
+	<script src="{% static 'plugins/CodeMirror/lib/matchbrackets.js'%}"></script>
+	<script src="{% static 'plugins/CodeMirror/lib/continuecomment.js'%}"></script>
+	<script src="{% static 'plugins/CodeMirror/lib/comment.js'%}"></script>
 
 	<script src="{% static 'plugins/SweetAlert2/dist/sweetalert2.js'%}"></script>
 	<script src="{% static 'plugins/SweetAlert2/plugins/polyfill.min.js'%}"></script>

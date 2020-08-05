@@ -8,7 +8,6 @@
 	author : Pei lin
 -->
     <!-- Content Header (Page header) -->
-    <script src="/static/js/workflow.js"></script>
     <section class="content-header">
       <h1>
       	{% trans "服務水準管理"%}
@@ -200,7 +199,7 @@
 		                        </select>
 		                      </div>
 		                      <div class="col-xs-8" style="padding-left:0;">
-		                        <input id="remind_value" type="text" class="form-control" placeholder="{% trans '數字、字串...'%}">
+		                        <input id="remind_value" type="text" class="form-control" placeholder="{% trans '數字'%}、{% trans '字串'%}...">
 		                      </div>
 		                    </div>
 		                  </div>
@@ -219,7 +218,7 @@
 		                        </select>
 		                      </div>
 		                      <div class="col-xs-8" style="padding-left:0;">
-		                        <input id="violation_value" type="text" class="form-control" placeholder="{% trans '數字、字串...'%}">
+		                        <input id="violation_value" type="text" class="form-control" placeholder="{% trans '數字'%}、{% trans '字串'%}...">
 		                      </div>
 		                      <!--/.col -->
 		                    </div>
@@ -343,7 +342,7 @@
 						}
 	                },
 	                {"data": "id", "render": function(data, type, row)
-	                	{ return '<button class="btn btn-xs btn-default" data-id="'+data+'" onclick="SLA_edit(\'update\', \'num\', this)">編輯</button>'}
+	                	{ return '<button class="btn btn-xs btn-default" data-id="'+data+'" onclick="SLA_edit(\'update\', \'num\', this)">{% trans '編輯'%}</button>'}
 	                }
 	            ],
 	            "rowCallback": function(row, data){
@@ -386,8 +385,6 @@
 							data.data = a['data.data']
 							return data.data;
 						},
-					"error": function(xhr,status,error){
-						}
 	        	},   
 				"columns":[
 					{"width": "15px", "data": "id", "orderable": false, "render": function (data, type, row)
@@ -398,16 +395,16 @@
 	                {"data": "flow_name"},
 	                {"data": "remind", "render": function(data, type, row)
 	                	{
-	                		return ('超過 '+data.value+' 分') 
+	                		return ('{% trans '超過'%} '+data.value+' 分') 
 						}
 	                },
 	                {"data": "violation", "render": function(data, type, row)
 	                	{
-	                		return ('超過 '+data.value+' 分')
+	                		return ('{% trans '超過'%} '+data.value+' 分')
 	                	}
 	                },
 	                {"data": "id", "render": function(data, type, row)
-	                	{ return '<button class="btn btn-xs btn-default" data-id="'+data+'" onclick="SLA_edit(\'update\', \'time\', this)">編輯</button>'}
+	                	{ return '<button class="btn btn-xs btn-default" data-id="'+data+'" onclick="SLA_edit(\'update\', \'time\', this)">{% trans '編輯'%}</button>'}
 	                }
 	            ],
 	            "rowCallback": function(row, data){
@@ -975,7 +972,7 @@
 				time_table.ajax.reload();
 				Swal.fire({
 		      	  icon : 'success',
-		      	  title: '成功',
+		      	  title: '{% trans '成功'%}',
 		      	  toast: true,
 			  	  position: 'bottom-start',
 			  	  showConfirmButton: false,

@@ -92,7 +92,7 @@
 				{
 					if(data.status == undefined)
 					{
-						omflowAlert('yellow', '你已被登出')
+						omflowAlert('yellow', '{% trans '你已被登出'%}')
 						$('#modal_yellow button').off('click').on('click', function(){
 							location.href="/"
 						});
@@ -101,14 +101,19 @@
 					else
 					{
 						omflowAlert('red', data.message);
-						clearInterval(header_routine);
 					}
 					
 				}
 			},
 			error: function(req, status, err) {
-			 	clearInterval(header_routine)
-				$('#modal_error').modal('show');
+			 	Swal.fire({
+				  icon : 'warning',
+				  title: '{% trans '主機連線不穩'%}',
+				  toast: true,
+				  position: 'bottom-start',
+				  showConfirmButton: false,
+				  timer: 1000,
+				});
 	        	console.log('Something went wrong', status, err);
 	    	}
     	});

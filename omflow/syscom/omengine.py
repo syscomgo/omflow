@@ -179,14 +179,14 @@ class OmEngine():
                             if not formdata:
                                 omdata_model = getModel('omformmodel','Omdata_' + self.table_uuid)
                                 formdata = list(omdata_model.objects.filterformat(id=self.data_id))[0]
-                            c_input_value = self.regexInOutputValue(formdata, value)
+                            c_input_value = regexInOutputValue(formdata, value)
                         else:
                             c_input_value = value
                         #寫入flow value
                         self.flow_value[name] = c_input_value
                     if require == True or require == 'true' or require == 'True':
                         require_list.append(name)
-                require_check = self.inputRequireCheck(require_list, self.flow_value)
+                require_check = inputRequireCheck(require_list, self.flow_value)
                 if require_check == None:
                     if hp_result['status'] == 'N':
                         if self.data.get('chart_input',''): #子流程或驗證
@@ -236,8 +236,16 @@ class OmEngine():
                                         group_str = m.group
                                         if group_str:
                                             group = json.loads(group_str)
-                                            mission_param['assignee_id'] = group.get('user','')
-                                            mission_param['assign_group_id']= group.get('group','')
+                                            g = group.get('group',None)
+                                            if g:
+                                                u = group.get('user',None)
+                                            else:
+                                                u = None
+                                        else:
+                                            g = None
+                                            u = None
+                                        mission_param['assignee_id'] = u
+                                        mission_param['assign_group_id']= g
                                         createMission(mission_param)
                                 self.data_id = m.id
                                 self.data['data_id'] = m.id
@@ -280,13 +288,13 @@ class OmEngine():
                                         if not formdata:
                                             omdata_model = getModel('omformmodel','Omdata_' + self.table_uuid)
                                             formdata = list(omdata_model.objects.filterformat(id=self.data_id))[0]
-                                        input_obj[name] = self.regexInOutputValue(formdata, value)
+                                        input_obj[name] = regexInOutputValue(formdata, value)
                                     else:
                                         input_obj[name] = value
                                 if require == True or require == 'true' or require == 'True':
                                     require_list.append(name)
                             #確認是否為必填欄位
-                            require_check = self.inputRequireCheck(require_list, input_obj)
+                            require_check = inputRequireCheck(require_list, input_obj)
                             if require_check == None:
                                 self.data['chart_input'] = input_obj
                                 #set preflow data
@@ -311,9 +319,9 @@ class OmEngine():
                             TempFiles.objects.filter(mapping_id=mapping_id).delete()
                         return hp_result['value']
                 else:
-                    return _('缺少必填變數：'+ require_check)
+                    return _('缺少必填變數：') + require_check
         except Exception as e:
-            self.markError(chart_id, chart_text, _('OME系統錯誤(開始點)，請通知系統管理員。') + '<br>' + e.__str__())
+            self.markError(chart_id, chart_text, _('OME系統錯誤(開始點)，請通知系統管理員。') + e.__str__())
     
     
     def endPoint(self,flag):
@@ -363,7 +371,7 @@ class OmEngine():
                                     if not formdata:
                                         omdata_model = getModel('omformmodel','Omdata_' + self.table_uuid)
                                         formdata = list(omdata_model.objects.filterformat(id=self.data_id))[0]
-                                    output_obj[name] = self.regexInOutputValue(formdata, value)
+                                    output_obj[name] = regexInOutputValue(formdata, value)
                                 else:
                                     output_obj[name] = value
                 #log output
@@ -452,7 +460,7 @@ class OmEngine():
                 self.inputLog(log, chart_id, input_value, chart_text, chart_type)
                 return self.replaceFromTo()
         except Exception as e:
-            self.markError(chart_id, chart_text, _('OME系統錯誤(結束點)，請通知系統管理員。') + '<br>' + e.__str__())
+            self.markError(chart_id, chart_text, _('OME系統錯誤(結束點)，請通知系統管理員。') + e.__str__())
         
     
     def pythonPoint(self,flag):
@@ -500,7 +508,7 @@ class OmEngine():
                 self.data['load_balance'] = load_balance and version != 'C'
                 return self.inputProcess(log)
         except Exception as e:
-            self.markError(chart_id, chart_text, _('OME系統錯誤(程式碼點)，請通知系統管理員。') + '<br>' + e.__str__())
+            self.markError(chart_id, chart_text, _('OME系統錯誤(程式碼點)，請通知系統管理員。') + e.__str__())
     
     
     def formPoint(self,flag):
@@ -525,7 +533,7 @@ class OmEngine():
                     value = config_output['value']  #欄位
                     if name and value:
                         name = name[2:-1]
-                        c_output_value = self.regexInOutputValue(table_dict, value)
+                        c_output_value = regexInOutputValue(table_dict, value)
                         #寫入flow value
                         self.flow_value[name] = c_output_value
                         #寫入output dict
@@ -624,7 +632,7 @@ class OmEngine():
                                 new_value = str(value)
                             write_from_dict[item_id] = new_value
                     #檢查必填欄位
-                    require_check = self.inputRequireCheck(require_list, write_from_dict)
+                    require_check = inputRequireCheck(require_list, write_from_dict)
                     if require_check == None:
                         self.inputLog(log, chart_id, write_from_dict, chart_text, chart_type)
                         #get omdata and change running status
@@ -669,9 +677,18 @@ class OmEngine():
                                 mission_param['ticket_createtime'] = m.init_data.createtime
                                 action = self.getQuickAction(chart_id)
                                 mission_param['action'] = action
-                                group = json.loads(m.group)
-                                mission_param['assignee_id'] = group.get('user','')
-                                mission_param['assign_group_id'] = group.get('group','')
+                                if m.group:
+                                    group = json.loads(m.group)
+                                    g = group.get('group',None)
+                                    if g:
+                                        u = group.get('user',None)
+                                    else:
+                                        u = None
+                                else:
+                                    g = None
+                                    u = None
+                                mission_param['assignee_id'] = u
+                                mission_param['assign_group_id'] = g
                                 createMission(mission_param)
                         #remove queue db
                         self.removeQueueDB()
@@ -706,14 +723,14 @@ class OmEngine():
                                     if table_dict == None:
                                         model = getModel('omformmodel', 'Omdata_' + self.table_uuid)
                                         table_dict = model.objects.getdictformat(id=self.data_id)
-                                    input_obj[name] = self.regexInOutputValue(table_dict, value)
+                                    input_obj[name] = regexInOutputValue(table_dict, value)
                                 else:
                                     input_obj[name] = value
                                 #確認是否為必填欄位
                                 if not input_obj[name]:
                                     require = subflow_input['require']
                                     if require == True or require == 'true' or require == 'True':
-                                        return _('缺少必填變數：'+name)
+                                        return _('缺少必填變數：') + name
                         self.data['chart_input'] = input_obj
                         #set preflow data
                         preflow_uuid = self.has_preflow(chart)['value']
@@ -730,7 +747,7 @@ class OmEngine():
                         #找不到資料驗證的流程
                         return self.markError(chart_id, chart_text, hp_result['value'])
         except Exception as e:
-            self.markError(chart_id, chart_text, _('OME系統錯誤(人工點)，請通知系統管理員。') + '<br>' + e.__str__())
+            self.markError(chart_id, chart_text, _('OME系統錯誤(人工點)，請通知系統管理員。') + e.__str__())
     
     
     def asyncPoint(self,flag):
@@ -751,6 +768,11 @@ class OmEngine():
                 omdata_model = getModel('omformmodel', model_name)
                 main_ticket = list(omdata_model.objects.filter(id=self.data_id).values())[0]
                 async_main_ticket_id = main_ticket.pop('id')
+                main_ticket['running'] = True
+                main_ticket['stop_uuid'] = ''
+                main_ticket['stop_chart_text'] = ''
+                main_ticket['stoptime'] = None
+                main_ticket['history'] = False
                 m = omdata_model.objects.create(**main_ticket)
                 self.data_id = m.id
                 self.data['data_id'] = m.id
@@ -773,7 +795,7 @@ class OmEngine():
                 self.inputLog(log, chart_id, self.next_chart_item['id'], chart_text, chart_type)
                 return self.replaceFromTo()
         except Exception as e:
-            self.markError(chart_id, chart_text, _('OME系統錯誤(並行點)，請通知系統管理員。') + '<br>' + e.__str__())
+            self.markError(chart_id, chart_text, _('OME系統錯誤(並行點)，請通知系統管理員。') + e.__str__())
     
     
     def collectionPoint(self,flag):
@@ -807,7 +829,7 @@ class OmEngine():
                 omdata_model.objects.filter(id=self.data_id).update(running=False,history=True,stop_uuid=stop_uuid,stop_chart_text=chart_text,stoptime=stoptime)
                 #取得flow design確認非同步作業是否都已經完成
                 config = chart['config']
-                main_chart_id = config['main']
+                main_chart_id = config.get('main','')
                 if not main_chart_id:
                     main_chart_id = self.data.get('chart_id_from','')
                 count = len(config['rules'])
@@ -859,7 +881,7 @@ class OmEngine():
                 else:
                     self.removeQueueDB()
         except Exception as e:
-            self.markError(chart_id, chart_text, _('OME系統錯誤(集合點)，請通知系統管理員。') + '<br>' + e.__str__())
+            self.markError(chart_id, chart_text, _('OME系統錯誤(集合點)，請通知系統管理員。') + e.__str__())
     
     
     def switchPoint(self,flag):
@@ -911,7 +933,7 @@ class OmEngine():
                             if not formdata:
                                 omdata_model = getModel('omformmodel','Omdata_' + self.table_uuid)
                                 formdata = list(omdata_model.objects.filterformat(id=self.data_id))[0]
-                            c_input_value = self.regexInOutputValue(formdata, value1)
+                            c_input_value = regexInOutputValue(formdata, value1)
                             if re.match(r'#[A-Z][0-9]+\(.+\)', value1):
                                 value1 = re.findall(r'#[A-Z][0-9]+\((.+)\)', value1)[0]
                             elif re.match(r'#\(.+\)', value1):
@@ -931,7 +953,7 @@ class OmEngine():
                             if not formdata:
                                 omdata_model = getModel('omformmodel','Omdata_' + self.table_uuid)
                                 formdata = list(omdata_model.objects.filterformat(id=self.data_id))[0]
-                            c_input_value = self.regexInOutputValue(formdata, value2)
+                            c_input_value = regexInOutputValue(formdata, value2)
                             if re.match(r'#[A-Z][0-9]+\(.+\)', value2):
                                 value2 = re.findall(r'#[A-Z][0-9]+\((.+)\)', value2)[0]
                             elif re.match(r'#\(.+\)', value2):
@@ -945,7 +967,7 @@ class OmEngine():
                 self.inputLog(log, chart_id, last_chart_id, chart_text, chart_type)
                 return self.replaceFromTo()
         except Exception as e:
-            self.markError(chart_id, chart_text, _('OME系統錯誤(判斷點)，請通知系統管理員。') + '<br>' + e.__str__())
+            self.markError(chart_id, chart_text, _('OME系統錯誤(判斷點)，請通知系統管理員。') + e.__str__())
     
     
     def subflowPoint(self,flag):
@@ -1003,14 +1025,14 @@ class OmEngine():
                             if not formdata:
                                 omdata_model = getModel('omformmodel','Omdata_' + self.table_uuid)
                                 formdata = list(omdata_model.objects.filterformat(id=self.data_id))[0]
-                            input_obj[name] = self.regexInOutputValue(formdata, value)
+                            input_obj[name] = regexInOutputValue(formdata, value)
                         else:
                             input_obj[name] = value
                         #確認是否為必填欄位
                         if require == True or require == 'true' or require == 'True':
                             require_list.append(name)
                 #檢查必填
-                require_check = self.inputRequireCheck(require_list, input_obj)
+                require_check = inputRequireCheck(require_list, input_obj)
                 if require_check == None:
                     self.data['chart_input'] = input_obj
                     log = chart['config'].get('log',False)
@@ -1019,7 +1041,7 @@ class OmEngine():
                 else:
                     return self.markError(chart_id,chart_text,_('缺少必填變數：') + require_check)
         except Exception as e:
-            self.markError(chart_id, chart_text, _('OME系統錯誤(子流程點)，請通知系統管理員。') + '<br>' + e.__str__())
+            self.markError(chart_id, chart_text, _('OME系統錯誤(子流程點)，請通知系統管理員。') + e.__str__())
     
     
     def outflowPoint(self,flag):
@@ -1098,7 +1120,7 @@ class OmEngine():
                             if not formdata:
                                 omdata_model = getModel('omformmodel','Omdata_' + self.table_uuid)
                                 formdata = list(omdata_model.objects.filterformat(id=self.data_id))[0]
-                            input_value = self.regexInOutputValue(formdata, value)
+                            input_value = regexInOutputValue(formdata, value)
                         else:
                             input_value = value
                         #確認name格式
@@ -1126,7 +1148,7 @@ class OmEngine():
                         if require == True or require == 'true' or require == 'True':
                             require_list.append(name)
                     #檢查必填
-                    require_check = self.inputRequireCheck(require_list, both_input_dict)
+                    require_check = inputRequireCheck(require_list, both_input_dict)
                     if require_check == None:
                         log = chart['config'].get('log',False)
                         self.inputLog(log, chart_id, both_input_dict, chart_text, chart_type)
@@ -1149,7 +1171,7 @@ class OmEngine():
         except Exception as e:
             if self.last_chart_item:
                 chart_id = self.last_chart_item.get('id','')
-            self.markError(chart_id, chart_text, _('OME系統錯誤(外部流程點)，請通知系統管理員。') + '<br>' + e.__str__())
+            self.markError(chart_id, chart_text, _('OME系統錯誤(外部流程點)，請通知系統管理員。') + e.__str__())
         
         
     def inflowPoint(self,flag):
@@ -1227,7 +1249,7 @@ class OmEngine():
                             if not formdata:
                                 omdata_model = getModel('omformmodel','Omdata_' + self.table_uuid)
                                 formdata = list(omdata_model.objects.filterformat(id=self.data_id))[0]
-                            input_value = self.regexInOutputValue(formdata, value)
+                            input_value = regexInOutputValue(formdata, value)
                         else:
                             input_value = value
                         #確認name格式
@@ -1255,7 +1277,7 @@ class OmEngine():
                         if require == True or require == 'true' or require == 'True':
                             require_list.append(name)
                     #檢查必填
-                    require_check = self.inputRequireCheck(require_list, both_input_dict)
+                    require_check = inputRequireCheck(require_list, both_input_dict)
                     if require_check == None:
                         log = chart['config'].get('log',False)
                         self.inputLog(log, chart_id, both_input_dict, chart_text, chart_type)
@@ -1264,7 +1286,7 @@ class OmEngine():
                         try:
                             outside_flow_fa = FlowActiveGlobalObject.NameSearch(outside_flow_name, self.flowactive.flow_app_id, None)
                         except:
-                            self.markError(chart_id, chart_text, _('應用內找不到此流程：' + outside_flow_name))
+                            self.markError(chart_id, chart_text, _('應用內找不到此流程：') + outside_flow_name)
                         outside_flow_uuid = outside_flow_fa.flow_uuid.hex
                         outside_flow_formobject = json.loads(outside_flow_fa.merge_formobject)
                         from omformflow.views import createOmData
@@ -1279,7 +1301,7 @@ class OmEngine():
                     else:
                         return self.markError(chart_id,chart_text,_('缺少必填變數：') + require_check)
         except Exception as e:
-            self.markError(chart_id, chart_text, _('OME系統錯誤(呼叫流程點)，請通知系統管理員。') + '<br>' + e.__str__())
+            self.markError(chart_id, chart_text, _('OME系統錯誤(呼叫流程點)，請通知系統管理員。') + e.__str__())
     
     
     def sleepPoint(self,flag):
@@ -1327,7 +1349,7 @@ class OmEngine():
                     self.inputLog(log, chart_id, '', chart_text, chart_type)
                     return self.replaceFromTo()
         except Exception as e:
-            self.markError(chart_id, chart_text, _('OME系統錯誤(暫停點)，請通知系統管理員。') + '<br>' + e.__str__())
+            self.markError(chart_id, chart_text, _('OME系統錯誤(暫停點)，請通知系統管理員。') + e.__str__())
         
     
     def setformPoint(self,flag):
@@ -1352,7 +1374,7 @@ class OmEngine():
                     value = config_output['value']  #欄位
                     if name:
                         name = name[2:-1]
-                        c_output_value = self.regexInOutputValue(table_dict, value)
+                        c_output_value = regexInOutputValue(table_dict, value)
                         #寫入flow value
                         self.flow_value[name] = c_output_value
                         #寫入output dict
@@ -1448,7 +1470,7 @@ class OmEngine():
                             new_value = str(value)
                         write_from_dict[item_id] = new_value
                 #檢查必填欄位
-                require_check = self.inputRequireCheck(require_list, write_from_dict)
+                require_check = inputRequireCheck(require_list, write_from_dict)
                 if require_check == None:
                     model_name = 'Omdata_' + self.table_uuid
                     model = getModel('omformmodel', model_name)
@@ -1461,7 +1483,7 @@ class OmEngine():
                 else:
                     return self.markError(chart_id,chart_text,_('缺少必填變數：') + require_check)
         except Exception as e:
-            self.markError(chart_id, chart_text, _('OME系統錯誤(自動輸入點)，請通知系統管理員。') + '<br>' + e.__str__())
+            self.markError(chart_id, chart_text, _('OME系統錯誤(自動輸入點)，請通知系統管理員。') + e.__str__())
         
     
     def org1Point(self,flag):
@@ -1519,7 +1541,7 @@ class OmEngine():
                                     if not formdata:
                                         omdata_model = getModel('omformmodel','Omdata_' + self.table_uuid)
                                         formdata = list(omdata_model.objects.filterformat(id=self.data_id))[0]
-                                    c_input_value = self.regexInOutputValue(formdata, value)
+                                    c_input_value = regexInOutputValue(formdata, value)
                                 elif re.match(r'\$\(.+\)', value):
                                     value = value[2:-1]
                                     c_input_value = self.flow_value.get(value,'')
@@ -1532,15 +1554,15 @@ class OmEngine():
                                 #組裝寫入value history db的變數
                                 input_obj[name] = c_input_value
                     #檢查必填欄位
-                    require_check = self.inputRequireCheck(require_list, input_obj)
+                    require_check = inputRequireCheck(require_list, input_obj)
                     if require_check == None:
                         cog = checkOrgGlobal()
                         if cog:
                             user_id = input_obj.get('user_no','')
-                            default_group_id = self.getUserDefaultGroup(user_id)
+                            default_group_id = getUserDefaultGroup(user_id)
                             grp_res = getRootPosition(default_group_id, input_obj.get('role',''))
                             role_user_id = grp_res['user_id']
-                            role_default_group_id = self.getUserDefaultGroup(role_user_id)
+                            role_default_group_id = getUserDefaultGroup(role_user_id)
                             input_obj['dept_no'] = role_default_group_id
                             input_obj['user_no'] = role_user_id
                             self.inputLog(log, chart_id, input_obj, chart_text, chart_type)
@@ -1554,7 +1576,7 @@ class OmEngine():
                     self.inputLog(log, chart_id, {}, chart_text, chart_type)
                     return self.replaceFromTo()
         except Exception as e:
-            self.markError(chart_id, chart_text, _('OME系統錯誤(同系角色點)，請通知系統管理員。') + '<br>' + e.__str__())
+            self.markError(chart_id, chart_text, _('OME系統錯誤(同系角色點)，請通知系統管理員。') + e.__str__())
         
     
     def org2Point(self,flag):
@@ -1612,7 +1634,7 @@ class OmEngine():
                                     if not formdata:
                                         omdata_model = getModel('omformmodel','Omdata_' + self.table_uuid)
                                         formdata = list(omdata_model.objects.filterformat(id=self.data_id))[0]
-                                    c_input_value = self.regexInOutputValue(formdata, value)
+                                    c_input_value = regexInOutputValue(formdata, value)
                                 elif re.match(r'\$\(.+\)', value):
                                     value = value[2:-1]
                                     c_input_value = self.flow_value.get(value,'')
@@ -1625,14 +1647,14 @@ class OmEngine():
                                 #組裝寫入value history db的變數
                                 input_obj[name] = c_input_value
                     #檢查必填欄位
-                    require_check = self.inputRequireCheck(require_list, input_obj)
+                    require_check = inputRequireCheck(require_list, input_obj)
                     if require_check == None:
                         cog = checkOrgGlobal()
                         if cog:
                             dept_no = input_obj.get('dept_no','')
                             grp_res = getDeptPosition(dept_no, input_obj.get('role_name',''))
                             role_user_id = grp_res['user_id']
-                            role_default_group_id = self.getUserDefaultGroup(role_user_id)
+                            role_default_group_id = getUserDefaultGroup(role_user_id)
                             input_obj['dept_no'] = role_default_group_id
                             input_obj['user_no'] = role_user_id
                             self.inputLog(log, chart_id, input_obj, chart_text, chart_type)
@@ -1646,7 +1668,7 @@ class OmEngine():
                     self.inputLog(log, chart_id, {}, chart_text, chart_type)
                     return self.replaceFromTo()
         except Exception as e:
-            self.markError(chart_id, chart_text, _('OME系統錯誤(部門角色點)，請通知系統管理員。') + '<br>' + e.__str__())
+            self.markError(chart_id, chart_text, _('OME系統錯誤(部門角色點)，請通知系統管理員。') + e.__str__())
         
             
     
@@ -1784,7 +1806,7 @@ class OmEngine():
                         else:
                             var_dict[f] = flow_value.get(c_row[f][2:-1],'')
                     elif re.match(r'#[A-Z]*[0-9]*\(.+\)', c_row[f]):
-                        var_dict[f] = self.regexInOutputValue(formdata, c_row[f])
+                        var_dict[f] = regexInOutputValue(formdata, c_row[f])
                     else:
                         var_dict[f] = c_row[f]
                 elif f == 'to':
@@ -1950,7 +1972,7 @@ class OmEngine():
                             result[var_dict['to']] = ''
                     elif c_type == 'get_user_group':
                         try:
-                            default_group_id = self.getUserDefaultGroup(var_dict['from'])
+                            default_group_id = getUserDefaultGroup(var_dict['from'])
                             self.flow_value[var_dict['to']] = default_group_id
                         except:
                             result[var_dict['to']] = ''
@@ -2045,9 +2067,18 @@ class OmEngine():
                             mission_param['stop_chart_text'] = stop_chart_text
                             mission_param['create_user_id'] = m.create_user_id
                             mission_param['ticket_createtime'] = m.init_data.createtime
-                            group = json.loads(m.group)
-                            mission_param['assignee_id'] = group.get('user','')
-                            mission_param['assign_group_id'] = group.get('group','')
+                            if m.group:
+                                group = json.loads(m.group)
+                                g = group.get('group',None)
+                                if g:
+                                    u = group.get('user',None)
+                                else:
+                                    u = None
+                            else:
+                                g = None
+                                u = None
+                            mission_param['assignee_id'] = u
+                            mission_param['assign_group_id'] = g
                             createMission(mission_param)
         except Exception as e:
             debug('OME MarkError error:     %s' % e.__str__())
@@ -2124,7 +2155,7 @@ class OmEngine():
                         if not formdata:
                             omdata_model = getModel('omformmodel','Omdata_' + self.table_uuid)
                             formdata = list(omdata_model.objects.filterformat(id=self.data_id))[0]
-                        c_input_value = self.regexInOutputValue(formdata, value)
+                        c_input_value = regexInOutputValue(formdata, value)
                     else:
                         c_input_value = value
                     #確認該欄位是否為必填
@@ -2134,7 +2165,7 @@ class OmEngine():
                     #組裝寫入value history db的變數
                     input_obj[name] = c_input_value
         #檢查必填欄位
-        require_check = self.inputRequireCheck(require_list, input_obj)
+        require_check = inputRequireCheck(require_list, input_obj)
         if require_check == None:
             self.inputLog(log, chart_id, input_obj, chart_text, chart_type)
             #put input_obj into data
@@ -2142,22 +2173,7 @@ class OmEngine():
             #put queue
             return self.replaceFromTo()
         else:
-            return self.markError(chart_id,chart_text,_('缺少必填變數：'+ require_check))
-        
-    
-    def inputRequireCheck(self, require_list, input_obj):
-        '''
-        檢查必填欄位使否為空
-        '''
-        require_check = None
-        if len(require_list):
-            for name in require_list:
-                if input_obj[name]:
-                    pass
-                else:
-                    require_check = name
-                    break
-        return require_check
+            return self.markError(chart_id,chart_text,_('缺少必填變數：') + require_check)
     
     
     def replaceFromTo(self):
@@ -2180,7 +2196,7 @@ class OmEngine():
                 async_main_ticket_id = self.data.pop('async_main_ticket_id')
                 ex_queue_id = self.flow_uuid + str(async_main_ticket_id) + str(chart_id)
             QueueData.objects.get(queue_id=ex_queue_id).delete()
-        except:
+        except Exception as e:
             pass
     
     
@@ -2210,7 +2226,10 @@ class OmEngine():
             ex_queue_id = parent_flow_uuid + str(parent_data_id) + str(parent_chart_id)
         elif outflow_content and chart_type == 'start':
             parent_flow_uuid = outflow_content.get('flow_uuid','')
-            parent_data_id = outflow_content.get('data_id','')
+            if outflow_content.get('async_main_ticket_id',''):
+                parent_data_id = outflow_content.pop('async_main_ticket_id')
+            else:
+                parent_data_id = outflow_content.get('data_id','')
             parent_chart_id = outflow_content.get('chart_id_from','')
             outflow_content['chart_id_from'] = None
             ex_queue_id = parent_flow_uuid + str(parent_data_id) + str(parent_chart_id)
@@ -2246,43 +2265,6 @@ class OmEngine():
         model_name = 'Omdata_' + self.table_uuid
         model = getModel('omformmodel', model_name)
         model.objects.filter(id=self.data_id).update(running=False,closed=True,stop_uuid=stop_uuid,stop_chart_text=stop_chart_text,stoptime=stoptime)
-
-
-    def regexInOutputValue(self, formdata, value):
-        '''
-        確認input/output value格式
-        '''
-        try:
-            if re.match(r'#[A-Z][0-9]+\(.+\)', value):
-                eng_num = re.findall(r'#([A-Z][0-9]+)\(.+\)', value)[0]
-                value = re.findall(r'#[A-Z][0-9]+\((.+)\)', value)[0]
-                table_field = value.lower()
-                temp_value = json.loads(formdata.get(table_field,'{}'))
-                c_input_value = self.getTableFieldValue(eng_num,temp_value)
-            elif re.match(r'#\(.+\)', value):
-                value = re.findall(r'#\((.+)\)', value)[0]
-                table_field = value.lower()
-                c_input_value = formdata.get(table_field,'')
-        except Exception as e:
-            debug(e.__str__())
-            c_input_value = ''
-        finally:
-            return c_input_value
-
-    
-    def getTableFieldValue(self, eng_num, temp_value):
-        '''
-        '''
-        try:
-            if eng_num == 'G1':
-                value = temp_value['group']
-            elif eng_num == 'G2':
-                value = temp_value['user']
-        except Exception as e:
-            debug(e.__str__())
-            value = ''
-        finally:
-            return value
     
     
     def getQuickAction(self, chart_id):
@@ -2304,21 +2286,73 @@ class OmEngine():
             pass
         finally:
             return action
+        
     
-    
-    def getUserDefaultGroup(self, user_id):
-        try:
-            search_user = OmUser.objects.get(id=user_id)
-            default_group_id = search_user.default_group
-            if default_group_id:
-                default_group_id = str(default_group_id)
+def inputRequireCheck(require_list, input_obj):
+    '''
+    檢查必填欄位使否為空
+    '''
+    require_check = None
+    if len(require_list):
+        for name in require_list:
+            if input_obj[name]:
+                pass
             else:
-                default_group_id_list = list(search_user.groups.all().values_list('id',flat=True))
-                if default_group_id_list:
-                    default_group_id = str(default_group_id_list[0])
-                else:
-                    default_group_id = ''
-        except:
-            default_group_id = ''
-        finally:
-            return default_group_id
+                require_check = name
+                break
+    return require_check
+
+
+def regexInOutputValue(formdata, value):
+    '''
+    確認input/output value格式
+    '''
+    try:
+        if re.match(r'#[A-Z][0-9]+\(.+\)', value):
+            eng_num = re.findall(r'#([A-Z][0-9]+)\(.+\)', value)[0]
+            value = re.findall(r'#[A-Z][0-9]+\((.+)\)', value)[0]
+            table_field = value.lower()
+            temp_value = json.loads(formdata.get(table_field,'{}'))
+            c_input_value = getTableFieldValue(eng_num,temp_value)
+        elif re.match(r'#\(.+\)', value):
+            value = re.findall(r'#\((.+)\)', value)[0]
+            table_field = value.lower()
+            c_input_value = formdata.get(table_field,'')
+    except Exception as e:
+        debug(e.__str__())
+        c_input_value = ''
+    finally:
+        return c_input_value
+
+    
+def getTableFieldValue(eng_num, temp_value):
+    '''
+    '''
+    try:
+        if eng_num == 'G1':
+            value = temp_value['group']
+        elif eng_num == 'G2':
+            value = temp_value['user']
+    except Exception as e:
+        debug(e.__str__())
+        value = ''
+    finally:
+        return value
+    
+    
+def getUserDefaultGroup(user_id):
+    try:
+        search_user = OmUser.objects.get(id=user_id)
+        default_group_id = search_user.default_group
+        if default_group_id:
+            default_group_id = str(default_group_id)
+        else:
+            default_group_id_list = list(search_user.groups.all().values_list('id',flat=True))
+            if default_group_id_list:
+                default_group_id = str(default_group_id_list[0])
+            else:
+                default_group_id = ''
+    except:
+        default_group_id = ''
+    finally:
+        return default_group_id

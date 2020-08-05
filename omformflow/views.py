@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.utils.translation import gettext as _
 from django.contrib.auth.decorators import login_required, permission_required
 from omflow.syscom.schedule_monitor import schedule_Execute, cancelScheduleJob
-from omflow.syscom.common import try_except, DataChecker, DatatableBuilder, getModel, FormDataChecker, FormatToFormdataList, getAppAttr, merge_formobject_items, FormatFormdataListToFormdata, check_app, getPostdata
+from omflow.syscom.common import try_except, DataChecker, DatatableBuilder, getModel, FormDataChecker, FormatToFormdataList, getAppAttr, merge_formobject_items, FormatFormdataListToFormdata, check_app, getPostdata, listQueryBuilder
 from omflow.syscom.message import ResponseAjax, statusEnum
 from omflow.global_obj import GlobalObject, FlowActiveGlobalObject
 from omflow.models import SystemSetting, Scheduler, TempFiles
@@ -817,6 +817,7 @@ def deployWorkspaceApplication(postdata, user):
                 if app_attr in ['sys','user','cloud']:
                     if app_attr == 'sys':
                         removeSidebar(a_app_id)
+                        lside_pid = ''
                     elif lside_pid == 'disable':
                         lside_pid = removeSidebar(a_app_id)
                     createSidebar(flow_list, new_app_id, new_app_name, lside_pid)
@@ -1342,75 +1343,79 @@ def getFlowAPIFormatAjax(request):
     author: Kolin Hsu
     '''
     #function variable
-    require_field = ['flow_name','app_name']
-    result = {}
-    #server side rule check
-    postdata = getPostdata(request)
-    checker = DataChecker(postdata, require_field)
+    api_input = {}
+    api_output = {}
+    formdata = []
     #get post data
+    postdata = getPostdata(request)
     flow_name = postdata.get('flow_name','')
     app_name = postdata.get('app_name','')
     action = postdata.get('action','')
-    if checker.get('status') == 'success':
-        fa = FlowActiveGlobalObject.NameSearch(flow_name, None, app_name)
-        if fa:
-            formdata = []
-            items = json.loads(fa.merge_formobject)
-            for key in items:
-                field_dict = {}
-                item = items[key]
-                if item['type'] == 'checkbox':
-                    field_dict = {'id':item['id'], 'value':'[<' + item['config']['title'] + '>,...]', 'type':item['type']}
-                elif item['type'] == 'h_status':
-                    field_dict = {'id':item['id'], 'value':'<' + item['config']['title'] + '>', 'type':item['type']}
-                    header_dict = {'id':'status', 'value':'<' + item['config']['title'] + '>', 'type':'header'}
-                    formdata.append(header_dict)
-                elif item['type'] == 'h_group':
-                    field_dict = {'id':item['id'], 'value':{'group':'<'+item['config']['group_title']+'>','user':'<'+item['config']['user_title']+'>'}, 'type':item['type']}
-                    header_dict = {'id':'group', 'value':{'group':'<'+item['config']['group_title']+'>','user':'<'+item['config']['user_title']+'>'}, 'type':'header'}
-                    formdata.append(header_dict)
-                elif item['type'] == 'h_title':
-                    field_dict = {'id':item['id'], 'value':'<' + item['config']['title'] + '>', 'type':item['type']}
-                    header_dict = {'id':'title', 'value':'<' + item['config']['title'] + '>', 'type':'header'}
-                    formdata.append(header_dict)
-                elif item['type'] == 'h_level':
-                    field_dict = {'id':item['id'], 'value':'<' + item['config']['title'] + '>', 'type':item['type']}
-                    header_dict = {'id':'level', 'value':'<' + item['config']['title'] + '>', 'type':'header'}
-                    formdata.append(header_dict)
-                else:
-                    field_dict = {'id':item['id'], 'value':'<' + item['config']['title'] + '>', 'type':item['type']}
-                formdata.append(field_dict)
-            result['security'] = '<security>'
-            result['app_name'] = app_name
-            result['flow_name'] = flow_name
-            result['action'] = action
-            result['omflow_restapi'] = True
-            if formdata:
-                result['formdata'] = formdata
-            if action == 'update':
-                result['data_id'] = '<data_id>'
-            elif action == 'create':
-                if not formdata:
-                    #如果沒有表單
-                    start_input = {}
-                    items = json.loads(fa.flowobject)['items']
-                    for item in items:
-                        if item['id'] == 'FITEM_1':
-                            break
-                    input_list = item['config']['input']
-                    for input_dict in input_list:
-                        name = input_dict['name']
-                        value = input_dict['value']
-                        start_input[name] = value
-                    result['start_input'] = start_input
-            info(request ,'%s list flow form point success.' % request.user.username)
-            return ResponseAjax(statusEnum.success, _('讀取成功。'), result).returnJSON()
-        else:
-            info(request ,'%s list flow form point error.' % request.user.username)
-            return ResponseAjax(statusEnum.success, _('讀取失敗。')).returnJSON()
+    fa = FlowActiveGlobalObject.NameSearch(flow_name, None, app_name)
+    if fa:
+        items = json.loads(fa.merge_formobject)
+        for key in items:
+            field_dict = {}
+            item = items[key]
+            if item['type'] == 'checkbox':
+                field_dict = {'id':item['id'], 'value':'[<' + item['config']['title'] + '>,...]', 'type':item['type']}
+            elif item['type'] == 'h_status':
+                field_dict = {'id':item['id'], 'value':'<' + item['config']['title'] + '>', 'type':item['type']}
+                header_dict = {'id':'status', 'value':'<' + item['config']['title'] + '>', 'type':'header'}
+                formdata.append(header_dict)
+            elif item['type'] == 'h_group':
+                field_dict = {'id':item['id'], 'value':{'group':'<'+item['config']['group_title']+'>','user':'<'+item['config']['user_title']+'>'}, 'type':item['type']}
+                header_dict = {'id':'group', 'value':{'group':'<'+item['config']['group_title']+'>','user':'<'+item['config']['user_title']+'>'}, 'type':'header'}
+                formdata.append(header_dict)
+            elif item['type'] == 'h_title':
+                field_dict = {'id':item['id'], 'value':'<' + item['config']['title'] + '>', 'type':item['type']}
+                header_dict = {'id':'title', 'value':'<' + item['config']['title'] + '>', 'type':'header'}
+                formdata.append(header_dict)
+            elif item['type'] == 'h_level':
+                field_dict = {'id':item['id'], 'value':'<' + item['config']['title'] + '>', 'type':item['type']}
+                header_dict = {'id':'level', 'value':'<' + item['config']['title'] + '>', 'type':'header'}
+                formdata.append(header_dict)
+            else:
+                field_dict = {'id':item['id'], 'value':'<' + item['config']['title'] + '>', 'type':item['type']}
+            formdata.append(field_dict)
+        api_input['security'] = '<security>'
+        api_input['app_name'] = app_name
+        api_input['flow_name'] = flow_name
+        api_input['action'] = action
+        api_input['omflow_restapi'] = 1
+        if action == 'update':
+            api_input['data_id'] = '<data_id>'
+            #組裝推單回傳內容
+            s = {'status':'200', 'message':_('推單成功'), 'result':''}
+            e = {'status':'404', 'message':_('推單失敗')}
+            api_output = {'success':s, 'error':e}
+        elif action == 'create':
+            #組裝開單回傳內容
+            s1 = {'status':'200', 'message':_('開單成功'), 'result':'<data_no>'}
+            s2 = {'status':'200', 'message':_('開單成功'), 'result':''}
+            e = {'status':'404', 'message':_('開單失敗')}
+            api_output = {'success1':s1, 'success2':s2, 'error':e}
+            #如果沒有表單
+            if not formdata:
+                start_input = {}
+                items = json.loads(fa.flowobject)['items']
+                for item in items:
+                    if item['id'] == 'FITEM_1':
+                        break
+                input_list = item['config']['input']
+                for input_dict in input_list:
+                    name = input_dict['name']
+                    value = input_dict['value']
+                    start_input[name] = value
+                api_input['start_input'] = start_input
+        if formdata:
+            api_input['formdata'] = formdata
+        result = {'input':api_input, 'output':api_output}
+        info(request ,'%s list flow form point success.' % request.user.username)
+        return ResponseAjax(statusEnum.success, _('讀取成功。'), result).returnJSON()
     else:
-        info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
-        return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
+        info(request ,'%s list flow form point error.' % request.user.username)
+        return ResponseAjax(statusEnum.success, _('讀取失敗。')).returnJSON()
 
 
 @login_required
@@ -1790,6 +1795,7 @@ def listActiveApplicationAjax(request):
         info(request ,'%s list ActiveApplication success.' % request.user.username)
         return ResponseAjax(statusEnum.success, _('查詢成功。'), result).returnJSON()
 
+
 @login_required
 @try_except
 def listActiveApplication4RelationAjax(request):
@@ -1837,7 +1843,6 @@ def getCloudFlowAjax(request):
             return ResponseAjax(statusEnum.error, _('查詢失敗。'), result).returnJSON()
     except:
         return ResponseAjax(statusEnum.error, _('查詢失敗。')).returnJSON()
-        
     
     
 def undeployFlow(flow_id_list):
@@ -2189,7 +2194,8 @@ def editOmDataAjax(request):
     flow_uuid = postdata.get('flow_uuid','')
     if app_name and flow_name:
         fa = FlowActiveGlobalObject.NameSearch(flow_name, None, app_name)
-        flow_uuid = fa.flow_uuid.hex
+        if fa:
+            flow_uuid = fa.flow_uuid.hex
         postdata['flow_uuid'] = flow_uuid
     #server side rule check
     omflow_restapi = postdata.get('omflow_restapi',False)
@@ -2202,7 +2208,7 @@ def editOmDataAjax(request):
     if api_pass:
         if checker.get('status') == 'success':
             if action == 'update':
-                if checkOmDataPermission(request.user, postdata.get('flow_uuid',''), None, postdata.get('data_id',''), '_Modify'):
+                if checkOmDataPermission(request.user, flow_uuid, None, postdata.get('data_id',''), '_Modify'):
                     result = updateOmData(postdata, request.user.username)
                 else:
                     per = False
@@ -2373,7 +2379,7 @@ def createOmData(param,user='system',files=None):
         else:
             message = _('該流程目前為停用狀態。')
     except ObjectDoesNotExist:
-        message = _('該流程沒有已上架的版本')
+        message = _('該流程沒有已上架的版本。')
     except Exception as e:
         message = e.__str__()
     finally:
@@ -2521,11 +2527,11 @@ def updateOmData(param,user='system'):
                                     omengine_result = OmEngine(subflow_uuid, data).checkActive()
                                 if omengine_result:
                                     if isinstance(omengine_result, str):
-                                        message = _('開單失敗：') + omengine_result
+                                        message = _('推單失敗：') + omengine_result
                                     elif isinstance(omengine_result, dict):
                                         status = True
                                         data_no = omengine_result['data_no']
-                                        message = _('開單成功。')
+                                        message = _('推單成功。')
                                 else:
                                     message = _('更新成功。')
                                     status = True
@@ -2643,6 +2649,43 @@ def deleteOmData(param):
         result['message'] = message
         result['status'] = status
         return result
+
+
+@login_required
+@try_except
+def getDataIDListAjax(request):
+    '''
+    get data_id list
+    input: app_name, flow_name, data_no
+    return: data_id, 
+    author: Kolin Hsu
+    '''
+    #function variable
+    require_field = ['app_name','flow_name','data_no']
+    result = []
+    #get post data
+    postdata = getPostdata(request)
+    app_name = postdata.get('app_name','')
+    flow_name = postdata.get('flow_name','')
+    data_no = postdata.get('data_no','')
+    #server side rule check
+    checker = DataChecker(postdata, require_field)
+    if checker.get('status') == 'success':
+        fa = FlowActiveGlobalObject.NameSearch(flow_name, None, app_name)
+        if fa:
+            flow_uuid = fa.flow_uuid.hex
+            omdata_model = getModel('omformmodel','Omdata_' + flow_uuid)
+            omdata_list = list(omdata_model.objects.filter(data_no=data_no,history=False,running=False,closed=False).values('id','stop_chart_text'))
+            for omdata in omdata_list:
+                result.append({'data_id':omdata['id'],'stop_chart_text':omdata['stop_chart_text']})
+            info(request ,'%s get OmData data_id list success.' % request.user.username)
+            return ResponseAjax(statusEnum.success, _('查詢成功。'), result).returnJSON()
+        else:
+            info(request ,'%s get OmData data_id list error.' % request.user.username)
+            return ResponseAjax(statusEnum.not_found, _('查詢失敗。')).returnJSON()
+    else:
+        info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+        return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
 
 
 #檔案上傳、表列
@@ -2858,47 +2901,71 @@ def listOmDataAjax(request):
     return: json
     author: Kolin Hsu
     '''
+    #function variable
+    display_field_list = []
+    search_field_list = []
     #get post data
     postdata = getPostdata(request)
     flow_uuid = postdata.get('flow_uuid','')
     updatetime = postdata.get('updatetime','')
     closed = postdata.get('closed',[0])
-    display_field_list = []
-    search_field_list = []
-    if request.user.has_perm('omformmodel.Omdata_' + flow_uuid + '_View'):
-        #get field setting
-        flowactive = FlowActiveGlobalObject.UUIDSearch(flow_uuid)
-        display_field_dict = json.loads(flowactive.display_field)
-        for key in display_field_dict:
-            if '-' in key:
-                key = re.findall(r'(.+)-[a-z]', key)[0]
-            if key == 'create_user_id' or key == 'create_user':
-                key = 'create_user_id__nick_name'
-            elif key == 'update_user_id' or key == 'update_user':
-                key = 'update_user_id__nick_name'
-            display_field_list.append(key)
-        display_field_list.append('id')
-        display_field_list.append('data_no')
-        display_field_list.append('stop_uuid')
-        display_field_list.append('stop_chart_text')
-        display_field_list.append('error')
-        display_field_list.append('error_message')
-        display_field_list.append('closed')
-        display_field_list.append('running')
-        search_field_list = display_field_list.copy()
-#         search_field_list.append('data_no')
-#         search_field_list.append('create_user_id__username')
-        #暫時先使用display_field當作search_field
-        field_list = list(map(lambda search_field : search_field + '__icontains', search_field_list))
-        #get model
-        omdata_model = getModel('omformmodel','Omdata_' + flow_uuid)
-        query = omdata_model.objects.filter(closed__in=closed,updatetime__lte=updatetime,history=False).values(*display_field_list)
-        result = DatatableBuilder(request, query, field_list)
-        info(request ,'%s list OmData success.' % request.user.username)
-        return JsonResponse(result)
+    app_name = postdata.get('app_name','')
+    flow_name = postdata.get('flow_name','')
+    omflow_restapi = postdata.get('omflow_restapi','')
+    if flow_name and app_name:
+        flowactive = FlowActiveGlobalObject.NameSearch(flow_name, None, app_name)
+        if flowactive:
+            flow_uuid = flowactive.flow_uuid.hex
     else:
-        info(request ,'%s has no permission.' % request.user.username)
-        return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
+        flowactive = FlowActiveGlobalObject.UUIDSearch(flow_uuid)
+    if flowactive:
+        if request.user.has_perm('omformmodel.Omdata_' + flow_uuid + '_View'):
+            if not omflow_restapi:
+                #get field setting
+                display_field_dict = json.loads(flowactive.display_field)
+                for key in display_field_dict:
+                    if '-' in key:
+                        key = re.findall(r'(.+)-[a-z]', key)[0]
+                    if key == 'create_user_id' or key == 'create_user':
+                        key = 'create_user_id__nick_name'
+                    elif key == 'update_user_id' or key == 'update_user':
+                        key = 'update_user_id__nick_name'
+                    display_field_list.append(key)
+                display_field_list.append('id')
+                display_field_list.append('data_no')
+                display_field_list.append('stop_uuid')
+                display_field_list.append('stop_chart_text')
+                display_field_list.append('error')
+                display_field_list.append('error_message')
+                display_field_list.append('closed')
+                display_field_list.append('running')
+                search_field_list = display_field_list.copy()
+#                 search_field_list.append('data_no')
+#                 search_field_list.append('create_user_id__username')
+                #暫時先使用display_field當作search_field
+                field_list = list(map(lambda search_field : search_field + '__icontains', search_field_list))
+                #get model
+                omdata_model = getModel('omformmodel','Omdata_' + flow_uuid)
+                query = omdata_model.objects.filter(closed__in=closed,updatetime__lte=updatetime,history=False).values(*display_field_list)
+                result = DatatableBuilder(request, query, field_list)
+                info(request ,'%s list OmData success.' % request.user.username)
+                return JsonResponse(result)
+            else:
+                #api使用
+                omdata_model = getModel('omformmodel','Omdata_' + flow_uuid)
+                result = listQueryBuilder(omdata_model, postdata)
+                if result['status']:
+                    info(request ,'%s list OmData success.' % request.user.username)
+                    return ResponseAjax(statusEnum.success, result['message'], result['result']).returnJSON()
+                else:
+                    info(request ,'%s list OmData error.' % request.user.username)
+                    return ResponseAjax(statusEnum.not_found, result['message']).returnJSON()
+        else:
+            info(request ,'%s has no permission.' % request.user.username)
+            return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
+    else:
+        info(request ,'%s list OmData error.' % request.user.username)
+        return ResponseAjax(statusEnum.not_found, _('找不到流程。')).returnJSON()
 
 
 @login_required
@@ -3766,7 +3833,7 @@ def deleteOmParameterAjax(request):
             return ResponseAjax(statusEnum.success, _('刪除成功。')).returnJSON()
         else:
             info(request ,'%s create parameter error.' % request.user.username)
-            return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作')).returnJSON()
+            return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
     else:
         info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
         return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
@@ -3817,7 +3884,7 @@ def listOmParameterAjax(request):
             return ResponseAjax(statusEnum.success, _('查詢成功。'), result).returnJSON()
     else:
         info(request ,'%s create parameter error.' % request.user.username)
-        return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作')).returnJSON()
+        return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
 
 
 def listOmParameter(group_id):
@@ -3875,6 +3942,7 @@ def importOmParameterAjax(request):
 
 
 #collector接收policy
+@try_except
 def receivePolicyAjax(request):
     '''
     collector receive policy.

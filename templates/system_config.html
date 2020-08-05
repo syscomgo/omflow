@@ -117,16 +117,16 @@
               <div class="row">
                 <div class="col-md-12">
                   <div class="form-group">
-				    <label>個資使用同意</label>
-					  <textarea row="9" name="PI_agree" id="PI_agree" class="form-control" placeholder="個資使用同意" style="height:150px;resize:none;"></textarea>					
+				    <label>{% trans '個資使用同意'%}</label>
+					  <textarea row="9" name="PI_agree" id="PI_agree" class="form-control" placeholder="{% trans '個資使用同意'%}" style="height:150px;resize:none;"></textarea>					
 				  </div>
 				  <!-- /.form-group -->
                 </div>
                 <!-- /.col -->
                 <div class="col-md-12">
                   <div class="form-group">
-				    <label>軟體使用同意</label>
-					  <textarea row="9" name="SU_agree" id="SU_agree" class="form-control" placeholder="軟體使用同意" style="height:150px;resize:none;"></textarea>					
+				    <label>{% trans '軟體使用同意'%}</label>
+					  <textarea row="9" name="SU_agree" id="SU_agree" class="form-control" placeholder="{% trans '軟體使用同意'%}" style="height:150px;resize:none;"></textarea>					
 				  </div>
 				  <!-- /.form-group -->
                 </div>
@@ -257,7 +257,7 @@
 	function store_config()	 
 	{	
 		Swal.fire({
-		  title: '處理中...',
+		  title: '{% trans '處理中'%}...',
 		  toast: true,
 		  position: 'bottom-start',
 		  showConfirmButton: false,
@@ -288,7 +288,7 @@
 	
 	function check_connect(){
 		Swal.fire({
-		  title: '處理中...',
+		  title: '{% trans '處理中'%}...',
 		  toast: true,
 		  position: 'bottom-start',
 		  showConfirmButton: false,
@@ -354,7 +354,7 @@
 				}
 				else
 				{
-					omflowAlert('blue', '授權檔案錯誤，請重新選擇檔案')
+					omflowAlert('blue', '{% trans '授權檔案錯誤，請重新選擇檔案'%}')
 				}
 	        }
 	        input_file = file
@@ -366,7 +366,7 @@
     function license_upload_save()
     {
     	Swal.fire({
-		  title: '升級中...',
+		  title: '{% trans '升級中'%}...',
 		  toast: true,
 		  position: 'bottom-start',
 		  showConfirmButton: false,
@@ -391,7 +391,7 @@
 		            input_file =  ''
 		            Swal.fire({
 			      	  icon : 'success',
-			      	  title: '授權資料上傳成功',
+			      	  title: '{% trans '授權資料上傳成功'%}',
 			      	  toast: true,
 				  	  position: 'bottom-start',
 				  	  showConfirmButton: false,

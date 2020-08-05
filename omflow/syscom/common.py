@@ -175,11 +175,11 @@ def DataChecker(data, req_list):
         else:
             result['status'] = 'require null'
             result['result'] = require_null_list
-            result['message'] = _('必要欄位為空，請填入後重新發送請求。')
+            result['message'] = _('必要參數為空，請確認後重新發送請求。')
     else:
         result['status'] = 'require missing'
         result['result'] = require_miss_list
-        result['message'] = _('缺少必填欄位，請填入後重新發送請求。')
+        result['message'] = _('缺少必要參數，請確認後重新發送請求。')
     return result
 
 
@@ -280,7 +280,7 @@ def DatatableBuilder(request, queryset, filed_list):
     length = postdata.get('length')                     #列表顯示長度  int
     start = postdata.get('start')                       #列表顯示起始位置  int
     limit = start + length
-    lst = SearchQueryBuilder(filed_list,searchkey)
+    lst = DatatableQueryBuilder(filed_list,searchkey)
 #     if orderdir == "asc":                                   #判斷排序方式          Q搜尋包含search關鍵字
     thislist = list(queryset.filter(reduce(operator.or_, lst)).order_by(*ordercolumn_list)[start:limit])
 #     else:
@@ -354,7 +354,7 @@ def DatatableBuilder(request, queryset, filed_list):
     return result
 
 
-def SearchQueryBuilder(filed_list,searchkey):
+def DatatableQueryBuilder(filed_list,searchkey):
     '''
     search user method
     input: filed_list,searchkey
@@ -393,7 +393,7 @@ def UserSearch(filed_list,searchkey,ordercolumn):
     author: Kolin Hsu
     '''
     if searchkey:
-        lst = SearchQueryBuilder(filed_list,searchkey)
+        lst = DatatableQueryBuilder(filed_list,searchkey)
         result = list(OmUser.objects.filter(delete=False).exclude(id=1).filter(reduce(operator.or_, lst)).values('id','username','nick_name').distinct().order_by(ordercolumn))
     else:
         result = list(OmUser.objects.filter(delete=False).exclude(id=1).values('id','username','nick_name').distinct().order_by(ordercolumn))
@@ -407,7 +407,7 @@ def GroupSearch(filed_list,searchkey,ordercolumn,adGroup):
     return: json
     author: Kolin Hsu
     '''
-    lst = SearchQueryBuilder(filed_list,searchkey)
+    lst = DatatableQueryBuilder(filed_list,searchkey)
     result = list(Group.objects.filter(reduce(operator.or_, lst),omgroup__functional_flag=False,omgroup__ad_flag__in=adGroup).values('id','name','omgroup__display_name').distinct().order_by(ordercolumn))
     return result
     
@@ -680,5 +680,81 @@ class License():
             return getVersion()
         else:
             return getVersion()
+
+
+def listQueryBuilder(model, param, query=None):
+    try:
+        res = []
+        status = True
+        message = _('查詢成功。')
         
-    
+        search_conditions = param.get('search_conditions',[])
+        search_columns = param.get('search_columns',[])
+        exclude_conditions = param.get('exclude_conditions',[])
+        order_columns = param.get('order_columns',[])
+        if not order_columns:
+            order_columns = ['id']
+        limit = int(param.get('limit', 100))
+        start = int(param.get('start', 0))
+        
+        sc = searchConditionBuilder(search_conditions)
+        ec = searchConditionBuilder(exclude_conditions)
+        if query:
+            if sc:
+                if ec:
+                    res = list(query.filter(reduce(operator.and_, sc)).exclude(reduce(operator.and_, ec)).order_by(*order_columns)[start:limit].values(*search_columns))
+                else:
+                    res = list(query.filter(reduce(operator.and_, sc)).order_by(*order_columns)[start:limit].values(*search_columns))
+            else:
+                if ec:
+                    res = list(query.filter().exclude(reduce(operator.and_, ec)).order_by(*order_columns)[start:limit].values(*search_columns))
+                else:
+                    res = list(query.filter().order_by(*order_columns)[start:limit].values(*search_columns))
+        else:
+            if sc:
+                if ec:
+                    res = list(model.objects.filter(reduce(operator.and_, sc)).exclude(reduce(operator.and_, ec)).order_by(*order_columns)[start:limit].values(*search_columns))
+                else:
+                    res = list(model.objects.filter(reduce(operator.and_, sc)).order_by(*order_columns)[start:limit].values(*search_columns))
+            else:
+                if ec:
+                    res = list(model.objects.filter().exclude(reduce(operator.and_, ec)).order_by(*order_columns)[start:limit].values(*search_columns))
+                else:
+                    res = list(model.objects.filter().order_by(*order_columns)[start:limit].values(*search_columns))
+    except Exception as e:
+        status = False
+        message = _('查詢失敗，錯誤訊息如下：') + e.__str__()
+        error('', e.__str__())
+    finally:
+        return {'status':status,'message':message,'result':res}
+
+
+def searchConditionBuilder(search_conditions):
+    try:
+        lst = []
+        for con in search_conditions:
+            column = con['column']
+            condition = getConsValue(con['condition'])
+            field = column + condition
+            searchkey = con['value']
+            q_obj = Q(**{field: searchkey})
+            lst.append(q_obj)
+    except Exception as e:
+        error('', e.__str__())
+    finally:
+        return lst
+
+
+def getConsValue(con):
+    result = ''
+    if con == '=':
+        pass
+    elif con == 'in':
+        result = '__in'
+    elif con == 'contains':
+        result = '__icontains'
+    elif con == '>':
+        result = '__gt'
+    elif con == '<':
+        result = '__lt'
+    return result

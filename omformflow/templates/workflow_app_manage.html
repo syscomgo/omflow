@@ -10,13 +10,13 @@
 	<!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-       	已上架應用
-        <small>應用列表</small>
+       	{% trans '已上架應用'%}
+        <small>{% trans '應用列表'%}</small>
       </h1>
       <ol class="breadcrumb">
-        <li><a href="/"><i class="fa fa-dashboard"></i> 首頁</a></li>
-		<li>應用管理</li>
-        <li class="active"><a href="/flowmanage/page/workflow-app/">已上架應用</a></li>
+        <li><a href="/"><i class="fa fa-dashboard"></i> {% trans '首頁'%}</a></li>
+		<li>{% trans '應用管理'%}</li>
+        <li class="active"><a href="/flowmanage/page/workflow-app/">{% trans '已上架應用'%}</a></li>
       </ol>
     </section>
     <section class="content">
@@ -25,14 +25,14 @@
 	  	<div class="box box-primary">
   	      <div class="box-header with-border">
   	      	<div class="pull-left">
-		      <button type="button" class="btn btn-default" onclick="undeploy_flowdesign()" id="undeploy_flowdesign" disabled="disabled" style="margin:1px 0px;"><i class="fa fa-trash-o"></i> 下架</button>
-		      <button type="button" class="btn btn-default" onclick="delete_flowdesign()" id="inactive_flowdesign" disabled="disabled" style="margin:1px 0px;display:none;"><i class="fa fa-stop"></i> 刪除</button>
-		      <button type="button" class="btn btn-default" onclick="filter_flowdesign()" style="margin:1px 0px;"><i class="fa fa-filter"></i> 篩選</button>
+		      <button type="button" class="btn btn-default" onclick="undeploy_flowdesign()" id="undeploy_flowdesign" disabled="disabled" style="margin:1px 0px;"><i class="fa fa-trash-o"></i> {% trans '下架'%}</button>
+		      <button type="button" class="btn btn-default" onclick="delete_flowdesign()" id="inactive_flowdesign" disabled="disabled" style="margin:1px 0px;display:none;"><i class="fa fa-stop"></i> {% trans '刪除'%}</button>
+		      <button type="button" class="btn btn-default" onclick="filter_flowdesign()" style="margin:1px 0px;"><i class="fa fa-filter"></i> {% trans '篩選'%}</button>
               <button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default" onclick="filter_default()" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
           	</div>
           	<div class="pull-right">
-		      <button type="button" class="btn btn-default" id="workflowapp_output" onclick="workflowapp_output()" style="margin:1px 0px;" disabled="disabled"><i class="fa fa-upload"></i> 匯出</button>
-		      <button type="button" class="btn btn-default" id="flow_history()" onclick="flow_history()" style="margin:1px 0px;" title="顯示上架紀錄"><i class="fa fa-clock-o"></i> 紀錄</button>
+		      <button type="button" class="btn btn-default" id="workflowapp_output" onclick="workflowapp_output()" style="margin:1px 0px;" disabled="disabled"><i class="fa fa-upload"></i> {% trans '匯出'%}</button>
+		      <button type="button" class="btn btn-default" id="flow_history()" onclick="flow_history()" style="margin:1px 0px;" title="{% trans '顯示上架紀錄'%}"><i class="fa fa-clock-o"></i> {% trans '紀錄'%}</button>
 		  	</div>
   	      </div>
   	      <!-- box-header -->
@@ -41,11 +41,11 @@
 			  <thead>
 			  	<tr>
 				  <th style="width:15px"><a><i class="fa fa-lg fa-check-square-o checkbox-toggle" style="color:SteelBlue"></i></a></th>
-				  <th>流程名稱</th>
-				  <th>屬性</th>
-				  <th>最後修改時間</th>
-				  <th>使用者</th>
-				  <th>版本</th>
+				  <th>{% trans '流程名稱'%}</th>
+				  <th>{% trans '屬性'%}</th>
+				  <th>{% trans '最後修改時間'%}</th>
+				  <th>{% trans '使用者'%}</th>
+				  <th>{% trans '版本'%}</th>
 			  	</tr>
 			  </thead>
 			  <tbody>
@@ -111,9 +111,6 @@
 						data.data = a['data.data']
 						return data.data;
 					},
-				"error": function(xhr,status,error){
-							clearInterval(table_routine);
-					}
         	},   
 			"columns":[ 
 				{"width": "15px", "data": "id", "orderable": false, "render": function (data, type, row)
@@ -130,7 +127,7 @@
 			rowCallback: function(row, data){
 				if (data.undeploy_flag)
 				{	
-					$('td:last', row).html(data.version + '  <button class="btn btn-xs btn-default" onclick="redeploy_app('+data.id+',\''+data.app_name+'\')">切換</button>')
+					$('td:last', row).html(data.version + '  <button class="btn btn-xs btn-default" onclick="redeploy_app('+data.id+',\''+data.app_name+'\')">{% trans '切換'%}</button>')
 					$(row).css('color','#b5bbc8');
 				}
 				else
@@ -212,7 +209,7 @@
     
     
     function undeploy_flowdesign(){
-    	omflowListDialogue('delete', '下列應用將被下架');
+    	omflowListDialogue('delete', '{% trans '下列應用將被下架'%}');
 		
 		$('#modal-default-list button:eq(2)').off("click").on("click",function(){
 			var postbody = {
@@ -222,7 +219,7 @@
 			$('#modal-default-list').on('hidden.bs.modal', function () {
 				omflowJsonAjax(postbody,'{% url "undeployActiveApplicationAjax"%}', actions);
 				Swal.fire({
-				  title: '處理中...',
+				  title: '{% trans '處理中'%}...',
 				  toast: true,
 				  target: document.getElementById('swal-container'),
 				  position: 'bottom-start',
@@ -268,7 +265,7 @@
 			table.draw(false);
 			Swal.fire({
 	      	  icon : 'success',
-	      	  title: '成功',
+	      	  title: '{% trans '成功'%}',
 	      	  toast: true,
 		  	  position: 'bottom-start',
 		  	  showConfirmButton: false,

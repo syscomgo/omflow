@@ -143,7 +143,7 @@
 				{
 					if(data.status == undefined)
 					{
-						omflowAlert('yellow', '你已被登出')
+						omflowAlert('yellow', '{% trans '你已被登出'%}')
 						$('#modal_yellow button').off('click').on('click', function(){
 							location.href="/"
 						});
@@ -152,14 +152,19 @@
 					else
 					{
 						omflowAlert('red', data.message);
-						clearInterval(LSide_routine)
 					}
 					
 				}
 			},
 			error: function(req, status, err) {
-			 	clearInterval(LSide_routine)
-				$('#modal_error').modal('show');
+				Swal.fire({
+				  icon : 'warning',
+				  title: '{% trans '主機連線不穩'%}',
+				  toast: true,
+				  position: 'bottom-start',
+				  showConfirmButton: false,
+				  timer: 1000,
+				});
 	        	console.log('Something went wrong', status, err);
 	    	}
     	});
@@ -173,11 +178,11 @@
 			$('ul.sidebar-menu').empty();
 			defaultarr = ['mymission', 'service', 'servermanage', 'flowmgmt', 'report', 'syssetting', 'staffmgmt']
 			$.each(data.result.sidebar, function(index, value){
-				if (defaultarr.indexOf(value.id) >= 0 && (value.p_id == null | value.p_id.length == 0))
+				if (defaultarr.indexOf(value.id) >= 0 && (!value.p_id))
 				{
 					$('ul.sidebar-menu').append($('div#'+value.id+'>li').clone());
 				}
-				else if ( (value.flow_uuid == 'custom' | value.flow_uuid == 'app') && (value.p_id == null | value.p_id.length == 0))
+				else if ( (value.flow_uuid == 'custom' | value.flow_uuid == 'app') && (!value.p_id))
 				{
 					{%if version_type == "C"%}
 						if (value.name == '服務管理')
@@ -192,7 +197,7 @@
 	        					+'</li>'
 					)
 				}
-				else if ( (value.flow_uuid == 'custom' | value.flow_uuid == 'app') && (value.p_id != null | value.p_id.length != 0))
+				else if ( (value.flow_uuid == 'custom' | value.flow_uuid == 'app') && (value.p_id))
 				{
 					$('ul.sidebar-menu li#'+value.p_id+'>ul').append('<li id="'+value.id+'" class="treeview">'
 	        					+'<a ><i class="fa fa-'+value.icon+'"></i> <span>'+value.name+'</span>'
@@ -203,7 +208,7 @@
 	        					+'</li>'
 					)
 				}
-				else if (value.p_id == null | value.p_id.length == 0)
+				else if (!value.p_id)
 				{
 					$('ul.sidebar-menu').append('<li id="'+value.id+'" class="treeview">'
 	        					+'<a ><i class="fa fa-'+value.icon+'"></i> <span>'+value.name+'</span>'

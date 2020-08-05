@@ -8,14 +8,14 @@
 	author : Pei lin
 -->
     <!-- Content Header (Page header) -->
-    <script src="/static/js/workflow.js"></script>
+    <script src="/static/js/workflow.js?version={%omflow_version%}"></script>
     <section class="content-header">
       <h1>
       </h1>
       <ol class="breadcrumb">
-        <li><a href="/"><i class="fa fa-dashboard"></i> 首頁</a></li>
-		<li>應用管理</li>
-        <li><a href="/flowmanage/page/flow-app/">應用設計</a></li>
+        <li><a href="/"><i class="fa fa-dashboard"></i> {% trans '首頁'%}</a></li>
+		<li>{% trans '應用管理'%}</li>
+        <li><a href="/flowmanage/page/flow-app/">{% trans '應用設計'%}</a></li>
         
       </ol>
     </section>
@@ -27,14 +27,14 @@
         <div class="col-md-12">
           <div class="nav-tabs-custom">
             <ul class="nav nav-tabs">
-              <li class="active"><a href="#p1" data-toggle="tab">參數設定</a></li>
-              <li><a href="#p2" data-toggle="tab">權限設定</a></li>
-			  <li><a href="#p3" data-toggle="tab">表單設計</a></li>
-			  <li><a href="#p4" data-toggle="tab">流程設計</a></li>
-              <li><a href="#p5" data-toggle="tab">子流程</a></li>
+              <li class="active"><a href="#p1" data-toggle="tab">{% trans '參數設定'%}</a></li>
+              <li><a href="#p2" data-toggle="tab">{% trans '權限設定'%}</a></li>
+			  <li><a href="#p3" data-toggle="tab">{% trans '表單設計'%}</a></li>
+			  <li><a href="#p4" data-toggle="tab">{% trans '流程設計'%}</a></li>
+              <li><a href="#p5" data-toggle="tab">{% trans '子流程'%}</a></li>
               <li class="pull-right" id="save_button">
               	<div class="btn-group">
-                  <button type="button" class="btn btn-default" onclick="flow_save()"><i class="fa fa-save"></i> 儲存
+                  <button type="button" class="btn btn-default" onclick="flow_save()"><i class="fa fa-save"></i> {% trans '儲存'%}
                 </div>
               </li>
             </ul>
@@ -47,49 +47,49 @@
 				  	<div class="row">
 				      <div class="col-md-6">
 					  	<div class="form-group has-warning">
-						  <label>流程名稱</label>
-						  <input type="text" class="form-control" name="flow_name" id="flow_name" placeholder="請輸入流程名稱">
+						  <label>{% trans '流程名稱'%}</label>
+						  <input type="text" class="form-control" name="flow_name" id="flow_name" placeholder="{% trans '請輸入流程名稱'%}">
 					  	</div>
 					  	<div class="form-group">
-						  <label>說明</label>
-						  <textarea rows="3" class="form-control" name="description" id="description" placeholder="流程說明" style="resize:none;"></textarea>
+						  <label>{% trans '說明'%}</label>
+						  <textarea rows="3" class="form-control" name="description" id="description" placeholder="{% trans '流程說明'%}" style="resize:none;"></textarea>
 					  	</div>
 					  	<div class="form-group">
 						  <input type="checkbox" class="icheckbox_minimal-blue" id="flowlog" name="flowlog"><label for="flowlog"></label>
-						  <label>執行過程紀錄(LOG)</label>
+						  <label>{% trans '執行過程紀錄'%}(LOG)</label>
 					  	</div>
 					  	<div class="form-group">
 						  <input type="checkbox" class="icheckbox_minimal-blue" id="api" name="api"><label for="api"></label>
-						  <label>應用程式介面(API)</label>
+						  <label>{% trans '應用程式介面'%}(API)</label>
 					  	</div>
 					  </div>
 					  <div class="col-md-6">
 					  	<div class="form-group">
-						  <label><h4>表單工作區設定:</h4></label>
+						  <label><h4>{% trans '表單工作區設定'%}:</h4></label>
 					  	</div>
 					  	<div class="form-group">
 						  <input type="checkbox" class="icheckbox_minimal-blue" id="mission" name="mission"><label for="mission"></label>
-						  <label>是否建立任務</label>
+						  <label>{% trans '是否建立任務'%}</label>
 					  	</div>
 					  	<div class="form-group">
 						  <input type="checkbox" class="icheckbox_minimal-blue" id="fp_show" name="fp_show"><label for="fp_show"></label>
-						  <label>查看目前流程及進度</label>
+						  <label>{% trans '查看目前流程及進度'%}</label>
 					  	</div>
 					  	<div class="form-group">
 						  <input type="checkbox" class="icheckbox_minimal-blue" id="history" name="history"><label for="history"></label>
-						  <label>檢視表單資料操作歷程</label>
+						  <label>{% trans '檢視表單資料操作歷程'%}</label>
 					  	</div>
 					  	<div class="form-group">
 						  <input type="checkbox" class="icheckbox_minimal-blue" id="attachment" name="attachment"><label for="attachment"></label>
-						  <label>附加檔案功能</label>
+						  <label>{% trans '附加檔案功能'%}</label>
 					  	</div>
 					  	<div class="form-group">
 						  <input type="checkbox" class="icheckbox_minimal-blue" id="relation" name="relation"><label for="relation"></label>
-						  <label>顯示資料關聯</label>
+						  <label>{% trans '顯示資料關聯'%}</label>
 					  	</div>
 					  	<div class="form-group">
 						  <input type="checkbox" class="icheckbox_minimal-blue" id="worklog" name="worklog"><label for="worklog"></label>
-						  <label>填寫及顯示工作日誌</label>
+						  <label>{% trans '填寫及顯示工作日誌'%}</label>
 					    </div>
 					  </div>
 					</div>
@@ -103,19 +103,19 @@
 				  <div class="col-xs-12">
 					<div class="box box-default">
 					  <div class="box-header with-border">
-						<button type="button" class="btn btn-default" onclick="permission_edit('add', null)" style="margin:1px 0px;"><i class="fa fa-plus"></i> 新增</button>
-						<button type="button" class="btn btn-default" onclick="permission_delete()"><i class="fa fa-trash-o" style="margin:1px 0px;"></i> 刪除</button>
+						<button type="button" class="btn btn-default" onclick="permission_edit('add', null)" style="margin:1px 0px;"><i class="fa fa-plus"></i> {% trans '新增'%}</button>
+						<button type="button" class="btn btn-default" onclick="permission_delete()"><i class="fa fa-trash-o" style="margin:1px 0px;"></i> {% trans '刪除'%}</button>
 					  </div>
 					  <div class="box-body">
 						<table id="flow_permission_table" class="table table-bordered table-striped" width="100%">
 						  <thead>
 							<tr>
 							  <th style="width:15px"></th>
-							  <th>角色名稱</th>				  
-							  <th style="width:15%">檢視</th>
-							  <th style="width:15%">新增</th>
-							  <th style="width:15%">修改</th>
-							  <th style="width:15%">刪除</th>
+							  <th>{% trans '角色名稱'%}</th>				  
+							  <th style="width:15%">{% trans '檢視'%}</th>
+							  <th style="width:15%">{% trans '新增'%}</th>
+							  <th style="width:15%">{% trans '修改'%}</th>
+							  <th style="width:15%">{% trans '刪除'%}</th>
 							</tr>
 						  </thead>
 						  <tbody>
@@ -136,8 +136,8 @@
 				  <div class="col-md-12">
 					<div class="box box-default">
 					  <div class="box-header with-border">
-						<button type="button" class="btn btn-default" onclick="formcontent.add_item('box12');" style="margin:1px 0px;"><i class="fa fa-plus"></i> 區塊</button>
-						<button type="button" class="btn btn-default" onclick="formcontent.add_item('box6');" style="margin:1px 0px;"><i class="fa fa-plus"></i> 半區塊</button>
+						<button type="button" class="btn btn-default" onclick="formcontent.add_item('box12');" style="margin:1px 0px;"><i class="fa fa-plus"></i> {% trans '區塊'%}</button>
+						<button type="button" class="btn btn-default" onclick="formcontent.add_item('box6');" style="margin:1px 0px;"><i class="fa fa-plus"></i> {% trans '半區塊'%}</button>
 					  </div>
 					  <!-- /.box-header -->
 					  <div id="formcontent" class="box-body">
@@ -156,7 +156,7 @@
 				  <div id="flowbox" class="col-md-12">
 					<div class="box box-default">
 					  <div class="box-header with-border">
-						<button type="button" class="btn btn-default" data-toggle="modal" data-target="#flowcontent_add_chart_modal"style="margin:1px 0px;"><i class="fa fa-plus"></i> 新增</button>
+						<button type="button" class="btn btn-default" data-toggle="modal" data-target="#flowcontent_add_chart_modal"style="margin:1px 0px;"><i class="fa fa-plus"></i> {% trans '新增'%}</button>
 
 					  </div>
 					  <!-- /.box-header -->
@@ -175,8 +175,8 @@
               	  <div class="col-xs-12" id="subflow_table_box">
               	    <div class="box box-default">
               	      <div class="box-header with-dorder">
-              	      	<button type="button" class="btn btn-default" onclick="create_subflowdesign()" style="margin:1px 0px;"><i class="fa fa-plus"></i> 新增</button>
-              	      	<button type="button" class="btn btn-default" onclick="delete_subflowdesign()" id="subflow_delete" style="margin:1px 0px;" disabled="true"><i class="fa fa-trash-o"></i> 刪除</button>
+              	      	<button type="button" class="btn btn-default" onclick="create_subflowdesign()" style="margin:1px 0px;"><i class="fa fa-plus"></i> {% trans '新增'%}</button>
+              	      	<button type="button" class="btn btn-default" onclick="delete_subflowdesign()" id="subflow_delete" style="margin:1px 0px;" disabled="true"><i class="fa fa-trash-o"></i> {% trans '刪除'%}</button>
               	      </div>
               	      <!-- /.box-header -->
               	      <div class="box-body">
@@ -184,8 +184,8 @@
               	      	  <thead>
               	      	  	<tr>
               	      	  	  <th style="width:15px"><a><i class="fa fa-lg fa-check-square-o checkbox-toggle" style="color:SteelBlue"></i></a></th>
-              	      	  	  <th>流程名稱</th>
-              	      	  	  <th>說明</th>
+              	      	  	  <th>{% trans '流程名稱'%}</th>
+              	      	  	  <th>{% trans '說明'%}</th>
               	      	  	</tr>
               	      	  </thead>
               	      	  <tbody>
@@ -222,29 +222,29 @@
 			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			  <span aria-hidden="true">&times;</span>
 			</button>
-	        <h4 class="modal-title"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增權限角色</h4>
+	        <h4 class="modal-title"><i class="fa fa-plus"></i>&nbsp;&nbsp;{% trans '新增權限角色'%}</h4>
 		  </div>
 		  <div class="modal-body">
 			<div class="form-group">
-		  	  <label class="control-label">角色名稱</label>
+		  	  <label class="control-label">{% trans '角色名稱'%}</label>
 			  <select class="form-control" id="role_select">
 			  </select>
 			</div>
 			<div class="form-group">
-			  <label class="control-label">權限</label></br>
+			  <label class="control-label">{% trans '權限'%}</label></br>
 		  	  <input type="checkbox"  id="role_select_view" class="icheckbox_minimal-blue" value="view"><label for="role_select_view"></label>
-				 檢視
+				 {% trans '檢視'%}
 		  	  <input type="checkbox" id="role_select_add" class="icheckbox_minimal-blue" value="add"><label for="role_select_add"></label>
-				 新增
+				{% trans ' 新增'%}
 		  	  <input type="checkbox" id="role_select_modify" class="icheckbox_minimal-blue" value="modify"><label for="role_select_modify"></label>
-			 	修改
+			 	{% trans '修改'%}
 		  	  <input type="checkbox" id="role_select_delete" class="icheckbox_minimal-blue" value="delete"><label for="role_select_delete"></label>
-			 	刪除
+			 	{% trans '刪除'%}
 			</div>
 		  </div>
 		  <div class="modal-footer">
-			<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-			<button type="button" class="btn btn-primary" id="permission_check">確定</button>
+			<button type="button" class="btn btn-default" data-dismiss="modal">{% trans '取消'%}</button>
+			<button type="button" class="btn btn-primary" id="permission_check">{% trans '確定'%}</button>
 		  </div>
 		</div>
 	  </div>
@@ -308,7 +308,7 @@
 	    	flowcontent.event_group_list(load_group_list);
     		flowcontent.event_user_list(load_user_list);
 	    	flowcontent.init(true);
-	    	flowcontent.load('{"flow_item_counter":4,"flow_line_counter":3,"form_object":{"form_item_counter":0,"form_box_counter":0,"user":[],"group":[],"level":[],"title":false,"status":[],"op1":[],"op2":[],"items":[]},"is_sub":false,"subflow":[],"items":[{"id":"FITEM_1","type":"start","text":"開始","left":0,"top":0,"config":{"error_pass":false,"load_balance":false,"callable":false,"input":[{"require":false,"value":"success","name":"result","des":""}],"output":[],"subflow_input":[],"subflow_output":[],"top":0,"left":210}},{"id":"FITEM_2","type":"form","text":"人工輸入","left":0,"top":0,"config":{"calculate":[],"input":[],"output":[],"form_object":null,"form_setdata":[],"subflow_id":"","subflow_input":[],"subflow_output":[],"log":true,"top":100,"left":210,"input1":[],"input2":[],"cform_object":null,"action1":false,"action2":false,"action1_text":"","action2_text":""}},{"id":"FITEM_3","type":"switch","text":"判斷","left":0,"top":0,"config":{"calculate":[],"rules":[{"target":"FITEM_2","value1":"","value2":"","rule":"="}],"log":true,"top":200,"left":210}},{"id":"FLINE_MW1","type":"line","config":{"target_side":"top","source_side":"bottom","target_item":"FITEM_2","source_item":"FITEM_1","idcounter":1,"linebox_left":270,"linebox_top":100,"linebox_long":0,"linebox_top_width":20,"linebox_bottom_width":-20,"linebox_arrow_top":110,"linebox_arrow_left":266}},{"id":"FLINE_MW2","type":"line","config":{"target_side":"top","source_side":"bottom","target_item":"FITEM_3","source_item":"FITEM_2","idcounter":2,"linebox_left":270,"linebox_top":200,"linebox_long":0,"linebox_top_width":20,"linebox_bottom_width":-20,"linebox_arrow_top":210,"linebox_arrow_left":266}},{"id":"FLINE_MH3","type":"line","config":{"target_side":"left","source_side":"left","target_item":"FITEM_2","source_item":"FITEM_3","idcounter":3,"linebox_left":110,"linebox_top":150,"linebox_long":100,"linebox_top_width":100,"linebox_bottom_width":100,"linebox_arrow_top":146,"linebox_arrow_left":200}},{"id":"FITEM_4","type":"end","text":"結束","left":0,"top":0,"config":{"output":[{"value":"$(result)","name":"$(result)","des":""}],"calculate":[],"top":275,"left":210}}]}');
+	    	flowcontent.load('{"flow_item_counter":4,"flow_line_counter":3,"form_object":{"form_item_counter":0,"form_box_counter":0,"user":[],"group":[],"level":[],"title":false,"status":[],"op1":[],"op2":[],"items":[]},"is_sub":false,"subflow":[],"items":[{"id":"FITEM_1","type":"start","text":"{% trans '開始'%}","left":0,"top":0,"config":{"error_pass":false,"load_balance":false,"callable":false,"input":[{"require":false,"value":"success","name":"result","des":""}],"output":[],"subflow_input":[],"subflow_output":[],"top":0,"left":210}},{"id":"FITEM_2","type":"form","text":"{% trans '人工輸入'%}","left":0,"top":0,"config":{"calculate":[],"input":[],"output":[],"form_object":null,"form_setdata":[],"subflow_id":"","subflow_input":[],"subflow_output":[],"log":true,"top":100,"left":210,"input1":[],"input2":[],"cform_object":null,"action1":false,"action2":false,"action1_text":"","action2_text":""}},{"id":"FITEM_3","type":"switch","text":"{% trans '判斷'%}","left":0,"top":0,"config":{"calculate":[],"rules":[{"target":"FITEM_2","value1":"","value2":"","rule":"="}],"log":true,"top":200,"left":210}},{"id":"FLINE_MW1","type":"line","config":{"target_side":"top","source_side":"bottom","target_item":"FITEM_2","source_item":"FITEM_1","idcounter":1,"linebox_left":270,"linebox_top":100,"linebox_long":0,"linebox_top_width":20,"linebox_bottom_width":-20,"linebox_arrow_top":110,"linebox_arrow_left":266}},{"id":"FLINE_MW2","type":"line","config":{"target_side":"top","source_side":"bottom","target_item":"FITEM_3","source_item":"FITEM_2","idcounter":2,"linebox_left":270,"linebox_top":200,"linebox_long":0,"linebox_top_width":20,"linebox_bottom_width":-20,"linebox_arrow_top":210,"linebox_arrow_left":266}},{"id":"FLINE_MH3","type":"line","config":{"target_side":"left","source_side":"left","target_item":"FITEM_2","source_item":"FITEM_3","idcounter":3,"linebox_left":110,"linebox_top":150,"linebox_long":100,"linebox_top_width":100,"linebox_bottom_width":100,"linebox_arrow_top":146,"linebox_arrow_left":200}},{"id":"FITEM_4","type":"end","text":"{% trans '結束'%}","left":0,"top":0,"config":{"output":[{"value":"$(result)","name":"$(result)","des":""}],"calculate":[],"top":275,"left":210}}]}');
 	    	flowcontent.event_flow_list(load_flow_list);
 	    	flowcontent.event_flowIO_list(load_flowIO_list);
 	    	flowcontent.form(formcontent.getObject());
@@ -357,10 +357,10 @@
 					$('#flow_permission_table tbody').append('<tr>'
 					+'<td><input type="checkbox" class="icheckbox_minimal-blue" value="'+item.role_name+'" id="'+item.role_name+'"><label for="'+item.role_name+'"></label></td>'
 					+'<td><a onclick="permission_edit(\'edit\',\''+item.role_name+'\')" style="color:black;cursor:pointer;"><i class="fa fa-fw fa-edit" style="color:SteelBlue"></i>'+item.role_name+'</a></td>'
-					+'<td><input type="checkbox" class="icheckbox_minimal-blue" name="view"  id="'+item.role_name+'_view" disabled><label for="'+item.role_name+'_view"></label> 允許</td>'
-					+'<td><input type="checkbox" class="icheckbox_minimal-blue" name="add"  id="'+item.role_name+'_add" disabled><label for="'+item.role_name+'_add"></label> 允許</td>'
-					+'<td><input type="checkbox" class="icheckbox_minimal-blue" name="modify" id="'+item.role_name+'_modify" disabled><label for="'+item.role_name+'_modify"></label> 允許</td>'
-					+'<td><input type="checkbox" class="icheckbox_minimal-blue" name="delete" id="'+item.role_name+'_delete" disabled><label for="'+item.role_name+'_delete"></label> 允許</td></tr>');
+					+'<td><input type="checkbox" class="icheckbox_minimal-blue" name="view"  id="'+item.role_name+'_view" disabled><label for="'+item.role_name+'_view"></label> {% trans '允許'%}</td>'
+					+'<td><input type="checkbox" class="icheckbox_minimal-blue" name="add"  id="'+item.role_name+'_add" disabled><label for="'+item.role_name+'_add"></label> {% trans '允許'%}</td>'
+					+'<td><input type="checkbox" class="icheckbox_minimal-blue" name="modify" id="'+item.role_name+'_modify" disabled><label for="'+item.role_name+'_modify"></label> {% trans '允許'%}</td>'
+					+'<td><input type="checkbox" class="icheckbox_minimal-blue" name="delete" id="'+item.role_name+'_delete" disabled><label for="'+item.role_name+'_delete"></label> {% trans '允許'%}</td></tr>');
 					$('#'+item.role_name+'_view').prop('checked', item.value.view);
 					$('#'+item.role_name+'_add').prop('checked', item.value.add);
 					$('#'+item.role_name+'_modify').prop('checked', item.value.modify);
@@ -385,10 +385,10 @@
 			$('#flow_permission_table tbody').append('<tr>'
 				+'<td><input type="checkbox" class="icheckbox_minimal-blue" value="'+role+'" id="'+role+'"><label for="'+role+'"></label></td>'
 				+'<td><a onclick="permission_edit(\'edit\',\''+role+'\')" style="color:black;cursor:pointer;"><i class="fa fa-fw fa-edit" style="color:SteelBlue"></i>'+role+'</a></td>'
-				+'<td><input type="checkbox" class="icheckbox_minimal-blue" name="view"  id="'+role+'_view" disabled><label for="'+role+'_view"></label> 允許</td>'
-				+'<td><input type="checkbox" class="icheckbox_minimal-blue" name="add"  id="'+role+'_add" disabled><label for="'+role+'_add"></label> 允許</td>'
-				+'<td><input type="checkbox" class="icheckbox_minimal-blue" name="modify" id="'+role+'_modify" disabled><label for="'+role+'_modify"></label> 允許</td>'
-				+'<td><input type="checkbox" class="icheckbox_minimal-blue" name="delete" id="'+role+'_delete" disabled><label for="'+role+'_delete"></label> 允許</td></tr>');
+				+'<td><input type="checkbox" class="icheckbox_minimal-blue" name="view"  id="'+role+'_view" disabled><label for="'+role+'_view"></label> {% trans '允許'%}</td>'
+				+'<td><input type="checkbox" class="icheckbox_minimal-blue" name="add"  id="'+role+'_add" disabled><label for="'+role+'_add"></label> {% trans '允許'%}</td>'
+				+'<td><input type="checkbox" class="icheckbox_minimal-blue" name="modify" id="'+role+'_modify" disabled><label for="'+role+'_modify"></label> {% trans '允許'%}</td>'
+				+'<td><input type="checkbox" class="icheckbox_minimal-blue" name="delete" id="'+role+'_delete" disabled><label for="'+role+'_delete"></label> {% trans '允許'%}</td></tr>');
 		}
 		var thisper = {}
 		$.each($('#modal-flowdesign-permission input:checkbox'), function(index, item){
@@ -509,7 +509,7 @@
 			JSON.parse(res.flowobject).subflow.forEach(function(item,index){
 				subflows.push(item)
 				$('#subflow_table tbody').append('<tr><td><input type="checkbox" class="icheckbox_minimal-blue" id="'+item.uid+'" value="'+item.uid+'" onchange="enablebtt()"></input><label for="'+item.uid+'"></label></td>'
-	          	      	  	  +'<td><a onclick="subflow_edit(\''+item.uid+'\')" title="編輯" style="color:black;cursor: pointer;"><i class="fa fa-fw fa-edit" style="color:SteelBlue;"></i>'+item.name+'</a></td>'
+	          	      	  	  +'<td><a onclick="subflow_edit(\''+item.uid+'\')" title="{% trans '編輯'%}" style="color:black;cursor: pointer;"><i class="fa fa-fw fa-edit" style="color:SteelBlue;"></i>'+item.name+'</a></td>'
 	          	      	  	  +'<td>'+item.description+'</td></tr>');
 			});
 		}
@@ -705,7 +705,7 @@
 	function flow_save()
 	{
 		Swal.fire({
-		  title: '處理中...',
+		  title: '{% trans '處理中'%}...',
 		  toast: true,
 		  position: 'bottom-start',
 		  showConfirmButton: false,
@@ -758,14 +758,14 @@
 		var uid = Date.now();
 		var subflow_box = '<div class="panel with-nav-tabs panel-default"><div class="panel-default panel-heading">'
 			         +'  	  <ul class="nav nav-tabs">'
-			         +'  	  	<li class="active"><a href="#subflow_p1" data-toggle="tab">參數設定</a></li>'
-					 +'		<li><a href="#subflow_p2" data-toggle="tab">流程設計</a></li>'
+			         +'  	  	<li class="active"><a href="#subflow_p1" data-toggle="tab">{% trans '參數設定'%}</a></li>'
+					 +'		<li><a href="#subflow_p2" data-toggle="tab">{% trans '流程設計'%}</a></li>'
 					 +'		<li class="pull-right" id="subflow_confirm_button">'
 					 +'     	  <div class="btn-group">'
-			         +'         	<button type="button" class="btn btn-default" onclick="subflow_cancel()" style="margin:1px 0px;"><i class="fa fa-close"></i> 取消'
+			         +'         	<button type="button" class="btn btn-default" onclick="subflow_cancel()" style="margin:1px 0px;"><i class="fa fa-close"></i> {% trans '取消'%}'
 			         +'           </div>'
 			         +'     	  <div class="btn-group">'
-			         +'         	<button type="button" class="btn btn-default" onclick="subflow_check(\''+uid+'\')" style="margin:1px 0px;"><i class="fa fa-check"></i> 確定'
+			         +'         	<button type="button" class="btn btn-default" onclick="subflow_check(\''+uid+'\')" style="margin:1px 0px;"><i class="fa fa-check"></i> {% trans '確定'%}'
 			         +'           </div>'
 			         +'     	</li>'
 			         +'  	  </ul>'
@@ -777,12 +777,12 @@
 					 +'		  	  <div class="row">'
 					 +'		      	<div class="col-md-6">'
 					 +'		      	  <div class="form-group has-warning">'
-					 +'					<label>流程名稱</label>'
-					 +'					<input type="text" class="form-control" name="subflow_name" id="subflow_name" data-toggle="tooltip" placeholder="請輸入流程名稱">'
+					 +'					<label>{% trans '流程名稱'%}</label>'
+					 +'					<input type="text" class="form-control" name="subflow_name" id="subflow_name" data-toggle="tooltip" placeholder="{% trans '請輸入流程名稱'%}">'
 					 +'				  </div>'
 					 +'				  <div class="form-group">'
-					 +'					<label>說明</label>'
-					 +'					<textarea rows="3" class="form-control" name="subflow_description" id="subflow_description" placeholder="流程說明" style="resize:none;"></textarea>'
+					 +'					<label>{% trans '說明'%}</label>'
+					 +'					<textarea rows="3" class="form-control" name="subflow_description" id="subflow_description" placeholder="{% trans '流程說明'%}" style="resize:none;"></textarea>'
 					 +'				  </div>'
 					 +'				</div>'
 					 +'				<div class="col-md-6">'
@@ -796,7 +796,7 @@
 					 +'		  	<div id="flowbox" class="col-md-12">'
 					 +'			  <div class="box box-default">'
 					 +'			  	<div class="box-header with-border">'
-					 +'				  <button type="button" class="btn btn-default" data-toggle="modal" data-target="#subflow_flowcontent_add_chart_modal"style="margin:1px 0px;"><i class="fa fa-plus"></i> 新增</button>'
+					 +'				  <button type="button" class="btn btn-default" data-toggle="modal" data-target="#subflow_flowcontent_add_chart_modal"style="margin:1px 0px;"><i class="fa fa-plus"></i> {% trans '新增'%}</button>'
 					 +'			  	</div>'
 					 +'			  	<div id="subflow_flowcontent" style="width:calc(100%-10px);height:500px">'
 					 +'			  	</div>'
@@ -814,7 +814,7 @@
 		subflow_flowcontent.event_app_list(load_app_list);
 		subflow_flowcontent.event_my_flow_list(my_flow_list);
 		subflow_flowcontent.init_subflow(true);
-		subflow_flowcontent.load('{"flow_item_counter":4,"flow_line_counter":3,"form_object":{"form_item_counter":0,"form_box_counter":0,"user":[],"group":[],"level":[],"title":false,"status":[],"op1":[],"op2":[],"items":[]},"is_sub":false,"subflow":[],"items":[{"id":"FITEM_1","type":"start","text":"開始","left":0,"top":0,"config":{"error_pass":false,"load_balance":false,"callable":false,"input":[{"require":false,"value":"success","name":"result","des":""}],"output":[],"subflow_input":[],"subflow_output":[],"top":0,"left":210}},{"id":"FITEM_2","type":"form","text":"人工輸入","left":0,"top":0,"config":{"calculate":[],"input":[],"output":[],"form_object":null,"form_setdata":[],"subflow_id":"","subflow_input":[],"subflow_output":[],"log":true,"top":100,"left":210,"input1":[],"input2":[],"cform_object":null,"action1":false,"action2":false,"action1_text":"","action2_text":""}},{"id":"FITEM_3","type":"switch","text":"判斷","left":0,"top":0,"config":{"calculate":[],"rules":[{"target":"FITEM_2","value1":"","value2":"","rule":"="}],"log":true,"top":200,"left":210}},{"id":"FLINE_MW1","type":"line","config":{"target_side":"top","source_side":"bottom","target_item":"FITEM_2","source_item":"FITEM_1","idcounter":1,"linebox_left":270,"linebox_top":100,"linebox_long":0,"linebox_top_width":20,"linebox_bottom_width":-20,"linebox_arrow_top":110,"linebox_arrow_left":266}},{"id":"FLINE_MW2","type":"line","config":{"target_side":"top","source_side":"bottom","target_item":"FITEM_3","source_item":"FITEM_2","idcounter":2,"linebox_left":270,"linebox_top":200,"linebox_long":0,"linebox_top_width":20,"linebox_bottom_width":-20,"linebox_arrow_top":210,"linebox_arrow_left":266}},{"id":"FLINE_MH3","type":"line","config":{"target_side":"left","source_side":"left","target_item":"FITEM_2","source_item":"FITEM_3","idcounter":3,"linebox_left":110,"linebox_top":150,"linebox_long":100,"linebox_top_width":100,"linebox_bottom_width":100,"linebox_arrow_top":146,"linebox_arrow_left":200}},{"id":"FITEM_4","type":"end","text":"結束","left":0,"top":0,"config":{"output":[{"value":"$(result)","name":"$(result)","des":""}],"calculate":[],"top":275,"left":210}}]}');
+		subflow_flowcontent.load('{"flow_item_counter":4,"flow_line_counter":3,"form_object":{"form_item_counter":0,"form_box_counter":0,"user":[],"group":[],"level":[],"title":false,"status":[],"op1":[],"op2":[],"items":[]},"is_sub":false,"subflow":[],"items":[{"id":"FITEM_1","type":"start","text":"{% trans '開始'%}","left":0,"top":0,"config":{"error_pass":false,"load_balance":false,"callable":false,"input":[{"require":false,"value":"success","name":"result","des":""}],"output":[],"subflow_input":[],"subflow_output":[],"top":0,"left":210}},{"id":"FITEM_2","type":"form","text":"{% trans '人工輸入'%}","left":0,"top":0,"config":{"calculate":[],"input":[],"output":[],"form_object":null,"form_setdata":[],"subflow_id":"","subflow_input":[],"subflow_output":[],"log":true,"top":100,"left":210,"input1":[],"input2":[],"cform_object":null,"action1":false,"action2":false,"action1_text":"","action2_text":""}},{"id":"FITEM_3","type":"switch","text":"{% trans '判斷'%}","left":0,"top":0,"config":{"calculate":[],"rules":[{"target":"FITEM_2","value1":"","value2":"","rule":"="}],"log":true,"top":200,"left":210}},{"id":"FLINE_MW1","type":"line","config":{"target_side":"top","source_side":"bottom","target_item":"FITEM_2","source_item":"FITEM_1","idcounter":1,"linebox_left":270,"linebox_top":100,"linebox_long":0,"linebox_top_width":20,"linebox_bottom_width":-20,"linebox_arrow_top":110,"linebox_arrow_left":266}},{"id":"FLINE_MW2","type":"line","config":{"target_side":"top","source_side":"bottom","target_item":"FITEM_3","source_item":"FITEM_2","idcounter":2,"linebox_left":270,"linebox_top":200,"linebox_long":0,"linebox_top_width":20,"linebox_bottom_width":-20,"linebox_arrow_top":210,"linebox_arrow_left":266}},{"id":"FLINE_MH3","type":"line","config":{"target_side":"left","source_side":"left","target_item":"FITEM_2","source_item":"FITEM_3","idcounter":3,"linebox_left":110,"linebox_top":150,"linebox_long":100,"linebox_top_width":100,"linebox_bottom_width":100,"linebox_arrow_top":146,"linebox_arrow_left":200}},{"id":"FITEM_4","type":"end","text":"{% trans '結束'%}","left":0,"top":0,"config":{"output":[{"value":"$(result)","name":"$(result)","des":""}],"calculate":[],"top":275,"left":210}}]}');
 		subflow_flowcontent.event_group_list(load_group_list);
 		subflow_flowcontent.event_user_list(load_user_list);
 	    subflow_flowcontent.event_flow_list(load_flow_list);
@@ -829,14 +829,14 @@
 		subflow_flowcontent = '';
 		var subflow_box = '<div class="panel with-nav-tabs panel-default"><div class="panel-default panel-heading">'
 			         +'  	  <ul class="nav nav-tabs">'
-			         +'  	  	<li class="active"><a href="#subflow_p1" data-toggle="tab">參數設定</a></li>'
-					 +'		<li><a href="#subflow_p2" data-toggle="tab">流程設計</a></li>'
+			         +'  	  	<li class="active"><a href="#subflow_p1" data-toggle="tab">{% trans '參數設定'%}</a></li>'
+					 +'		<li><a href="#subflow_p2" data-toggle="tab">{% trans '流程設計'%}</a></li>'
 					 +'		<li class="pull-right" id="subflow_confirm_button">'
 					 +'     	  <div class="btn-group">'
-			         +'         	<button type="button" class="btn btn-default" onclick="subflow_cancel()" style="margin:1px 0px;"><i class="fa fa-close"></i> 取消'
+			         +'         	<button type="button" class="btn btn-default" onclick="subflow_cancel()" style="margin:1px 0px;"><i class="fa fa-close"></i> {% trans '取消'%}'
 			         +'           </div>'
 			         +'     	  <div class="btn-group">'
-			         +'         	<button type="button" class="btn btn-default" onclick="subflow_check(\''+uid+'\')" style="margin:1px 0px;"><i class="fa fa-check"></i> 確定'
+			         +'         	<button type="button" class="btn btn-default" onclick="subflow_check(\''+uid+'\')" style="margin:1px 0px;"><i class="fa fa-check"></i> {% trans '確定'%}'
 			         +'           </div>'
 			         +'     	</li>'
 			         +'  	  </ul>'
@@ -848,12 +848,12 @@
 					 +'		  	  <div class="row">'
 					 +'		      	<div class="col-md-6">'
 					 +'		      	  <div class="form-group has-warning">'
-					 +'					<label>流程名稱</label>'
-					 +'					<input type="text" class="form-control" name="subflow_name" id="subflow_name" data-toggle="tooltip" placeholder="請輸入流程名稱">'
+					 +'					<label>{% trans '流程名稱'%}</label>'
+					 +'					<input type="text" class="form-control" name="subflow_name" id="subflow_name" data-toggle="tooltip" placeholder="{% trans '請輸入流程名稱'%}">'
 					 +'				  </div>'
 					 +'				  <div class="form-group">'
-					 +'					<label>說明</label>'
-					 +'					<textarea rows="3" class="form-control" name="subflow_description" id="subflow_description" placeholder="流程說明" style="resize:none;"></textarea>'
+					 +'					<label>{% trans '說明'%}</label>'
+					 +'					<textarea rows="3" class="form-control" name="subflow_description" id="subflow_description" placeholder="{% trans '流程說明'%}" style="resize:none;"></textarea>'
 					 +'				  </div>'
 					 +'				</div>'
 					 +'				<div class="col-md-6">'
@@ -950,7 +950,7 @@
 		if (new_name == null | new_name.length == 0)
 		{
 			$('.nav-tabs a[href="#subflow_p1"]').tab('show');
-			$('#subflow_name').css("border-color","rgb(253, 13, 77)").prop("title","請輸入子流程名稱");
+			$('#subflow_name').css("border-color","rgb(253, 13, 77)").prop("title","{% trans '請輸入子流程名稱'%}");
 			$('input').tooltip({
 			     placement: "top",
 			     trigger: "focus"
@@ -964,7 +964,7 @@
 				if (item.name == new_name && item.uid != new_id)
 				{
 					$('.nav-tabs a[href="#subflow_p1"]').tab('show');
-					$('#subflow_name').css("border-color","rgb(253, 13, 77)").prop("title","子流程名稱重複，請重新輸入。");
+					$('#subflow_name').css("border-color","rgb(253, 13, 77)").prop("title","{% trans '子流程名稱重複，請重新輸入'%}。");
 					$('input').tooltip({
 					     placement: "top",
 					     trigger: "focus"
@@ -998,7 +998,7 @@
 				create = false;
 			}
 			$('#subflow_table tbody').append('<tr><td><input type="checkbox" class="icheckbox_minimal-blue" id="'+item.uid+'" value="'+item.uid+'" onchange="enablebtt()"></input><label for="'+item.uid+'"></label></td>'
-              	      	  	  +'<td><a onclick="subflow_edit(\''+item.uid+'\')" title="編輯" style="color:black;cursor: pointer;"><i class="fa fa-fw fa-edit" style="color:SteelBlue;"></i>'+item.name+'</a></td>'
+              	      	  	  +'<td><a onclick="subflow_edit(\''+item.uid+'\')" title="{% trans '編輯'%}" style="color:black;cursor: pointer;"><i class="fa fa-fw fa-edit" style="color:SteelBlue;"></i>'+item.name+'</a></td>'
               	      	  	  +'<td>'+item.description+'</td></tr>');
 		});
 		config.subflow.forEach(function(item,index){
@@ -1013,7 +1013,7 @@
 			subflows.push(subflow_flowcontent.getObject());
 			config.subflow.push(subflow_config);
 			$('#subflow_table tbody').append('<tr><td><input type="checkbox" class="icheckbox_minimal-blue" id="'+uid+'" value="'+uid+'" onchange="enablebtt()"></input><label for="'+uid+'"></label></td>'
-              	      	  	  +'<td><a onclick="subflow_edit(\''+uid+'\')" title="編輯" style="color:black;cursor: pointer;"><i class="fa fa-fw fa-edit" style="color:SteelBlue;"></i>'+new_name+'</a></td>'
+              	      	  	  +'<td><a onclick="subflow_edit(\''+uid+'\')" title="{% trans '編輯'%}" style="color:black;cursor: pointer;"><i class="fa fa-fw fa-edit" style="color:SteelBlue;"></i>'+new_name+'</a></td>'
               	      	  	  +'<td>'+new_des+'</td></tr>');
 			
 		}
@@ -1039,7 +1039,7 @@
 			{
 				Swal.fire({
 		      	  icon : 'success',
-		      	  title: '成功',
+		      	  title: '{% trans '成功'%}',
 		      	  toast: true,
 			  	  position: 'bottom-start',
 			  	  showConfirmButton: false,

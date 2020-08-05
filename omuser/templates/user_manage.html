@@ -45,9 +45,7 @@
                   <th>{% trans '使用者名稱' %}</th>
                   <th>{% trans '信箱' %}</th>
                   <th>{% trans '公司' %}</th>
-                  <th>{% trans '部門' %}</th>	
                   <th>{% trans '上次登入時間' %}</th>
-{#                  <th></th>  #}
                 </tr>
                 </thead>
               </table>
@@ -65,6 +63,13 @@
     <style>
 		table tr{
 		  cursor:pointer;
+		}
+		table td {
+			max-width: 120px;
+			white-space: break-spaces;
+			text-overflow: ellipsis;
+			word-break: break-all;
+			overflow: hidden;
 		}
 		thead th { white-space: nowrap; }
 	</style>
@@ -105,9 +110,6 @@
 							data.data = a['data.data']
 							return data.data;
 						},
-					"error": function(xhr,status,error){
-							clearInterval(table_routine);
-					}
 	        	},        		
 	        	"columns":[									//	columns detail
 	        		{"width": "15px", "data": "username", "orderable": false, "render": function (data, type)
@@ -118,23 +120,23 @@
 	        		{"data": "is_active" ,"orderable": false,"width": "30px", "render": function(data, type, row)
 		        		{
 		        			if(data)
-		        				{return '<button class="btn btn-xs btn-success" onclick="active_user(this,\'inactive\',\''+row.username+'\')">啟用</button>'}
+		        				{return '<button class="btn btn-xs btn-success" onclick="active_user(this,\'inactive\',\''+row.username+'\')">{% trans '啟用'%}</button>'}
 		        			else	
-		        				{return '<button class="btn btn-xs btn-warning" onclick="active_user(this,\'active\',\''+row.username+'\')">停用</button>'}
+		        				{return '<button class="btn btn-xs btn-warning" onclick="active_user(this,\'active\',\''+row.username+'\')">{% trans '停用'%}</button>'}
 		        		}
 	        		},
 	        		{"data": "ad_flag" , "orderable": false, "width": "30px", "render": function(data, type, row)
 		        		{
 		        			if (row.is_superuser)
 		        			{
-		        				return '<span class="label label-success">管理員</span>'
+		        				return '<span class="label label-success">{% trans '管理員'%}</span>'
 		        			}
 		        			else
 		        			{
 			        			if(data)
 			        				{return '<span class="label label-info">ldap</span>'}
 			        			else	
-			        				{return '<span class="label label-primary">使用者</span>'}
+			        				{return '<span class="label label-primary">{% trans '使用者'%}</span>'}
 			        		}
 			        		
 		        		}
@@ -142,7 +144,6 @@
 	        		{"data": "nick_name"},
 	        		{"data": "email"},
 	        		{"data": "company"},
-	        		{"data": "department"},
 	        		{"data": "last_login", "width": "150px", "render": function(data)
 						{
 							if (data)
@@ -151,9 +152,6 @@
 								{return ''}
 						}
 	        		},
-	{#        		{"data": "username", "orderable": false, "width": "15px", "render": function(data, type)#}
-	{#        			{return '<a href="/accounts/page/profile/'+data+'/" title="編輯'+data+'" style="color:black;"><i class="fa fa-fw fa-edit" style="color:SteelBlue;"></i></a>'}#}
-	{#        		}#}
 	        	],				
 				"language": __const_language__,
 				rowCallback: function( row, data ) {
@@ -218,7 +216,7 @@
 			$('#modal-default-list').on('hidden.bs.modal', function () {
 				omflowJsonAjax(postbody,'{% url "deleteUserAjax"%}', actions);
 				Swal.fire({
-				  title: '處理中...',
+				  title: '{% trans '處理中'%}...',
 				  toast: true,
 				  position: 'bottom-start',
 				  showConfirmButton: false,
@@ -261,7 +259,7 @@
 				$('#modal-default-list').on('hidden.bs.modal', function () {
 					omflowJsonAjax(postbody,'{% url "activeUserAjax"%}', actions);
 					Swal.fire({
-					  title: '處理中...',
+					  title: '{% trans '處理中'%}...',
 					  toast: true,
 					  position: 'bottom-start',
 					  showConfirmButton: false,

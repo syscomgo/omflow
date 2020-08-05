@@ -1,9 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load i18n %} 
+{% load omflow_tags %}
 {% block content %}
 
-	<script src="/static/js/workflow.js"></script>
+	<script src="/static/js/workflow.js?version={%omflow_version%}"></script>
     <section class="content-header">
       <h1>
       	{% trans '我的任務	'%}
@@ -67,7 +68,7 @@
 	                <button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default" onclick="filter_currentmission_default()" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
 	                <div class="pull-right">
 	                  <select id="currentmission_group_select" class="select2 form-control" style="width:150px">
-	                  	<option value="">所有組織</option>
+	                  	<option value="">{% trans '所有組織'%}</option>
 	                  {% for group in user.groups.all %}<option value="{{group.id}}">{{group.name}}</option> {% endfor %}
 	                  </select>
 	                </div>
@@ -80,8 +81,6 @@
 	                      <th>{% trans '表單編號' %}</th>
 	                      <th>{% trans '燈號' %}</th>
 	                  	  <th>{% trans '標題' %}</th>
-{#	                  	  <th>{% trans '開單人' %}</th>#}
-{#	                  	  <th>{% trans '更新日期' %}</th>#}
 	                  	  <th>{% trans '受派組織' %}</th>
 	                  	  <th>{% trans '受派人' %}</th>
 	                  	  <th>{% trans '狀態' %}</th>
@@ -106,7 +105,7 @@
 	                <button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default" onclick="filter_historymission_default()" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
 	                <div class="pull-right">
 	                  <select id="historymission_group_select" class="select2 form-control" style="width:150px">
-	                  	<option value="">所有組織</option>
+	                  	<option value="">{% trans '所有組織'%}</option>
 	                  {% for group in user.groups.all %}<option value="{{group.id}}">{{group.name}}</option> {% endfor %}
 	                  </select>
 	                </div>
@@ -117,13 +116,10 @@
 	                    <tr>
 	                      <th>{% trans '功能名稱' %}</th>
 	                      <th style="width:110px">{% trans '表單編號' %}</th>
-{#	                      <th>{% trans '燈號' %}</th>#}
 	                  	  <th>{% trans '標題' %}</th>
 	                  	  <th>{% trans '開單人' %}</th>
-{#	                  	  <th>{% trans '開單日期' %}</th>#}
 	                  	  <th>{% trans '受派組織' %}</th>
 	                  	  <th>{% trans '受派人' %}</th>
-{#	                  	  <th>{% trans '狀態' %}</th>#}
 	                  	  <th>{% trans '更新日期' %}</th>
 	                    </tr>
 	                  </thead>
@@ -257,9 +253,6 @@ table tr td:not(:last-child){
 						data.data = mymission_compare['data.data']
 						return data.data;
 					},
-					"error": function(xhr,status,error){
-							clearInterval(mymission_routine);
-					}
 			},
 			"columns":[
 				{"data": "flow_name"},
@@ -271,13 +264,13 @@ table tr td:not(:last-child){
 				{"data": "level", "render": function(data)
 					{
 						if(data == 'green')
-							{return '<div class="label label-success">綠燈</div>'}
+							{return '<div class="label label-success">{% trans '綠燈'%}</div>'}
 						else if(data == 'yellow')
-							{return '<div class="label label-warning">黃燈</div>'}
+							{return '<div class="label label-warning">{% trans '黃燈'%}</div>'}
 						else if(data == 'red')
-							{return '<div class="label label-danger">紅燈</div>'}
+							{return '<div class="label label-danger">{% trans '紅燈'%}</div>'}
 						else
-							{return '<div class="label label-success">綠燈</div>'}		
+							{return '<div class="label label-success">{% trans '綠燈'%}</div>'}		
 					}
 				},
 				{"data": "title", "width": "150px", "render": function(data, type, row)
@@ -353,9 +346,6 @@ table tr td:not(:last-child){
 						data.data = currentmission_compare['data.data']
 						return data.data;
 					},
-					"error": function(xhr,status,error){
-							clearInterval(currentmission_routine);
-					}
 			},
 			"columns":[
 				{"data": "flow_name", "width": "150px"},
@@ -367,13 +357,13 @@ table tr td:not(:last-child){
 				{"data": "level", "width": "30px", "render": function(data)
 					{
 						if(data == 'green')
-							{return '<div class="label label-success">綠燈</div>'}
+							{return '<div class="label label-success">{% trans '綠燈'%}</div>'}
 						else if(data == 'yellow')
-							{return '<div class="label label-warning">黃燈</div>'}
+							{return '<div class="label label-warning">{% trans '黃燈'%}</div>'}
 						else if(data == 'red')
-							{return '<div class="label label-danger">紅燈</div>'}
+							{return '<div class="label label-danger">{% trans '紅燈'%}</div>'}
 						else
-							{return '<div class="label label-success">綠燈</div>'}		
+							{return '<div class="label label-success">{% trans '綠燈'%}</div>'}		
 					}
 				},
 				{"data": "title", "width": "200px",},
@@ -422,9 +412,6 @@ table tr td:not(:last-child){
 						data.data = historymission_compare['data.data']
 						return data.data;
 					},
-					"error": function(xhr,status,error){
-							clearInterval(historymission_routine);
-					}
 			},
 			"columns":[
 				{"data": "flow_name", "width": "150px"},
@@ -542,9 +529,9 @@ table tr td:not(:last-child){
 						}
 						$('#attach_upload').append('<li name="'+item.file_name+'"><div class="mailbox-attachment-info">'
 				        	+'<a '+file_href+' class="mailbox-attachment-name" title="'+item.file_name+'&#10;'
-				        	+'上傳者: '+item.upload_user_id__nick_name+'&#10;'
-				        	+'大小: '+omflowSizeUnit(item.size)+'&#10;'
-				        	+'修改日期: '+item.createtime.replace(/T/g,' ').slice(0,-7)+'" style="word-break: break-all;overflow: hidden;display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 2;"><i class="fa fa-paperclip"></i>&nbsp;&nbsp;'+item.file_name+delete_mes+'</a>'
+				        	+'{% trans '上傳者'%}: '+item.upload_user_id__nick_name+'&#10;'
+				        	+'{% trans '大小'%}: '+omflowSizeUnit(item.size)+'&#10;'
+				        	+'{% trans '修改日期'%}: '+item.createtime.replace(/T/g,' ').slice(0,-7)+'" style="word-break: break-all;overflow: hidden;display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 2;"><i class="fa fa-paperclip"></i>&nbsp;&nbsp;'+item.file_name+delete_mes+'</a>'
 				            +'<span class="mailbox-attachment-size">'+item.upload_user_id__nick_name+'</span>'
 				            +'<span class="mailbox-attachment-size">'+omflowSizeUnit(item.size)+'</span>'
 				            +'<span class="mailbox-attachment-size">'+item.createtime.replace(/T/g,' ').slice(0,-7)+'</span>'
@@ -626,9 +613,10 @@ table tr td:not(:last-child){
     		if (data.status == 200)
     		{
 	    		$('#modal_flow_browser .modal-title').text(data.result.flow_name)
-		      	flowcontent.load(data.result.flowobject);
+				flowcontent.load(data.result.flowobject);
 		      	$('#modal_flow_browser').on('shown.bs.modal', function(){
-		      		flowcontent.setFocus(data.result.inoutput.pop().chart_id);
+					var last_chart = (data.result.inoutput).length-1;
+		      		flowcontent.setFocus(data.result.inoutput[last_chart].chart_id);
 		      	});
 		      	$('#flowcontent div').off('click');
 		      	$('#modal_flow_browser').modal('show');

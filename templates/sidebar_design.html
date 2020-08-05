@@ -117,7 +117,7 @@ author : Pei lin
 					{
 						$('ul.defaultconnect').append('<li class="defaultlist" id="'+value.id+'" data-pid="" data-flowuuid="default"><i class="fa fa-'+value.icon+'"></i>&nbsp;<span>'+value.name+'</span></li>')
 					}
-					else if(value.flow_uuid == 'custom' && (value.p_id == null | value.p_id.length == 0))
+					else if(value.flow_uuid == 'custom' && (!value.p_id))
 					{
 						$('ul.defaultconnect').append('<li class="mysort" id="'+value.id+'" data-pid="" data-flowuuid="custom"><i class="fa fa-'+value.icon+'"></i>&nbsp;<span>'+value.name+'</span>'
 								+'<button class="btn btn-box-tool pull-right" onclick="delete_folder(this)"><i class="fa fa-remove"></i></button>'
@@ -126,7 +126,7 @@ author : Pei lin
 								+'<ul class="cusconnect" style="list-style-type:none;padding:10px 0px;"></ul>'
 								+'</li>')
 					}
-					else if(value.flow_uuid == 'custom' && (value.p_id != null | value.p_id.length != 0))
+					else if(value.flow_uuid == 'custom' && (value.p_id))
 					{
 						$('.box-body #'+value.p_id+'>ul').append('<li class="mysort" id="'+value.id+'" data-pid="'+value.p_id+'" data-flowuuid="'+value.flow_uuid+'"><i class="fa fa-'+value.icon+'"></i>&nbsp;<span>'+value.name+'</span>'
 								+'<button class="btn btn-box-tool pull-right" onclick="delete_folder(this)"><i class="fa fa-remove"></i></button>'
@@ -135,7 +135,7 @@ author : Pei lin
 								+'<ul class="cusconnect" style="list-style-type:none;padding:10px 0px;"></ul>'
 								+'</li>')
 					}
-					else if(value.p_id == null | value.p_id.length == 0)
+					else if(!value.p_id)
 					{
 						$('ul.defaultconnect').append('<li class="myflow" id="'+value.id+'" data-pid="'+value.p_id+'" data-flowuuid="'+value.flow_uuid+'"><i class="fa fa-'+value.icon+'"></i>&nbsp;<span>'+value.name+'</span></li>')					
 					}
@@ -191,7 +191,7 @@ author : Pei lin
 				pos = $(d).closest('li');
 				pid = $(d).closest('li').attr('id'); 
 			}
-			$('#modal-folder .modal-title').append('<i class="fa fa-plus"></i>&nbsp;新增資料夾')
+			$('#modal-folder .modal-title').append('<i class="fa fa-plus"></i>&nbsp;{% trans '新增資料夾'%}')
 			$('#modal-folder').modal('show');
 			$('#modal-folder button:eq(2)').off('click').on('click', function(){
 				var name = $('#modal-folder input[name="folder_name"]').val();
@@ -233,7 +233,7 @@ author : Pei lin
 	  			}
 	  			else
 	  			{
-	  				omflowAlert('yellow', '請輸入資料夾名稱',nothing,' ');
+	  				omflowAlert('yellow', '{% trans '請輸入資料夾名稱'%}',nothing,' ');
 	  				function nothing(){};
 	  			}
 			});
@@ -259,7 +259,7 @@ author : Pei lin
 		function delete_folder(d){
 			if ($(d).closest('li').find('li').hasClass('myflow'))
 			{
-				omflowAlert('blue', ' 資料夾中尚有表單/流程，請移出流程後再刪除資料夾', '','')
+				omflowAlert('blue', ' {% trans '資料夾中尚有表單/流程，請移出流程後再刪除資料夾'%}', '','')
 			}
 			else
 			{
@@ -269,7 +269,7 @@ author : Pei lin
 		
 		function store(){
 			Swal.fire({
-			  title: '處理中...',
+			  title: '{% trans '處理中'%}...',
 			  toast: true,
 			  position: 'bottom-start',
 			  showConfirmButton: false,

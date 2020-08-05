@@ -43,6 +43,7 @@ urlpatterns = [
     path('api/flow-active-display-field/get/', views.getFlowActiveDisplayFieldAjax, name='getFlowActiveDisplayFieldAjax'),
     #自訂應用-取得流程api格式
     path('api/flow-active-api-format/get/', views.getFlowAPIFormatAjax, name='getFlowAPIFormatAjax'),
+    path('api/omdata-data-id/get/', views.getDataIDListAjax, name='getDataIDListAjax'),
     #排程設定
     path('api/flow-active/schedule/', views.scheduleFlowActiveAjax, name='scheduleFlowActiveAjax'),
     path('api/flow-active/schedule/list/', views.listSchedulerAjax, name='listSchedulerAjax'),

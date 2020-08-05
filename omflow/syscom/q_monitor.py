@@ -3,6 +3,7 @@ Created on 2019年12月24日
 @author: kailin
 '''
 import queue, threading, json
+from django.utils.translation import gettext as _
 from time import sleep
 from importlib import import_module
 from concurrent.futures.thread import ThreadPoolExecutor
@@ -60,9 +61,9 @@ class QueueMonitor():
                 except Exception as e:
                     try:
                         if fa:
-                            error('找不到main.py',e)
+                            error(_('找不到main.py'),e)
                         else:
-                            error('找不到流程',e)
+                            error(_('找不到流程'),e)
                     except:
                         pass
             sleep(0.00001)

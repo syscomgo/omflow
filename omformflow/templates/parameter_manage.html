@@ -31,9 +31,9 @@
                 <button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default" onclick="filter_default()" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
               </div>
               <div class="pull-right">
-                <button type="button" class="btn btn-default" id="parameter_input" onclick="$('#file').click()" style="margin:1px 0px;"><i class="fa fa-download"></i> 匯入</button>
+                <button type="button" class="btn btn-default" id="parameter_input" onclick="$('#file').click()" style="margin:1px 0px;"><i class="fa fa-download"></i> {% trans '匯入'%}</button>
                 <input type="file" id="file" onchange="parameter_input(this.files)" style="display:none;"/>
-			    <button type="button" class="btn btn-default" id="parameter_output" onclick="parameter_output()" style="margin:1px 0px;" disabled="disabled"><i class="fa fa-upload"></i> 匯出</button>
+			    <button type="button" class="btn btn-default" id="parameter_output" onclick="parameter_output()" style="margin:1px 0px;" disabled="disabled"><i class="fa fa-upload"></i> {% trans '匯出'%}</button>
               </div>
       	    </div>
       	    <!-- box-header -->
@@ -108,8 +108,8 @@
 			</div>
 		  </div>
 		  <div class="modal-footer">
-			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
-			<button type="button" class="btn btn-primary" id="modal-param-submit">確定</button>
+			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">{% trans '取消'%}</button>
+			<button type="button" class="btn btn-primary" id="modal-param-submit">{% trans '確定'%}</button>
 		  </div>
 		</div>
 	  </div><!-- /.modal-content -->
@@ -121,15 +121,15 @@
 		  <div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			  <span aria-hidden="true">&times;</span></button>
-			<h4 class="modal-title"><i class="fa fa-download"></i>&nbsp;&nbsp;參數匯入</h4>
+			<h4 class="modal-title"><i class="fa fa-download"></i>&nbsp;&nbsp;{% trans '參數匯入'%}</h4>
 		  </div>
 		  <div class="modal-body">
 		  	<ul class="mailbox-attachments clearfix" id="param_input_name">
             </ul>
 		  </div>
 		  <div class="modal-footer">
-			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
-			<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="param_input_save()">確定</button>
+			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">{% trans '取消'%}</button>
+			<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="param_input_save()">{% trans '確定'%}</button>
 		  </div>
 		</div>
 	  </div><!-- /.modal-content -->
@@ -173,9 +173,6 @@
 						data.data = a['data.data']
 						return data.data;
 					},
-				"error": function(xhr,status,error){
-							clearInterval(table_routine);
-					}
         	},
         	"columns":[
 				{"width": "15px", "data": "name", "orderable": false, "render": function (data, type, row)
@@ -194,7 +191,7 @@
 				{"data": "description"},
 				{"data": "value", "width": "30px", "render": function(data, type, row)
 					{
-						return '<button class="btn btn-xs btn-default" data-id="'+row.id+'" onclick="edit_param(\'modify\', this)">設定</button>'
+						return '<button class="btn btn-xs btn-default" data-id="'+row.id+'" onclick="edit_param(\'modify\', this)">{% trans '設定'%}</button>'
 					}
 				}
             ],
@@ -267,7 +264,7 @@
 		}
 		else if (action == 'delete')
 		{
-			omflowListDialogue('delete', '刪除下列參數', param_submit);
+			omflowListDialogue('delete', '{% trans '刪除下列參數'%}', param_submit);
 		}
 		
 		$('#modal-param-submit').off('click').on('click', param_submit);
@@ -386,7 +383,7 @@
     function param_input_save(){
     	input_file = JSON.stringify(JSON.parse(input_file));
     	Swal.fire({
-		  title: '處理中...',
+		  title: '{% trans '處理中'%}...',
 		  toast: true,
 		  position: 'bottom-start',
 		  showConfirmButton: false,
@@ -429,7 +426,7 @@
 			table.draw(false);
 			Swal.fire({
 	      	  icon : 'success',
-	      	  title: '成功',
+	      	  title: '{% trans '成功'%}',
 	      	  toast: true,
 		  	  position: 'bottom-start',
 		  	  showConfirmButton: false,

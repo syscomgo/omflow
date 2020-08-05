@@ -23,13 +23,13 @@
       	    <div class="box-header with-border" >
       	      {% if perms.omservice.OmServiceDesign_Manage %}
       	      <div class="pull-left">
-              	<button type="button" class="btn btn-default" id="edit-mode_save" onclick="ServiceRoot_save()" style="display:none;"><i class="fa fa-save"></i> 儲存</button>
-				<button type="button" class="btn btn-default" id="edit-mode_cancel" onclick="ServiceRoot_cancel()" style="display:none;"><i class="fa fa-undo"></i> 取消</button>
-		        <button type="button" class="btn btn-default" id="read-mode_edit" onclick="ServiceRoot_edit()" style="display:none;"><i class="fa fa-pencil-square-o"></i> 編輯</button>
+              	<button type="button" class="btn btn-default" id="edit-mode_save" onclick="ServiceRoot_save()" style="display:none;"><i class="fa fa-save"></i> {% trans '儲存'%}</button>
+				<button type="button" class="btn btn-default" id="edit-mode_cancel" onclick="ServiceRoot_cancel()" style="display:none;"><i class="fa fa-undo"></i> {% trans '取消'%}</button>
+		        <button type="button" class="btn btn-default" id="read-mode_edit" onclick="ServiceRoot_edit()" style="display:none;"><i class="fa fa-pencil-square-o"></i> {% trans '編輯'%}</button>
 		      </div>
               <div class="pull-right" >
-			    <button type="button" class="btn btn-default move-in" id="edit-mode_addS" onclick="add_service()" style="margin:1px 0px;display:none;"><i class="fa fa-plus"></i> 建立服務</button>
-			    <button type="button" class="btn btn-default move-in" id="edit-mode_addF" onclick="add_object('folder')" style="display:none;"><i class="fa fa-plus"></i> 建立資料夾</button>
+			    <button type="button" class="btn btn-default move-in" id="edit-mode_addS" onclick="add_service()" style="margin:1px 0px;display:none;"><i class="fa fa-plus"></i> {% trans '建立服務'%}</button>
+			    <button type="button" class="btn btn-default move-in" id="edit-mode_addF" onclick="add_object('folder')" style="display:none;"><i class="fa fa-plus"></i> {% trans '建立資料夾'%}</button>
       	      </div>
 			  {% endif%}
       	    </div>
@@ -186,12 +186,12 @@
 		setTitle:
             '<div class="form-group">'+
                 '<label class="text-light-blue">'+const_title+'</label>'+
-                '<input name="setTitle" type="text" class="form-control" placeholder="輸入標題，空白時會自動隱藏">'+
+                '<input name="setTitle" type="text" class="form-control" placeholder="{% trans '輸入標題，空白時會自動隱藏'%}">'+
             '</div>',
 		setTip:
             '<div class="form-group">'+
                 '<label class="text-light-blue">'+const_tip+'</label>'+
-                '<input type="text" name="setTip" class="form-control" placeholder="輸入說明">'+
+                '<input type="text" name="setTip" class="form-control" placeholder="{% trans '輸入說明'%}">'+
             '</div>',
 		setIcon:
             '<div class="form-group">'+
@@ -199,48 +199,48 @@
                 '<div></div>'+
                 '<input name="showIcon" style="display:inline-block;width:20%;top:-2px;position:relative;text-align:center;" value="&#xf013" class="fa form-control" readOnly>'+
                 '<select name="setIcon" style="display:inline-block;width:80%;" class="form-control select2">'+
-                	'<option data-value="&#xf013" value="fa fa-gear">齒輪</option>'+
-					'<option data-value="&#xf2e7" value="fa fa-cutlery">餐具</option>'+
-					'<option data-value="&#xf0f4" value="fa fa-coffee">咖啡</option>'+
-					'<option data-value="&#xf21e" value="fa fa-heartbeat">心跳</option>'+
-					'<option data-value="&#xf1e0" value="fa fa-share-alt">分享</option>'+
-					'<option data-value="&#xf2dc" value="fa fa-snowflake-o">雪花</option>'+
-					'<option data-value="&#xf2c9" value="fa fa-thermometer-half">溫度</option>'+
-					'<option data-value="&#xf164" value="fa fa-thumbs-up">點讚</option>'+
-					'<option data-value="&#xf165" value="fa fa-thumbs-down">倒讚</option>'+
-					'<option data-value="&#xf201" value="fa fa-line-chart">折線圖</option>'+
-					'<option data-value="&#xf0ac" value="fa fa-globe">地球</option>'+
-					'<option data-value="&#xf254" value="fa fa-hourglass">沙漏</option>'+
-					'<option data-value="&#xf0e7" value="fa fa-bolt">電力</option>'+
-					'<option data-value="&#xf007" value="fa fa-user">使用者</option>'+
-					'<option data-value="&#xf0c0" value="fa fa-users">群組</option>'+
-					'<option data-value="&#xf4ad" value="fa fa-comment-dots">對話</option>'+
-					'<option data-value="&#xf277" value="fa fa-map-signs">路標</option>'+
-					'<option data-value="&#xf084" value="fas fa-key">鑰匙</option>'+
-					'<option data-value="&#xf071" value="fa fa-exclamation-triangle">警告</option>'+
-					'<option data-value="&#xf1b9" value="fa fa-car">汽車</option>'+
-					'<option data-value="&#xf207" value="fa fa-bus">公車</option>'+
-					'<option data-value="&#xf239" value="fa fa-subway">地鐵</option>'+
-					'<option data-value="&#xf21a" value="fa fa-ship">船隻</option>'+
-					'<option data-value="&#xf072" value="fa fa-plane">飛機</option>'+
-					'<option data-value="&#xf015" value="fa fa-home">房屋</option>'+
-					'<option data-value="&#xf275" value="fa fa-industry">工廠</option>'+
-					'<option data-value="&#xf200" value="fa fa-pie-chart">圓餅圖</option>'+
-					'<option data-value="&#xf073" value="far fa-calendar-alt">行事曆</option>'+
-					'<option data-value="&#xf290" value="fa fa-shopping-bag">購物袋</option>'+
-					'<option data-value="&#xf07a" value="fa fa-shopping-cart">購物車</option>'+
-					'<option data-value="&#xf0f3" value="fa fa-bell">鈴鐺</option>'+
-					'<option data-value="&#xf1c0" value="fa fa-database">資料庫</option>'+
-					'<option data-value="&#xf381" value="fa fa-cloud-download-alt">下載</option>'+
-					'<option data-value="&#xf017" value="fa fa-clock-o">時鐘</option>'+
-					'<option data-value="&#xf06c" value="fa fa-leaf">葉子</option>'+
-					'<option data-value="&#xf0e0" value="fa fa-envelope">信封</option>'+
-					'<option data-value="&#xf155" value="fas fa-dollar-sign">金錢</option>'+
-					'<option data-value="&#xf109" value="fa fa-laptop">電腦</option>'+
-					'<option data-value="&#xf02d" value="fa fa-book">書籍</option>'+
-					'<option data-value="&#xf15c" value="fa fa-file-text">文件</option>'+
-					'<option data-value="&#xf328" value="fas fa-clipboard">剪貼板</option>'+
-					'<option data-value="&#xf044" value="fas fa-edit">書寫</option>'+
+                	'<option data-value="&#xf013" value="fa fa-gear">{% trans '齒輪'%}</option>'+
+					'<option data-value="&#xf2e7" value="fa fa-cutlery">{% trans '餐具'%}</option>'+
+					'<option data-value="&#xf0f4" value="fa fa-coffee">{% trans '咖啡'%}</option>'+
+					'<option data-value="&#xf21e" value="fa fa-heartbeat">{% trans '心跳'%}</option>'+
+					'<option data-value="&#xf1e0" value="fa fa-share-alt">{% trans '分享'%}</option>'+
+					'<option data-value="&#xf2dc" value="fa fa-snowflake-o">{% trans '雪花'%}</option>'+
+					'<option data-value="&#xf2c9" value="fa fa-thermometer-half">{% trans '溫度'%}</option>'+
+					'<option data-value="&#xf164" value="fa fa-thumbs-up">{% trans '點讚'%}</option>'+
+					'<option data-value="&#xf165" value="fa fa-thumbs-down">{% trans '倒讚'%}</option>'+
+					'<option data-value="&#xf201" value="fa fa-line-chart">{% trans '折線圖'%}</option>'+
+					'<option data-value="&#xf0ac" value="fa fa-globe">{% trans '地球'%}</option>'+
+					'<option data-value="&#xf254" value="fa fa-hourglass">{% trans '沙漏'%}</option>'+
+					'<option data-value="&#xf0e7" value="fa fa-bolt">{% trans '電力'%}</option>'+
+					'<option data-value="&#xf007" value="fa fa-user">{% trans '使用者'%}</option>'+
+					'<option data-value="&#xf0c0" value="fa fa-users">{% trans '群組'%}</option>'+
+					'<option data-value="&#xf4ad" value="fa fa-comment-dots">{% trans '對話'%}</option>'+
+					'<option data-value="&#xf277" value="fa fa-map-signs">{% trans '路標'%}</option>'+
+					'<option data-value="&#xf084" value="fas fa-key">{% trans '鑰匙'%}</option>'+
+					'<option data-value="&#xf071" value="fa fa-exclamation-triangle">{% trans '警告'%}</option>'+
+					'<option data-value="&#xf1b9" value="fa fa-car">{% trans '汽車'%}</option>'+
+					'<option data-value="&#xf207" value="fa fa-bus">{% trans '公車'%}</option>'+
+					'<option data-value="&#xf239" value="fa fa-subway">{% trans '地鐵'%}</option>'+
+					'<option data-value="&#xf21a" value="fa fa-ship">{% trans '船隻'%}</option>'+
+					'<option data-value="&#xf072" value="fa fa-plane">{% trans '飛機'%}</option>'+
+					'<option data-value="&#xf015" value="fa fa-home">{% trans '房屋'%}</option>'+
+					'<option data-value="&#xf275" value="fa fa-industry">{% trans '工廠'%}</option>'+
+					'<option data-value="&#xf200" value="fa fa-pie-chart">{% trans '圓餅圖'%}</option>'+
+					'<option data-value="&#xf073" value="far fa-calendar-alt">{% trans '行事曆'%}</option>'+
+					'<option data-value="&#xf290" value="fa fa-shopping-bag">{% trans '購物袋'%}</option>'+
+					'<option data-value="&#xf07a" value="fa fa-shopping-cart">{% trans '購物車'%}</option>'+
+					'<option data-value="&#xf0f3" value="fa fa-bell">{% trans '鈴鐺'%}</option>'+
+					'<option data-value="&#xf1c0" value="fa fa-database">{% trans '資料庫'%}</option>'+
+					'<option data-value="&#xf381" value="fa fa-cloud-download-alt">{% trans '下載'%}</option>'+
+					'<option data-value="&#xf017" value="fa fa-clock-o">{% trans '時鐘'%}</option>'+
+					'<option data-value="&#xf06c" value="fa fa-leaf">{% trans '葉子'%}</option>'+
+					'<option data-value="&#xf0e0" value="fa fa-envelope">{% trans '信封'%}</option>'+
+					'<option data-value="&#xf155" value="fas fa-dollar-sign">{% trans '金錢'%}</option>'+
+					'<option data-value="&#xf109" value="fa fa-laptop">{% trans '電腦'%}</option>'+
+					'<option data-value="&#xf02d" value="fa fa-book">{% trans '書籍'%}</option>'+
+					'<option data-value="&#xf15c" value="fa fa-file-text">{% trans '文件'%}</option>'+
+					'<option data-value="&#xf328" value="fas fa-clipboard">{% trans '剪貼板'%}</option>'+
+					'<option data-value="&#xf044" value="fas fa-edit">{% trans '書寫'%}</option>'+
 				'</select>'+
             '</div>',
         setForm:
@@ -316,7 +316,7 @@
 			//table.draw();
 			Swal.fire({
 	      	  icon : 'success',
-	      	  title: status?status:"成功",
+	      	  title: status?status:"{% trans '成功'%}",
 	      	  toast: true,
 		  	  position: 'bottom-start',
 		  	  showConfirmButton: false,
@@ -892,7 +892,7 @@
 		}else{
 			if(form_object.attachment && thatDialog.find('li[data-id^="COL_UPLOAD"]').length==0)//表單允許上傳
 				thisSelect.find('select').append(
-					'<option value="COL_UPLOAD1" >'+'強制上傳檔案'+'</option>'+
+					'<option value="COL_UPLOAD1" >'+'{% trans '強制上傳檔案'%} '+'</option>'+
 					'<option value="COL_UPLOAD0" >'+const_upload_file+'</option>'
 					);
 			thisSelect.find("button[name=default-col]:eq(0)").hide();
@@ -1469,7 +1469,7 @@
 				filesToUpload = [];
 				fileTotalSize = 0;
 				//attachment_browser();
-				actions(data,"請求成功");
+				actions(data,"{% trans '請求成功'%}");
 			},
 			error: function(req, status, err) {
 				$('#modal_error').modal('show');
@@ -1827,7 +1827,7 @@
 		        box_move_item(box_object.list[source.data('idx')],target.data('idx'));
 				Swal.fire({
 		      	  icon : 'success',
-		      	  title: '成功',
+		      	  title: '{% trans '成功'%}',
 		      	  toast: true,
 			  	  position: 'bottom-start',
 			  	  showConfirmButton: false,
