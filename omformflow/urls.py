@@ -20,6 +20,8 @@ urlpatterns = [
     path('api/flow-workspace-app/deploy/', views.deployWorkspaceApplicationAjax, name='deployWorkspaceApplicationAjax'),
     path('api/flow-workspace-app/export/', views.exportWorkspaceApplicationAjax, name='exportWorkspaceApplicationAjax'),
     path('api/flow-workspace-app/import/', views.importWorkspaceApplicationAjax, name='importWorkspaceApplicationAjax'),
+    path('api/flow-workspace-app-language/export/', views.exportAppLanguagePackageAjax, name='exportAppLanguagePackageAjax'),
+    path('api/flow-workspace-app-language/import/', views.importAppLanguagePackageAjax, name='importAppLanguagePackageAjax'),
     #應用設計-流程
     path('api/flow-workspace/create/', views.createFlowWorkspaceAjax, name='createFlowWorkspaceAjax'),
     path('api/flow-workspace/list/', views.listFlowWorkspaceAjax, name='listFlowWorkspaceAjax'),
@@ -43,7 +45,8 @@ urlpatterns = [
     path('api/flow-active-display-field/get/', views.getFlowActiveDisplayFieldAjax, name='getFlowActiveDisplayFieldAjax'),
     #自訂應用-取得流程api格式
     path('api/flow-active-api-format/get/', views.getFlowAPIFormatAjax, name='getFlowAPIFormatAjax'),
-    path('api/omdata-data-id/get/', views.getDataIDListAjax, name='getDataIDListAjax'),
+    path('api/omdata-data-id/get/<str:api_path>/', views.getDataIDListAjax, name='getDataIDListAjax'),
+#     url('api/omdata-data-id/get/([a-z0-9-]+)', views.getDataIDListAjax, name='getDataIDListAjax'),
     #排程設定
     path('api/flow-active/schedule/', views.scheduleFlowActiveAjax, name='scheduleFlowActiveAjax'),
     path('api/flow-active/schedule/list/', views.listSchedulerAjax, name='listSchedulerAjax'),
@@ -52,8 +55,10 @@ urlpatterns = [
     path('api/form-design/load/', views.loadFormDesignAjax, name='loadFormDesignAjax'),
     path('api/flow-display/get/', views.getFlowFieldNameAjax, name='getFlowFieldNameAjax'),
     path('api/flow-name/load/', views.getApplicationFlowNameAjax, name='getApplicationFlowNameAjax'),
-    path('api/omdata/edit/', views.editOmDataAjax, name='editOmDataAjax'),
-    path('api/omdata/list/', views.listOmDataAjax, name='listOmDataAjax'),
+    path('api/omdata/edit/<str:api_path>/', views.editOmDataAjax, name='editOmDataAjax'),
+#     url('api/omdata/edit/([a-z0-9-]*)', views.editOmDataAjax, name='editOmDataAjax'),
+    path('api/omdata/list/<str:api_path>/', views.listOmDataAjax, name='listOmDataAjax'),
+#     url('api/omdata/list/([a-z0-9-]*)', views.listOmDataAjax, name='listOmDataAjax'),
     path('api/omdata/load/', views.loadOmDataAjax, name='loadOmDataAjax'),
     path('api/omdata-file/upload/', views.uploadOmdataFilesAjax, name='uploadOmdataFilesAjax'),
     path('api/omdata-file/list/', views.listOmDataFilesAjax, name='listOmDataFilesAjax'),
@@ -87,4 +92,10 @@ urlpatterns = [
     path('api/flow-SLA/update/', views.updateSLARuleAjax, name='updateSLARuleAjax'),
     path('api/flow-SLA/delete/', views.deleteSLARuleAjax, name='deleteSLARuleAjax'),
     path('api/flow-SLA-data/list/', views.listSLADataAjax, name='listSLADataAjax'),
+    
+    #子查詢
+    path('api/omdata-sub-query/list/', views.listOmDataForSubQueryAjax, name='listOmDataForSubQueryAjax'),
+    path('api/omdata-sub-query/load/', views.loadOmDataForSubQueryAjax, name='loadOmDataForSubQueryAjax'),
+    path('api/flow-display-sub-query/get/', views.getFlowFieldNameForSubQueryAjax, name='getFlowFieldNameForSubQueryAjax'),
+    
     ]

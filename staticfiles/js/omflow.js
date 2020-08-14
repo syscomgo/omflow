@@ -280,6 +280,9 @@ function omflowListDialogue(){
 	case "output":
 		tag_i = '<i class="fa fa-upload"></i>&nbsp;&nbsp;';
 		break;
+	case "input":
+		tag_i = '<i class="fa fa-download"></i>&nbsp;&nbsp;';
+		break;
 	case "relation":
 		tag_i = '<i class="fas fa-link"></i>&nbsp;&nbsp;';
 		break;
@@ -459,8 +462,8 @@ function omflowFilter(){
 						'<div class="form-group" style="margin:0px;">'+
 						'<label class="text-light-blue">' + gettext('類別') + '：</label>'+
 						'<br>'+
-						'<input type="checkbox" class="icheckbox_minimal-blue" name="filter_utype" data-value="1" id="filter_type_1" checked><label for="filter_type_1"></label>&nbsp;&nbsp;&nbsp;外部&nbsp;&nbsp;&nbsp;'+
-			            '<input type="checkbox" class="icheckbox_minimal-blue" name="filter_utype" data-value="0" id="filter_type_0" checked><label for="filter_type_0"></label>&nbsp;&nbsp;&nbsp;系統&nbsp;&nbsp;&nbsp;'+
+						'<input type="checkbox" class="icheckbox_minimal-blue" name="filter_utype" data-value="1" id="filter_type_1" checked><label for="filter_type_1"></label>&nbsp;&nbsp;&nbsp;' + gettext('外部') + '&nbsp;&nbsp;&nbsp;'+
+			            '<input type="checkbox" class="icheckbox_minimal-blue" name="filter_utype" data-value="0" id="filter_type_0" checked><label for="filter_type_0"></label>&nbsp;&nbsp;&nbsp;' + gettext('系統') + '&nbsp;&nbsp;&nbsp;'+
 						'</div>'+
 						'</li>';
 	
@@ -468,8 +471,8 @@ function omflowFilter(){
 						'<div class="form-group" style="margin:0px;">'+
 						'<label class="text-light-blue">' + gettext('狀態') + '：</label>'+
 						'<br>'+
-			            '<input type="checkbox" class="icheckbox_minimal-blue" name="filter_status" data-value="1" id="filter_status_1" checked><label for="filter_status_1"></label>&nbsp;&nbsp;&nbsp;啟用&nbsp;&nbsp;&nbsp;'+
-			            '<input type="checkbox" class="icheckbox_minimal-blue" name="filter_status" data-value="0" id="filter_status_0" checked><label for="filter_status_0"></label>&nbsp;&nbsp;&nbsp;停用&nbsp;&nbsp;&nbsp;'+
+			            '<input type="checkbox" class="icheckbox_minimal-blue" name="filter_status" data-value="1" id="filter_status_1" checked><label for="filter_status_1"></label>&nbsp;&nbsp;&nbsp;' + gettext('啟用') + '&nbsp;&nbsp;&nbsp;'+
+			            '<input type="checkbox" class="icheckbox_minimal-blue" name="filter_status" data-value="0" id="filter_status_0" checked><label for="filter_status_0"></label>&nbsp;&nbsp;&nbsp;' + gettext('停用') + '&nbsp;&nbsp;&nbsp;'+
 			          	'</div>'+
 			            '</li>';
 	
@@ -477,8 +480,8 @@ function omflowFilter(){
 						'<div class="form-group" style="margin:0px;">'+
 						'<label class="text-light-blue">' + gettext('已關單') + '/' + gettext('未關單') + '：</label>'+
 						'<br>'+
-					    '<input type="checkbox" class="icheckbox_minimal-blue" name="filter_closed" data-value="1" id="filter_closed_1"><label for="filter_closed_1"></label>&nbsp;&nbsp;&nbsp;已關單&nbsp;&nbsp;&nbsp;'+
-					    '<input type="checkbox" class="icheckbox_minimal-blue" name="filter_closed" data-value="0" id="filter_closed_0" checked><label for="filter_closed_0"></label>&nbsp;&nbsp;&nbsp;未關單&nbsp;&nbsp;&nbsp;'+
+					    '<input type="checkbox" class="icheckbox_minimal-blue" name="filter_closed" data-value="1" id="filter_closed_1"><label for="filter_closed_1"></label>&nbsp;&nbsp;&nbsp;' + gettext('已關單') + '&nbsp;&nbsp;&nbsp;'+
+					    '<input type="checkbox" class="icheckbox_minimal-blue" name="filter_closed" data-value="0" id="filter_closed_0" checked><label for="filter_closed_0"></label>&nbsp;&nbsp;&nbsp;' + gettext('未關單') + '&nbsp;&nbsp;&nbsp;'+
 					  	'</div>'+
 					    '</li>';
 
@@ -762,4 +765,14 @@ function unescapeHtml(text) {
 		{
 			return text;
 		}
+}
+
+function checkPattern(obj){
+	var pattern = obj.attr('pattern')
+	var re = new RegExp(pattern);
+    if (re.test(obj.val())) {
+        return true;
+    } else {
+        return false;
+    }
 }

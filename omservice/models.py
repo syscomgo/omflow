@@ -27,6 +27,7 @@ class OmServiceDesign(models.Model):
     author: Arthur
     '''
     content = models.TextField(verbose_name = _('服務設計'), blank=True)
+    language_package = models.TextField(verbose_name= _('語言包'), default='{}')
     class Meta:
         default_permissions = ()
         permissions = (

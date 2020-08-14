@@ -1,5 +1,4 @@
-import uuid, os, re, operator, json
-from django.shortcuts import render
+import re, json
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Permission
 from django.utils.translation import gettext as _
@@ -7,15 +6,16 @@ from omflow.syscom.default_logger import info,error
 from omflow.syscom.common import try_except, DataChecker, getPostdata, checkMigrate
 from omflow.syscom.message import ResponseAjax, statusEnum
 from omflow.global_obj import FlowActiveGlobalObject
+from omformflow.models import ActiveApplication
 from django.apps import apps
 #APP
 from omdashboard.models import OmDashboard
 from omformflow.models import FlowActive
 import datetime
-from django.db.models import Count,Max,Min,Avg,Sum,Q,F
-from omuser.models import OmUser
+from django.db.models import Count,Max,Min,Avg,Sum,Q
 from calendar import monthrange
-
+from omflow.syscom.common import Translator
+    
 
 
 @login_required
@@ -39,13 +39,13 @@ def saveDashboardAjax(request):
             dashboard = OmDashboard.objects.get_or_create(user=request.user)[0]
             setattr(dashboard,"content",postdata.get('content', ''))
             dashboard.save()
-            info(request,'%s update Dashboard success' % username)
+            info('%s update Dashboard success' % username,request)
             return ResponseAjax(statusEnum.success, _('儲存成功')).returnJSON()
         else:
-            info(request,'%s update Dashboard error' % username)
+            info('%s update Dashboard error' % username,request)
             return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
     else:
-        info(request,'%s update Dashboard with no permission' % username)
+        info('%s update Dashboard with no permission' % username,request)
         return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
        
 @login_required
@@ -70,7 +70,7 @@ def loadDashboardAjax(request):
         
         return ResponseAjax(statusEnum.success , _('讀取成功'), result).returnJSON()
     else:
-        error(request,'%s load Dashboard with no permission' % username)
+        error('%s load Dashboard with no permission' % username,request)
         return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
          
 @login_required
@@ -121,115 +121,119 @@ def updateGridAjax(request):
         gte_list=[]
         lt_list=[]
         #判斷圖片類型
+        
         if "type" in QueryJson and "form" in QueryJson : 
             #判斷時間格式
             if "time_range" in QueryJson:
-                today = datetime.date.today()
+                today = datetime.datetime.today().replace(hour=0, minute=0, second=0, microsecond=0)
+                #print(today.strftime("%Y-%m-%d %H:%M:%S"))
                 if QueryJson["time_range"]=="today":
                     gte_list.append(today)
-                    if has_group:
-                        lt_list.append(gte_list[0] + datetime.timedelta(hours=1))
-                        result["labels"].append('00:00')
-                        for i in range(23):
-                            gte_list.append(lt_list[i])
-                            lt_list.append(lt_list[i] + datetime.timedelta(hours=1))
-                            result["labels"].append(switch00(i+1)+':00')
-                    else:
-                        lt_list.append(gte_list[0] + datetime.timedelta(days=1))
-                        result["labels"].append(_('今日'))
+                    #if has_group:
+                    lt_list.append(gte_list[0] + datetime.timedelta(hours=1))
+                    #print((gte_list[0] + datetime.timedelta(hours=1)).strftime("%Y-%m-%d %H:%M:%S"))
+                    result["labels"].append('00:00')
+                    for i in range(23):
+                        gte_list.append(lt_list[i])
+                        lt_list.append(lt_list[i] + datetime.timedelta(hours=1))
+                        
+                        result["labels"].append(switch00(i+1)+':00')
+                    #else:
+                        #lt_list.appecnd(gte_list[0] + datetime.timedelta(days=1))
+                        #result["labels"].append(_('今日'))
                 elif QueryJson["time_range"]=="yesterday":
                     gte_list.append(today - datetime.timedelta(days=1))
-                    if has_group:
-                        lt_list.append(gte_list[0] + datetime.timedelta(hours=1))
-                        result["labels"].append('00:00')
-                        for i in range(23):
-                            gte_list.append(lt_list[i])
-                            lt_list.append(lt_list[i] + datetime.timedelta(hours=1))
-                            result["labels"].append(switch00(i+1)+':00')
-                    else:
-                        lt_list.append(today)
-                        result["labels"].append(_('昨日'))
+                    #if has_group:
+                    lt_list.append(gte_list[0] + datetime.timedelta(hours=1))
+                    result["labels"].append('00:00')
+                    for i in range(23):
+                        gte_list.append(lt_list[i])
+                        lt_list.append(lt_list[i] + datetime.timedelta(hours=1))
+                        result["labels"].append(switch00(i+1)+':00')
+                    #else:
+                        #lt_list.append(today)
+                        #result["labels"].append(_('昨日'))
                 elif QueryJson["time_range"]=="this_week":
                     gte_list.append(today - datetime.timedelta(days=today.weekday()))
-                    if has_group:
-                        lt_list.append(gte_list[0] + datetime.timedelta(days=1))
-                        result["labels"].append(translateW(1))
-                        for i in range(6):
-                            gte_list.append(lt_list[i])
-                            lt_list.append(lt_list[i] + datetime.timedelta(days=1))
-                            result["labels"].append(translateW(i+2))
-                    else:
-                        lt_list.append(today + datetime.timedelta(days=-today.weekday(), weeks=1))
-                        result["labels"].append(_('本周'))
+                    #if has_group:
+                    lt_list.append(gte_list[0] + datetime.timedelta(days=1))
+                    result["labels"].append(translateW(1))
+                    for i in range(6):
+                        gte_list.append(lt_list[i])
+                        lt_list.append(lt_list[i] + datetime.timedelta(days=1))
+                        result["labels"].append(translateW(i+2))
+                    #else:
+                        #lt_list.append(today + datetime.timedelta(days=-today.weekday(), weeks=1))
+                        #result["labels"].append(_('本周'))
                 elif QueryJson["time_range"]=="last_week":
                     gte_list.append(today - datetime.timedelta(days=today.weekday(), weeks=1))
-                    if has_group:
-                        lt_list.append(gte_list[0] + datetime.timedelta(days=1))
-                        result["labels"].append(translateW(1))
-                        for i in range(6):
-                            gte_list.append(lt_list[i])
-                            lt_list.append(lt_list[i] + datetime.timedelta(days=1))
-                            result["labels"].append(translateW(i+2))
-                    else:
-                        lt_list.append(today - datetime.timedelta(days=today.weekday()))
-                        result["labels"].append(_('上周'))
+                    #if has_group:
+                    lt_list.append(gte_list[0] + datetime.timedelta(days=1))
+                    result["labels"].append(translateW(1))
+                    for i in range(6):
+                        gte_list.append(lt_list[i])
+                        lt_list.append(lt_list[i] + datetime.timedelta(days=1))
+                        result["labels"].append(translateW(i+2))
+                    #else:
+                        #lt_list.append(today - datetime.timedelta(days=today.weekday()))
+                        #result["labels"].append(_('上周'))
                 elif QueryJson["time_range"]=="this_month":
                     gte_list.append(today.replace(day=1))
-                    if has_group:
-                        lt_list.append(gte_list[0] + datetime.timedelta(days=1))
-                        result["labels"].append(str(gte_list[0].month)+'/'+str(gte_list[0].day))
-                        for i in range(monthrange(today.year, today.month)[1]-1):
-                            gte_list.append(lt_list[i])
-                            lt_list.append(lt_list[i] + datetime.timedelta(days=1))
-                            result["labels"].append(str(lt_list[i].month)+'/'+str(lt_list[i].day))
-                    else: 
-                        lt_list.append(gte_list[0] + datetime.timedelta(days=monthrange(gte_list[0].year, gte_list[0].month)[1]))
-                        result["labels"].append(_('今月'))
+                    #if has_group:
+                    lt_list.append(gte_list[0] + datetime.timedelta(days=1))
+                    result["labels"].append(str(gte_list[0].month)+'/'+str(gte_list[0].day))
+                    for i in range(monthrange(today.year, today.month)[1]-1):
+                        gte_list.append(lt_list[i])
+                        lt_list.append(lt_list[i] + datetime.timedelta(days=1))
+                        result["labels"].append(str(lt_list[i].month)+'/'+str(lt_list[i].day))
+                    #else: 
+                        #lt_list.append(gte_list[0] + datetime.timedelta(days=monthrange(gte_list[0].year, gte_list[0].month)[1]))
+                        #result["labels"].append(_('今月'))
                 elif QueryJson["time_range"]=="last_month":
                     if today.month==1:
                         gte_list.append(today.replace(day=1,month=switchM(today.month-1)),year=today.year-1)
                     else:
                         gte_list.append(today.replace(day=1,month=switchM(today.month-1)))
-                    if has_group:
-                        lt_list.append(gte_list[0] + datetime.timedelta(days=1))
-                        result["labels"].append(str(gte_list[0].month)+'/'+str(gte_list[0].day))
-                        for i in range(monthrange(today.year, switchM(today.month-1))[1]-1):
-                            gte_list.append(lt_list[i])
-                            lt_list.append(lt_list[i] + datetime.timedelta(days=1))
-                            result["labels"].append(str(lt_list[i].month)+'/'+str(lt_list[i].day))
-                    else:
-                        lt_list.append(today.replace(day=1))
-                        result["labels"].append(_('上月'))
+                    #if has_group:
+                    lt_list.append(gte_list[0] + datetime.timedelta(days=1))
+                    result["labels"].append(str(gte_list[0].month)+'/'+str(gte_list[0].day))
+                    for i in range(monthrange(today.year, switchM(today.month-1))[1]-1):
+                        gte_list.append(lt_list[i])
+                        lt_list.append(lt_list[i] + datetime.timedelta(days=1))
+                        result["labels"].append(str(lt_list[i].month)+'/'+str(lt_list[i].day))
+                    #else:
+                        #lt_list.append(today.replace(day=1))
+                        #result["labels"].append(_('上月'))
                 elif QueryJson["time_range"]=="this_year":
                     gte_list.append(today.replace(day=1,month=1))
-                    if has_group:
-                        lt_list.append(gte_list[0].replace(month=2))
-                        result["labels"].append(translateM(1))
-                        for i in range(11):
-                            gte_list.append(lt_list[i])
-                            result["labels"].append(translateM(i+2))
-                            if i !=11:
-                                lt_list.append(lt_list[i].replace(month=switchM(i+3)))
-                            else:
-                                lt_list.append(today.replace(year=today.year+1,day=1,month=1))
-                    else:
-                        lt_list.append(today.replace(year=today.year+1,day=1,month=1))
-                        result["labels"].append(_('今年'))
+                    #if has_group:
+                    lt_list.append(gte_list[0].replace(month=2))
+                    result["labels"].append(translateM(1))
+                    for i in range(11):
+                        gte_list.append(lt_list[i])
+                        result["labels"].append(translateM(i+2))
+                        if i !=11:
+                            lt_list.append(lt_list[i].replace(month=switchM(i+3)))
+                        else:
+                            lt_list.append(today.replace(year=today.year+1,day=1,month=1))
+                    #else:
+                        #lt_list.append(today.replace(year=today.year+1,day=1,month=1))
+                        #result["labels"].append(_('今年'))
                 elif QueryJson["time_range"]=="last_year":
                     gte_list.append(today.replace(year=today.year-1,day=1,month=1))
-                    if has_group:
-                        lt_list.append(gte_list[0].replace(month=2))
-                        result["labels"].append(translateM(1))
-                        for i in range(11):
-                            gte_list.append(lt_list[i])
-                            result["labels"].append(translateM(i+2))
-                            if i !=11:
-                                lt_list.append(lt_list[i].replace(month=switchM(i+3)))
-                            else:
-                                lt_list.append(today.replace(day=1,month=1))
-                    else:
-                        lt_list.append(today.replace(day=1,month=1))
-                        result["labels"].append(_('去年'))
+                    #if has_group:
+                    lt_list.append(gte_list[0].replace(month=2))
+                    result["labels"].append(translateM(1))
+                    for i in range(11):
+                        gte_list.append(lt_list[i])
+                        result["labels"].append(translateM(i+2))
+                        if i !=11:
+                            lt_list.append(lt_list[i].replace(month=switchM(i+3)))
+                        else:
+                            lt_list.append(today.replace(day=1,month=1))
+                    #else:
+                        #lt_list.append(today.replace(day=1,month=1))
+                        #result["labels"].append(_('去年'))
                 else:
                     gte_list.append(today.replace(year=1970))
                     lt_list.append(today + datetime.timedelta(days=1))
@@ -240,22 +244,44 @@ def updateGridAjax(request):
                 #print(result["labels"])
                 
             #解析json
-            permission = QueryJson["form"]
+            #permission = QueryJson["form"]
+            permission = "Omdata_"+QueryJson["form"]+"_View"
             this_model = list(filter(lambda x: x.__name__==re.findall("^(.+)_View", permission)[0],apps.get_models()))
+            getModel = False
+            isPolicy = False
             if len(this_model) and request.user.has_perm(str(this_model[0]._meta.app_label)+"."+permission):
+                getModel = True
+            else:
+                this_model = list(filter(lambda x: x.__name__==QueryJson["form"],apps.get_models()))
+                if len(this_model) and request.user.has_perm("OmMonitor_Manage"):
+                    getModel = True
+                    isPolicy = True
+                    
+            if getModel:
                 #setCondition
                 filter_count = 0
                 for i in range(len(gte_list)):
-                    QueryJson["condition"]=[
-                        {
-                            "column":"updatetime__gte",
-                            "value":gte_list[i]
-                        },{
-                            "column":"updatetime__lt",
-                            "value":lt_list[i]
-                        }]
-                    
-                    if len(re.findall("Omdata_",permission)):
+                    #print(gte_list[i].strftime("%Y-%m-%d %H:%M:%S"))
+                    if isPolicy:
+                        QueryJson["condition"]=[
+                            {
+                                "column":"createtime__gte",
+                                "value":gte_list[i]
+                            },{
+                                "column":"createtime__lt",
+                                "value":lt_list[i]
+                            }]
+                    else:
+                        QueryJson["condition"]=[
+                            {
+                                "column":"updatetime__gte",
+                                "value":gte_list[i]
+                            },{
+                                "column":"updatetime__lt",
+                                "value":lt_list[i]
+                            }]
+                        
+                    if not isPolicy:
                         #取得各ticket最新id_List
                         value_list = ["data_no"]
                         thisQuery = this_model[0].objects.all().values(*tuple(value_list))
@@ -299,8 +325,12 @@ def updateGridAjax(request):
                             elif cObj["value"] == "avg":
                                 thisQuery = thisQuery.annotate(**{cObj["column"]:Avg(cObj["column"])})
                             else:
-                                thisQuery = thisQuery.annotate(New=Max('updatetime'))
-                                thisQuery = thisQuery.filter(updatetime__in=list(thisQuery.values_list('New', flat=True)))
+                                if isPolicy:
+                                    thisQuery = thisQuery.annotate(New=Max('createtime'))
+                                    thisQuery = thisQuery.filter(createtime__in=list(thisQuery.values_list('New', flat=True)))
+                                else :
+                                    thisQuery = thisQuery.annotate(New=Max('updatetime'))
+                                    thisQuery = thisQuery.filter(updatetime__in=list(thisQuery.values_list('New', flat=True)))
                             
                             has_static = False
                             for cObj in QueryJson["column"]:
@@ -332,8 +362,13 @@ def updateGridAjax(request):
                             QueryList = [thisQueryJson]
                             
                             if cObj["value"] == "static":
-                                thisQueryJson = thisQuery.aggregate(New=Max('updatetime'))
-                                thisQuery = thisQuery.filter(updatetime__in=list([thisQueryJson.get('New')]))
+                                if isPolicy:
+                                    thisQueryJson = thisQuery.aggregate(New=Max('createtime'))
+                                    thisQuery = thisQuery.filter(createtime__in=list([thisQueryJson.get('New')]))
+                                else:
+                                    thisQueryJson = thisQuery.aggregate(New=Max('updatetime'))
+                                    thisQuery = thisQuery.filter(updatetime__in=list([thisQueryJson.get('New')]))
+                                
                                 QueryList = list(thisQuery)
 
                     if QueryJson["type"] and QueryJson["type"]!="table":
@@ -343,7 +378,7 @@ def updateGridAjax(request):
                                 this_value_list = list(filter(lambda x: x['name']==row.get(QueryJson["groupby"][0],""), result["dataset"]))
                             else:
                                 this_value_list = result["dataset"]
-                                
+                            
                             if len(this_value_list)==0:
                                 value_list = {}
                                 value = []
@@ -357,7 +392,7 @@ def updateGridAjax(request):
                                 result["dataset"].append(value_list)
                             else:
                                 for cObj in QueryJson["column"]:
-                                    this_value_list[0].data.append(row.get(cObj["column"],""))
+                                    this_value_list[0]['data'].append(row.get(cObj["column"],""))
                         filter_count = filter_count+1
                         for this_value_list in result["dataset"]:
                             if len(this_value_list['data'])<filter_count:
@@ -393,9 +428,12 @@ def getFormListAjax(request):
     ''' 
     username = request.user.username
     if username:
+        #已上架流程
         this_activeList = list(FlowActive.objects.filter(undeploy_flag=0,parent_uuid__isnull=True).values_list('flow_uuid', flat=True))
         this_activeList = [o.hex for o in this_activeList]
-        #print(this_activeList)
+        
+        #有權限流程清單
+        per_list = []
         if request.user.is_superuser:
             p = list(Permission.objects.filter(codename__contains="_View").values())
         else: 
@@ -407,16 +445,40 @@ def getFormListAjax(request):
                 this_name = this_model[0].__name__
                 this_flow_uuid = re.findall("^Omdata_(.+)", this_name)
                 if len(this_flow_uuid) :
-                    #print(this_flow_uuid)
-                    #print(set(this_activeList) & set(this_flow_uuid))
                     if this_flow_uuid[0] in this_activeList:
-                        result[i.get("codename")] = this_model[0].table_name
-                else:
-                    result[i.get("codename")] = this_model[0].table_name
-        info(request,'%s get Form-List success' % username)
+                        per_list.append(this_flow_uuid[0])
+        
+        #上線流程
+        flow_list = list(FlowActive.objects.filterformat('id','flow_uuid','flow_name','flow_app_id',undeploy_flag=False,parent_uuid=None))
+        app_list = list(ActiveApplication.objects.filterformat('id','app_name',undeploy_flag=False))
+        
+        #merge
+        flow = [x for x in flow_list if x['flow_uuid'] in per_list]
+        flow_app = [x['flow_app_id'] for x in flow_list]
+        app =  [x for x in app_list if x['id'] in flow_app]
+        result = {'app':app,'flow':flow}
+        
+        #翻譯
+        lang = request.COOKIES.get('django_language','zh-hant')
+        result['app'] = Translator('datatable_multi_app','active', lang, None,None).Do(result['app'])
+        result['flow'] = Translator('datatable_multi_app','active', lang, None,None).Do(result['flow'])
+        
+        from omflow.syscom.common import License
+        version_type = License().getVersionType()
+        if version_type != 'C':
+            from ommonitor.models import MonitorFlow
+            #判斷有無資料收集權限
+            if request.user.has_perms("OmMonitor_Manage"):
+                result['app'].append({'id':'sch','app_name':_('收集器流程')})
+                result['app'].append({'id':'api','app_name':_('收集器API')})
+                this_monitorList = list(MonitorFlow.objects.filterformat('id','table_id','flow_name','attr',history=0))
+                for this_monitor in this_monitorList:
+                    result['flow'].append({'id':this_monitor['id'],'flow_uuid':'OmPolicy_'+this_monitor['table_id'],'flow_name':this_monitor['flow_name'],'flow_app_id':this_monitor['attr']})
+        
+        info('%s get Form-List success' % username,request)
         return ResponseAjax(statusEnum.success , _('讀取成功'), result).returnJSON()
     else:
-        info(request,'%s get Form-List with no permission' % username)
+        info('%s get Form-List with no permission' % username,request)
         return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
          
 @login_required
@@ -430,43 +492,67 @@ def getColumnListAjax(request):
     ''' 
     username = request.user.username
     postdata = getPostdata(request)
-    
+
     if username:
         require_field = ['model']
         checker = DataChecker(postdata, require_field)
         if checker.get('status') == 'success':
-            permission = postdata.get('model', '')
+            permission = "Omdata_"+postdata.get('model', '')+"_View"
             this_model = list(filter(lambda x: x.__name__==re.findall("^(.+)_View", permission)[0],apps.get_models()))
+            result={}
+            
+            #isPolicy = False
+            from omflow.syscom.common import License
+            version_type = License().getVersionType()
+            if version_type != 'C':
+                from ommonitor.models import MonitorFlow
+                if len(this_model) == 0 and request.user.has_perm("OmMonitor_Manage"):
+                    policy_model = list(filter(lambda x: x.__name__==postdata.get('model', ''),apps.get_models()))
+                    if len(policy_model) :
+                        this_table_id = re.findall("OmPolicy_(.+)", postdata.get('model', ''))[0]
+                        fa = list(MonitorFlow.objects.filter(table_id=this_table_id).values('flowobject'))
+                        if len(fa):
+                            fa = json.loads(fa[0]['flowobject'])
+                            result["collector_id"] = "收集器ID"
+                            for item in fa['items']:
+                                if item['type'] == "end":
+                                    for output in item['config']['output']:
+                                        field_name = re.findall('\$\((.+)\)',output['name'])[0]
+                                        result[field_name] = output['des']
+                
+                
             if len(this_model) and request.user.has_perm(str(this_model[0]._meta.app_label)+"."+permission):
-                result={}
                 if re.match('Omdata_.+_View', permission) :
                     flow_uuid = re.findall("Omdata_(.+)_View", permission)[0]#Omdata_5d3c2cbdcf4145c3a05affaf4a74345b_View
                     fa = FlowActiveGlobalObject.UUIDSearch(flow_uuid).merge_formobject
-                    fa = json.loads(fa)
-                    for field in this_model[0]._meta.fields:
-                        if 'formitm' in field.verbose_name:
-                            if field.name.upper() in fa:
-                                if fa[field.name.upper()]["type"] == 'h_group':
-                                    #result[field.name] = fa[field.name.upper]
-                                    result[field.name] = fa[field.name.upper()]["config"]["group_title"]
-                                else:
-                                    result[field.name] = fa[field.name.upper()]["config"]["title"]
-                        else:
-                            result[field.name] = field.verbose_name
-                else:
-                    for field in this_model[0]._meta.fields:
-                        result[field.name] = field.verbose_name
-                    
-                info(request,'%s get Column-List success' % username)
+                    if len(fa):
+                        fa = json.loads(fa)
+                        for field in this_model[0]._meta.fields:
+                            if 'formitm' in field.verbose_name:
+                                if field.name.upper() in fa:
+                                    if fa[field.name.upper()]["type"] == 'h_group':
+                                        #result[field.name] = fa[field.name.upper]
+                                        result[field.name] = fa[field.name.upper()]["config"]["group_title"]
+                                    else:
+                                        result[field.name] = fa[field.name.upper()]["config"]["title"]
+                            else:
+                                result[field.name] = field.verbose_name
+                                
+                    lang = request.COOKIES.get('django_language','zh-hant')
+                    app_id = FlowActiveGlobalObject.UUIDSearch(flow_uuid).flow_app_id
+                    result = Translator( 'single_app','active', lang, app_id, None ).Do( result )
+            
+            if result != {}:
+                info('%s get Column-List success' % username,request)
                 return ResponseAjax(statusEnum.success, _('讀取成功。'),result).returnJSON()
             else:
-                info(request,'%s get Column-List with no permission' % username)
+                info('%s get Column-List with no permission' % username,request)
                 return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
         else:
-            info(request,'%s get Column-List error' % username)
+            info('%s get Column-List error' % username,request)
             return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
     else:
-        info(request,'%s get Column-List with no permission' % username)
+        info('%s get Column-List with no permission' % username,request)
         return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
     
 def switchM(num):

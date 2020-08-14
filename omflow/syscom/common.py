@@ -11,7 +11,7 @@ from omflow.syscom.message import ResponseAjax, statusEnum
 from django.utils.translation import gettext as _
 from omflow.syscom.default_logger import error
 from omflow.syscom.constant import LOCAL_PORT
-from omflow.global_obj import GlobalObject
+from omflow.global_obj import GlobalObject, FlowActiveGlobalObject
 from functools import wraps
 from django.apps import apps
 from django.conf import settings
@@ -247,7 +247,7 @@ def FormDataChecker(formdata_list, formobject_items):
     return status
 
 
-def DatatableBuilder(request, queryset, filed_list):
+def DatatableBuilder(request, queryset, field_list):
     '''
     build response data for datatble
     input: request, module dict, total_records
@@ -280,7 +280,7 @@ def DatatableBuilder(request, queryset, filed_list):
     length = postdata.get('length')                     #列表顯示長度  int
     start = postdata.get('start')                       #列表顯示起始位置  int
     limit = start + length
-    lst = DatatableQueryBuilder(filed_list,searchkey)
+    lst = DatatableQueryBuilder(field_list,searchkey)
 #     if orderdir == "asc":                                   #判斷排序方式          Q搜尋包含search關鍵字
     thislist = list(queryset.filter(reduce(operator.or_, lst)).order_by(*ordercolumn_list)[start:limit])
 #     else:
@@ -354,16 +354,16 @@ def DatatableBuilder(request, queryset, filed_list):
     return result
 
 
-def DatatableQueryBuilder(filed_list,searchkey):
+def DatatableQueryBuilder(field_list,searchkey):
     '''
     search user method
-    input: filed_list,searchkey
+    input: field_list,searchkey
     return: json
     author: Kolin Hsu
     '''
     lst = []
-    for filed in filed_list:
-        q_obj = Q(**{filed: searchkey})
+    for field in field_list:
+        q_obj = Q(**{field: searchkey})
         lst.append(q_obj)
     return lst
 
@@ -385,29 +385,29 @@ def DataFormat(model_dict):
     return model_dict
 
 
-def UserSearch(filed_list,searchkey,ordercolumn):
+def UserSearch(field_list,searchkey,ordercolumn):
     '''
     search user method
-    input: filed_list,searchkey,ordercolumn
+    input: field_list,searchkey,ordercolumn
     return: json
     author: Kolin Hsu
     '''
     if searchkey:
-        lst = DatatableQueryBuilder(filed_list,searchkey)
+        lst = DatatableQueryBuilder(field_list,searchkey)
         result = list(OmUser.objects.filter(delete=False).exclude(id=1).filter(reduce(operator.or_, lst)).values('id','username','nick_name').distinct().order_by(ordercolumn))
     else:
         result = list(OmUser.objects.filter(delete=False).exclude(id=1).values('id','username','nick_name').distinct().order_by(ordercolumn))
     return result
 
 
-def GroupSearch(filed_list,searchkey,ordercolumn,adGroup):
+def GroupSearch(field_list,searchkey,ordercolumn,adGroup):
     '''
     search group method
-    input: filed_list,searchkey,ordercolumn,adGroup
+    input: field_list,searchkey,ordercolumn,adGroup
     return: json
     author: Kolin Hsu
     '''
-    lst = DatatableQueryBuilder(filed_list,searchkey)
+    lst = DatatableQueryBuilder(field_list,searchkey)
     result = list(Group.objects.filter(reduce(operator.or_, lst),omgroup__functional_flag=False,omgroup__ad_flag__in=adGroup).values('id','name','omgroup__display_name').distinct().order_by(ordercolumn))
     return result
     
@@ -423,9 +423,9 @@ def try_except(fun):
             return fun(*args, **kwargs)
         except Exception as e:
             if not args:
-                error('Parameter is None',e)
+                error(e)
             else:
-                error(args[0],e)
+                error(e,args[0])
             return ResponseAjax(statusEnum.error, e.__str__()).returnJSON()
     return handle_problems
 
@@ -494,7 +494,9 @@ def FormatToFormdataList(item, input_value, formdata_list):
         else:
             group, user = input_value.split(',')
         formdata_dict['value'] = {'group': group, 'user': user}
-        group_dict = {'id':'group','type':'header','value':{'group': group, 'user': user}}
+        user_nick_name = getUserName(user)
+        gorup_display_name = getGroupName(group)
+        group_dict = {'id':'group','type':'header','value':{'group': gorup_display_name, 'user': user_nick_name}}
         formdata_list.append(group_dict)
     elif item['type'] == 'h_title':
         title_dict = {'id':'title','type':'header','value':input_value}
@@ -519,11 +521,16 @@ def FormatToFormdataList(item, input_value, formdata_list):
     formdata_list.append(formdata_dict)
 
 
-def FormatFormdataListToFormdata(formdata_list):
+def FormatFormdataListToFormdata(formdata_list, flow_uuid=None, formobject=None):
     formdata = {}
+    header_dict = {}
     for item in formdata_list:
+        item_type = item['type']
         item_id = item['id'].lower()
         value = item['value']
+        if re.match(r'h_.+', item_type):
+            header_dict[item_id] = re.findall(r'h_(.+)', item_type)[0]
+        
         if isinstance(value, dict):
             new_value = json.dumps(value)
         elif isinstance(value, list):
@@ -535,7 +542,85 @@ def FormatFormdataListToFormdata(formdata_list):
         else:
             new_value = str(value)
         formdata[item_id] = new_value
+    
+    for item_id in header_dict:
+        header_type = header_dict[item_id]
+        header = formdata.get(header_type,None)
+        if header_type in ['title','level']:
+            if header:
+                pass
+            else:
+                formdata[header_type] = formdata[item_id]
+        elif header_type == 'status':
+            value_to_text = True
+            if header:
+                if header != formdata[item_id]:
+                    value_to_text = False
+            if value_to_text:
+                try:
+                    formdata[header_type] = getFormobjectListText(item_id, formdata[item_id], flow_uuid, formobject)
+                except:
+                    formdata[header_type] = formdata[item_id]
+        elif header_type == 'group':
+            value_to_text = True
+            if header:
+                if header != formdata[item_id]:
+                    value_to_text = False
+            if value_to_text:
+                try:
+                    new_header = json.loads(formdata[item_id])
+                    new_header['group'] = getGroupName(new_header['group'])
+                    new_header['user'] = getUserName(new_header['user'])
+                    formdata[header_type] = json.dumps(new_header)
+                except:
+                    formdata[header_type] = formdata[item_id]
     return formdata
+
+
+def getFormobjectListText(item_id, value, flow_uuid, formobject):
+    text = value
+    lists = []
+    if flow_uuid:
+        fa = FlowActiveGlobalObject.UUIDSearch(flow_uuid)
+        items = json.loads(fa.merge_formobject)
+    else:
+        if isinstance(formobject, str):
+            formobject = json.loads(formobject)
+        items = formobject['items']
+        
+    if isinstance(items, dict):
+        item = items.get(item_id,{})
+        lists = item.get('config',{}).get('lists',[])
+    else:
+        for item in items:
+            if item['id'] == item_id:
+                lists = item.get('config',{}).get('lists',[])
+                break
+    
+    for l in lists:
+        if l['value'] == value:
+            text = l['text']
+            break
+    return text
+
+
+def datatableValueToText(data, flow_uuid):
+    if isinstance(data, str):
+        pass
+    else:
+        if isinstance(data, str):
+            pass
+        else:
+            for key_or_line in data:
+                if isinstance(key_or_line, dict):
+                    line = key_or_line
+                else:
+                    line = data[key_or_line]
+                for key in line:
+                    if re.match(r'formitm_.+', key):
+                        if line[key]:
+                            line[key] = getFormobjectListText(key.upper(), line[key], flow_uuid, None)
+    return data
 
 
 def merge_formobject_items(items_list):
@@ -545,6 +630,8 @@ def merge_formobject_items(items_list):
             for item in items:
                 item_id = item['id']
                 if item_id[:8] == 'FORMITM_':
+                    new_item_str = json.dumps(item)
+                    new_item = json.loads(new_item_str)
                     if item['type'] in ['h_status','h_group','list','checkbox']:
                         if merge_dict.get(item_id,''):
                             ex_item = merge_dict.get(item_id,'')
@@ -556,7 +643,8 @@ def merge_formobject_items(items_list):
                             for l in now_item_list:
                                 if l['value'] not in ex_value_list:
                                     ex_item_list.append(l)
-                    merge_dict[item_id] = item
+                            new_item['config']['lists'] = ex_item_list
+                    merge_dict[item_id] = new_item
     except:
         merge_dict = {}
     finally:
@@ -576,14 +664,8 @@ def getAppAttr(app_attr_num):
         s = 'user'
         if isinstance(app_attr_num, str):
             app_attr_num = int(app_attr_num)
-        if app_attr_num == 1:
-            s = 'sys'
-        elif app_attr_num == 2:
-            s = 'lib'
-        elif app_attr_num == 3:
-            s = 'cloud'
-        elif app_attr_num == 4:
-            s = 'policy'
+        app_attr_map = {1:'sys', 2:'lib', 3:'cloud', 4:'policy'}
+        s = app_attr_map.get(app_attr_num, 'user')
     except:
         pass
     finally:
@@ -608,18 +690,22 @@ def getPolicyAttr(policy_attr_num):
 
 def getUserName(user_id):
     try:
-        nick_name = OmUser.objects.get(id=user_id).nick_name
+        nick_name = user_id
+        if user_id:
+            nick_name = OmUser.objects.get(id=user_id).nick_name
     except:
-        nick_name = ''
+        pass
     finally:
         return nick_name
 
 
 def getGroupName(group_id):
     try:
-        display_name = OmGroup.objects.get(id=group_id).display_name
+        display_name = group_id
+        if group_id:
+            display_name = OmGroup.objects.get(id=group_id).display_name
     except:
-        display_name = ''
+        pass
     finally:
         return display_name
 
@@ -733,11 +819,8 @@ def searchConditionBuilder(search_conditions):
     try:
         lst = []
         for con in search_conditions:
-            column = con['column']
-            condition = getConsValue(con['condition'])
-            field = column + condition
-            searchkey = con['value']
-            q_obj = Q(**{field: searchkey})
+            field = con['column'] + getConsValue(con['condition'])
+            q_obj = Q(**{field: con['value']})
             lst.append(q_obj)
     except Exception as e:
         error('', e.__str__())
@@ -746,15 +829,268 @@ def searchConditionBuilder(search_conditions):
 
 
 def getConsValue(con):
-    result = ''
-    if con == '=':
-        pass
-    elif con == 'in':
-        result = '__in'
-    elif con == 'contains':
-        result = '__icontains'
-    elif con == '>':
-        result = '__gt'
-    elif con == '<':
-        result = '__lt'
+    conditions_map = {'in':'__in', 'contains':'__icontains', '>':'__gt', '<':'__lt'}
+    result = conditions_map.get(con, '')
     return result
+
+
+#組合語言dict
+class LanguageDictBuilder():
+    
+    def __init__(self):
+        self.name = ''
+    
+    def buildLanDict(self, app_name, flow_list, lan_str, ex_dict):
+        try:
+            lan_dict = {}
+            for flow in flow_list:
+                #基本資料
+                flow_name = flow.get('flow_name','')
+                description = flow.get('description','')
+                lan_dict[app_name] = ''
+                lan_dict[flow_name] = ''
+                lan_dict[description] = ''
+                #表單物件
+                flowobject = flow.get('flowobject','{}')
+                if isinstance(flowobject, str):
+                    flowobject = json.loads(flowobject)
+                formobject = flowobject.get('form_object',{})
+                self.loopFormObject(lan_dict, formobject)
+                #流程物件
+                self.loopFlowObject(lan_dict, flowobject)
+                #將舊有的翻譯帶入
+                new_keys = list(lan_dict.keys())
+                for e_k in ex_dict:
+                    if e_k in new_keys:
+                        lan_dict[e_k] = ex_dict[e_k]
+                #編成csv格式
+                result = ''
+                for k in lan_dict:
+                    if k:
+                        result += 'original:'+ k + '\r\n'
+                        result += '' + lan_str + ':' + lan_dict[k] + '\r\n'
+                        result += '\r\n'
+        except:
+            result = None
+        finally:
+            if result:
+                if len(result) > 4:
+                    result  = result[:-4]
+            return result
+
+
+    def loopFlowObject(self, lan_dict, flowobject):
+        try:
+            items = flowobject.get('items',[])
+            for i in items:
+                item_type = i['type']
+                if item_type != 'line':
+                    config = i['config']
+                    
+                    lan_dict[i['text']] = ''
+                    
+                    if item_type in ['start','python','setform']:
+                        loop_list = ['input','output']
+                        self.loopInOutPut(lan_dict, loop_list, config)
+                    
+                    elif item_type == 'end':
+                        loop_list = ['output']
+                        self.loopInOutPut(lan_dict, loop_list, config)
+                    
+                    elif item_type in ['outflow','inflow','subflow']:
+                        loop_list = ['subflow_input','subflow_output']
+                        self.loopInOutPut(lan_dict, loop_list, config)
+                    
+                    elif item_type == 'form':
+                        loop_list = ['input','output','subflow_input','subflow_output','input1','input2']
+                        self.loopInOutPut(lan_dict, loop_list, config)
+                        
+                        lan_dict[config['action1_text']] = ''
+                        lan_dict[config['action2_text']] = ''
+                        
+                        form_object = config.get('form_object',{})
+                        if form_object:
+                            if form_object.get('items',[]):
+                                self.loopFormObject(lan_dict, form_object)
+                    
+                    elif item_type in ['async','switch']:
+                        pass
+        except:
+            pass
+
+
+    def loopFormObject(self, lan_dict, formobject):
+        try:
+            items = formobject.get('items',[])
+            for i in items:
+                item_type = i['type']
+                config = i['config']
+                if item_type in ['box12','box6','areabox']:
+                    lan_dict[config['title']] = ''
+                    
+                elif item_type in ['h_title','inputbox','date','datetime','subquery']:
+                    lan_dict[config['title']] = ''
+                    lan_dict[config['placeholder']] = ''
+                    
+                elif item_type == 'h_group':
+                    lan_dict[config['group_title']] = ''
+                    lan_dict[config['user_title']] = ''
+                    
+                elif item_type in ['h_level','h_status','list','checkbox']:
+                    lan_dict[config['title']] = ''
+                    lists = config['lists']
+                    for l in lists:
+                        lan_dict[l['text']] = ''
+        except:
+            pass
+
+
+    def loopInOutPut(self, lan_dict, loop_list, config):
+        try:
+            for i in loop_list:
+                n_lst = config[i]
+                for n in n_lst:
+                    lan_dict[n['des']] = ''
+        except:
+            pass
+
+
+class Translator():
+    
+    def __init__(self, trans_class, trans_type, language, app_id, app_name):
+        self.trans_class = trans_class
+        self.trans_type = trans_type
+        self.language = language
+        self.app_id = app_id
+        self.app_name = app_name
+        self.fun = lambda m, n: m if m else n
+        
+    
+    def Do(self, content, c_level=None):
+        try:
+            c = self.trans_class
+            if c == 'flowobject':
+                result = self.flowobject(content)
+            elif c == 'formobject':
+                result = self.formobject(content)
+            elif c == 'datatable_single_app':
+                result = self.datatable_single_app(content)
+            elif c == 'datatable_multi_app':
+                result = self.datatable_multi_app(content)
+            elif c == 'single_app':
+                result = self.single_app(content)
+            else:
+                result = None
+        except:
+            result = None
+        finally:
+            return result
+    
+    
+    def flowobject(self, content):
+        full_language_package = FlowActiveGlobalObject.getAppLanDict(self.trans_type, self.app_id, self.app_name)
+        lan = full_language_package.get(self.language,{})
+        if isinstance(content, str):
+            content = json.loads(content)
+        items = content['items']
+        for i in items:
+            item_type = i['type']
+            if item_type != 'line':
+                #置換元件名稱
+                i['text'] = self.fun(lan.get(i['text'],i['text']), i['text'])
+        return content
+    
+    
+    def formobject(self, content):
+        full_language_package = FlowActiveGlobalObject.getAppLanDict(self.trans_type, self.app_id, self.app_name)
+        lan = full_language_package.get(self.language,{})
+        if isinstance(content, str):
+            content = json.loads(content)
+        items = content['items']
+        for i in items:
+            item_type = i['type']
+            config = i['config']
+            
+            if item_type in ['box12','box6','areabox']:
+                config['title'] = self.fun(lan.get(config['title'],config['title']), config['title'])
+                
+            elif item_type in ['h_title','inputbox','date','datetime','subquery']:
+                config['title'] = self.fun(lan.get(config['title'],config['title']), config['title'])
+                config['placeholder'] = self.fun(lan.get(config['placeholder'],config['placeholder']), config['placeholder'])
+                
+            elif item_type == 'h_group':
+                config['group_title'] = self.fun(lan.get(config['group_title'],config['group_title']), config['group_title'])
+                config['user_title'] = self.fun(lan.get(config['user_title'],config['user_title']), config['user_title'])
+                
+            elif item_type in ['h_level','h_status','list','checkbox']:
+                config['title'] = self.fun(lan.get(config['title'],config['title']), config['title'])
+                lists = config['lists']
+                for l in lists:
+                    l['text'] = self.fun(lan.get(l['text'],l['text']), l['text'])
+        return content
+
+        
+    def datatable_single_app(self, content):
+        full_language_package = FlowActiveGlobalObject.getAppLanDict(self.trans_type, self.app_id, self.app_name)
+        lan = full_language_package.get(self.language,{})
+        if isinstance(content, dict):
+            for key in content:
+                line = content[key]
+                for s_k in line:
+                    if isinstance(line[s_k], str):
+                        line[s_k] = self.fun(lan.get(line[s_k],line[s_k]), line[s_k])
+        elif isinstance(content, list):
+            for line in content:
+                for s_k in line:
+                    if isinstance(line[s_k], str):
+                        line[s_k] = self.fun(lan.get(line[s_k],line[s_k]), line[s_k])
+        return content
+
+        
+    def datatable_multi_app(self, content):
+        if isinstance(content, dict):
+            for key in content:
+                line = content[key]
+                for s_k in line:
+                    if isinstance(line[s_k], str):
+                        if line.get('flow_uuid',None):
+                            app_id = FlowActiveGlobalObject.UUIDSearch(line.get('flow_uuid',None)).flow_app_id
+                            app_name = None
+                        else:
+                            app_id = line.get('id',None)
+                            app_name = line.get('app_name',None)
+                        lan = FlowActiveGlobalObject.getAppLanDict(self.trans_type, app_id, app_name).get(self.language,{})
+                        line[s_k] = self.fun(lan.get(line[s_k],line[s_k]), line[s_k])
+        elif isinstance(content, list):
+            for line in content:
+                for s_k in line:
+                    if isinstance(line[s_k], str):
+                        if line.get('flow_uuid',None):
+                            app_id = FlowActiveGlobalObject.UUIDSearch(line.get('flow_uuid',None)).flow_app_id
+                            app_name = None
+                        else:
+                            app_id = line.get('id',None)
+                            app_name = line.get('app_name',None)
+                        lan = FlowActiveGlobalObject.getAppLanDict(self.trans_type, app_id, app_name).get(self.language,{})
+                        line[s_k] = self.fun(lan.get(line[s_k],line[s_k]), line[s_k])
+        return content
+    
+    
+    def single_app(self, content):
+        full_language_package = FlowActiveGlobalObject.getAppLanDict(self.trans_type, self.app_id, self.app_name)
+        lan = full_language_package.get(self.language,{})
+        if isinstance(content, str):
+            result = self.fun(lan.get(content,content), content)
+        elif isinstance(content, list):
+            result = []
+            for i in content:
+                result.append(self.fun(lan.get(i,i), i))
+        elif isinstance(content, dict):
+            result = {}
+            for key in content:
+                result[key] = self.fun(lan.get(content[key],content[key]), content[key])
+        else:
+            result = None
+        return result
+    
+    

@@ -20,6 +20,7 @@ class WorkspaceApplication(models.Model):
     updatetime = models.DateTimeField(verbose_name = _('更新時間'), blank=True, null=True)
     active_app_name = models.CharField(verbose_name= _('對應名稱'), max_length=200, null=True, blank=True)
     app_attr = models.CharField(verbose_name= _('屬性'), max_length=100)
+    language_package = models.TextField(verbose_name= _('語言包'), default='{}')
     
     objects = FormatManager()
     
@@ -62,6 +63,7 @@ class ActiveApplication(models.Model):
     version = models.IntegerField(verbose_name= _('流程版本'), null=True, blank=True)
     app_attr = models.CharField(verbose_name= _('屬性'), max_length=100)
     undeploy_flag = models.BooleanField(verbose_name = _('下線'), default=False)
+    language_package = models.TextField(verbose_name= _('語言包'), default='{}')
     
     objects = FormatManager()
     
@@ -109,6 +111,7 @@ class FlowActive(models.Model):
     action2 = models.TextField(verbose_name= _('快速操作2'),null=True, blank=True)
     type = models.TextField(verbose_name= _('分類'),null=True, blank=True)
     permission = models.TextField(verbose_name= _('權限'),null=True, blank=True)
+    api_path = models.CharField(verbose_name= _('api路徑'), max_length=500,null=True, blank=True)
     
     objects = FormatManager()
     

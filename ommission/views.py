@@ -2,7 +2,7 @@ import json
 from django.shortcuts import render
 from django.utils.translation import gettext as _
 from django.contrib.auth.decorators import login_required
-from omflow.syscom.common import try_except, DataChecker, DatatableBuilder, getPostdata, listQueryBuilder
+from omflow.syscom.common import try_except, DataChecker, DatatableBuilder, getPostdata, listQueryBuilder, Translator
 from omflow.syscom.message import ResponseAjax, statusEnum
 from django.http.response import JsonResponse
 from ommission.models import Missions
@@ -10,6 +10,7 @@ from django.db.models import Q
 from omuser.models import OmUser
 from django.db.models.aggregates import Max
 from omflow.syscom.default_logger import info,debug,error
+from omflow.global_obj import FlowActiveGlobalObject
 
 
 @login_required
@@ -78,7 +79,7 @@ def updateMissionLevel(flow_uuid, data_no, level):
         status = True
         Missions.objects.filter(flow_uuid=flow_uuid,data_no=data_no,history=False).update(level=level)
     except Exception as e:
-        error('','update mission error:     %s' % e.__str__())
+        error('update mission error:     %s' % e.__str__())
         status =  False
     finally:
         return status
@@ -121,7 +122,35 @@ def listMyMissionAjax(request):
         group_id_list = list(request.user.groups.all().values_list('id',flat=True))
         query = Missions.objects.filter((Q(assignee_id=request.user.id) | (Q(assign_group_id__in=group_id_list) & Q(assignee_id=None))) & Q(history=False) & Q(ticket_createtime__range=ticket_createtime)).values(*display_field)
         result = DatatableBuilder(request, query, field_list)
-        info(request ,'%s list Mission success.' % request.user.username)
+        
+        #載入語言包
+        language = request.COOKIES.get('django_language','zh-hant')
+        data = result['data']
+        if isinstance(data, str):
+            pass
+        elif isinstance(data, list) or isinstance(data, dict):
+            for key_or_line in data:
+                if isinstance(data, list):
+                    line = key_or_line
+                else:
+                    line = data[key_or_line]
+                fa = FlowActiveGlobalObject.UUIDSearch(line['flow_uuid'])
+                if fa:
+                    app_id = fa.flow_app_id
+                    for key in line:
+                        if key in['flow_name','level','status']:
+                            line[key] = Translator('single_app', 'active', language, app_id, None).Do(line[key])
+                        elif key == 'action':
+                            action = line[key]
+                            if action:
+                                action1 = action.split(',')[0]
+                                action2 = action.split(',')[1]
+                                trans_a1 = Translator('single_app', 'active', language, app_id, None).Do(action1)
+                                trans_a2 = Translator('single_app', 'active', language, app_id, None).Do(action2)
+                                line[key] = trans_a1 + ',' + trans_a2
+#         result['data'] = Translator('datatable_multi_app', 'active', language, None, None).Do(result['data'])
+        
+        info('%s list Mission success.' % request.user.username,request)
         return JsonResponse(result)
     else:
         #api使用
@@ -129,10 +158,10 @@ def listMyMissionAjax(request):
         query = Missions.objects.filter((Q(assignee_id=request.user.id) | (Q(assign_group_id__in=group_id_list) & Q(assignee_id=None))) & Q(history=False))
         result = listQueryBuilder(None, postdata, query)
         if result['status']:
-            info(request ,'%s list Mission success.' % request.user.username)
+            info('%s list Mission success.' % request.user.username,request)
             return ResponseAjax(statusEnum.success, result['message'], result['result']).returnJSON()
         else:
-            info(request ,'%s list Mission error.' % request.user.username)
+            info('%s list Mission error.' % request.user.username,request)
             return ResponseAjax(statusEnum.not_found, result['message']).returnJSON()
 
 
@@ -158,7 +187,12 @@ def listHistoryMissionAjax(request):
     else:
         query = Missions.objects.filter(Q(update_user_id=request.user.username) & Q(updatetime__range=updatetime) & Q(history=True)).values(*display_field)
     result = DatatableBuilder(request, query, field_list)
-    info(request ,'%s list MissionHistory success.' % request.user.username)
+        
+    #載入語言包
+    language = request.COOKIES.get('django_language','zh-hant')
+    result['data'] = Translator('datatable_multi_app', 'active', language, None, None).Do(result['data'])
+    
+    info('%s list MissionHistory success.' % request.user.username,request)
     return JsonResponse(result)
 
 
@@ -214,5 +248,10 @@ def listHistoryMissionCurrentStateAjax(request):
     query = Missions.objects.filter(id__in=max_id_list).values(*display_field)
     result = DatatableBuilder(request, query, field_list)
     result['toomany'] = toomany
-    info(request ,'%s list MissionCurrentState success.' % request.user.username)
+        
+    #載入語言包
+    language = request.COOKIES.get('django_language','zh-hant')
+    result['data'] = Translator('datatable_multi_app', 'active', language, None, None).Do(result['data'])
+    
+    info('%s list MissionCurrentState success.' % request.user.username,request)
     return JsonResponse(result)

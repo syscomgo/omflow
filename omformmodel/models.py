@@ -9,9 +9,9 @@ from omflow.syscom.customfield import FormatManager
 #<import end>
 
 
-#<Omdata_7f811b732ddf44d4995aeffdc56ad2ba start>
+#<Omdata_dc33fb340034418c8fbb3baf15525e86 start>
 #7
-class Omdata_7f811b732ddf44d4995aeffdc56ad2ba(models.Model):
+class Omdata_dc33fb340034418c8fbb3baf15525e86(models.Model):
     table_name = _('任務單')
     flow_uuid = models.UUIDField(verbose_name= _('流程編號'), null=True, blank=True)
     dataid_header = models.CharField(verbose_name= _('資料代碼'), max_length=3)
@@ -30,8 +30,8 @@ class Omdata_7f811b732ddf44d4995aeffdc56ad2ba(models.Model):
     createtime = models.DateTimeField(verbose_name = _('建立時間'), auto_now_add=True)
     updatetime = models.DateTimeField(verbose_name = _('更新時間'), auto_now=True)
     stoptime = models.DateTimeField(verbose_name = _('停止時間'), null=True,blank=True)
-    create_user = models.ForeignKey('omuser.OmUser', verbose_name = _('開單人員'), to_field='username', on_delete=models.SET_NULL, blank=True, null=True, related_name='create_7f811b732ddf44d4995aeffdc56ad2ba')
-    update_user = models.ForeignKey('omuser.OmUser', verbose_name = _('更新人員'), to_field='username', on_delete=models.SET_NULL, blank=True, null=True, related_name='update_7f811b732ddf44d4995aeffdc56ad2ba')
+    create_user = models.ForeignKey('omuser.OmUser', verbose_name = _('開單人員'), to_field='username', on_delete=models.SET_NULL, blank=True, null=True, related_name='create_dc33fb340034418c8fbb3baf15525e86')
+    update_user = models.ForeignKey('omuser.OmUser', verbose_name = _('更新人員'), to_field='username', on_delete=models.SET_NULL, blank=True, null=True, related_name='update_dc33fb340034418c8fbb3baf15525e86')
     data_param = models.TextField(verbose_name = _('流程參數'), null=True,blank=True)
     error_message = models.TextField(verbose_name = _('錯誤訊息'), null=True,blank=True)
     init_data = models.ForeignKey('self', blank=True, null=True, related_name='extra_data', verbose_name = _('初始資料'), on_delete=models.CASCADE)
@@ -47,13 +47,13 @@ class Omdata_7f811b732ddf44d4995aeffdc56ad2ba(models.Model):
     class Meta:
         default_permissions = ()
         permissions = (
-            ('Omdata_7f811b732ddf44d4995aeffdc56ad2ba_Add', _('新增任務單')),
-            ('Omdata_7f811b732ddf44d4995aeffdc56ad2ba_Modify', _('修改任務單')),
-            ('Omdata_7f811b732ddf44d4995aeffdc56ad2ba_View', _('檢視任務單')),
-            ('Omdata_7f811b732ddf44d4995aeffdc56ad2ba_Delete', _('刪除任務單')),
+            ('Omdata_dc33fb340034418c8fbb3baf15525e86_Add', _('新增任務單')),
+            ('Omdata_dc33fb340034418c8fbb3baf15525e86_Modify', _('修改任務單')),
+            ('Omdata_dc33fb340034418c8fbb3baf15525e86_View', _('檢視任務單')),
+            ('Omdata_dc33fb340034418c8fbb3baf15525e86_Delete', _('刪除任務單')),
         )
 
-class Omdata_7f811b732ddf44d4995aeffdc56ad2ba_ValueHistory(models.Model):
+class Omdata_dc33fb340034418c8fbb3baf15525e86_ValueHistory(models.Model):
     flow_uuid = models.UUIDField(verbose_name= _('流程編號'), null=True, blank=True)
     data_no = models.IntegerField(verbose_name = _('資料編號'), null=True, blank=True)
     data_id = models.IntegerField(verbose_name = _('多重資料編號'), blank=True, null=True)
@@ -69,10 +69,10 @@ class Omdata_7f811b732ddf44d4995aeffdc56ad2ba_ValueHistory(models.Model):
     class Meta:
         default_permissions = ()
 
-class Omdata_7f811b732ddf44d4995aeffdc56ad2ba_DataNo(models.Model):
+class Omdata_dc33fb340034418c8fbb3baf15525e86_DataNo(models.Model):
     createtime = models.DateTimeField(verbose_name = _('建立時間'), auto_now_add=True)
     objects = FormatManager()
     class Meta:
         default_permissions = ()
-#<Omdata_7f811b732ddf44d4995aeffdc56ad2ba end>
+#<Omdata_dc33fb340034418c8fbb3baf15525e86 end>
 #<new here>

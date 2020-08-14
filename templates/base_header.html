@@ -32,6 +32,24 @@
               <span class="label label-success" name="message_count"></span>
             </a>
           </li>
+          <li class="dropdown">
+            <!-- Menu toggle button -->
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fas fa-globe"></i>
+              <span class="label label-success"></span>
+            </a>
+            <ul class="dropdown-menu" style="background:#2B424A;">
+              {% get_current_language as LANGUAGE_CODE %}
+		  	  {% get_language_info_list for LANGUAGES  as LANGUAGES %}
+		  	  {% for lang in LANGUAGES %}
+              <li style="{% if lang.code == LANGUAGE_CODE %}background:#456875;{% endif %}cursor:pointer;">
+                <a onclick="change_language('{{ lang.code }}')" style="color:rgba(255,255,255,0.8)">
+                  {{ lang.name_local }} ({{ lang.code }})
+                </a>
+              </li>
+              {% endfor %}
+            </ul>
+          </li>
           <!-- User Account Menu -->
           <li class="dropdown user user-menu">
             <!-- Menu Toggle Button -->
@@ -55,7 +73,7 @@
                   <a href="/accounts/page/profile/{{user.username}}/" class="btn btn-default btn-flat">{% trans '個人資料' %}</a>
                 </div>
                 <div class="col-xs-4 text-center">
-                {% if not user.ad_flag %}  <a href="/accounts/page/password/" class="btn btn-default btn-flat">{% trans '更改密碼' %}</a> {% endif %}
+                {% if not user.ad_flag %}  <a href="/accounts/page/password/" class="btn btn-default btn-flat">{% trans '更改密碼 ' %}</a> {% endif %}
                 </div>
                 <div class="col-xs-4 text-center">
                   <a href="{%url 'logout'%}" class="btn btn-default btn-flat">{% trans '登出' %}</a>
@@ -120,4 +138,10 @@
     }
     LHeader();
     var header_routine = setInterval(function(){ LHeader() }, {{user.frequency}}*1000);
+    
+    function change_language(lang)
+    {
+    	setCookie('django_language', lang, 90);
+		window.location.reload();
+    }
     </script>

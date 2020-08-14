@@ -1,7 +1,6 @@
-import logging
+import logging,sys
 import base64
 from django.urls.base import resolve
-from omflow.settings import LOG_LEVEL
 from pprint import pformat
 
 
@@ -45,8 +44,6 @@ omflow_name = 'omflowlog'
 root_name = 'django'
 omflow_logger = logging.getLogger(omflow_name)
 root_logger = logging.getLogger(root_name)
-# #取得Settings LOG等級
-log_level = LOG_LEVEL
 
 
 
@@ -87,32 +84,26 @@ def IpUserget(*args):
         return alls
 
 
-def debug(*args):
+def debug(param,request=None):
     '''
     Set debug log message
     input: args
     return: log message
     author: Jia Liu
     ''' 
-#     request = args[0].__class__.__name__
-    request = str(args)
-    if 'Request' in request:
-        #假如有Request參數,印出 IP、User、URL、view name 以及自訂 DEBUG 訊息
-        msg = IpUserget(*args) + ' - ' + str(args[1])
-        omflow_logger.debug(msg)
-        root_logger.debug(msg)
-        #印出所有參數
-        msg = IpUserget(*args) + ' - ' + str(pformat(list(args)))
-        omflow_logger.debug(msg)
-        root_logger.debug(msg)
-    else:
-        #印出所有參數
-        msg = IpUserget(*args) + ' - ' + str(pformat(list(args)))
-        omflow_logger.debug(msg)
-        root_logger.debug(msg)
+    msg = IpUserget(request) + ' - ' + str(param)
+    omflow_logger.debug(msg)
+    root_logger.debug(msg)
+    #印出所有參數
+    if request != None:
+        post = request.POST
+        if post != {}:
+            posts = IpUserget(request) + ' - ' + '\n' + str(pformat(post))
+            omflow_logger.debug(posts)
+            root_logger.debug(posts)
 
 
-def info(*args):
+def info(param,request=None):
     '''
     Set info log message,if log level set debug,print debug post
     input: args
@@ -120,27 +111,11 @@ def info(*args):
     author: Jia Liu
     ''' 
     #假如有Request參數,印出 IP、User、URL、view name 以及自訂 info 訊息    
-    request = str(args)
-    if 'Request' in request:
-        msg = IpUserget(*args) + ' - ' + str(args[1])
-        omflow_logger.info(msg)
-        root_logger.info(msg)
-        log_level = logging.getLevelName(logging.getLogger('django').getEffectiveLevel())
-        #如果等級等於DEBUG，印出POST訊息
-        if  log_level == "DEBUG":
-            post = args[0].POST
-            debugmsg = IpUserget(*args) + ' - ' + '\n' + str(pformat(post))
-            omflow_logger.debug(debugmsg)
-            root_logger.debug(debugmsg)
-    else:
-        #印出所有參數
-        msg = IpUserget(*args) + ' - ' + str(pformat(list(args)))
-        omflow_logger.info(msg)
-        root_logger.info(msg)
-         
+    msg = IpUserget(request) + ' - ' + str(param)
+    omflow_logger.info(msg)
+    root_logger.info(msg)
 
-
-def error(*args):
+def error(param,request=None):
     '''
     Set error log message,print error exception and post error information
     input: args
@@ -148,26 +123,28 @@ def error(*args):
     author: Jia Liu
     '''
     #假如有Request參數,印出 IP、User、URL、view name Exception，以及自訂Error訊息
-    request = str(args)
-    if 'Request' in request:
-        errormsg = IpUserget(*args) + ' - ' + str(args[1])
-        omflow_logger.exception(errormsg)
-        root_logger.exception(errormsg)
-        #印出所有Request POST
-        post = args[0].POST
-        errorpost = IpUserget(*args) + ' - ' + '\n' + str(pformat(post))
-        omflow_logger.error(errorpost)
-        root_logger.error(errorpost)
+    exc_tu = sys.exc_info()
+    exc_bol = True
+    if exc_tu.count(None) == 3:
+        exc_bol = False
     else:
-        errormsg = IpUserget(*args) + ' - ' + str(args[1])
-        omflow_logger.exception(errormsg)
-        root_logger.exception(errormsg)
-        #印出所有參數
-        errorpost = IpUserget(*args) + ' - ' + str(list(args))
+        exc_bol = True
+    if request != None:
+        errormsg = IpUserget(request) + ' - ' + str(param)
+        omflow_logger.exception(errormsg,exc_info=exc_bol)
+        root_logger.exception(errormsg,exc_info=exc_bol)
+        #印出所有Request POST
+        post = request.POST
+        if post != {}:
+            errorpost = IpUserget(request) + ' - ' + '\n' + str(pformat(post))
+            omflow_logger.error(errorpost)
+            root_logger.error(errorpost)
+    else:
+        errorpost = IpUserget(request) + ' - ' + str(param)
         omflow_logger.error(errorpost)
         root_logger.error(errorpost)
         
-def critical(*args):
+def critical(param,request=None):
     '''
     Set critical log message,if log level set debug,print debug post
     input: args
@@ -175,21 +152,15 @@ def critical(*args):
     author: Jia Liu
     ''' 
     #假如有Request參數,印出 IP、User、URL、view name 以及自訂 critical 訊息    
-    request = str(args)
-    if 'Request' in request:
-        msg = IpUserget(*args) + ' - ' + str(args[1])
-        omflow_logger.critical(msg)
-        root_logger.critical(msg)
-        log_level = logging.getLevelName(logging.getLogger('django').getEffectiveLevel())
-        #如果等級等於DEBUG，印出POST訊息
-        if  log_level == "DEBUG":
-            post = args[0].POST
-            debugmsg = IpUserget(*args) + ' - ' + '\n' + str(pformat(post))
-            omflow_logger.debug(debugmsg)
-            root_logger.debug(debugmsg)
-    else:
-        #印出所有參數
-        msg = IpUserget(*args) + ' - ' + str(pformat(list(args)))
-        omflow_logger.critical(msg)
-        root_logger.critical(msg)        
-
+    msg = IpUserget(request) + ' - ' + str(param)
+    omflow_logger.critical(msg)
+    root_logger.critical(msg)
+    log_level = logging.getLevelName(logging.getLogger('django').getEffectiveLevel())
+    #如果等級等於DEBUG，印出POST訊息
+    if  log_level == "DEBUG":
+        if request != None:
+            post = request.POST
+            if post != {}:
+                debugmsg = IpUserget(request) + ' - ' + '\n' + str(pformat(post))
+                omflow_logger.debug(debugmsg)
+                root_logger.debug(debugmsg)

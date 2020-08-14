@@ -57,7 +57,7 @@ def listMessagesAjax(request):
         display_field = ['messages_id','messages_id__subject','createtime','id','create_group__name','create_user__nick_name','messagebox__read','messagehistoryfiles__main_id','content']
         messages_query = MessageHistory.objects.filterformat(*display_field,messagebox__omuser_id=request.user.id,messagebox__delete=True).distinct()
     result = DatatableBuilder(request, messages_query, field_list)
-    info(request ,'%s list message success.' % request.user.username)
+    info('%s list message success.' % request.user.username,request)
     return JsonResponse(result)
 
 
@@ -94,7 +94,7 @@ def composeMessageDetailAjax(request):
     request_user_group_list = list(request.user.groups.filter(omgroup__functional_flag=False).values('id','name'))
     result['reply_history'] = reply_history
     result['request_user_group_list'] = request_user_group_list
-    info(request ,'%s load message success.' % request.user.username)
+    info('%s load message success.' % request.user.username,request)
     return ResponseAjax(statusEnum.success, _('請求處理成功'), result).returnJSON()
 
 
@@ -114,10 +114,10 @@ def createMessagesAjax(request):
         #建立一筆新的messages
         messages = Messages.objects.create(subject=subject)
         #建立MessageHistory
-        info(request ,'%s create message success.' % request.user.username)
+        info('%s create message success.' % request.user.username,request)
         return createMessageHistoryAjax(request,messages.id)
     else:
-        info(request ,'%s create message error.' % request.user.username)
+        info('%s create message error.' % request.user.username,request)
         return ResponseAjax(statusEnum.no_permission, _('提供資料格式有誤')).returnJSON()
 
 
@@ -135,10 +135,10 @@ def listMessageHistoryAjax(request):
     if messages_id is not None:
         box_lst = list(request.user.messagebox_set.filter(messages_id=messages_id).values_list('id',flat=True))
         result = list(MessageHistory.objects.filterformat('id','create_user__nick_name','create_group_name','createtime','messagebox__read','messagehistoryfiles__main_id',messagebox__id__in=box_lst,messagebox__omuser_id=request.user.id).distinct().order_by('-createtime'))
-        info(request ,'%s list message history success.' % request.user.username)
+        info('%s list message history success.' % request.user.username,request)
         return ResponseAjax(statusEnum.success, _('搜尋成功'), result).returnJSON()
     else:
-        info(request ,'%s list message history error.' % request.user.username)
+        info('%s list message history error.' % request.user.username,request)
         return ResponseAjax(statusEnum.no_permission, _('請提供訊息編號')).returnJSON()
 
 
@@ -186,12 +186,12 @@ def loadMessageHistoryAjax(request):
                 mes_box.save()
             result['messagehistory'] = mes_his
             result['receivers'] = receivers
-            info(request ,'%s load message history success.' % request.user.username)
+            info('%s load message history success.' % request.user.username,request)
             return ResponseAjax(statusEnum.success, _('搜尋成功'), result).returnJSON()
         else:
             return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
     else:
-        info(request ,'%s load message error.' % request.user.username)
+        info('%s load message error.' % request.user.username,request)
         return ResponseAjax(statusEnum.no_permission, _('請提供訊息編號')).returnJSON()
 
 
@@ -274,10 +274,10 @@ def createMessageHistoryAjax(request, *args):
             create_user_box = MessageBox.objects.get(messagehistory=messagehistory,messages_id=messages_id,omuser_id=create_user_id)
             create_user_box.read = True
             create_user_box.save()
-        info(request ,'%s send message success.' % request.user.username)
+        info('%s send message success.' % request.user.username,request)
         return ResponseAjax(statusEnum.success, _('發送成功')).returnJSON()
     else:
-        info(request ,'%s send message error.' % request.user.username)
+        info('%s send message error.' % request.user.username,request)
         return ResponseAjax(statusEnum.no_permission, _('提供資料格式有誤')).returnJSON()
 
 
@@ -296,13 +296,13 @@ def deleteMessageHistoryAjax(request):
     if messagehistory_id_list:
         if action == 'delete':
             request.user.messagebox_set.filter(messagehistory_id__in=messagehistory_id_list).update(delete=True)
-            info(request ,'%s delete message success.' % request.user.username)
+            info('%s delete message success.' % request.user.username,request)
             return ResponseAjax(statusEnum.success, _('刪除訊息成功')).returnJSON()
         else:
             request.user.messagebox_set.filter(messagehistory_id__in=messagehistory_id_list).update(delete=False)
             return ResponseAjax(statusEnum.success, _('訊息還原成功')).returnJSON()
     else:
-        info(request ,'%s delete message success.' % request.user.username)
+        info('%s delete message success.' % request.user.username,request)
         return ResponseAjax(statusEnum.no_permission, _('找不到訊息資料')).returnJSON()
 
 
@@ -320,7 +320,7 @@ def searchSendUserAjax(request):
     field_list=['username__icontains','nick_name__icontains']
     ordercolumn = 'nick_name'
     result = UserSearch(field_list, searchkey, ordercolumn)
-    info(request ,'%s search send user success.' % request.user.username)
+    info('%s search send user success.' % request.user.username,request)
     return ResponseAjax(statusEnum.success, _('請求處理成功'), result).returnJSON()
 
 
@@ -339,7 +339,7 @@ def searchSendGroupAjax(request):
     field_list=['name__icontains']
     ordercolumn = 'name'
     result = GroupSearch(field_list, searchkey, ordercolumn,adGroup)
-    info(request ,'%s search send group success.' % request.user.username)
+    info('%s search send group success.' % request.user.username,request)
     return ResponseAjax(statusEnum.success, _('請求處理成功'), result).returnJSON()
 
 
@@ -357,6 +357,6 @@ def searchGroupUserAjax(request):
     field_list=['groups__id']
     ordercolumn = 'nick_name'
     result = UserSearch(field_list, searchkey, ordercolumn)
-    info(request ,'%s search users by group success.' % request.user.username)
+    info('%s search users by group success.' % request.user.username,request)
     return ResponseAjax(statusEnum.success, _('請求處理成功'), result).returnJSON()
     

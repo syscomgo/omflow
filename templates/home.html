@@ -221,7 +221,7 @@
 					'<option data-value="&#xf2c9" value="fa fa-thermometer-half">{% trans '溫度'%}</option>'+
 					'<option data-value="&#xf164" value="fa fa-thumbs-up">{% trans '點讚'%}</option>'+
 					'<option data-value="&#xf165" value="fa fa-thumbs-down">{% trans '倒讚'%}</option>'+
-					'<option data-value="&#xf201" value="fa fa-line-chart">{% trans '折'%}線圖</option>'+
+					'<option data-value="&#xf201" value="fa fa-line-chart">{% trans '折線圖'%}</option>'+
 					'<option data-value="&#xf0ac" value="fa fa-globe">{% trans '地球'%}</option>'+
 					'<option data-value="&#xf254" value="fa fa-hourglass">{% trans '沙漏'%}</option>'+
 					'<option data-value="&#xf0e7" value="fa fa-bolt">{% trans '電力'%}</option>'+
@@ -458,6 +458,7 @@
 				const duration2 = performance.now() - startTime2;
 				old_box_object = JSON.stringify(box_object);
 				DO_readmode();
+				$("#grid-tab").tabs();
 			}else{actions(data)}
 		}
 	    const startTime = performance.now();
@@ -493,7 +494,7 @@
 	function box_button_add_item(item_id, item_type){
 	    var default_option = '<option value="word">{% trans '顯示文字'%}</option>'
 	    					+'<option value="meter-bar">{% trans '計量條'%}</option>'
-	    					+'<option value="tube">{% trans '水管圖'%}</option>'
+	    					+'<option value="tube">{% trans '計量圖'%}</option>'
 	    					+'<option value="line">{% trans '折線圖'%}</option>'
 	    					+'<option value="bar">{% trans '長條圖'%}</option>'
 	    					+'<option value="pie">{% trans '圓餅圖'%}</option>'
@@ -703,7 +704,7 @@
 	        case 'line':
 	        case 'bar':
 	        case 'pie':
-	        	thisDom.find("#CONTENT_"+item.id).empty().append(
+	        	thisDom.find("#CONTENT_"+item.id).empty().css('height',item.setting.setHeight).append(
 					'<canvas id="CHART_'+item.id+'" style="width:100%;height:'+item.setting.setHeight+'px;padding:15px;"></canvas>'
 	        	);
 	        break;
@@ -1054,27 +1055,28 @@
 			case "box9":
 			case 'box12':
 				Grid_buildAdvance(["setTitle","setBoxColor"]);
+				
 				break;
 			case 'word':
-				Grid_buildAdvance(["setTitle","setTip","setIcon","setColor","setUnit"]);
 				Grid_buildSearch(["setForm","setColumn","setTime","setType","setNull"]);
+				Grid_buildAdvance(["setTitle","setTip","setIcon","setColor","setUnit"]);
 				break;
 			case 'meter-bar':
-				Grid_buildAdvance(["setTitle","setTip","setBarColor","setMax","setUnit"]);
 				Grid_buildSearch(["setForm","setColumn","setTime","setType","setNull"]);
+				Grid_buildAdvance(["setTitle","setTip","setBarColor","setMax","setUnit"]);
 				break;
 			case 'tube':
-				Grid_buildAdvance(["setTitle","setTip","setIcon","setColor","setUnit","setMax"]);
 				Grid_buildSearch(["setForm","setColumn","setTime","setType","setNull"]);
+				Grid_buildAdvance(["setTitle","setTip","setIcon","setColor","setUnit","setMax"]);
 				break;
 			case 'line':
 			case 'bar':
-				Grid_buildAdvance(["setTitle","setChartColor","setHeight","setNull","setNull"]);
 				Grid_buildSearch(["setForm","setColumn","setTime","setType","setGroup"]);
+				Grid_buildAdvance(["setTitle","setChartColor","setHeight","setNull","setNull"]);
 				break;
 			case 'pie':
-				Grid_buildAdvance(["setTitle","setChartColor","setUnit","setHeight","setNull"]);
 				Grid_buildSearch(["setForm","setColumn","setTime","setType","setGroup"]);
+				Grid_buildAdvance(["setTitle","setChartColor","setUnit","setHeight","setNull"]);
 				break;
 			case 'map-world':
 			case 'map-taiwan':
@@ -1092,10 +1094,7 @@
     function Grid_buildAdvance(){
         var thisList = arguments[0];
         var count=1;
-        $("#modal-grid-config table").empty().show();
-    	$("#modal-grid-config #showAdvance").hide();
-        $("#modal-grid-config #showSearch").hide();
-        var thisDialogBody = $("#modal-grid-config table:eq(0)");
+        var thisDialogBody = $("#modal-grid-config table:eq(0)").empty();
         $.each(thisList,function(idx,name){
             if(count%2)
                 thisDialogBody.append($('<tr><td style="width:50%;padding-right:7px;"></td></tr>'));
@@ -1105,12 +1104,14 @@
             thisTD.append($(config_set[name]));
             count++
         });
+        $("#grid-tab>ul>li").removeClass("active");
+		$("#grid-tab>ul>li:eq(0)").addClass("active");
+		$("#grid-tab").tabs("option", "active", 0);
     }
     function Grid_buildSearch(){
     	var thisList = arguments[0];
     	var count=1;
-        $("#modal-grid-config table:eq(1)").empty();
-        var thisDialogBody = $("#modal-grid-config table:eq(1)");
+        var thisDialogBody = $("#modal-grid-config table:eq(1)").empty();
         $.each(thisList,function(idx,name){
             if(count%2)
                 thisDialogBody.append($('<tr><td style="width:50%;padding-right:7px;"></td></tr>'));
@@ -1121,22 +1122,8 @@
             count++
         });
         Grid_listForm();
-        Grid_showSearch();
     }
-    function Grid_showAdvance(){
-		var thisDialog = $("#modal-grid-config");
-        thisDialog.find("table:eq(0)").show();
-        thisDialog.find("table:eq(1)").hide();
-    	thisDialog.find('#showAdvance').hide();
-        thisDialog.find('#showSearch').show("fade");
-    }
-    function Grid_showSearch(){
-		var thisDialog = $("#modal-grid-config");
-        thisDialog.find("table:eq(0)").hide();
-        thisDialog.find("table:eq(1)").show();
-    	thisDialog.find('#showAdvance').show("fade");
-        thisDialog.find('#showSearch').hide();
-    }
+    
     function Grid_submit(){
 		var item_id = $('#modal-grid-config').attr('name');
 		var item = box_object.list[item_id];
@@ -1163,11 +1150,17 @@
 			data = arguments[0];
 			if (data.status==200){
 				thisSelect=$("#modal-grid-config select[name=setForm]");
-				$.each(data.result,function(key,value){
-					thisSelect.append($('<option value="'+key+'">'+value+'</option>'))
+				$.each(data.result.app,function(idx,item){
+					thisSelect.append($('<option value="'+item.id+'" class="l1 non-leaf" disabled="disabled">'+item.app_name+'</option>'))
 				});
+				$.each(data.result.flow,function(idx,item){
+					thisSelect.find('option[value="'+item.flow_app_id+'"]').after($('<option value="'+item.flow_uuid+'" data-id="'+item.id+'" data-pup="'+item.flow_app_id+'" class="l2">'+item.flow_name+'</option>'))
+				});
+				
 				thisSelect.val(grid_object.data.setForm);
-				Grid_listColumn(grid_object.data.setForm)
+				Grid_listColumn(grid_object.data.setForm);
+				thisSelect.select2ToTree();
+				thisSelect.next().css("display","block");
 			}
 			else
 			{actions(data)}

@@ -629,45 +629,8 @@
 	    
 	    function getApi(app_name, flow_name, action)
 	    {
-	    	if (action == 'query')
-	    	{
-	    		var data = {
-	    			'status':200,
-	    			'result':{
-	    				'input':{
-		    				"security": "<security>",
-		    				'app_name': app_name,
-							'flow_name': flow_name,
-							'data_no': '<{% trans '單號'%}>',
-							"omflow_restapi": 1,
-						},
-						'output':{
-							'success':{
-								'status': '200',
-								'message': '{% trans '查詢成功'%}',
-								'result': [{
-										"data_id": "<{% trans '資料的唯一編號，推單時使用'%}>",
-										"stop_chart_text": "<{% trans '停留的關卡名稱(人工處理點名稱'%})>"
-									},{
-										"data_id": "<{% trans '資料的唯一編號，推單時使用'%}>",
-										"stop_chart_text": "<{% trans '停留的關卡名稱(人工處理點名稱'%})>"
-									}
-								]
-							},
-							'error':{
-								'status': '404',
-								'message': '{% trans '查詢失敗'%}'
-							}
-						}
-	    			}
-	    		}
-	    		form_callback(data)
-	    	}
-	    	else
-	    	{
-				var form_postbody = {app_name: app_name, flow_name: flow_name, action: action};
-	    		omflowJsonAjax(form_postbody, '{% url "getFlowAPIFormatAjax" %}', form_callback)
-	    	}  	
+	    	var form_postbody = {app_name: app_name, flow_name: flow_name, action: action};
+	    	omflowJsonAjax(form_postbody, '{% url "getFlowAPIFormatAjax" %}', form_callback)
 	    	
 	    	
 	    	function form_callback(data)
@@ -676,11 +639,13 @@
 	    		{
 	    			if (action == 'create')
 	    			{
-		    			$('#'+action+'_URL').val('http:\//'+location.host+'/rest/flowmanage/api/omdata/edit/');
 		    			var api = data.result.input;
+		    			var api_path = data.result.input.api_path;
+		    			delete api.api_path;
 		    			var response = data.result.output.success1;
 						var response_1 = data.result.output.success2;
 						var error = data.result.output.error;
+						$('#'+action+'_URL').val('http:\//'+location.host+'/rest/flowmanage/api/omdata/edit/'+api_path);
 		    			create_api_text.setValue(JSON.stringify(api, undefined, 2));
 		    			create_api_response.setValue(JSON.stringify(response, undefined, 2));
 {#		    			create_api_response_1.setValue(JSON.stringify(response_1, undefined, 2));#}
@@ -688,20 +653,41 @@
 		    		}
 		    		else if (action == 'update')
 		    		{
-		    			$('#'+action+'_URL').val('http:\//'+location.host+'/rest/flowmanage/api/omdata/edit/');
 		    			var api = data.result.input;
+		    			var api_path = data.result.input.api_path;
+		    			delete api.api_path;
 		    			var response = data.result.output.success;
 						var error = data.result.output.error;
+						$('#'+action+'_URL').val('http:\//'+location.host+'/rest/flowmanage/api/omdata/edit/'+api_path);
 		    			update_api_text.setValue(JSON.stringify(api, undefined, 2));
 		    			update_api_response.setValue(JSON.stringify(response, undefined, 2));
 		    			update_api_error.setValue(JSON.stringify(error, undefined, 2));
 		    		}
 		    		else
 		    		{
-		    			$('#'+action+'_URL').val('http:\//'+location.host+'/rest/flowmanage/api/omdata-data-id/get/');
-		    			var api = data.result.input;
-		    			var response = data.result.output.success;
-						var error = data.result.output.error;
+		    			var api = {
+				    				"security": "<security>",
+									'data_no': '<{% trans '單號'%}>',
+									"omflow_restapi": 1,
+								}
+			    		var api_path = data.result;
+		    			var response = {
+										'status': '200',
+										'message': '{% trans '查詢成功'%}',
+										'result': [{
+												"data_id": "<{% trans '資料的唯一編號，推單時使用'%}>",
+												"stop_chart_text": "<{% trans '停留的關卡名稱(人工處理點名稱'%})>"
+											},{
+												"data_id": "<{% trans '資料的唯一編號，推單時使用'%}>",
+												"stop_chart_text": "<{% trans '停留的關卡名稱(人工處理點名稱'%})>"
+											}
+										]
+									}
+						var error = {
+										'status': '404',
+										'message': '{% trans '查詢失敗'%}'
+									}
+						$('#'+action+'_URL').val('http:\//'+location.host+'/rest/flowmanage/api/omdata-data-id/get/'+api_path);
 		    			query_api_text.setValue(JSON.stringify(api, undefined, 2));
 		    			query_api_response.setValue(JSON.stringify(response, undefined, 2));
 		    			query_api_error.setValue(JSON.stringify(error, undefined, 2));

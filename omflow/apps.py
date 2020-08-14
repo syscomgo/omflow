@@ -70,7 +70,7 @@ class AppOmflowConfig(AppConfig):
                 if 'omformflow' in app_list:
                     mymission = {"id":"mymission","name":"我的任務","p_id":"","flow_uuid":"default","icon":"commenting"}
                     service = {"id":"service","name":"服務請求","p_id":"","flow_uuid":"default","icon":"shopping-cart"}
-                    customflow = {"id":"custom_1","name":"自訂應用","p_id":"","flow_uuid":"custom","icon":"folder"}
+                    customflow = {"id":"custom_1","name":"Apps","p_id":"","flow_uuid":"custom","icon":"folder"}
                     servermanage = {"id":"servermanage","name":"資料收集","p_id":"","flow_uuid":"default","icon":"server"}
                     flowmgmt = {"id":"flowmgmt","name":"應用管理","p_id":"","flow_uuid":"default","icon":"cubes"}
                     sidebar_design.append(mymission)
@@ -160,6 +160,15 @@ def doPreProcessing():
                     exec_fun_str = json.dumps(exec_fun)
                     scheduler = Scheduler.objects.create(exec_time=exec_time,every=every,cycle=cycle,cycle_date=cycle_date,exec_fun=exec_fun_str,input_param=input_param_str,flowactive_id=None)
                     schedule_Execute(scheduler)
+            #檢查是否有更新暫存檔
+            temp_path = os.path.join(settings.BASE_DIR, "tmp.py")
+            if os.path.isfile(temp_path):
+                from omflow.global_obj import FlowActiveGlobalObject
+                with open(temp_path,'r',encoding='UTF-8') as f:
+                    temp_file = f.read()
+                    exec(temp_file)
+                os.remove(temp_path)
+                FlowActiveGlobalObject.ServerStart()
     except:
         pass
         
@@ -201,6 +210,7 @@ def firstrunImport(sysuser):
                 for wa in wa_list:
                     postdata = {'lside_pid':'','w_app_id':wa['id'],'app_name':wa['app_name']}
                     deployWorkspaceApplication(postdata, sysuser)
+            #刪除匯入的流程
             WorkspaceApplication.objects.all().delete()
     except:
         pass

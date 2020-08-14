@@ -316,13 +316,21 @@
             <h4 class="modal-title"><i class="fa fa-gear"></i>&nbsp;&nbsp;{% trans '內容設定'%}</h4>
           </div>
           <div class="modal-body">
-				<table style="width:100%;"></table>
-				<table style="width:100%;"></table>
+			<div id="grid-tab" class="nav-tabs-custom">
+			  <ul class="nav nav-tabs service-ul">
+				<li class="active"><a href="#grid-tab-setting" data-toggle="tab" aria-expanded="true">{% trans '一般設定'%}</a></li>
+			  	<li><a href="#grid-tab-query" data-toggle="tab" aria-expanded="true">{% trans '資料設定'%}</a></li>
+			  </ul>
+          	  <div id="grid-tab-setting" style="padding:10px;"><!--tab-setting-->
+          	  	<table style="width:100%;"></table>
+          	  </div><!--tab-setting-->
+          	  <div id="grid-tab-query" style="padding:10px;"><!--tab-setting-->
+          	  	<table style="width:100%;"></table>
+          	  </div><!--tab-setting-->
+          	</div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default pull-left" data-dismiss="modal">{% trans '取消'%}</button>
-            <button type="button" id="showAdvance" style="display:none;" class="btn btn-default" onclick="Grid_showAdvance()">{% trans '進階設定'%}&nbsp;<i class="fa fa-caret-right"></i></button>
-            <button type="button" id="showSearch" style="display:none;" class="btn btn-default" onclick="Grid_showSearch()"><i class="fa fa-caret-left"></i>&nbsp;{% trans '資料設定'%}</button>
             <button type="button" class="btn btn-primary" onclick="Grid_submit()">{% trans '確定'%}</button>
           </div>
         </div>

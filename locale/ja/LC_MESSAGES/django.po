@@ -1,0 +1,5374 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-08-13 11:03+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: .\omdashboard\models.py:17
+msgid "儀錶板設計"
+msgstr "ダッシュボードのデザイン"
+
+#: .\omdashboard\views.py:43
+msgid "儲存成功"
+msgstr "保存しました"
+
+#: .\omdashboard\views.py:49 .\omdashboard\views.py:74
+#: .\omdashboard\views.py:384 .\omdashboard\views.py:436
+#: .\omdashboard\views.py:480 .\omdashboard\views.py:486 .\omflow\views.py:183
+#: .\omflow\views.py:302 .\omflow\views.py:346 .\omflow\views.py:388
+#: .\omflow\views.py:467 .\omflow\views.py:556 .\omflow\views.py:847
+#: .\omformflow\views.py:2229 .\omformflow\views.py:2420
+#: .\omformflow\views.py:2929 .\omformflow\views.py:3012
+#: .\omformflow\views.py:3201 .\omformflow\views.py:3247
+#: .\omformflow\views.py:3323 .\omformflow\views.py:3399
+#: .\omformflow\views.py:3501 .\omformflow\views.py:3644
+#: .\omformflow\views.py:3808 .\omformflow\views.py:3924
+#: .\omformflow\views.py:3956 .\omformflow\views.py:4116
+#: .\omformflow\views.py:4167 .\omformflow\views.py:5209
+#: .\omformflow\views.py:5274 .\ommessage\views.py:192 .\omservice\views.py:69
+#: .\omservice\views.py:162 .\omservice\views.py:193 .\omservice\views.py:223
+#: .\omservice\views.py:269 .\omuser\views.py:292 .\omuser\views.py:381
+msgid "您沒有權限進行此操作。"
+msgstr "アクセス権限がないので、操作できません。"
+
+#: .\omdashboard\views.py:71 .\omdashboard\views.py:433
+msgid "讀取成功"
+msgstr "読み込む"
+
+#: .\omdashboard\views.py:139
+msgid "今日"
+msgstr "今日"
+
+#: .\omdashboard\views.py:151
+msgid "昨日"
+msgstr "昨日"
+
+#: .\omdashboard\views.py:163 .\templates\home.html:84
+msgid "本周"
+msgstr "今週"
+
+#: .\omdashboard\views.py:175 .\templates\home.html:85
+msgid "上周"
+msgstr "先週"
+
+#: .\omdashboard\views.py:187
+msgid "今月"
+msgstr "今月"
+
+#: .\omdashboard\views.py:202 .\templates\home.html:87
+msgid "上月"
+msgstr "先月"
+
+#: .\omdashboard\views.py:217 .\templates\home.html:88
+msgid "今年"
+msgstr "今年"
+
+#: .\omdashboard\views.py:232 .\templates\home.html:89
+msgid "去年"
+msgstr "去年"
+
+#: .\omdashboard\views.py:236 .\templates\home.html:90
+msgid "所有時間"
+msgstr "全部"
+
+#: .\omdashboard\views.py:378 .\omformflow\templates\workflow_manage.html:676
+#: .\omorganization\views.py:238
+msgid "查詢成功"
+msgstr "検索成功"
+
+#: .\omdashboard\views.py:380 .\omformflow\templates\workflow_manage.html:688
+msgid "查詢失敗"
+msgstr "検索失敗"
+
+#: .\omdashboard\views.py:477 .\omflow\views.py:180 .\omflow\views.py:464
+#: .\omflow\views.py:639 .\omflow\views.py:688 .\omformflow\views.py:181
+#: .\omformflow\views.py:532 .\omformflow\views.py:593
+#: .\omformflow\views.py:713 .\omformflow\views.py:807
+#: .\omformflow\views.py:1567 .\omformflow\views.py:2219
+#: .\omformflow\views.py:2282 .\omformflow\views.py:3009
+#: .\omformflow\views.py:3040 .\omformflow\views.py:3125
+#: .\omformflow\views.py:3635 .\omformflow\views.py:3674
+#: .\omformflow\views.py:4814 .\omformflow\views.py:5130
+#: .\omformflow\views.py:5268 .\omformflow\views.py:5295
+#: .\ommonitor\views.py:157 .\ommonitor\views.py:801 .\ommonitor\views.py:1026
+#: .\ommonitor\views.py:1095 .\ommonitor\views.py:1153
+#: .\ommonitor\views.py:2161 .\omorganization\views.py:129
+#: .\omservice\views.py:159 .\omservice\views.py:190 .\omservice\views.py:220
+#: .\omuser\views.py:286 .\omuser\views.py:386 .\omuser\views.py:682
+#: .\omuser\views.py:739
+msgid "讀取成功。"
+msgstr "読み込みました。"
+
+#: .\omdashboard\views.py:504
+msgid "一月"
+msgstr "一月"
+
+#: .\omdashboard\views.py:506
+msgid "二月"
+msgstr "二月"
+
+#: .\omdashboard\views.py:508
+msgid "三月"
+msgstr "三月"
+
+#: .\omdashboard\views.py:510
+msgid "四月"
+msgstr "四月"
+
+#: .\omdashboard\views.py:512
+msgid "五月"
+msgstr "五月"
+
+#: .\omdashboard\views.py:514
+msgid "六月"
+msgstr "六月"
+
+#: .\omdashboard\views.py:516
+msgid "七月"
+msgstr "七月"
+
+#: .\omdashboard\views.py:518
+msgid "八月"
+msgstr "八月"
+
+#: .\omdashboard\views.py:520
+msgid "九月"
+msgstr "九月"
+
+#: .\omdashboard\views.py:522
+msgid "十月"
+msgstr "十月"
+
+#: .\omdashboard\views.py:524
+msgid "十一月"
+msgstr "十一月"
+
+#: .\omdashboard\views.py:526
+msgid "十二月"
+msgstr "十二月"
+
+#: .\omdashboard\views.py:528
+msgid "無法辨識"
+msgstr "識別不能"
+
+#: .\omdashboard\views.py:532
+msgid "星期一"
+msgstr "月曜日"
+
+#: .\omdashboard\views.py:534
+msgid "星期二"
+msgstr "火曜日"
+
+#: .\omdashboard\views.py:536
+msgid "星期三"
+msgstr "水曜日"
+
+#: .\omdashboard\views.py:538
+msgid "星期四"
+msgstr "木曜日"
+
+#: .\omdashboard\views.py:540
+msgid "星期五"
+msgstr "金曜日"
+
+#: .\omdashboard\views.py:542
+msgid "星期六"
+msgstr "土曜日"
+
+#: .\omdashboard\views.py:544
+msgid "星期日"
+msgstr "日曜日"
+
+#: .\omflow\models.py:18 .\omflow\models.py:69 .\omformflow\models.py:39
+#: .\omformflow\models.py:86 .\omformflow\templates\flow_app_manage.html:47
+#: .\omformflow\templates\flow_app_manage.html:708
+#: .\omformflow\templates\parameter_manage.html:80 .\ommonitor\models.py:35
+#: .\ommonitor\templates\event_manage.html:857
+#: .\ommonitor\templates\event_manage.html:866
+#: .\ommonitor\templates\monitor_api_manage.html:46
+#: .\ommonitor\templates\monitor_api_manage.html:200
+#: .\ommonitor\templates\monitor_manage.html:46
+#: .\ommonitor\templates\monitor_manage.html:200
+#: .\ommonitor\templates\monitor_parameter.html:77
+#: .\ommonitor\templates\node_groups_manage.html:45
+#: .\ommonitor\templates\node_list_manage.html:44
+#: .\ommonitor\templates\node_manage.html:118 .\omorganization\models.py:14
+#: .\omorganization\models.py:24 .\omuser\templates\profile.html:63
+#: .\omuser\templates\profile.html:66 .\templates\base_component.html:104
+#: .\templates\base_component.html:123
+msgid "名稱"
+msgstr "件名"
+
+#: .\omflow\models.py:19 .\ommonitor\templates\event_manage.html:660
+#: .\ommonitor\templates\event_manage.html:675
+#: .\ommonitor\templates\monitor_api_design.html:1013
+#: .\ommonitor\templates\monitor_api_design.html:1028
+#: .\ommonitor\templates\monitor_design.html:1315
+#: .\ommonitor\templates\monitor_design.html:1330 .\omorganization\models.py:25
+msgid "值"
+msgstr "値"
+
+#: .\omflow\models.py:20 .\omformflow\models.py:40 .\omformflow\models.py:87
+#: .\omformflow\models.py:188 .\omformflow\models.py:203
+#: .\omformflow\templates\SLA_manage.html:125
+#: .\omformflow\templates\SLA_manage.html:126
+#: .\omformflow\templates\flow_app_manage.html:709
+#: .\omformflow\templates\flow_design.html:58
+#: .\omformflow\templates\flow_design.html:192
+#: .\omformflow\templates\flow_design.html:832
+#: .\omformflow\templates\flow_design.html:903
+#: .\omformflow\templates\flow_manage.html:47
+#: .\omformflow\templates\parameter_manage.html:48
+#: .\omformflow\templates\parameter_manage.html:84
+#: .\omformflow\templates\workflow_manage.html:41 .\ommonitor\models.py:36
+#: .\ommonitor\models.py:111 .\ommonitor\templates\monitor_api_design.html:66
+#: .\ommonitor\templates\monitor_api_design.html:110
+#: .\ommonitor\templates\monitor_api_design.html:575
+#: .\ommonitor\templates\monitor_api_design.html:643
+#: .\ommonitor\templates\monitor_api_manage.html:201
+#: .\ommonitor\templates\monitor_design.html:67
+#: .\ommonitor\templates\monitor_design.html:111
+#: .\ommonitor\templates\monitor_design.html:779
+#: .\ommonitor\templates\monitor_design.html:847
+#: .\ommonitor\templates\monitor_manage.html:201
+#: .\ommonitor\templates\monitor_parameter.html:45
+#: .\ommonitor\templates\monitor_parameter.html:81
+#: .\ommonitor\templates\node_groups_manage.html:46
+#: .\ommonitor\templates\node_groups_manage.html:78
+#: .\ommonitor\templates\node_groups_manage.html:79
+#: .\omorganization\models.py:15
+#: .\omorganization\templates\position_manage.html:42
+#: .\omorganization\templates\position_manage.html:75
+#: .\omorganization\templates\position_manage.html:76
+#: .\omservice\templates\list.html:126 .\omuser\models.py:64
+#: .\omuser\templates\profile.html:239 .\omuser\templates\role_manage.html:42
+#: .\omuser\templates\role_manage.html:74
+#: .\omuser\templates\role_manage.html:75 .\templates\home.html:72
+msgid "說明"
+msgstr "説明"
+
+#: .\omflow\models.py:21 .\omformflow\models.py:20 .\omformflow\models.py:43
+#: .\omformflow\models.py:62 .\omformflow\models.py:217
+#: .\omformflow\models.py:238 .\omformmodel\views.py:215
+#: .\omformmodel\views.py:239 .\ommessage\models.py:20 .\ommission\models.py:27
+#: .\ommonitor\models.py:39 .\ommonitor\models.py:80 .\ommonitor\models.py:146
+#: .\ommonitor\templates\monitor_api_design.html:165
+#: .\ommonitor\templates\monitor_design.html:318 .\omuser\models.py:32
+#: .\omuser\models.py:66
+msgid "更新時間"
+msgstr "更新時間"
+
+#: .\omflow\models.py:35
+msgid "執行一次"
+msgstr "一回"
+
+#: .\omflow\models.py:36
+msgid "每秒鐘"
+msgstr "毎秒"
+
+#: .\omflow\models.py:37
+msgid "每分鐘"
+msgstr "毎分"
+
+#: .\omflow\models.py:38
+msgid "每小時"
+msgstr "毎時間"
+
+#: .\omflow\models.py:39
+msgid "每天"
+msgstr "毎日"
+
+#: .\omflow\models.py:40 .\omformflow\templates\scheduleflow_manage.html:142
+#: .\ommonitor\templates\monitor_design.html:191
+msgid "每週"
+msgstr "毎週"
+
+#: .\omflow\models.py:41
+msgid "每月"
+msgstr "毎月"
+
+#: .\omflow\models.py:43 .\omformflow\models.py:42 .\omformflow\models.py:133
+#: .\omformflow\models.py:156 .\omformflow\models.py:172
+#: .\omformflow\models.py:216 .\omformflow\models.py:237
+#: .\omformmodel\views.py:214 .\omformmodel\views.py:238
+#: .\omformmodel\views.py:245 .\ommessage\models.py:19 .\ommessage\models.py:70
+#: .\ommessage\models.py:106 .\ommission\models.py:26 .\ommonitor\models.py:17
+#: .\ommonitor\models.py:38 .\ommonitor\models.py:97
+#: .\ompolicymodel\views.py:97
+msgid "建立時間"
+msgstr "作成日"
+
+#: .\omflow\models.py:44
+msgid "執行時間"
+msgstr "実行時間"
+
+#: .\omflow\models.py:45
+msgid "每次"
+msgstr "毎回"
+
+#: .\omflow\models.py:46 .\omformflow\templates\scheduleflow_manage.html:116
+msgid "週期"
+msgstr "サイクル"
+
+#: .\omflow\models.py:47
+msgid "週期執行日期"
+msgstr "サイクルの実行日付"
+
+#: .\omflow\models.py:48
+msgid "執行功能"
+msgstr "実行機能"
+
+#: .\omflow\models.py:49 .\omflow\models.py:72 .\omformmodel\views.py:235
+#: .\ommonitor\models.py:126
+msgid "輸入參數"
+msgstr "引数"
+
+#: .\omflow\models.py:50 .\omformflow\models.py:84
+msgid "啟用/停用"
+msgstr "啟用/停止"
+
+#: .\omflow\models.py:51 .\omformflow\templates\scheduleflow_manage.html:44
+msgid "上次執行時間"
+msgstr "最終実行時間"
+
+#: .\omflow\models.py:52 .\omformflow\templates\scheduleflow_manage.html:42
+msgid "下次執行時間"
+msgstr "次の実行時間"
+
+#: .\omflow\models.py:54 .\omformflow\models.py:112 .\ommonitor\models.py:45
+#: .\ommonitor\models.py:138 .\ommonitor\templates\event_manage.html:176
+#: .\ommonitor\templates\event_manage.html:177
+#: .\ommonitor\templates\event_manage.html:273
+#: .\ommonitor\templates\event_manage.html:274
+#: .\ommonitor\templates\event_manage.html:658
+#: .\ommonitor\templates\event_manage.html:673
+#: .\ommonitor\templates\monitor_api_design.html:239
+#: .\ommonitor\templates\monitor_api_design.html:240
+#: .\ommonitor\templates\monitor_design.html:392
+#: .\ommonitor\templates\monitor_design.html:393 .\templates\home.html:78
+msgid "分類"
+msgstr "分類"
+
+#: .\omflow\models.py:68 .\ommonitor\models.py:123
+msgid "佇列編號"
+msgstr "キュー番号"
+
+#: .\omflow\models.py:70 .\ommonitor\models.py:124
+msgid "模組名稱"
+msgstr "モジュール名"
+
+#: .\omflow\models.py:71 .\ommonitor\models.py:125
+msgid "方法名稱"
+msgstr "メソッド名"
+
+#: .\omflow\models.py:89 .\omformflow\models.py:132 .\ommessage\models.py:105
+#: .\ommission\templates\mission.html:534 .\templates\file_manage.html:117
+#: .\templates\myform.html:857 .\templates\myform.html:1414
+#: .\templates\myform.html:1460
+msgid "大小"
+msgstr "サイズ"
+
+#: .\omflow\models.py:90 .\omformflow\models.py:135
+#: .\templates\file_manage.html:116
+msgid "檔案名稱"
+msgstr "ファイル名"
+
+#: .\omflow\models.py:91
+msgid "對照編號"
+msgstr "対応番号"
+
+#: .\omflow\models.py:110 .\omformflow\templates\flow_manage.html:36
+#: .\omservice\templates\list.html:34
+msgid "語言"
+msgstr "言語"
+
+#: .\omflow\models.py:111
+msgid "翻譯表"
+msgstr "翻訳表"
+
+#: .\omflow\syscom\common.py:174
+msgid "欄位格式錯誤，請修正後重新發送請求。"
+msgstr "フィールドの形式が間違っています。もう一度送信してください。"
+
+#: .\omflow\syscom\common.py:178
+msgid "必要參數為空，請確認後重新發送請求。"
+msgstr "必要な引数が空です。もう一度送信してください。"
+
+#: .\omflow\syscom\common.py:182
+msgid "缺少必要參數，請確認後重新發送請求。"
+msgstr "必要な引数がありません。もう一度送信してください。"
+
+#: .\omflow\syscom\common.py:775 .\omflow\views.py:367
+#: .\omformflow\views.py:690 .\omformflow\views.py:1393
+#: .\omformflow\views.py:1948 .\omformflow\views.py:1981
+#: .\omformflow\views.py:1992 .\omformflow\views.py:2897
+#: .\omformflow\views.py:4164 .\omformflow\views.py:4772
+#: .\ommonitor\views.py:238 .\ommonitor\views.py:279 .\ommonitor\views.py:312
+#: .\ommonitor\views.py:1003 .\ommonitor\views.py:1129
+#: .\ommonitor\views.py:1516 .\ommonitor\views.py:1556
+#: .\ommonitor\views.py:1895 .\ommonitor\views.py:2100
+msgid "查詢成功。"
+msgstr "検索成功。"
+
+#: .\omflow\syscom\common.py:812
+msgid "查詢失敗，錯誤訊息如下："
+msgstr "検索失敗，エラー："
+
+#: .\omflow\syscom\omengine.py:81 .\omformflow\views.py:2601
+#: .\omformflow\views.py:2764
+msgid "該流程目前為停用狀態。"
+msgstr "このフローは現在停止になっています。"
+
+#: .\omflow\syscom\omengine.py:86
+msgid "該流程沒有已部署的版本"
+msgstr "フローにはデプロイされたバージョンがありません"
+
+#: .\omflow\syscom\omengine.py:333 .\omflow\syscom\omengine.py:356
+#: .\omflow\syscom\omengine.py:725 .\omflow\syscom\omengine.py:762
+#: .\omflow\syscom\omengine.py:1071 .\omflow\syscom\omengine.py:1202
+#: .\omflow\syscom\omengine.py:1334 .\omflow\syscom\omengine.py:1508
+#: .\omflow\syscom\omengine.py:1598 .\omflow\syscom\omengine.py:1690
+#: .\omflow\syscom\omengine.py:2200
+msgid "缺少必填變數："
+msgstr "必要な変数がありません："
+
+#: .\omflow\syscom\omengine.py:358
+msgid "OME系統錯誤(開始點)，請通知系統管理員。"
+msgstr "OMEエラー（開始点）。システム管理者に通知してください。"
+
+#: .\omflow\syscom\omengine.py:497
+msgid "OME系統錯誤(結束點)，請通知系統管理員。"
+msgstr "OMEエラー（エンドポイント）、システム管理者に通知してください。"
+
+#: .\omflow\syscom\omengine.py:545
+msgid "OME系統錯誤(程式碼點)，請通知系統管理員。"
+msgstr "OMEエラー（コードポイント）。システム管理者に通知してください。"
+
+#: .\omflow\syscom\omengine.py:779
+msgid "OME系統錯誤(人工點)，請通知系統管理員。"
+msgstr "OMEエラー（手動によるポイント）。システム管理者に通知してください。"
+
+#: .\omflow\syscom\omengine.py:827
+msgid "OME系統錯誤(並行點)，請通知系統管理員。"
+msgstr "OMEエラー（平行点）、システム管理者に通知してください。"
+
+#: .\omflow\syscom\omengine.py:913
+msgid "OME系統錯誤(集合點)，請通知系統管理員。"
+msgstr "OMEエラー（ミーティングポイント）。システム管理者に通知してください。"
+
+#: .\omflow\syscom\omengine.py:999
+msgid "OME系統錯誤(判斷點)，請通知系統管理員。"
+msgstr "OMEエラー（判断ポイント）。システム管理者に通知してください。"
+
+#: .\omflow\syscom\omengine.py:1073
+msgid "OME系統錯誤(子流程點)，請通知系統管理員。"
+msgstr "OMEエラー（サブフローポイント）。システム管理者に通知してください。"
+
+#: .\omflow\syscom\omengine.py:1200 .\omformflow\views.py:3204
+#: .\omformflow\views.py:3802
+msgid "找不到流程。"
+msgstr "フローが見つかりません。"
+
+#: .\omflow\syscom\omengine.py:1206
+msgid "OME系統錯誤(外部流程點)，請通知系統管理員。"
+msgstr "OMEエラー（外部フローポイント）。システム管理者に通知してください。"
+
+#: .\omflow\syscom\omengine.py:1321
+msgid "應用內找不到此流程："
+msgstr "このフローはアプリで見つかりません："
+
+#: .\omflow\syscom\omengine.py:1336
+msgid "OME系統錯誤(呼叫流程點)，請通知系統管理員。"
+msgstr "OMEエラー（コールフローポイント）。システム管理者に通知してください。"
+
+#: .\omflow\syscom\omengine.py:1384
+msgid "OME系統錯誤(暫停點)，請通知系統管理員。"
+msgstr "OMEエラー（一時停止ポイント）。システム管理者に通知してください。"
+
+#: .\omflow\syscom\omengine.py:1510
+msgid "OME系統錯誤(自動輸入點)，請通知系統管理員。"
+msgstr "OMEエラー（自動入力ポイント）。システム管理者に通知してください。"
+
+#: .\omflow\syscom\omengine.py:1596 .\omflow\syscom\omengine.py:1688
+msgid "取得組織圖錯誤。"
+msgstr "組織図の取得を間違いました"
+
+#: .\omflow\syscom\omengine.py:1603
+msgid "OME系統錯誤(同系角色點)，請通知系統管理員。"
+msgstr "OMEエラー（同じロールポイント）。システム管理者に通知してください。"
+
+#: .\omflow\syscom\omengine.py:1695
+msgid "OME系統錯誤(部門角色點)，請通知系統管理員。"
+msgstr "OMEエラー（部門のロールポイント）。システム管理者に通知してください。"
+
+#: .\omflow\syscom\omengine.py:1721
+msgid "驗證失敗。"
+msgstr "検証フローに失敗しました。"
+
+#: .\omflow\syscom\omengine.py:1724
+msgid "找不到驗證流程。"
+msgstr "検証フローが見つかりません。"
+
+#: .\omflow\syscom\omengine.py:2032
+msgid "更新流程變數失敗。"
+msgstr "フロー変数の更新を失敗しました。"
+
+#: .\omflow\syscom\q_monitor.py:64
+msgid "找不到main.py"
+msgstr "main.pyが見つかりません"
+
+#: .\omflow\syscom\q_monitor.py:66
+msgid "找不到流程"
+msgstr "フローが見つかりません"
+
+#: .\omflow\views.py:91
+msgid "URL錯誤，請確認後重新發送請求。"
+msgstr "URLエラー、もう一度送信してください。"
+
+#: .\omflow\views.py:119
+msgid "安全碼過期，請重新取得新的安全碼。"
+msgstr "コードの有効期限が切れています。新しいコードを入手してください。"
+
+#: .\omflow\views.py:121
+msgid "安全碼錯誤，請確認安全碼或重新取得新的安全碼。"
+msgstr "コードが間違っています。コードを確認してください。または，新しいコードを入手してください。"
+
+#: .\omflow\views.py:123
+msgid "缺少安全碼。"
+msgstr "コードがありません。"
+
+#: .\omflow\views.py:125
+msgid "缺少參數："
+msgstr "引数がありません："
+
+#: .\omflow\views.py:257 .\omflow\views.py:436 .\omflow\views.py:546
+#: .\omformflow\views.py:647 .\omformflow\views.py:2757
+#: .\omformflow\views.py:3729 .\omformflow\views.py:3799
+#: .\omformflow\views.py:4047 .\omformflow\views.py:4717
+#: .\ommonitor\views.py:47 .\ommonitor\views.py:131 .\ommonitor\views.py:866
+#: .\ommonitor\views.py:1437 .\ommonitor\views.py:1645
+#: .\ommonitor\views.py:1675 .\ommonitor\views.py:1812
+#: .\ommonitor\views.py:2060 .\ommonitor\views.py:2137
+#: .\omorganization\views.py:56 .\omorganization\views.py:183
+#: .\omuser\views.py:338 .\omuser\views.py:637 .\omuser\views.py:776
+#: .\omuser\views.py:819 .\omuser\views.py:859
+msgid "更新成功。"
+msgstr "更新されました。"
+
+#: .\omflow\views.py:260
+msgid "LDAP更新正在執行。"
+msgstr "LDAPを更新しています。"
+
+#: .\omflow\views.py:296
+msgid "請提供正確的APP名稱。"
+msgstr "正しいアプリ名を入力してください。"
+
+#: .\omflow\views.py:340 .\omformflow\views.py:142 .\omformflow\views.py:739
+#: .\omformflow\views.py:2860 .\omformflow\views.py:4113
+#: .\ommonitor\views.py:95 .\ommonitor\views.py:1053 .\ommonitor\views.py:1192
+#: .\ommonitor\views.py:1836 .\omorganization\views.py:208
+#: .\omuser\views.py:594
+msgid "刪除成功。"
+msgstr "削除されました。"
+
+#: .\omflow\views.py:484
+msgid "參數錯誤："
+msgstr "引数エラー："
+
+#: .\omflow\views.py:499
+msgid "重複名稱 -- "
+msgstr "この件名はすでにつかわれております -- "
+
+#: .\omflow\views.py:508
+msgid "無法移動預設選單至選單第二層。"
+msgstr "デフォルトメニューの2階に移動できません。"
+
+#: .\omflow\views.py:512
+msgid "無法新增預設類型選單。"
+msgstr "デフォルト種類を追加できません。"
+
+#: .\omflow\views.py:518
+msgid "無法在預設選單內新增選項。"
+msgstr "デフォルトにオプションを追加できません。"
+
+#: .\omflow\views.py:549
+msgid "無法刪除預設項目。"
+msgstr "デフォルトアイテムを削除できません。"
+
+#: .\omflow\views.py:711 .\omflow\views.py:737
+msgid "您尚未安裝omldap APP,請聯絡原廠。"
+msgstr "omldap APPがインストールされていません。会社にお問い合わせください。"
+
+#: .\omflow\views.py:841 .\omformflow\views.py:2926
+msgid "上傳成功。"
+msgstr "アップロードされました。"
+
+#: .\omflow\views.py:844
+msgid "請選擇檔案。"
+msgstr "ファイルを選択してください。"
+
+#: .\omformflow\models.py:21 .\ommonitor\models.py:18
+msgid "對應名稱"
+msgstr "対応名"
+
+#: .\omformflow\models.py:22 .\omformflow\models.py:64
+#: .\omformflow\models.py:83 .\omformflow\templates\flow_app_manage.html:48
+#: .\omformflow\templates\flow_app_manage.html:81
+#: .\omformflow\templates\flow_app_manage.html:82
+#: .\omformflow\templates\workflow_app_manage.html:45 .\ommonitor\models.py:19
+#: .\ommonitor\models.py:44
+msgid "屬性"
+msgstr "属性"
+
+#: .\omformflow\models.py:23 .\omformflow\models.py:66 .\omservice\models.py:30
+msgid "語言包"
+msgstr "翻訳パッケージ"
+
+#: .\omformflow\models.py:30
+msgid "自訂流程管理"
+msgstr "カスタマイズ流れ管理"
+
+#: .\omformflow\models.py:44 .\omformflow\models.py:91 .\ommonitor\models.py:40
+msgid "流程表單設計"
+msgstr "流れ表設計"
+
+#: .\omformflow\models.py:45 .\omformflow\models.py:93
+#: .\omformflow\templates\flow_design.html:33
+#: .\omformflow\templates\flow_design.html:810
+#: .\omformflow\templates\flow_design.html:881 .\ommonitor\models.py:41
+#: .\ommonitor\templates\monitor_api_design.html:553
+#: .\ommonitor\templates\monitor_api_design.html:621
+#: .\ommonitor\templates\monitor_design.html:757
+#: .\ommonitor\templates\monitor_design.html:825
+msgid "流程設計"
+msgstr "流れ設計"
+
+#: .\omformflow\models.py:46 .\ommonitor\models.py:42
+msgid "流程設定"
+msgstr "流れ設定"
+
+#: .\omformflow\models.py:47 .\omformflow\templates\flow_design.html:34
+#: .\ommonitor\models.py:43
+msgid "子流程"
+msgstr "サブ流れ"
+
+#: .\omformflow\models.py:63 .\omformflow\models.py:81
+msgid "流程版本"
+msgstr "流れバージョン"
+
+#: .\omformflow\models.py:65 .\omformflow\models.py:89
+msgid "下線"
+msgstr "アンデプロイ"
+
+#: .\omformflow\models.py:79 .\omformflow\models.py:136
+#: .\omformflow\models.py:169 .\omformflow\models.py:206
+#: .\omformmodel\views.py:200 .\omformmodel\views.py:229
+#: .\ommission\models.py:13 .\omservice\models.py:17
+msgid "流程編號"
+msgstr "流れ番号"
+
+#: .\omformflow\models.py:80
+msgid "uid"
+msgstr "uid"
+
+#: .\omformflow\models.py:82
+msgid "主流程編號"
+msgstr "主流れ番号"
+
+#: .\omformflow\models.py:88
+msgid "部署時間"
+msgstr "デプロイ時間"
+
+#: .\omformflow\models.py:90
+msgid "下線時間"
+msgstr "アンデプロイ時間"
+
+#: .\omformflow\models.py:92
+msgid "整合表單設計"
+msgstr "統合表設計"
+
+#: .\omformflow\models.py:94
+msgid "表單計數"
+msgstr "表数"
+
+#: .\omformflow\models.py:95
+msgid "流程計數"
+msgstr "流れ数"
+
+#: .\omformflow\models.py:96
+msgid "標題欄位"
+msgstr "タイトル"
+
+#: .\omformflow\models.py:97
+msgid "狀態欄位"
+msgstr "状態"
+
+#: .\omformflow\models.py:98
+msgid "共用"
+msgstr "コモン"
+
+#: .\omformflow\models.py:99
+msgid "執行過程紀錄"
+msgstr "記録"
+
+#: .\omformflow\models.py:100
+msgid "應用程式介面"
+msgstr "API"
+
+#: .\omformflow\models.py:101 .\omformflow\templates\flow_design.html:80
+msgid "查看目前流程及進度"
+msgstr "現在の流れと進行状況を表示する"
+
+#: .\omformflow\models.py:102 .\omformflow\templates\flow_design.html:88
+msgid "附加檔案功能"
+msgstr "アタッチメント"
+
+#: .\omformflow\models.py:103
+msgid "顯示關聯資料"
+msgstr "関連情報を表示"
+
+#: .\omformflow\models.py:104 .\omformflow\templates\flow_design.html:96
+msgid "填寫及顯示工作日誌"
+msgstr "日誌を記録と表示"
+
+#: .\omformflow\models.py:105
+msgid "操作歷程"
+msgstr "操作記録"
+
+#: .\omformflow\models.py:106
+msgid "建立任務"
+msgstr "任務作成"
+
+#: .\omformflow\models.py:107
+msgid "要顯示的欄位"
+msgstr "表示したい列"
+
+#: .\omformflow\models.py:108
+msgid "要查詢的欄位"
+msgstr "照会したい列"
+
+#: .\omformflow\models.py:110
+msgid "快速操作1"
+msgstr "クイック操作1"
+
+#: .\omformflow\models.py:111
+msgid "快速操作2"
+msgstr "クイック操作2"
+
+#: .\omformflow\models.py:113 .\omformflow\templates\flow_design.html:238
+#: .\omuser\templates\role_detail.html:30
+msgid "權限"
+msgstr "権限"
+
+#: .\omformflow\models.py:114
+msgid "api路徑"
+msgstr "API Path"
+
+#: .\omformflow\models.py:134 .\ommessage\models.py:87
+#: .\ommessage\models.py:107
+msgid "是否刪除"
+msgstr "削除するか"
+
+#: .\omformflow\models.py:137 .\omformflow\models.py:170
+#: .\ommission\models.py:19
+msgid "資料流水號"
+msgstr "資料シリアル番号"
+
+#: .\omformflow\models.py:138 .\omformflow\models.py:236
+#: .\omformflow\templates\workflow.html:116
+#: .\omformflow\templates\workflow.html:226 .\omformmodel\views.py:202
+#: .\omformmodel\views.py:230 .\ommessage\models.py:18 .\ommission\models.py:18
+#: .\templates\myform.html:522
+msgid "資料編號"
+msgstr "資料番号"
+
+#: .\omformflow\models.py:139
+msgid "上傳人員"
+msgstr "アップローダー"
+
+#: .\omformflow\models.py:150
+msgid "主表單流程"
+msgstr "表流れ1"
+
+#: .\omformflow\models.py:151
+msgid "主資料編號"
+msgstr "資料番号1"
+
+#: .\omformflow\models.py:152 .\templates\myform.html:264
+#: .\templates\myform.html:340 .\templates\myform.html:345
+#: .\templates\myform.html:346 .\templates\myform.html:347
+#: .\templates\myform.html:348
+msgid "關聯類型"
+msgstr "関連種類"
+
+#: .\omformflow\models.py:153
+msgid "被影響百分比"
+msgstr "影響を受ける割合"
+
+#: .\omformflow\models.py:154
+msgid "副表單流程"
+msgstr "表流れ2"
+
+#: .\omformflow\models.py:155
+msgid "副資料編號"
+msgstr "資料番号2"
+
+#: .\omformflow\models.py:157
+msgid "建立人員"
+msgstr "ユーザー"
+
+#: .\omformflow\models.py:171 .\omformflow\models.py:215
+#: .\omuser\templates\role_detail.html:118 .\templates\myform.html:220
+msgid "內容"
+msgstr "內容"
+
+#: .\omformflow\models.py:173
+msgid "建立人"
+msgstr "ユーザー"
+
+#: .\omformflow\models.py:185 .\omformflow\templates\parameter_manage.html:46
+#: .\ommonitor\templates\monitor_parameter.html:43
+msgid "參數名稱"
+msgstr "引数名"
+
+#: .\omformflow\models.py:186 .\omformflow\templates\parameter_manage.html:47
+#: .\omformflow\templates\parameter_manage.html:94
+#: .\ommonitor\templates\monitor_parameter.html:44
+#: .\ommonitor\templates\monitor_parameter.html:91
+msgid "參數值"
+msgstr "引数値"
+
+#: .\omformflow\models.py:187 .\omformflow\models.py:207
+#: .\omformflow\models.py:233 .\ommonitor\models.py:110
+#: .\ommonitor\templates\event_manage.html:856
+#: .\ommonitor\templates\event_manage.html:865
+#: .\ommonitor\templates\event_manage.html:872
+#: .\ommonitor\templates\monitor_api_design.html:60
+#: .\ommonitor\templates\monitor_api_design.html:61
+#: .\ommonitor\templates\monitor_api_manage.html:47
+#: .\ommonitor\templates\monitor_design.html:61
+#: .\ommonitor\templates\monitor_design.html:62
+#: .\ommonitor\templates\monitor_manage.html:47 .\templates\home.html:77
+msgid "類型"
+msgstr "種類"
+
+#: .\omformflow\models.py:189
+msgid "是否遮蔽"
+msgstr "マスクするか"
+
+#: .\omformflow\models.py:190
+msgid "群組id"
+msgstr "グループID"
+
+#: .\omformflow\models.py:202 .\omformflow\templates\SLA_manage.html:45
+#: .\omformflow\templates\SLA_manage.html:74
+#: .\omformflow\templates\SLA_manage.html:121
+#: .\omformflow\templates\SLA_manage.html:122
+msgid "服務水準名稱"
+msgstr "SLA名"
+
+#: .\omformflow\models.py:204 .\omformflow\models.py:234
+#: .\omformflow\templates\SLA_manage.html:46
+#: .\omformflow\templates\SLA_manage.html:75
+#: .\omformflow\templates\SLA_manage.html:169
+#: .\omformflow\templates\flow_app_manage.html:76
+#: .\omformflow\templates\flow_app_manage.html:77
+#: .\omformflow\templates\flow_app_manage.html:144
+#: .\omformflow\templates\flow_app_manage.html:156
+#: .\ommonitor\templates\monitor_api_manage.html:77
+#: .\ommonitor\templates\monitor_api_manage.html:78
+#: .\ommonitor\templates\monitor_manage.html:77
+#: .\ommonitor\templates\monitor_manage.html:78
+msgid "應用名稱"
+msgstr "アプリ名"
+
+#: .\omformflow\models.py:205 .\omformflow\models.py:235
+#: .\omformflow\templates\SLA_manage.html:47
+#: .\omformflow\templates\SLA_manage.html:76
+#: .\omformflow\templates\SLA_manage.html:176
+#: .\omformflow\templates\flow_design.html:50
+#: .\omformflow\templates\flow_design.html:191
+#: .\omformflow\templates\flow_design.html:828
+#: .\omformflow\templates\flow_design.html:899
+#: .\omformflow\templates\flow_manage.html:45
+#: .\omformflow\templates\scheduleflow_manage.html:40
+#: .\omformflow\templates\scheduleflow_manage.html:73
+#: .\omformflow\templates\workflow_app_manage.html:44
+#: .\omformflow\templates\workflow_manage.html:40 .\ommission\models.py:14
+#: .\ommonitor\templates\monitor_api_design.html:109
+#: .\ommonitor\templates\monitor_api_design.html:571
+#: .\ommonitor\templates\monitor_api_design.html:639
+#: .\ommonitor\templates\monitor_design.html:110
+#: .\ommonitor\templates\monitor_design.html:775
+#: .\ommonitor\templates\monitor_design.html:843 .\templates\myform.html:266
+msgid "流程名稱"
+msgstr "流れ名"
+
+#: .\omformflow\models.py:208
+msgid "時間測量開始"
+msgstr "時間測定が開始"
+
+#: .\omformflow\models.py:209
+msgid "時間測量終止"
+msgstr "時間測定が終了"
+
+#: .\omformflow\models.py:210
+msgid "進階條件"
+msgstr "高度な条件"
+
+#: .\omformflow\models.py:211
+msgid "數值測量欄位"
+msgstr "数値測定列"
+
+#: .\omformflow\models.py:212 .\omformflow\models.py:239
+msgid "提醒"
+msgstr "提醒"
+
+#: .\omformflow\models.py:213 .\omformflow\models.py:240
+msgid "違反"
+msgstr "違反"
+
+#: .\omformflow\models.py:214 .\omformmodel\views.py:205
+#: .\ommessage\templates\compose.html:34 .\ommission\models.py:17
+#: .\ommission\templates\mission.html:44 .\ommission\templates\mission.html:83
+#: .\ommission\templates\mission.html:119 .\ommonitor\models.py:139
+#: .\ommonitor\templates\event_manage.html:48
+#: .\ommonitor\templates\event_manage.html:74
+#: .\ommonitor\templates\event_manage.html:232
+#: .\ommonitor\templates\event_manage.html:233
+#: .\ommonitor\templates\event_manage.html:658
+#: .\ommonitor\templates\event_manage.html:673
+#: .\ommonitor\templates\monitor_api_design.html:141
+#: .\ommonitor\templates\monitor_api_design.html:218
+#: .\ommonitor\templates\monitor_api_design.html:219
+#: .\ommonitor\templates\monitor_design.html:294
+#: .\ommonitor\templates\monitor_design.html:371
+#: .\ommonitor\templates\monitor_design.html:372
+#: .\omservice\templates\list.html:125 .\templates\home.html:71
+#: .\templates\myform.html:267 .\templates\myform.html:425
+msgid "標題"
+msgstr "タイトル"
+
+#: .\omformflow\models.py:218 .\omformflow\templates\SLA_manage.html:152
+msgid "通知開單人"
+msgstr "クリエーターに通知"
+
+#: .\omformflow\models.py:219 .\omformflow\templates\SLA_manage.html:142
+#: .\omformflow\templates\SLA_manage.html:737
+msgid "通知角色"
+msgstr "ロールに通知"
+
+#: .\omformflow\models.py:220 .\omformflow\templates\SLA_manage.html:147
+#: .\omformflow\templates\SLA_manage.html:772
+msgid "通知人"
+msgstr "ユーザーに通知"
+
+#: .\omformflow\models.py:241 .\omformmodel\views.py:206
+#: .\ommission\models.py:16 .\ommission\templates\mission.html:43
+#: .\ommission\templates\mission.html:82 .\ommonitor\models.py:75
+#: .\ommonitor\templates\event_manage.html:152
+#: .\ommonitor\templates\event_manage.html:425
+#: .\ommonitor\templates\node_groups_manage.html:44
+#: .\ommonitor\templates\node_list_manage.html:43 .\templates\myform.html:428
+msgid "燈號"
+msgstr "レベル"
+
+#: .\omformflow\models.py:242 .\omformmodel\views.py:208
+msgid "關閉標記"
+msgstr "終了マーク"
+
+#: .\omformflow\templates\SLA_manage.html:13
+#: .\omformflow\templates\SLA_manage.html:19 .\templates\base_l_aside.html:64
+msgid "服務水準管理"
+msgstr "SLA管理"
+
+#: .\omformflow\templates\SLA_manage.html:14
+#: .\omformflow\templates\SLA_manage.html:18
+#: .\omformflow\templates\flow_app_manage.html:18
+#: .\omformflow\templates\flow_design.html:17
+#: .\omformflow\templates\flow_manage.html:18
+#: .\omformflow\templates\flowvalue.html:20
+#: .\omformflow\templates\parameter_manage.html:17
+#: .\omformflow\templates\scheduleflow_manage.html:20
+#: .\omformflow\templates\workflow_app_manage.html:18
+#: .\templates\base_l_aside.html:55 .\templates\file_manage.html:99
+msgid "應用管理"
+msgstr "アプリケーション管理"
+
+#: .\omformflow\templates\SLA_manage.html:17
+#: .\omformflow\templates\flow_app_manage.html:17
+#: .\omformflow\templates\flow_design.html:16
+#: .\omformflow\templates\flow_manage.html:17
+#: .\omformflow\templates\flowvalue.html:19
+#: .\omformflow\templates\parameter_manage.html:16
+#: .\omformflow\templates\scheduleflow_manage.html:19
+#: .\omformflow\templates\workflow.html:16
+#: .\omformflow\templates\workflow_app_manage.html:17
+#: .\omformflow\templates\workflow_manage.html:17
+#: .\ommessage\templates\compose.html:16 .\ommessage\templates\message.html:16
+#: .\ommessage\templates\messageManage.html:16
+#: .\ommission\templates\mission.html:14
+#: .\ommonitor\templates\monitor_parameter.html:16
+#: .\ommonitor\templates\node_manage.html:16
+#: .\omorganization\templates\organization_manage.html:18
+#: .\omorganization\templates\position_manage.html:16
+#: .\omservice\templates\list.html:11 .\omservice\templates\list.html:119
+#: .\omuser\templates\change_password.html:15
+#: .\omuser\templates\group_detail.html:16
+#: .\omuser\templates\group_manage.html:16 .\omuser\templates\profile.html:16
+#: .\omuser\templates\role_detail.html:16
+#: .\omuser\templates\role_manage.html:16
+#: .\omuser\templates\user_manage.html:16 .\templates\file_manage.html:17
+#: .\templates\home.html:13 .\templates\home.html:15 .\templates\home.html:17
+#: .\templates\home.html:63 .\templates\myform.html:18
+#: .\templates\sidebar_design.html:16 .\templates\system_config.html:16
+msgid "首頁"
+msgstr "ホーム"
+
+#: .\omformflow\templates\SLA_manage.html:29
+msgid "數值量測"
+msgstr "数値測定"
+
+#: .\omformflow\templates\SLA_manage.html:30
+msgid "時間量測"
+msgstr "時間測定"
+
+#: .\omformflow\templates\SLA_manage.html:36
+#: .\omformflow\templates\SLA_manage.html:65
+#: .\omformflow\templates\SLA_manage.html:234
+#: .\omformflow\templates\SLA_manage.html:246
+#: .\omformflow\templates\flow_app_manage.html:28
+#: .\omformflow\templates\flow_design.html:110
+#: .\omformflow\templates\flow_design.html:120
+#: .\omformflow\templates\flow_design.html:163
+#: .\omformflow\templates\flow_design.html:182
+#: .\omformflow\templates\flow_design.html:847
+#: .\omformflow\templates\flow_manage.html:29
+#: .\omformflow\templates\scheduleflow_manage.html:28
+#: .\omformflow\templates\workflow.html:23 .\omformmodel\views.py:190
+#: .\ommonitor\templates\monitor_api_design.html:590
+#: .\ommonitor\templates\monitor_api_design.html:658
+#: .\ommonitor\templates\monitor_api_manage.html:28
+#: .\ommonitor\templates\monitor_design.html:794
+#: .\ommonitor\templates\monitor_design.html:862
+#: .\ommonitor\templates\monitor_manage.html:28
+#: .\ommonitor\templates\node_groups_manage.html:28
+#: .\omorganization\templates\organization_manage.html:30
+#: .\omorganization\templates\position_manage.html:29
+#: .\templates\base_component.html:464 .\templates\base_component.html:489
+#: .\templates\base_component.html:490 .\templates\myform.html:201
+#: .\templates\sidebar_design.html:27
+msgid "新增"
+msgstr "新規"
+
+#: .\omformflow\templates\SLA_manage.html:37
+#: .\omformflow\templates\SLA_manage.html:66
+#: .\omformflow\templates\flow_app_manage.html:29
+#: .\omformflow\templates\flow_design.html:111
+#: .\omformflow\templates\flow_design.html:122
+#: .\omformflow\templates\flow_design.html:183
+#: .\omformflow\templates\flow_design.html:246
+#: .\omformflow\templates\flow_manage.html:31
+#: .\omformflow\templates\scheduleflow_manage.html:29
+#: .\omformflow\templates\workflow.html:26
+#: .\omformflow\templates\workflow_app_manage.html:29
+#: .\omformmodel\views.py:193 .\ommessage\templates\messageManage.html:340
+#: .\ommessage\templates\messageManage.html:341
+#: .\ommonitor\templates\monitor_api_manage.html:29
+#: .\ommonitor\templates\monitor_manage.html:29
+#: .\ommonitor\templates\node_groups_manage.html:29
+#: .\omorganization\templates\position_manage.html:30 .\omuser\models.py:34
+#: .\omuser\templates\group_manage.html:28
+#: .\omuser\templates\role_manage.html:30 .\templates\file_manage.html:40
+msgid "刪除"
+msgstr "削除"
+
+#: .\omformflow\templates\SLA_manage.html:48
+#: .\omformflow\templates\SLA_manage.html:77
+#: .\omformflow\templates\SLA_manage.html:190
+#: .\omformflow\templates\SLA_manage.html:442
+#: .\omformflow\templates\SLA_manage.html:473
+msgid "提醒規則"
+msgstr "提醒ルール"
+
+#: .\omformflow\templates\SLA_manage.html:49
+#: .\omformflow\templates\SLA_manage.html:78
+#: .\omformflow\templates\SLA_manage.html:209
+#: .\omformflow\templates\SLA_manage.html:443
+#: .\omformflow\templates\SLA_manage.html:474
+msgid "違反規則"
+msgstr "ルール違反"
+
+#: .\omformflow\templates\SLA_manage.html:131
+#: .\omformflow\templates\SLA_manage.html:132
+msgid "通知主旨"
+msgstr "通知主旨"
+
+#: .\omformflow\templates\SLA_manage.html:135
+#: .\omformflow\templates\SLA_manage.html:136
+msgid "通知內容"
+msgstr "通知內容"
+
+#: .\omformflow\templates\SLA_manage.html:183
+#: .\ommonitor\templates\event_manage.html:658
+#: .\ommonitor\templates\event_manage.html:673
+msgid "欄位"
+msgstr "列"
+
+#: .\omformflow\templates\SLA_manage.html:202
+#: .\omformflow\templates\SLA_manage.html:221
+#: .\ommonitor\templates\monitor_api_design.html:62
+#: .\ommonitor\templates\monitor_design.html:63
+msgid "數字"
+msgstr "数"
+
+#: .\omformflow\templates\SLA_manage.html:202
+#: .\omformflow\templates\SLA_manage.html:221
+msgid "字串"
+msgstr "文字列"
+
+#: .\omformflow\templates\SLA_manage.html:233
+#: .\omformflow\templates\SLA_manage.html:456
+#: .\omformflow\templates\SLA_manage.html:488
+msgid "觸發條件"
+msgstr "触発条件"
+
+#: .\omformflow\templates\SLA_manage.html:245
+msgid "終止條件"
+msgstr "終了条件"
+
+#: .\omformflow\templates\SLA_manage.html:269
+#: .\omformflow\templates\flow_app_manage.html:93
+#: .\omformflow\templates\flow_app_manage.html:114
+#: .\omformflow\templates\flow_app_manage.html:170
+#: .\omformflow\templates\flow_design.html:250
+#: .\omformflow\templates\flow_design.html:813
+#: .\omformflow\templates\flow_design.html:884
+#: .\omformflow\templates\flow_manage.html:76
+#: .\omformflow\templates\flow_manage.html:101
+#: .\omformflow\templates\flowvalue.html:62
+#: .\omformflow\templates\parameter_manage.html:111
+#: .\omformflow\templates\parameter_manage.html:131
+#: .\omformflow\templates\scheduleflow_manage.html:236
+#: .\omformflow\templates\workflow.html:57
+#: .\omformflow\templates\workflow_manage.html:211
+#: .\ommonitor\templates\event_manage.html:211
+#: .\ommonitor\templates\monitor_api_design.html:262
+#: .\ommonitor\templates\monitor_api_design.html:556
+#: .\ommonitor\templates\monitor_api_design.html:624
+#: .\ommonitor\templates\monitor_api_manage.html:83
+#: .\ommonitor\templates\monitor_api_manage.html:104
+#: .\ommonitor\templates\monitor_api_manage.html:237
+#: .\ommonitor\templates\monitor_design.html:415
+#: .\ommonitor\templates\monitor_design.html:760
+#: .\ommonitor\templates\monitor_design.html:828
+#: .\ommonitor\templates\monitor_manage.html:83
+#: .\ommonitor\templates\monitor_manage.html:104
+#: .\ommonitor\templates\monitor_parameter.html:108
+#: .\ommonitor\templates\node_groups_manage.html:83
+#: .\ommonitor\templates\node_list_manage.html:82
+#: .\omorganization\templates\position_manage.html:85
+#: .\omservice\templates\list.html:27 .\omservice\templates\list.html:104
+#: .\omuser\templates\group_manage.html:86 .\omuser\templates\profile.html:294
+#: .\omuser\templates\role_manage.html:84 .\templates\base_component.html:16
+#: .\templates\base_component.html:40 .\templates\base_component.html:59
+#: .\templates\base_component.html:81 .\templates\base_component.html:131
+#: .\templates\base_component.html:185 .\templates\base_component.html:210
+#: .\templates\base_component.html:244 .\templates\base_component.html:301
+#: .\templates\base_component.html:333 .\templates\base_component.html:357
+#: .\templates\base_component.html:413 .\templates\base_component.html:438
+#: .\templates\base_component.html:463 .\templates\base_component.html:488
+#: .\templates\home.html:29 .\templates\myform.html:203
+#: .\templates\myform.html:358 .\templates\system_config.html:213
+msgid "取消"
+msgstr "キャンセル"
+
+#: .\omformflow\templates\SLA_manage.html:270
+#: .\omformflow\templates\flow_app_manage.html:94
+#: .\omformflow\templates\flow_app_manage.html:115
+#: .\omformflow\templates\flow_app_manage.html:171
+#: .\omformflow\templates\flow_design.html:251
+#: .\omformflow\templates\flow_design.html:816
+#: .\omformflow\templates\flow_design.html:887
+#: .\omformflow\templates\flow_manage.html:77
+#: .\omformflow\templates\flow_manage.html:102
+#: .\omformflow\templates\flowvalue.html:63
+#: .\omformflow\templates\parameter_manage.html:112
+#: .\omformflow\templates\parameter_manage.html:132
+#: .\omformflow\templates\scheduleflow_manage.html:237
+#: .\omformflow\templates\workflow.html:58
+#: .\omformflow\templates\workflow_manage.html:212
+#: .\ommonitor\templates\event_manage.html:212
+#: .\ommonitor\templates\monitor_api_design.html:263
+#: .\ommonitor\templates\monitor_api_design.html:559
+#: .\ommonitor\templates\monitor_api_design.html:627
+#: .\ommonitor\templates\monitor_api_manage.html:84
+#: .\ommonitor\templates\monitor_api_manage.html:105
+#: .\ommonitor\templates\monitor_api_manage.html:238
+#: .\ommonitor\templates\monitor_design.html:416
+#: .\ommonitor\templates\monitor_design.html:763
+#: .\ommonitor\templates\monitor_design.html:831
+#: .\ommonitor\templates\monitor_manage.html:84
+#: .\ommonitor\templates\monitor_manage.html:105
+#: .\ommonitor\templates\monitor_parameter.html:109
+#: .\ommonitor\templates\node_groups_manage.html:84
+#: .\ommonitor\templates\node_list_manage.html:83
+#: .\omorganization\templates\position_manage.html:86
+#: .\omservice\templates\list.html:105 .\omuser\templates\group_manage.html:87
+#: .\omuser\templates\profile.html:295 .\omuser\templates\role_manage.html:85
+#: .\templates\base_component.html:41 .\templates\base_component.html:82
+#: .\templates\base_component.html:132 .\templates\base_component.html:186
+#: .\templates\base_component.html:211 .\templates\base_component.html:245
+#: .\templates\base_component.html:302 .\templates\base_component.html:334
+#: .\templates\base_component.html:358 .\templates\system_config.html:214
+msgid "確定"
+msgstr "確定する"
+
+#: .\omformflow\templates\SLA_manage.html:345
+#: .\omformflow\templates\SLA_manage.html:407
+#: .\omformflow\templates\flow_design.html:524
+#: .\omformflow\templates\flow_design.html:1049
+#: .\omformflow\templates\flow_design.html:1064
+#: .\omformflow\templates\flowvalue.html:151
+#: .\omformflow\templates\scheduleflow_manage.html:323
+#: .\ommonitor\templates\event_manage.html:457
+#: .\ommonitor\templates\event_manage.html:581
+#: .\ommonitor\templates\event_manage.html:625
+#: .\ommonitor\templates\monitor_api_design.html:348
+#: .\ommonitor\templates\monitor_api_design.html:369
+#: .\ommonitor\templates\monitor_api_design.html:787
+#: .\ommonitor\templates\monitor_api_design.html:802
+#: .\ommonitor\templates\monitor_api_design.html:942
+#: .\ommonitor\templates\monitor_api_design.html:978
+#: .\ommonitor\templates\monitor_api_design.html:1156
+#: .\ommonitor\templates\monitor_api_design.html:1196
+#: .\ommonitor\templates\monitor_design.html:504
+#: .\ommonitor\templates\monitor_design.html:543
+#: .\ommonitor\templates\monitor_design.html:991
+#: .\ommonitor\templates\monitor_design.html:1006
+#: .\ommonitor\templates\monitor_design.html:1244
+#: .\ommonitor\templates\monitor_design.html:1280
+#: .\ommonitor\templates\monitor_design.html:1458
+#: .\ommonitor\templates\monitor_design.html:1498
+#: .\omorganization\templates\position_manage.html:132
+#: .\omservice\templates\list.html:28 .\omuser\templates\group_manage.html:115
+#: .\omuser\templates\group_manage.html:123 .\templates\home.html:27
+#: .\templates\myform.html:270 .\templates\myform.html:939
+msgid "編輯"
+msgstr "編集"
+
+#: .\omformflow\templates\SLA_manage.html:398
+#: .\omformflow\templates\SLA_manage.html:403
+msgid "超過"
+msgstr " "
+
+#: .\omformflow\templates\SLA_manage.html:433
+msgid "新增服務水準"
+msgstr "新しいSLA"
+
+#: .\omformflow\templates\SLA_manage.html:444
+#: .\omformflow\templates\SLA_manage.html:475
+#: .\omformflow\templates\SLA_manage.html:689
+msgid "數字、字串..."
+msgstr "数値、文字列..."
+
+#: .\omformflow\templates\SLA_manage.html:446
+#: .\omformflow\templates\SLA_manage.html:477
+msgid "進階觸發條件"
+msgstr "高度な触発条件"
+
+#: .\omformflow\templates\SLA_manage.html:452
+#: .\omformflow\templates\SLA_manage.html:484
+msgid "提醒時間(分)"
+msgstr "提醒時間（分）"
+
+#: .\omformflow\templates\SLA_manage.html:453
+#: .\omformflow\templates\SLA_manage.html:485
+msgid "違反時間(分)"
+msgstr "違反時間（分）"
+
+#: .\omformflow\templates\SLA_manage.html:454
+#: .\omformflow\templates\SLA_manage.html:486
+#: .\omformflow\templates\scheduleflow_manage.html:119
+#: .\omformflow\templates\scheduleflow_manage.html:310
+#: .\ommonitor\templates\event_manage.html:194
+#: .\ommonitor\templates\monitor_design.html:168
+msgid "分"
+msgstr "分"
+
+#: .\omformflow\templates\SLA_manage.html:465
+msgid "編輯服務水準"
+msgstr "SLA編集"
+
+#: .\omformflow\templates\SLA_manage.html:543
+msgid "刪除下列服務水準"
+msgstr "以下SLAを削除"
+
+#: .\omformflow\templates\SLA_manage.html:696
+#: .\omformflow\templates\SLA_manage.html:819
+#: .\omformflow\templates\SLA_manage.html:919
+#: .\omformflow\templates\SLA_manage.html:923
+#: .\omformflow\templates\SLA_manage.html:936
+#: .\omservice\templates\list.html:131 .\templates\home.html:92
+msgid "選擇欄位"
+msgstr "列を選択"
+
+#: .\omformflow\templates\SLA_manage.html:814
+msgid "選擇應用"
+msgstr "アプリケーションを選択"
+
+#: .\omformflow\templates\SLA_manage.html:815
+#: .\omformflow\templates\SLA_manage.html:862
+#: .\omformflow\templates\SLA_manage.html:875
+msgid "選擇流程"
+msgstr "流れを選択"
+
+#: .\omformflow\templates\SLA_manage.html:975
+#: .\omformflow\templates\flow_app_manage.html:321
+#: .\omformflow\templates\flow_app_manage.html:600
+#: .\omformflow\templates\flow_design.html:1090
+#: .\omformflow\templates\flow_manage.html:437
+#: .\omformflow\templates\flowvalue.html:266
+#: .\omformflow\templates\parameter_manage.html:429
+#: .\omformflow\templates\scheduleflow_manage.html:450
+#: .\omformflow\templates\workflow_app_manage.html:268
+#: .\omformflow\templates\workflow_manage.html:731
+#: .\ommonitor\templates\event_manage.html:889
+#: .\ommonitor\templates\monitor_api_design.html:828
+#: .\ommonitor\templates\monitor_api_manage.html:395
+#: .\ommonitor\templates\monitor_api_manage.html:591
+#: .\ommonitor\templates\monitor_api_manage.html:738
+#: .\ommonitor\templates\monitor_design.html:1032
+#: .\ommonitor\templates\monitor_manage.html:367
+#: .\ommonitor\templates\monitor_manage.html:563
+#: .\ommonitor\templates\monitor_manage.html:710
+#: .\ommonitor\templates\monitor_parameter.html:321
+#: .\ommonitor\templates\node_groups_manage.html:340
+#: .\ommonitor\templates\node_list_manage.html:321
+#: .\ommonitor\templates\node_manage.html:389
+#: .\ommonitor\templates\node_manage.html:425
+#: .\omservice\templates\list.html:377 .\omservice\templates\list.html:1954
+#: .\omservice\templates\list.html:2103
+#: .\omuser\templates\group_manage.html:266 .\templates\myform.html:1979
+#: .\templates\myform.html:2023
+msgid "成功"
+msgstr "成功"
+
+#: .\omformflow\templates\flow_app_manage.html:13
+#: .\omformflow\templates\flow_app_manage.html:19
+#: .\omformflow\templates\flow_design.html:18
+#: .\omformflow\templates\flow_manage.html:19 .\templates\base_l_aside.html:59
+msgid "應用設計"
+msgstr "アプリケーション設計"
+
+#: .\omformflow\templates\flow_app_manage.html:14
+#: .\omformflow\templates\workflow_app_manage.html:14
+msgid "應用列表"
+msgstr "アプリケーションリスト"
+
+#: .\omformflow\templates\flow_app_manage.html:29
+#: .\ommonitor\templates\monitor_api_manage.html:29
+#: .\ommonitor\templates\monitor_manage.html:29
+msgid "刪除下列應用"
+msgstr "以下アプリを削除"
+
+#: .\omformflow\templates\flow_app_manage.html:30
+msgid "上架"
+msgstr "リリース"
+
+#: .\omformflow\templates\flow_app_manage.html:31
+#: .\omformflow\templates\flow_manage.html:32
+#: .\omformflow\templates\flowvalue.html:27
+#: .\omformflow\templates\scheduleflow_manage.html:30
+#: .\omformflow\templates\workflow.html:28
+#: .\omformflow\templates\workflow_app_manage.html:30
+#: .\ommonitor\templates\event_manage.html:34
+#: .\ommonitor\templates\monitor_api_manage.html:30
+#: .\ommonitor\templates\monitor_manage.html:30
+#: .\ommonitor\templates\node_groups_manage.html:30
+#: .\ommonitor\templates\node_list_manage.html:31 .\templates\myform.html:255
+#: .\templates\myform.html:306
+msgid "篩選"
+msgstr "フィルタ"
+
+#: .\omformflow\templates\flow_app_manage.html:32
+#: .\omformflow\templates\flow_manage.html:33
+#: .\omformflow\templates\flowvalue.html:28
+#: .\omformflow\templates\parameter_manage.html:31
+#: .\omformflow\templates\scheduleflow_manage.html:31
+#: .\omformflow\templates\undeployflow_manage.html:30
+#: .\omformflow\templates\workflow.html:29
+#: .\omformflow\templates\workflow_app_manage.html:31
+#: .\omformflow\templates\workflow_manage.html:31
+#: .\ommission\templates\mission.html:35 .\ommission\templates\mission.html:68
+#: .\ommission\templates\mission.html:105
+#: .\ommonitor\templates\event_manage.html:35
+#: .\ommonitor\templates\monitor_api_manage.html:31
+#: .\ommonitor\templates\monitor_manage.html:31
+#: .\ommonitor\templates\monitor_parameter.html:33
+#: .\ommonitor\templates\node_groups_manage.html:31
+#: .\ommonitor\templates\node_list_manage.html:32
+#: .\omorganization\templates\position_manage.html:32
+#: .\omuser\templates\group_detail.html:59
+#: .\omuser\templates\group_manage.html:32 .\omuser\templates\profile.html:189
+#: .\omuser\templates\profile.html:226 .\omuser\templates\role_detail.html:66
+#: .\omuser\templates\role_detail.html:105
+#: .\omuser\templates\role_manage.html:32
+#: .\omuser\templates\user_manage.html:33 .\templates\file_manage.html:42
+msgid "清除篩選條件"
+msgstr "選ばれた条件を削除"
+
+#: .\omformflow\templates\flow_app_manage.html:32
+#: .\omformflow\templates\flow_manage.html:33
+#: .\omformflow\templates\flowvalue.html:28
+#: .\omformflow\templates\parameter_manage.html:31
+#: .\omformflow\templates\scheduleflow_manage.html:31
+#: .\omformflow\templates\undeployflow_manage.html:30
+#: .\omformflow\templates\workflow.html:29
+#: .\omformflow\templates\workflow_app_manage.html:31
+#: .\omformflow\templates\workflow_manage.html:31
+#: .\ommission\templates\mission.html:35 .\ommission\templates\mission.html:68
+#: .\ommission\templates\mission.html:105
+#: .\ommonitor\templates\event_manage.html:35
+#: .\ommonitor\templates\monitor_api_manage.html:31
+#: .\ommonitor\templates\monitor_manage.html:31
+#: .\ommonitor\templates\monitor_parameter.html:33
+#: .\ommonitor\templates\node_groups_manage.html:31
+#: .\ommonitor\templates\node_list_manage.html:32
+#: .\omorganization\templates\position_manage.html:32
+#: .\omuser\templates\group_detail.html:59
+#: .\omuser\templates\group_manage.html:32 .\omuser\templates\profile.html:189
+#: .\omuser\templates\profile.html:226 .\omuser\templates\role_detail.html:66
+#: .\omuser\templates\role_detail.html:105
+#: .\omuser\templates\role_manage.html:32
+#: .\omuser\templates\user_manage.html:33 .\templates\file_manage.html:42
+msgid " 還原"
+msgstr " かんげん"
+
+#: .\omformflow\templates\flow_app_manage.html:35
+#: .\omformflow\templates\flow_app_manage.html:656
+#: .\omformflow\templates\flow_manage.html:124
+#: .\omformflow\templates\parameter_manage.html:34
+#: .\ommonitor\templates\monitor_api_manage.html:34
+#: .\ommonitor\templates\monitor_api_manage.html:801
+#: .\ommonitor\templates\monitor_manage.html:34
+#: .\ommonitor\templates\monitor_manage.html:773
+#: .\omservice\templates\list.html:35 .\omservice\templates\list.html:78
+#: .\templates\home.html:39
+msgid "匯入"
+msgstr "インポート"
+
+#: .\omformflow\templates\flow_app_manage.html:37
+#: .\omformflow\templates\flow_manage.html:126
+#: .\omformflow\templates\parameter_manage.html:36
+#: .\omformflow\templates\workflow_app_manage.html:34
+#: .\ommonitor\templates\monitor_api_manage.html:36
+#: .\ommonitor\templates\monitor_manage.html:36
+#: .\omservice\templates\list.html:37 .\omservice\templates\list.html:80
+#: .\templates\home.html:40
+msgid "匯出"
+msgstr "エクスポート"
+
+#: .\omformflow\templates\flow_app_manage.html:38
+#: .\ommonitor\templates\monitor_api_manage.html:37
+#: .\ommonitor\templates\monitor_manage.html:37
+#: .\omservice\templates\list.html:289 .\templates\home.html:247
+msgid "下載"
+msgstr "ダウンロード"
+
+#: .\omformflow\templates\flow_app_manage.html:49
+#: .\omformflow\templates\workflow_app_manage.html:47
+#: .\ommonitor\templates\monitor_api_manage.html:48
+#: .\ommonitor\templates\monitor_manage.html:48
+#: .\omservice\templates\list.html:270 .\omuser\models.py:21
+#: .\omuser\templates\group_detail.html:29
+#: .\omuser\templates\role_detail.html:29
+#: .\omuser\templates\user_manage.html:139 .\templates\home.html:228
+#: .\templates\myform.html:221
+msgid "使用者"
+msgstr "ユーザー"
+
+#: .\omformflow\templates\flow_app_manage.html:50
+#: .\omformflow\templates\flow_manage.html:46
+#: .\omformflow\templates\workflow_app_manage.html:46
+#: .\ommonitor\templates\monitor_api_manage.html:49
+#: .\ommonitor\templates\monitor_manage.html:49
+msgid "最後修改時間"
+msgstr "最終変更時刻"
+
+#: .\omformflow\templates\flow_app_manage.html:72
+msgid "建立應用"
+msgstr "アプリケーションの作成"
+
+#: .\omformflow\templates\flow_app_manage.html:107
+#: .\omformflow\templates\flow_manage.html:69
+#: .\ommonitor\templates\monitor_api_manage.html:97
+#: .\ommonitor\templates\monitor_manage.html:97
+msgid "流程匯入"
+msgstr "流れをインポートする"
+
+#: .\omformflow\templates\flow_app_manage.html:128
+msgid "上架設定"
+msgstr "リリース設定"
+
+#: .\omformflow\templates\flow_app_manage.html:136
+msgid "上架新應用"
+msgstr "新しいアプリのリリース"
+
+#: .\omformflow\templates\flow_app_manage.html:137
+msgid "取代上架應用"
+msgstr "アプリを置き換える"
+
+#: .\omformflow\templates\flow_app_manage.html:149
+msgid "上架位置"
+msgstr "リリースポジション"
+
+#: .\omformflow\templates\flow_app_manage.html:161
+msgid "應用選擇"
+msgstr "アプリケーションを選択"
+
+#: .\omformflow\templates\flow_app_manage.html:305
+#: .\omformflow\templates\flow_app_manage.html:465
+#: .\omformflow\templates\flow_app_manage.html:551 .\templates\myform.html:524
+msgid "處理中..."
+msgstr "処理しています..."
+
+#: .\omformflow\templates\flow_app_manage.html:425
+msgid "無應用可取代"
+msgstr "置き換えるアプリケーションはありません"
+
+#: .\omformflow\templates\flow_app_manage.html:478
+#: .\omformflow\templates\workflow_app_manage.html:333
+msgid "匯出下列應用"
+msgstr "以下のアプリケーションをエクスポートしてください"
+
+#: .\omformflow\templates\flow_app_manage.html:627
+#: .\ommonitor\templates\monitor_api_manage.html:765
+#: .\ommonitor\templates\monitor_manage.html:737 .\templates\home.html:674
+msgid "讀取中"
+msgstr "読み込み中"
+
+#: .\omformflow\templates\flow_app_manage.html:645
+#: .\ommonitor\templates\monitor_api_manage.html:785
+#: .\ommonitor\templates\monitor_api_manage.html:789
+#: .\ommonitor\templates\monitor_manage.html:757
+#: .\ommonitor\templates\monitor_manage.html:761
+msgid "回上一層"
+msgstr "前に戻る"
+
+#: .\omformflow\templates\flow_app_manage.html:652
+#: .\omformflow\templates\flow_design.html:119
+#: .\omformflow\templates\flow_design.html:240 .\omformmodel\views.py:192
+#: .\ommonitor\templates\event_manage.html:404
+#: .\ommonitor\templates\monitor_api_manage.html:797
+#: .\ommonitor\templates\monitor_manage.html:769 .\templates\myform.html:269
+#: .\templates\myform.html:607 .\templates\myform.html:685
+#: .\templates\myform.html:689 .\templates\myform.html:934
+msgid "檢視"
+msgstr "検分"
+
+#: .\omformflow\templates\flow_app_manage.html:671
+#: .\ommonitor\templates\monitor_api_manage.html:818
+#: .\ommonitor\templates\monitor_manage.html:788
+msgid "流程匯入中"
+msgstr "流れをインポートする"
+
+#: .\omformflow\templates\flow_app_manage.html:701
+#: .\ommonitor\templates\monitor_api_manage.html:193
+#: .\ommonitor\templates\monitor_manage.html:193
+msgid "雲端流程"
+msgstr "クラウド流れ"
+
+#: .\omformflow\templates\flow_app_manage.html:710
+#: .\omformflow\templates\workflow_app_manage.html:48
+#: .\omformflow\templates\workflow_manage.html:43 .\ommonitor\models.py:47
+#: .\ommonitor\models.py:96 .\ommonitor\templates\monitor_api_design.html:164
+#: .\ommonitor\templates\monitor_api_manage.html:202
+#: .\ommonitor\templates\monitor_design.html:317
+#: .\ommonitor\templates\monitor_manage.html:202
+#: .\ommonitor\templates\node_list_manage.html:47
+#: .\ommonitor\templates\node_manage.html:119
+#: .\templates\base_component.html:231
+msgid "版本"
+msgstr "バージョン"
+
+#: .\omformflow\templates\flow_app_manage.html:711
+#: .\ommission\templates\mission.html:535
+#: .\ommonitor\templates\monitor_api_manage.html:203
+#: .\ommonitor\templates\monitor_manage.html:203 .\templates\myform.html:858
+#: .\templates\myform.html:1415
+msgid "修改日期"
+msgstr "変更日"
+
+#: .\omformflow\templates\flow_app_manage.html:719
+#: .\omformflow\templates\flow_manage.html:129
+#: .\ommission\templates\mission.html:160
+#: .\ommission\templates\mission.html:188
+#: .\ommonitor\templates\event_manage.html:284
+#: .\ommonitor\templates\monitor_api_manage.html:133
+#: .\ommonitor\templates\monitor_api_manage.html:181
+#: .\ommonitor\templates\monitor_api_manage.html:211
+#: .\ommonitor\templates\monitor_manage.html:133
+#: .\ommonitor\templates\monitor_manage.html:181
+#: .\ommonitor\templates\monitor_manage.html:211
+#: .\ommonitor\templates\node_manage.html:181
+#: .\omservice\templates\list.html:83 .\templates\base_component.html:510
+#: .\templates\base_component.html:535 .\templates\base_component.html:556
+#: .\templates\base_component.html:577 .\templates\base_component.html:597
+#: .\templates\base_component.html:618 .\templates\myform.html:98
+#: .\templates\myform.html:128 .\templates\myform.html:177
+#: .\templates\myform.html:233 .\templates\myform.html:282
+#: .\templates\myform.html:319 .\templates\myform.html:399
+#: .\templates\myform.html:436
+msgid "關閉"
+msgstr "閉じる"
+
+#: .\omformflow\templates\flow_design.html:30
+#: .\omformflow\templates\flow_design.html:809
+#: .\omformflow\templates\flow_design.html:880
+#: .\ommonitor\templates\monitor_api_design.html:552
+#: .\ommonitor\templates\monitor_api_design.html:620
+#: .\ommonitor\templates\monitor_design.html:756
+#: .\ommonitor\templates\monitor_design.html:824
+msgid "參數設定"
+msgstr "引数設定"
+
+#: .\omformflow\templates\flow_design.html:31
+msgid "權限設定"
+msgstr "権限設定"
+
+#: .\omformflow\templates\flow_design.html:32
+msgid "表單設計"
+msgstr "フォーム設計"
+
+#: .\omformflow\templates\flow_design.html:37
+#: .\ommonitor\templates\node_manage.html:36
+#: .\omorganization\templates\organization_manage.html:31
+#: .\omservice\templates\list.html:26 .\omuser\templates\group_detail.html:35
+#: .\omuser\templates\group_detail.html:57 .\omuser\templates\profile.html:41
+#: .\omuser\templates\profile.html:185 .\omuser\templates\profile.html:224
+#: .\omuser\templates\role_detail.html:36
+#: .\omuser\templates\role_detail.html:64
+#: .\omuser\templates\role_detail.html:103 .\templates\base_component.html:417
+#: .\templates\home.html:28 .\templates\myform.html:202
+#: .\templates\system_config.html:28
+msgid "儲存"
+msgstr "保存する"
+
+#: .\omformflow\templates\flow_design.html:51
+#: .\omformflow\templates\flow_design.html:829
+#: .\omformflow\templates\flow_design.html:900
+#: .\ommonitor\templates\monitor_api_design.html:51
+#: .\ommonitor\templates\monitor_api_design.html:572
+#: .\ommonitor\templates\monitor_api_design.html:640
+#: .\ommonitor\templates\monitor_design.html:52
+#: .\ommonitor\templates\monitor_design.html:776
+#: .\ommonitor\templates\monitor_design.html:844
+msgid "請輸入流程名稱"
+msgstr "流れ名を入力してください"
+
+#: .\omformflow\templates\flow_design.html:54
+#: .\omformflow\templates\flow_design.html:55
+#: .\ommonitor\templates\monitor_api_design.html:55
+#: .\ommonitor\templates\monitor_design.html:56
+msgid "API 路徑"
+msgstr "API Path"
+
+#: .\omformflow\templates\flow_design.html:55
+#: .\ommonitor\templates\monitor_api_design.html:55
+#: .\ommonitor\templates\monitor_design.html:56
+#, fuzzy
+#| msgid "大小寫英文、數字及底線"
+msgid "小寫英文、數字及 -"
+msgstr "小文字の英語、数字、マイナス記号(−)"
+
+#: .\omformflow\templates\flow_design.html:59
+#: .\omformflow\templates\flow_design.html:833
+#: .\omformflow\templates\flow_design.html:904
+#: .\ommonitor\templates\monitor_api_design.html:67
+#: .\ommonitor\templates\monitor_api_design.html:576
+#: .\ommonitor\templates\monitor_api_design.html:644
+#: .\ommonitor\templates\monitor_design.html:68
+#: .\ommonitor\templates\monitor_design.html:780
+#: .\ommonitor\templates\monitor_design.html:848
+msgid "流程說明"
+msgstr "流れの説明"
+
+#: .\omformflow\templates\flow_design.html:63
+msgid "執行過程紀錄(LOG)"
+msgstr "LOG"
+
+#: .\omformflow\templates\flow_design.html:67
+msgid "應用程式介面(API)"
+msgstr "API"
+
+#: .\omformflow\templates\flow_design.html:72
+msgid "表單工作區設定"
+msgstr "フォームワークスペースの設定"
+
+#: .\omformflow\templates\flow_design.html:76
+msgid "是否建立任務"
+msgstr "任務を作成するか"
+
+#: .\omformflow\templates\flow_design.html:84
+msgid "檢視表單資料操作歷程"
+msgstr "フォーム資料の操作履歴を表示する"
+
+#: .\omformflow\templates\flow_design.html:92
+msgid "顯示資料關聯"
+msgstr "資料の関連付けを表示"
+
+#: .\omformflow\templates\flow_design.html:118
+#: .\omformflow\templates\flow_design.html:233
+#: .\omuser\templates\role_detail.html:42
+#: .\omuser\templates\role_detail.html:43
+#: .\omuser\templates\role_manage.html:70
+#: .\omuser\templates\role_manage.html:71
+msgid "角色名稱"
+msgstr "ロール名"
+
+#: .\omformflow\templates\flow_design.html:121
+#: .\omformflow\templates\flow_design.html:244 .\omformmodel\views.py:191
+#: .\templates\base_component.html:439
+msgid "修改"
+msgstr "変更"
+
+#: .\omformflow\templates\flow_design.html:143
+msgid "區塊"
+msgstr "ブロック"
+
+#: .\omformflow\templates\flow_design.html:144
+msgid "半區塊"
+msgstr "ハーフブロック"
+
+#: .\omformflow\templates\flow_design.html:229
+msgid "新增權限角色"
+msgstr "許可メンバーを加える"
+
+#: .\omformflow\templates\flow_design.html:242
+#: .\omformflow\templates\parameter_manage.html:28
+#: .\ommonitor\templates\event_manage.html:63
+#: .\ommonitor\templates\event_manage.html:185
+#: .\ommonitor\templates\monitor_api_design.html:81
+#: .\ommonitor\templates\monitor_api_design.html:100
+#: .\ommonitor\templates\monitor_api_design.html:132
+#: .\ommonitor\templates\monitor_api_design.html:250
+#: .\ommonitor\templates\monitor_design.html:82
+#: .\ommonitor\templates\monitor_design.html:101
+#: .\ommonitor\templates\monitor_design.html:285
+#: .\ommonitor\templates\monitor_design.html:403
+#: .\ommonitor\templates\monitor_parameter.html:30
+#: .\omuser\templates\user_manage.html:28 .\templates\sidebar_design.html:27
+msgid " 新增"
+msgstr " 新規"
+
+#: .\omformflow\templates\flow_design.html:317
+#: .\omformflow\templates\flow_design.html:865
+#: .\ommonitor\templates\monitor_api_design.html:299
+#: .\ommonitor\templates\monitor_api_design.html:607
+#: .\ommonitor\templates\monitor_design.html:452
+#: .\ommonitor\templates\monitor_design.html:811
+msgid "開始"
+msgstr "開始"
+
+#: .\omformflow\templates\flow_design.html:317
+#: .\omformflow\templates\flow_design.html:865
+#: .\ommonitor\templates\monitor_api_design.html:607
+#: .\ommonitor\templates\monitor_design.html:811
+msgid "人工輸入"
+msgstr "入力"
+
+#: .\omformflow\templates\flow_design.html:317
+#: .\omformflow\templates\flow_design.html:865
+#: .\ommonitor\templates\monitor_api_design.html:607
+#: .\ommonitor\templates\monitor_design.html:811
+msgid "判斷"
+msgstr "判断"
+
+#: .\omformflow\templates\flow_design.html:317
+#: .\omformflow\templates\flow_design.html:865
+#: .\ommonitor\templates\monitor_api_design.html:299
+#: .\ommonitor\templates\monitor_api_design.html:607
+#: .\ommonitor\templates\monitor_design.html:452
+#: .\ommonitor\templates\monitor_design.html:811
+msgid "結束"
+msgstr "終了"
+
+#: .\omformflow\templates\flow_design.html:341
+#: .\omformflow\templates\flow_design.html:343
+#: .\ommonitor\templates\monitor_api_design.html:287
+#: .\ommonitor\templates\monitor_api_design.html:288
+#: .\ommonitor\templates\monitor_design.html:440
+#: .\ommonitor\templates\monitor_design.html:441
+msgid "建立新流程"
+msgstr "新しい流れを作成する"
+
+#: .\omformflow\templates\flow_design.html:366
+#: .\omformflow\templates\flow_design.html:367
+#: .\omformflow\templates\flow_design.html:368
+#: .\omformflow\templates\flow_design.html:369
+#: .\omformflow\templates\flow_design.html:394
+#: .\omformflow\templates\flow_design.html:395
+#: .\omformflow\templates\flow_design.html:396
+#: .\omformflow\templates\flow_design.html:397
+msgid "允許"
+msgstr "許可"
+
+#: .\omformflow\templates\flow_design.html:744
+#: .\omformflow\templates\parameter_manage.html:386
+#: .\omformflow\templates\scheduleflow_manage.html:540
+#: .\omformflow\templates\workflow.html:337
+#: .\omformflow\templates\workflow.html:621
+#: .\omformflow\templates\workflow_app_manage.html:222
+#: .\omformflow\templates\workflow_manage.html:491
+#: .\omformflow\templates\workflow_manage.html:518
+#: .\omformflow\templates\workflow_manage.html:602
+#: .\ommonitor\templates\event_manage.html:822
+#: .\ommonitor\templates\monitor_api_design.html:498
+#: .\ommonitor\templates\monitor_api_manage.html:378
+#: .\ommonitor\templates\monitor_api_manage.html:516
+#: .\ommonitor\templates\monitor_api_manage.html:693
+#: .\ommonitor\templates\monitor_design.html:672
+#: .\ommonitor\templates\monitor_manage.html:350
+#: .\ommonitor\templates\monitor_manage.html:488
+#: .\ommonitor\templates\monitor_manage.html:665
+#: .\ommonitor\templates\node_groups_manage.html:268
+#: .\ommonitor\templates\node_groups_manage.html:280
+#: .\ommonitor\templates\node_groups_manage.html:301
+#: .\ommonitor\templates\node_list_manage.html:246
+#: .\ommonitor\templates\node_list_manage.html:270
+#: .\ommonitor\templates\node_manage.html:239
+#: .\ommonitor\templates\node_manage.html:324
+#: .\omorganization\templates\organization_manage.html:81
+#: .\omuser\templates\group_detail.html:163
+#: .\omuser\templates\group_detail.html:180
+#: .\omuser\templates\group_manage.html:225
+#: .\omuser\templates\group_manage.html:247 .\omuser\templates\profile.html:585
+#: .\omuser\templates\role_detail.html:232
+#: .\omuser\templates\role_detail.html:249
+#: .\omuser\templates\role_detail.html:266
+#: .\omuser\templates\role_manage.html:209
+#: .\omuser\templates\role_manage.html:232
+#: .\omuser\templates\user_manage.html:219
+#: .\omuser\templates\user_manage.html:262 .\templates\file_manage.html:261
+#: .\templates\sidebar_design.html:272 .\templates\system_config.html:260
+#: .\templates\system_config.html:291
+msgid "處理中"
+msgstr "処理中"
+
+#: .\omformflow\templates\flow_design.html:795
+#: .\ommonitor\templates\monitor_api_design.html:539
+#: .\ommonitor\templates\monitor_design.html:742
+msgid "請檢查流程名稱或API路徑"
+msgstr "フロー名またはAPI PATHを確認してください。"
+
+#: .\omformflow\templates\flow_design.html:1001
+#: .\ommonitor\templates\monitor_api_design.html:739
+#: .\ommonitor\templates\monitor_design.html:943
+msgid "請輸入子流程名稱"
+msgstr "サブ流れの名を入力してください"
+
+#: .\omformflow\templates\flow_design.html:1015
+msgid "子流程名稱重複，請重新輸入"
+msgstr "サブ流れ名が重複しています。再入力してください"
+
+#: .\omformflow\templates\flow_manage.html:30
+msgid "複製"
+msgstr "コピー"
+
+#: .\omformflow\templates\flow_manage.html:90
+msgid "流程複製"
+msgstr "流れコピー"
+
+#: .\omformflow\templates\flow_manage.html:94
+msgid "將流程複製到"
+msgstr "流れのコピー先"
+
+#: .\omformflow\templates\flow_manage.html:117
+#: .\omservice\templates\list.html:71
+msgid "語言翻譯"
+msgstr "言語翻訳"
+
+#: .\omformflow\templates\flow_manage.html:121
+#: .\omservice\templates\list.html:75
+msgid "選擇語系"
+msgstr "言語選択"
+
+#: .\omformflow\templates\flow_manage.html:230
+#: .\omformflow\templates\workflow_manage.html:332
+#: .\ommonitor\templates\monitor_api_manage.html:14
+#: .\ommonitor\templates\monitor_manage.html:14
+msgid "流程列表"
+msgstr "流れリスト"
+
+#: .\omformflow\templates\flow_manage.html:277
+msgid "下列流程將被刪除"
+msgstr "以下の流れを削除されます"
+
+#: .\omformflow\templates\flow_manage.html:355
+#: .\omservice\templates\list.html:1989
+msgid "匯出翻譯包"
+msgstr "翻訳パッケージのエクスポート"
+
+#: .\omformflow\templates\flow_manage.html:400
+#: .\omservice\templates\list.html:2042
+msgid "匯入翻譯包"
+msgstr "翻訳パッケージのインポート"
+
+#: .\omformflow\templates\flowvalue.html:21
+#: .\omformflow\templates\workflow_app_manage.html:13
+#: .\omformflow\templates\workflow_app_manage.html:19
+#: .\omformflow\templates\workflow_manage.html:19
+#: .\templates\base_l_aside.html:60
+msgid "已上架應用"
+msgstr "アプリがリリースされました"
+
+#: .\omformflow\templates\flowvalue.html:34 .\ommessage\models.py:17
+#: .\ommission\templates\mission.html:42 .\ommission\templates\mission.html:81
+#: .\ommission\templates\mission.html:118 .\templates\myform.html:265
+msgid "表單編號"
+msgstr "フォーム番号"
+
+#: .\omformflow\templates\flowvalue.html:35 .\omformmodel\views.py:209
+#: .\ommission\models.py:21
+msgid "關卡"
+msgstr "ステージ"
+
+#: .\omformflow\templates\flowvalue.html:36 .\omformmodel\views.py:213
+#: .\ompolicymodel\views.py:96 .\templates\myform.html:386
+msgid "是否異常"
+msgstr "異常ですか"
+
+#: .\omformflow\templates\flowvalue.html:37
+msgid "異常訊息"
+msgstr "異常メッセージ"
+
+#: .\omformflow\templates\flowvalue.html:38
+#: .\ommission\templates\mission.html:45 .\ommission\templates\mission.html:120
+msgid "開單人"
+msgstr "クリエーター"
+
+#: .\omformflow\templates\flowvalue.html:39 .\ommission\models.py:25
+#: .\ommonitor\models.py:145
+msgid "開單時間"
+msgstr "作成時間"
+
+#: .\omformflow\templates\flowvalue.html:56
+msgid "資料修改"
+msgstr "資料変更"
+
+#: .\omformflow\templates\flowvalue.html:128
+#: .\omformflow\templates\workflow.html:133 .\templates\myform.html:794
+#: .\templates\myform.html:1075
+msgid "異常"
+msgstr "異常"
+
+#: .\omformflow\templates\flowvalue.html:130
+#: .\omformflow\templates\workflow.html:135 .\templates\myform.html:796
+#: .\templates\myform.html:1077
+msgid "正常"
+msgstr "正常"
+
+#: .\omformflow\templates\flowvalue.html:186
+msgid "流程資料"
+msgstr "流れ資料"
+
+#: .\omformflow\templates\parameter_manage.html:12
+#: .\omformflow\templates\parameter_manage.html:18
+#: .\ommonitor\templates\monitor_parameter.html:12
+#: .\ommonitor\templates\monitor_parameter.html:20
+#: .\templates\base_l_aside.html:62
+msgid "參數管理"
+msgstr "引数管理"
+
+#: .\omformflow\templates\parameter_manage.html:13
+msgid "參數列表"
+msgstr "引数リスト"
+
+#: .\omformflow\templates\parameter_manage.html:29
+#: .\ommonitor\templates\event_manage.html:64
+#: .\ommonitor\templates\monitor_api_design.html:101
+#: .\ommonitor\templates\monitor_api_design.html:133
+#: .\ommonitor\templates\monitor_api_design.html:157
+#: .\ommonitor\templates\monitor_design.html:102
+#: .\ommonitor\templates\monitor_design.html:286
+#: .\ommonitor\templates\monitor_design.html:310
+#: .\ommonitor\templates\monitor_parameter.html:31
+#: .\ommonitor\templates\node_list_manage.html:30
+#: .\omuser\templates\user_manage.html:29
+msgid " 刪除"
+msgstr " 削除"
+
+#: .\omformflow\templates\parameter_manage.html:30
+#: .\ommission\templates\mission.html:34 .\ommission\templates\mission.html:67
+#: .\ommission\templates\mission.html:104
+#: .\ommonitor\templates\monitor_parameter.html:32
+#: .\omorganization\templates\position_manage.html:31
+#: .\omuser\templates\group_detail.html:58
+#: .\omuser\templates\group_manage.html:31 .\omuser\templates\profile.html:188
+#: .\omuser\templates\profile.html:225 .\omuser\templates\role_detail.html:65
+#: .\omuser\templates\role_detail.html:104
+#: .\omuser\templates\role_manage.html:31
+#: .\omuser\templates\user_manage.html:32 .\templates\file_manage.html:41
+msgid " 篩選"
+msgstr " フィルタ"
+
+#: .\omformflow\templates\parameter_manage.html:45
+#: .\ommonitor\templates\monitor_parameter.html:42
+#: .\omorganization\templates\position_manage.html:40
+#: .\omuser\templates\group_manage.html:44
+#: .\omuser\templates\role_manage.html:40
+#: .\omuser\templates\user_manage.html:41
+msgid "編號"
+msgstr "番號"
+
+#: .\omformflow\templates\parameter_manage.html:98
+#: .\ommonitor\templates\monitor_parameter.html:95
+msgid "遮罩"
+msgstr "マスク"
+
+#: .\omformflow\templates\parameter_manage.html:100
+#: .\ommonitor\templates\monitor_parameter.html:97 .\templates\myform.html:932
+msgid "否"
+msgstr "いいえ"
+
+#: .\omformflow\templates\parameter_manage.html:101
+#: .\ommonitor\templates\monitor_parameter.html:98 .\templates\myform.html:932
+msgid "是"
+msgstr "はい"
+
+#: .\omformflow\templates\parameter_manage.html:124
+msgid "參數匯入"
+msgstr "引数のインポート"
+
+#: .\omformflow\templates\parameter_manage.html:194
+#: .\omformflow\templates\workflow_manage.html:69
+#: .\omformflow\templates\workflow_manage.html:406
+#: .\ommonitor\templates\monitor_parameter.html:174
+#: .\ommonitor\templates\node_groups_manage.html:187
+#: .\omuser\templates\group_detail.html:28
+#: .\omuser\templates\role_detail.html:28
+msgid "設定"
+msgstr "設定"
+
+#: .\omformflow\templates\parameter_manage.html:243
+#: .\ommonitor\templates\monitor_parameter.html:225
+msgid "新增參數"
+msgstr "引数を加える"
+
+#: .\omformflow\templates\parameter_manage.html:262
+#: .\ommonitor\templates\monitor_parameter.html:244
+msgid "設定參數"
+msgstr "引数の設定"
+
+#: .\omformflow\templates\parameter_manage.html:267
+#: .\ommonitor\templates\monitor_parameter.html:249
+msgid "刪除下列參數"
+msgstr "以下引数を削除"
+
+#: .\omformflow\templates\parameter_manage.html:313
+msgid "匯出下列參數"
+msgstr "以下引数をエクスポートする"
+
+#: .\omformflow\templates\scheduleflow_manage.html:15
+#: .\omformflow\templates\scheduleflow_manage.html:21
+#: .\omformflow\templates\scheduleflow_manage.html:43
+#: .\omformflow\templates\scheduleflow_manage.html:64
+#: .\templates\base_l_aside.html:61
+msgid "排程設定"
+msgstr "スケジュールを設定する"
+
+#: .\omformflow\templates\scheduleflow_manage.html:41
+#: .\omformflow\templates\workflow_manage.html:42 .\omformmodel\views.py:204
+#: .\ommission\models.py:15 .\ommission\templates\mission.html:48
+#: .\ommission\templates\mission.html:86
+#: .\omuser\templates\group_detail.html:76
+#: .\omuser\templates\role_detail.html:83
+msgid "狀態"
+msgstr "状態"
+
+#: .\omformflow\templates\scheduleflow_manage.html:79
+msgid "表單內容"
+msgstr "表內容"
+
+#: .\omformflow\templates\scheduleflow_manage.html:80
+#: .\omformflow\templates\scheduleflow_manage.html:90
+#: .\ommonitor\templates\monitor_design.html:139
+msgid "排程時間"
+msgstr "スケジュール時間"
+
+#: .\omformflow\templates\scheduleflow_manage.html:117
+#: .\omformflow\templates\scheduleflow_manage.html:306
+#: .\ommonitor\templates\monitor_design.html:166
+msgid "單次"
+msgstr "一回"
+
+#: .\omformflow\templates\scheduleflow_manage.html:118
+#: .\omformflow\templates\scheduleflow_manage.html:308
+#: .\ommonitor\templates\event_manage.html:194
+#: .\ommonitor\templates\monitor_design.html:167
+#: .\omuser\templates\profile.html:311 .\omuser\templates\profile.html:451
+msgid "秒"
+msgstr "秒"
+
+#: .\omformflow\templates\scheduleflow_manage.html:120
+#: .\omformflow\templates\scheduleflow_manage.html:312
+#: .\ommonitor\templates\monitor_design.html:169
+msgid "小時"
+msgstr "時間"
+
+#: .\omformflow\templates\scheduleflow_manage.html:121
+#: .\omformflow\templates\scheduleflow_manage.html:149
+#: .\ommonitor\templates\monitor_design.html:170
+#: .\ommonitor\templates\monitor_design.html:198
+msgid "日"
+msgstr "日"
+
+#: .\omformflow\templates\scheduleflow_manage.html:122
+#: .\omformflow\templates\scheduleflow_manage.html:316
+#: .\ommonitor\templates\monitor_design.html:171
+msgid "週"
+msgstr "週"
+
+#: .\omformflow\templates\scheduleflow_manage.html:123
+#: .\omformflow\templates\scheduleflow_manage.html:167
+#: .\omformflow\templates\scheduleflow_manage.html:318
+#: .\ommonitor\templates\monitor_design.html:172
+#: .\ommonitor\templates\monitor_design.html:216
+msgid "月"
+msgstr "月"
+
+#: .\omformflow\templates\scheduleflow_manage.html:132
+#: .\omformflow\templates\scheduleflow_manage.html:165
+#: .\omformflow\templates\scheduleflow_manage.html:308
+#: .\omformflow\templates\scheduleflow_manage.html:310
+#: .\omformflow\templates\scheduleflow_manage.html:312
+#: .\omformflow\templates\scheduleflow_manage.html:314
+#: .\omformflow\templates\scheduleflow_manage.html:316
+#: .\omformflow\templates\scheduleflow_manage.html:318
+#: .\ommonitor\templates\monitor_design.html:181
+#: .\ommonitor\templates\monitor_design.html:214
+msgid "每隔"
+msgstr "毎"
+
+#: .\omformflow\templates\scheduleflow_manage.html:134
+#: .\ommonitor\templates\monitor_design.html:183
+msgid "秒執行"
+msgstr "秒を実施"
+
+#: .\omformflow\templates\scheduleflow_manage.html:143
+#: .\ommonitor\templates\monitor_design.html:192
+msgid "一"
+msgstr "一"
+
+#: .\omformflow\templates\scheduleflow_manage.html:144
+#: .\ommonitor\templates\monitor_design.html:193
+msgid "二"
+msgstr "二"
+
+#: .\omformflow\templates\scheduleflow_manage.html:145
+#: .\ommonitor\templates\monitor_design.html:194
+msgid "三"
+msgstr "三"
+
+#: .\omformflow\templates\scheduleflow_manage.html:146
+#: .\ommonitor\templates\monitor_design.html:195
+msgid "四"
+msgstr "四"
+
+#: .\omformflow\templates\scheduleflow_manage.html:147
+#: .\ommonitor\templates\monitor_design.html:196
+msgid "五"
+msgstr "五"
+
+#: .\omformflow\templates\scheduleflow_manage.html:148
+#: .\ommonitor\templates\monitor_design.html:197
+msgid "六"
+msgstr "六"
+
+#: .\omformflow\templates\scheduleflow_manage.html:150
+#: .\omformflow\templates\scheduleflow_manage.html:169
+#: .\ommonitor\templates\monitor_api_design.html:299
+#: .\ommonitor\templates\monitor_design.html:199
+#: .\ommonitor\templates\monitor_design.html:218
+#: .\ommonitor\templates\monitor_design.html:452
+msgid "執行"
+msgstr "執行"
+
+#: .\omformflow\templates\scheduleflow_manage.html:297
+#: .\omformflow\templates\workflow_manage.html:28
+#: .\omformflow\templates\workflow_manage.html:382
+#: .\omformflow\templates\workflow_manage.html:391
+#: .\omformflow\templates\workflow_manage.html:400 .\ommonitor\models.py:81
+#: .\omuser\templates\group_detail.html:125
+#: .\omuser\templates\role_detail.html:169
+#: .\omuser\templates\user_manage.html:123
+msgid "啟用"
+msgstr "啟用"
+
+#: .\omformflow\templates\scheduleflow_manage.html:299
+#: .\omformflow\templates\workflow_manage.html:29
+#: .\omformflow\templates\workflow_manage.html:384
+#: .\omformflow\templates\workflow_manage.html:393
+#: .\omformflow\templates\workflow_manage.html:402
+#: .\omuser\templates\group_detail.html:130
+#: .\omuser\templates\role_detail.html:174
+#: .\omuser\templates\user_manage.html:125
+msgid "停用"
+msgstr "停止"
+
+#: .\omformflow\templates\scheduleflow_manage.html:314
+#: .\ommonitor\templates\event_manage.html:194
+msgid "天"
+msgstr "天"
+
+#: .\omformflow\templates\scheduleflow_manage.html:316
+#: .\templates\home.html:850 .\templates\home.html:913
+msgid "周一"
+msgstr "月曜日"
+
+#: .\omformflow\templates\scheduleflow_manage.html:316
+msgid "週二"
+msgstr "火曜日"
+
+#: .\omformflow\templates\scheduleflow_manage.html:316
+msgid "週三"
+msgstr "水曜日"
+
+#: .\omformflow\templates\scheduleflow_manage.html:316
+msgid "週四"
+msgstr "木曜日"
+
+#: .\omformflow\templates\scheduleflow_manage.html:316
+msgid "週五"
+msgstr "金曜日"
+
+#: .\omformflow\templates\scheduleflow_manage.html:316
+msgid "週六"
+msgstr "土曜日"
+
+#: .\omformflow\templates\scheduleflow_manage.html:316
+msgid "週日"
+msgstr "日曜日"
+
+#: .\omformflow\templates\scheduleflow_manage.html:410
+msgid "下列排程將被刪除"
+msgstr "以下のスケジュールは削除されます"
+
+#: .\omformflow\templates\scheduleflow_manage.html:610
+#: .\templates\myform.html:1956
+msgid "缺少必填欄位"
+msgstr "必須列がありません"
+
+#: .\omformflow\templates\scheduleflow_manage.html:633
+#: .\ommonitor\templates\monitor_design.html:1103
+msgid "秒鐘執行"
+msgstr "秒を実施"
+
+#: .\omformflow\templates\scheduleflow_manage.html:641
+#: .\ommonitor\templates\monitor_design.html:1111
+msgid "分鐘執行"
+msgstr "分を実施"
+
+#: .\omformflow\templates\scheduleflow_manage.html:649
+#: .\ommonitor\templates\monitor_design.html:1119
+msgid "小時執行"
+msgstr "時間を実施"
+
+#: .\omformflow\templates\scheduleflow_manage.html:657
+#: .\ommonitor\templates\monitor_design.html:1127
+msgid "天執行"
+msgstr "天を実施"
+
+#: .\omformflow\templates\workflow.html:144
+#: .\ommission\templates\mission.html:269
+#: .\ommission\templates\mission.html:362
+#: .\ommonitor\templates\event_manage.html:155 .\templates\myform.html:1086
+#: .\templates\myform.html:2093
+msgid "黃燈"
+msgstr "黄"
+
+#: .\omformflow\templates\workflow.html:146
+#: .\ommission\templates\mission.html:271
+#: .\ommission\templates\mission.html:364
+#: .\ommonitor\templates\event_manage.html:154 .\templates\myform.html:1088
+#: .\templates\myform.html:2095
+msgid "紅燈"
+msgstr "赤"
+
+#: .\omformflow\templates\workflow.html:148
+#: .\ommission\templates\mission.html:267
+#: .\ommission\templates\mission.html:273
+#: .\ommission\templates\mission.html:360
+#: .\ommission\templates\mission.html:366
+#: .\ommonitor\templates\event_manage.html:156 .\templates\myform.html:1090
+#: .\templates\myform.html:2091
+msgid "綠燈"
+msgstr "青"
+
+#: .\omformflow\templates\workflow.html:262
+msgid "表單列表"
+msgstr "フォームリスト"
+
+#: .\omformflow\templates\workflow.html:315
+#: .\omformflow\templates\workflow_manage.html:75
+msgid "開單"
+msgstr "新しいデータを作成"
+
+#: .\omformflow\templates\workflow.html:407 .\templates\myform.html:1617
+msgid "檔案上傳成功"
+msgstr "ファイルはアップロードされました"
+
+#: .\omformflow\templates\workflow.html:435
+msgid "請檢查必填欄位"
+msgstr "必要な列を確認してください"
+
+#: .\omformflow\templates\workflow.html:519 .\templates\myform.html:154
+msgid "新增檔案"
+msgstr "新しいファイルを作成"
+
+#: .\omformflow\templates\workflow.html:522
+#: .\omservice\templates\list.html:1153 .\templates\myform.html:158
+msgid "硬碟容量不足，請移除部分檔案再上傳或聯絡系統管理員"
+msgstr "ハードディスクの容量が不足しています。アップロードする前にファイルをいくつか削除してください。または，システム管理者に連絡してください"
+
+#: .\omformflow\templates\workflow.html:618
+msgid "下列表單將被刪除"
+msgstr "以下のフォームは削除されます"
+
+#: .\omformflow\templates\workflow_app_manage.html:28
+#: .\omservice\templates\list.html:147
+msgid "下架"
+msgstr "撤去"
+
+#: .\omformflow\templates\workflow_app_manage.html:35
+msgid "顯示上架紀錄"
+msgstr "リリースの記録を表示"
+
+#: .\omformflow\templates\workflow_app_manage.html:35
+msgid "紀錄"
+msgstr "バージョン"
+
+#: .\omformflow\templates\workflow_app_manage.html:130
+msgid "切換"
+msgstr "切り替え"
+
+#: .\omformflow\templates\workflow_app_manage.html:212
+msgid "下列應用將被下架"
+msgstr "以下のアプリは撤去されます"
+
+#: .\omformflow\templates\workflow_manage.html:18
+msgid "流程管理"
+msgstr "フロー管理"
+
+#: .\omformflow\templates\workflow_manage.html:74
+#: .\ommonitor\templates\monitor_api_manage.html:223
+msgid "欄位設定"
+msgstr "列の設定"
+
+#: .\omformflow\templates\workflow_manage.html:76
+msgid "查詢"
+msgstr "クエリ"
+
+#: .\omformflow\templates\workflow_manage.html:77
+msgid "推單"
+msgstr "推進"
+
+#: .\omformflow\templates\workflow_manage.html:103
+#: .\omformflow\templates\workflow_manage.html:145
+#: .\omformflow\templates\workflow_manage.html:183
+#: .\ommonitor\templates\node_groups_manage.html:187
+msgid "參數"
+msgstr "引数"
+
+#: .\omformflow\templates\workflow_manage.html:104
+#: .\omformflow\templates\workflow_manage.html:146
+#: .\omformflow\templates\workflow_manage.html:184
+msgid "回傳"
+msgstr "返事"
+
+#: .\omformflow\templates\workflow_manage.html:106
+#: .\omformflow\templates\workflow_manage.html:147
+#: .\omformflow\templates\workflow_manage.html:185
+#: .\templates\base_component.html:571 .\templates\base_component.html:591
+msgid "錯誤"
+msgstr "錯誤"
+
+#: .\omformflow\templates\workflow_manage.html:477
+msgid "下列流程將被啟用"
+msgstr "以下のフローが起動になります"
+
+#: .\omformflow\templates\workflow_manage.html:504
+msgid "下列流程將被停用"
+msgstr "以下フローは停止になります"
+
+#: .\omformflow\templates\workflow_manage.html:670
+#: .\ommonitor\templates\event_manage.html:860
+msgid "單號"
+msgstr "データ番号"
+
+#: .\omformflow\templates\workflow_manage.html:678
+#: .\omformflow\templates\workflow_manage.html:681
+msgid "資料的唯一編號，推單時使用"
+msgstr "推進の時に使われる唯一の番号です"
+
+#: .\omformflow\templates\workflow_manage.html:679
+#: .\omformflow\templates\workflow_manage.html:682
+msgid "停留的關卡名稱(人工處理點名稱"
+msgstr "滞在するステージの名前（手動処理ポイントの名）"
+
+#: .\omformflow\views.py:127 .\omformflow\views.py:417
+#: .\omformflow\views.py:3918 .\omformflow\views.py:3982
+#: .\omformflow\views.py:4676 .\omformflow\views.py:4746
+#: .\ommonitor\views.py:660 .\ommonitor\views.py:1789 .\ommonitor\views.py:1933
+#: .\omorganization\views.py:159 .\omuser\views.py:567
+msgid "建立成功。"
+msgstr "作成されました。"
+
+#: .\omformflow\views.py:130
+msgid "名稱重複。"
+msgstr "名が重複しています。"
+
+#: .\omformflow\views.py:133
+msgid "名稱不得為空值。"
+msgstr "名は空白にできません。"
+
+#: .\omformflow\views.py:145
+msgid "找不到該應用程式。"
+msgstr "アプリケーションが見つかりません。"
+
+#: .\omformflow\views.py:229 .\omformflow\views.py:310
+#: .\omformflow\views.py:2346 .\omformflow\views.py:4198
+#: .\ommonitor\views.py:520 .\omservice\views.py:362 .\omservice\views.py:381
+msgid "匯出成功。"
+msgstr "エクスポートしました。"
+
+#: .\omformflow\views.py:272 .\omformflow\views.py:336
+#: .\omformflow\views.py:4221 .\ommonitor\views.py:565 .\omservice\views.py:311
+msgid "匯入成功。"
+msgstr "インポートしました。"
+
+#: .\omformflow\views.py:379
+msgid "流程建立失敗。"
+msgstr "フローの作成に失敗しました"
+
+#: .\omformflow\views.py:383
+msgid "同應用內不可有重複的流程名稱。"
+msgstr "アプリケーションに重複するフローの名があってはなりません。"
+
+#: .\omformflow\views.py:420 .\ommonitor\views.py:665
+msgid "建立失敗。"
+msgstr "作成に失敗しました"
+
+#: .\omformflow\views.py:423 .\omformflow\views.py:4009
+#: .\omformflow\views.py:4016 .\omformflow\views.py:4075
+#: .\omformflow\views.py:4082 .\omformflow\views.py:4216
+#: .\omformflow\views.py:4679 .\omformflow\views.py:4720
+#: .\ommonitor\views.py:671 .\ommonitor\views.py:895 .\ommonitor\views.py:1239
+msgid "重複名稱。"
+msgstr "名が重複しています。"
+
+#: .\omformflow\views.py:650
+msgid "重複流程名稱。"
+msgstr "フロー名が重複しています。"
+
+#: .\omformflow\views.py:777
+msgid "複製失敗，該應用內含有同樣名稱之流程。"
+msgstr "コピーに失敗しました。アプリケーションに同じ名のフローが含まれています。"
+
+#: .\omformflow\views.py:781 .\ommonitor\views.py:1233
+msgid "複製成功。"
+msgstr "コピーしました"
+
+#: .\omformflow\views.py:848 .\omformflow\views.py:959
+msgid "上架成功。"
+msgstr "リリースしました"
+
+#: .\omformflow\views.py:857 .\omformflow\views.py:1906
+msgid "應用流程數量已達上限。"
+msgstr "フロー数が上限に達しました。"
+
+#: .\omformflow\views.py:907
+msgid "api路徑重複："
+msgstr "API Pathが重複しています："
+
+#: .\omformflow\views.py:976
+msgid "上架流程時失敗。"
+msgstr "フローがリリース中に失敗しました。"
+
+#: .\omformflow\views.py:978
+msgid "上架應用時失敗。"
+msgstr "アプリケーションがリリース中に失敗しました。"
+
+#: .\omformflow\views.py:1013
+msgid "流程名稱重複，同一個應用程式不可有重複的流程名稱。"
+msgstr "フロー名が重複しています。アプリケーションにフロー名を重複させることはできません。"
+
+#: .\omformflow\views.py:1024
+msgid "無法覆蓋預設流程。"
+msgstr "デフォルトフローをカバーできません。"
+
+#: .\omformflow\views.py:1044
+msgid "重複的應用程式名稱。"
+msgstr "アプリケーション名が重複しています。"
+
+#: .\omformflow\views.py:1438 .\omformflow\views.py:1477
+#: .\omformflow\views.py:1609 .\omformflow\views.py:1731
+msgid "設定成功。"
+msgstr "設定しました。"
+
+#: .\omformflow\views.py:1441 .\omformflow\views.py:2223
+#: .\omformflow\views.py:3638
+msgid "找不到該流程。"
+msgstr "フローが見つかりませんでした。"
+
+#: .\omformflow\views.py:1541
+msgid "推單成功"
+msgstr "推進しました"
+
+#: .\omformflow\views.py:1542
+msgid "推單失敗"
+msgstr "推進に失敗しました"
+
+#: .\omformflow\views.py:1546 .\omformflow\views.py:1547
+msgid "開單成功"
+msgstr "作成しました"
+
+#: .\omformflow\views.py:1548
+msgid "開單失敗"
+msgstr "作成に失敗しました"
+
+#: .\omformflow\views.py:1570
+msgid "讀取失敗。"
+msgstr "ローディングに失敗しました。"
+
+#: .\omformflow\views.py:1638
+msgid "缺少schedule_id。\n"
+msgstr "schedule_idがありません。\n"
+
+#: .\omformflow\views.py:1686
+msgid "請選擇日期或星期。\n"
+msgstr "日付または週を選択してください。\n"
+
+#: .\omformflow\views.py:1693
+msgid "請選擇流程。\n"
+msgstr "フローを選択してください。\n"
+
+#: .\omformflow\views.py:1734
+msgid "找不到該排程。"
+msgstr "スケジュールが見つかりません。"
+
+#: .\omformflow\views.py:1834 .\ommonitor\views.py:1366
+msgid "下架成功。"
+msgstr "撤去しました。"
+
+#: .\omformflow\views.py:1837
+msgid "請提供必要參數：app_id或是app_name。"
+msgstr "必要な引数を入力してください：app_idかapp_name。"
+
+#: .\omformflow\views.py:1894
+msgid "重新上架成功。"
+msgstr "再リリースしました。"
+
+#: .\omformflow\views.py:1897
+msgid "重新上架失敗。"
+msgstr "再リリースにしっぱいしました"
+
+#: .\omformflow\views.py:1900
+msgid "找不到該應用流程。"
+msgstr "アプリフローが見つかりません。"
+
+#: .\omformflow\views.py:1994 .\omformflow\views.py:1996
+#: .\omformflow\views.py:2900 .\omformflow\views.py:4775
+msgid "查詢失敗。"
+msgstr "クエリに失敗しました。"
+
+#: .\omformflow\views.py:2350
+msgid "匯出失敗。"
+msgstr "エクスポートに失敗しました。"
+
+#: .\omformflow\views.py:2409
+msgid "請提供正確的動作，新增、編輯或刪除。"
+msgstr "正しい操作(作成、編集、削除)をしてください"
+
+#: .\omformflow\views.py:2426
+msgid "該流程未啟用API呼叫。"
+msgstr "フローではAPI呼び出しが有効になっていません。"
+
+#: .\omformflow\views.py:2560 .\omformflow\views.py:2760
+#: .\omservice\templates\list.html:144 .\omservice\views.py:266
+msgid "缺少必填欄位。"
+msgstr "必要なフィールドがありません。"
+
+#: .\omformflow\views.py:2592
+msgid "開單失敗："
+msgstr "作成に失敗しました："
+
+#: .\omformflow\views.py:2596 .\omformflow\views.py:2598
+msgid "開單成功。"
+msgstr "作成しました。"
+
+#: .\omformflow\views.py:2603
+msgid "該流程沒有已上架的版本。"
+msgstr "フローのリリースバージョンはありません。"
+
+#: .\omformflow\views.py:2751
+msgid "推單失敗："
+msgstr "推進に失敗しました："
+
+#: .\omformflow\views.py:2755
+msgid "推單成功。"
+msgstr "推進しました。"
+
+#: .\omformflow\views.py:2762
+msgid "該流程目前並未處於人工處理點，無法人工推進流程。"
+msgstr "フローは現在手動処理ポイントにないため、フローを手動で進めることはできません。"
+
+#: .\omformflow\views.py:2766
+msgid "該流程有多個已上架的版本，請聯絡系統管理員協助處理。"
+msgstr "フローには複数のバージョンがリリースされていました。システム管理者にお問い合わせください。"
+
+#: .\omformflow\views.py:2768
+msgid "該流程沒有已上架的版本"
+msgstr "リリースされたフローバージョンがありません"
+
+#: .\omformflow\views.py:2770
+msgid "該單目前為執行狀態，無法進行更新/刪除。"
+msgstr "データは現在実行中ので、更新/削除できません。"
+
+#: .\omformflow\views.py:2772 .\omformflow\views.py:2863
+msgid "找不到該資料庫：Omdata_"
+msgstr "データベースが見つかりませんでした：Omdata_"
+
+#: .\omformflow\views.py:2866
+msgid "找不到該筆資料。"
+msgstr "資料が見つかりません。"
+
+#: .\omformflow\views.py:3354
+msgid "關聯對象不可為同一資料。"
+msgstr "関連するオブジェクトと同じ資料のことはできません。"
+
+#: .\omformflow\views.py:3358
+msgid "不同表單資料不可建立母子關聯。"
+msgstr "異なる表資料では母子関係を確立できません。"
+
+#: .\omformflow\views.py:3384
+msgid "建立關聯成功。"
+msgstr "関連付けが作成されました"
+
+#: .\omformflow\views.py:3388
+msgid "更改關聯成功。"
+msgstr "関連付けが変更されました。"
+
+#: .\omformflow\views.py:3395
+msgid "刪除關聯成功。"
+msgstr "関連付けが削除されました。"
+
+#: .\omformflow\views.py:3726 .\ommonitor\views.py:1440
+#: .\ommonitor\views.py:2066 .\ommonitor\views.py:2143
+msgid "更新失敗："
+msgstr "更新に失敗しました："
+
+#: .\omformflow\views.py:3732
+msgid "此筆資料並無錯誤，無法進行修改。"
+msgstr "データにエラーはなく、変更できません。"
+
+#: .\omformflow\views.py:3735
+msgid "此筆資料正在執行中，無法進行修改。"
+msgstr "データは現在実行中であり、変更できません。"
+
+#: .\omformflow\views.py:3738
+msgid "此筆資料已經關閉，無法進行修改。"
+msgstr "データは閉じられており、変更できません。"
+
+#: .\omformflow\views.py:3741
+msgid "無法修改歷史資料。"
+msgstr "履歴データを変更できません。"
+
+#: .\omformflow\views.py:3950
+#, fuzzy
+#| msgid "搜尋成功"
+msgid "搜尋成功。"
+msgstr "検索成功。"
+
+#: .\omformflow\views.py:3988 .\omformflow\views.py:4053
+msgid "您沒有權限進行此操作"
+msgstr "アクセス権限がないので、操作できません。"
+
+#: .\omformflow\views.py:4284 .\ommonitor\views.py:1314
+msgid "派送成功。"
+msgstr "割り当てられました。"
+
+#: .\omformflow\views.py:4313 .\omformflow\views.py:4314
+msgid "找不到符合的條件。"
+msgstr "一致する条件は見つかりません。"
+
+#: .\omformflow\views.py:4857 .\omformflow\views.py:5015
+msgid "[違反] "
+msgstr "[違反]"
+
+#: .\omformflow\views.py:4866 .\omformflow\views.py:5024
+msgid "[提醒] "
+msgstr "[提醒]"
+
+#: .\omformmodel\views.py:201
+msgid "資料代碼"
+msgstr "資料コード"
+
+#: .\omformmodel\views.py:203 .\ommission\models.py:20 .\ommonitor\models.py:52
+msgid "歷史資料"
+msgstr "歴史資料"
+
+#: .\omformmodel\views.py:207 .\ommission\models.py:29
+msgid "受派群組"
+msgstr "指定されたグループ"
+
+#: .\omformmodel\views.py:210 .\omformmodel\views.py:233
+msgid "關卡類型"
+msgstr "ステージ種類"
+
+#: .\omformmodel\views.py:211 .\omformmodel\views.py:234
+#: .\ommission\models.py:22 .\templates\myform.html:86
+msgid "關卡名稱"
+msgstr "ステージ名"
+
+#: .\omformmodel\views.py:212
+msgid "執行標記"
+msgstr "執行のマーク"
+
+#: .\omformmodel\views.py:216
+msgid "停止時間"
+msgstr "停止時間"
+
+#: .\omformmodel\views.py:217 .\ommission\models.py:23
+msgid "開單人員"
+msgstr "クリエーター"
+
+#: .\omformmodel\views.py:218 .\ommission\models.py:24
+msgid "更新人員"
+msgstr "アップデーター"
+
+#: .\omformmodel\views.py:219
+msgid "流程參數"
+msgstr "フローの引数"
+
+#: .\omformmodel\views.py:220 .\ompolicymodel\views.py:98
+msgid "錯誤訊息"
+msgstr "エラー"
+
+#: .\omformmodel\views.py:221
+msgid "初始資料"
+msgstr "最初の資料"
+
+#: .\omformmodel\views.py:222
+msgid "子單"
+msgstr "子フォーム"
+
+#: .\omformmodel\views.py:231
+msgid "多重資料編號"
+msgstr "複数の資料番号"
+
+#: .\omformmodel\views.py:232
+msgid "功能點"
+msgstr "機能点"
+
+#: .\omformmodel\views.py:236
+msgid "輸出參數"
+msgstr "アウトプット"
+
+#: .\omformmodel\views.py:237
+msgid "異常標記"
+msgstr "異常のマーク"
+
+#: .\omldap\ldap_config.py:392
+msgid "LDAP 同步完成"
+msgstr "LDAP同調完了"
+
+#: .\omldap\ldap_config.py:395
+msgid "LDAP 設定值為空"
+msgstr "LDAP設定が空いています"
+
+#: .\omldap\ldap_config.py:399
+msgid "LDAP 同步失敗 ,"
+msgstr "LDAP同調失敗 ,"
+
+#: .\omldap\views.py:36
+msgid "LDAP連線成功"
+msgstr "LDAP接続しました"
+
+#: .\omldap\views.py:40
+msgid "LDAP帳號密碼錯誤"
+msgstr "LDAPアカウントのパスワードが正しくありません"
+
+#: .\omldap\views.py:47
+msgid "AD伺服器無法使用"
+msgstr "ADサーバーが利用できません"
+
+#: .\omldap\views.py:65
+msgid "LDAP更新正在執行"
+msgstr "LDAP更新が進行中です"
+
+#: .\ommessage\models.py:16
+msgid "主旨"
+msgstr " "
+
+#: .\ommessage\models.py:21
+msgid "標記"
+msgstr " "
+
+#: .\ommessage\models.py:65
+msgid "發送者名稱"
+msgstr " "
+
+#: .\ommessage\models.py:67
+msgid "發送群組名稱"
+msgstr " "
+
+#: .\ommessage\models.py:68
+msgid "已刪除的接收者名稱"
+msgstr " "
+
+#: .\ommessage\models.py:69
+msgid "接收群組名稱"
+msgstr " "
+
+#: .\ommessage\models.py:71 .\ommonitor\models.py:140
+#: .\ommonitor\templates\event_manage.html:49
+#: .\ommonitor\templates\event_manage.html:75
+#: .\ommonitor\templates\event_manage.html:236
+#: .\ommonitor\templates\event_manage.html:237
+#: .\ommonitor\templates\event_manage.html:658
+#: .\ommonitor\templates\event_manage.html:673
+#: .\ommonitor\templates\monitor_api_design.html:142
+#: .\ommonitor\templates\monitor_api_design.html:224
+#: .\ommonitor\templates\monitor_api_design.html:225
+#: .\ommonitor\templates\monitor_design.html:295
+#: .\ommonitor\templates\monitor_design.html:377
+#: .\ommonitor\templates\monitor_design.html:378
+msgid "內文"
+msgstr "内容"
+
+#: .\ommessage\models.py:84
+msgid "是否讀取"
+msgstr " "
+
+#: .\ommessage\templates\compose.html:12
+#: .\ommessage\templates\messageManage.html:24
+msgid "新訊息"
+msgstr " "
+
+#: .\ommessage\templates\compose.html:17 .\ommessage\templates\message.html:12
+#: .\ommessage\templates\message.html:17
+#: .\ommessage\templates\messageManage.html:12
+#: .\ommessage\templates\messageManage.html:17 .\templates\file_manage.html:96
+msgid "訊息管理"
+msgstr " "
+
+#: .\ommessage\templates\compose.html:26
+msgid " 回到訊息管理"
+msgstr " "
+
+#: .\ommessage\templates\compose.html:41
+msgid "發送身分"
+msgstr " "
+
+#: .\ommessage\templates\compose.html:42
+msgid "訊息發送身分"
+msgstr " "
+
+#: .\ommessage\templates\compose.html:48
+msgid "訊息成員"
+msgstr " "
+
+#: .\ommessage\templates\compose.html:62
+msgid "新增附件"
+msgstr " "
+
+#: .\ommessage\templates\compose.html:72
+msgid "傳送"
+msgstr " "
+
+#: .\ommessage\templates\message.html:25
+#: .\ommessage\templates\messageManage.html:292
+msgid "回覆"
+msgstr " "
+
+#: .\ommessage\templates\message.html:26
+#: .\ommessage\templates\messageManage.html:293
+msgid " 回覆"
+msgstr " "
+
+#: .\ommessage\templates\messageManage.html:27
+#: .\omservice\templates\list.html:122
+msgid "資料夾"
+msgstr " "
+
+#: .\ommessage\templates\messageManage.html:32
+#: .\ommessage\templates\messageManage.html:44
+msgid "我的訊息"
+msgstr " "
+
+#: .\ommessage\templates\messageManage.html:34
+msgid "發送紀錄"
+msgstr " "
+
+#: .\ommessage\templates\messageManage.html:35
+#: .\ommessage\templates\messageManage.html:44
+msgid "垃圾桶"
+msgstr " "
+
+#: .\ommessage\templates\messageManage.html:44
+msgid "寄件備份"
+msgstr " "
+
+#: .\ommessage\templates\messageManage.html:175
+msgid "周日 "
+msgstr " "
+
+#: .\ommessage\templates\messageManage.html:176
+msgid "周一 "
+msgstr " "
+
+#: .\ommessage\templates\messageManage.html:177
+msgid "周二 "
+msgstr " "
+
+#: .\ommessage\templates\messageManage.html:178
+msgid "周三 "
+msgstr " "
+
+#: .\ommessage\templates\messageManage.html:179
+msgid "周四 "
+msgstr " "
+
+#: .\ommessage\templates\messageManage.html:180
+msgid "周五 "
+msgstr " "
+
+#: .\ommessage\templates\messageManage.html:181
+msgid "周六 "
+msgstr " "
+
+#: .\ommessage\templates\messageManage.html:275
+#: .\ommission\templates\mission.html:528 .\templates\myform.html:851
+#: .\templates\myform.html:1408 .\templates\myform.html:1455
+msgid "此附件已刪除"
+msgstr " "
+
+#: .\ommessage\templates\messageManage.html:340
+#: .\ommessage\templates\messageManage.html:341
+msgid "筆訊息"
+msgstr " "
+
+#: .\ommessage\views.py:98 .\ommessage\views.py:324 .\ommessage\views.py:343
+#: .\ommessage\views.py:361
+msgid "請求處理成功"
+msgstr " "
+
+#: .\ommessage\views.py:121 .\ommessage\views.py:281
+msgid "提供資料格式有誤"
+msgstr " "
+
+#: .\ommessage\views.py:139 .\ommessage\views.py:190
+msgid "搜尋成功"
+msgstr " "
+
+#: .\ommessage\views.py:142 .\ommessage\views.py:195
+msgid "請提供訊息編號"
+msgstr " "
+
+#: .\ommessage\views.py:278
+msgid "發送成功"
+msgstr " "
+
+#: .\ommessage\views.py:300
+msgid "刪除訊息成功"
+msgstr " "
+
+#: .\ommessage\views.py:303
+msgid "訊息還原成功"
+msgstr " "
+
+#: .\ommessage\views.py:306
+msgid "找不到訊息資料"
+msgstr " "
+
+#: .\ommission\models.py:12 .\ommission\templates\mission.html:10
+#: .\ommission\templates\mission.html:15 .\templates\base_l_aside.html:17
+#: .\templates\myform.html:1871
+msgid "我的任務"
+msgstr "私の任務"
+
+#: .\ommission\models.py:28 .\ommission\templates\mission.html:47
+#: .\ommission\templates\mission.html:85 .\ommission\templates\mission.html:122
+#: .\ommonitor\templates\event_manage.html:167
+#: .\ommonitor\templates\event_manage.html:807
+msgid "受派人"
+msgstr "指定された方"
+
+#: .\ommission\models.py:30 .\ommission\templates\mission.html:50
+msgid "快速操作"
+msgstr "クイック操作"
+
+#: .\ommission\models.py:31 .\templates\myform.html:36
+#: .\templates\myform.html:140 .\templates\myform.html:843
+#: .\templates\myform.html:1400
+msgid "附加檔案"
+msgstr "アタッチメント"
+
+#: .\ommission\models.py:32
+msgid "關單"
+msgstr "クローズ"
+
+#: .\ommission\templates\mission.html:25
+msgid "任務列表"
+msgstr "任務リスト"
+
+#: .\ommission\templates\mission.html:26
+msgid "進行中任務"
+msgstr "執行中任務"
+
+#: .\ommission\templates\mission.html:27
+msgid "處理紀錄"
+msgstr "記録"
+
+#: .\ommission\templates\mission.html:41 .\ommission\templates\mission.html:80
+#: .\ommission\templates\mission.html:117
+msgid "功能名稱"
+msgstr "機能名"
+
+#: .\ommission\templates\mission.html:46 .\ommission\templates\mission.html:84
+#: .\ommission\templates\mission.html:121
+#: .\ommonitor\templates\event_manage.html:162
+#: .\ommonitor\templates\event_manage.html:767
+msgid "受派組織"
+msgstr "指定されたグループ"
+
+#: .\ommission\templates\mission.html:49 .\ommission\templates\mission.html:123
+#: .\templates\myform.html:388
+msgid "更新日期"
+msgstr "更新日"
+
+#: .\ommission\templates\mission.html:71 .\ommission\templates\mission.html:108
+msgid "所有組織"
+msgstr "全部"
+
+#: .\ommission\templates\mission.html:87
+msgid "開單日期"
+msgstr "クリエイター日"
+
+#: .\ommission\templates\mission.html:533 .\templates\myform.html:856
+#: .\templates\myform.html:1413
+msgid "上傳者"
+msgstr "アップローダー"
+
+#: .\ommonitor\models.py:26
+msgid "資料收集管理"
+msgstr "資料収集管理"
+
+#: .\ommonitor\models.py:34 .\ommonitor\models.py:95
+msgid "資料表編號"
+msgstr "資料表番号"
+
+#: .\ommonitor\models.py:46 .\ommonitor\models.py:67
+#: .\ommonitor\templates\monitor_api_manage.html:433
+#: .\ommonitor\templates\monitor_manage.html:405
+#: .\ommonitor\templates\node_list_manage.html:46
+#: .\ommonitor\templates\node_manage.html:76
+#: .\ommonitor\templates\node_manage.html:77
+#: .\ommonitor\templates\node_manage.html:87
+msgid "作業系統"
+msgstr "OS"
+
+#: .\ommonitor\models.py:48
+msgid "排程"
+msgstr "スケジュール"
+
+#: .\ommonitor\models.py:49
+msgid "事件規則"
+msgstr "事件ルール"
+
+#: .\ommonitor\models.py:51
+msgid "套件"
+msgstr "パッケージ"
+
+#: .\ommonitor\models.py:64 .\ommonitor\templates\node_manage.html:42
+#: .\ommonitor\templates\node_manage.html:43 .\omuser\models.py:65
+msgid "顯示名稱"
+msgstr "表示名"
+
+#: .\ommonitor\models.py:65 .\ommonitor\templates\node_list_manage.html:45
+#: .\ommonitor\templates\node_manage.html:47
+#: .\ommonitor\templates\node_manage.html:48
+msgid "主機名稱"
+msgstr "ホスト名"
+
+#: .\ommonitor\models.py:66
+msgid "主機識別碼"
+msgstr "uuid"
+
+#: .\ommonitor\models.py:68
+msgid "作業系統版本1"
+msgstr "OSバージョン1"
+
+#: .\ommonitor\models.py:69
+msgid "作業系統版本2"
+msgstr "OSバージョン2"
+
+#: .\ommonitor\models.py:70
+msgid "IP位置"
+msgstr "IPアドレス"
+
+#: .\ommonitor\models.py:71
+msgid "連接阜"
+msgstr "ポート"
+
+#: .\ommonitor\models.py:72
+msgid "omflow版本"
+msgstr "omflowバージョン"
+
+#: .\ommonitor\models.py:74
+msgid "負載平衡"
+msgstr "ロードバランス"
+
+#: .\ommonitor\models.py:76
+msgid "軟體清單"
+msgstr "ソフトウェアリスト"
+
+#: .\ommonitor\models.py:77 .\ommonitor\templates\node_manage.html:93
+msgid "硬體資訊"
+msgstr "ハードウェア情報"
+
+#: .\ommonitor\models.py:78
+msgid "api碼"
+msgstr "apiコード"
+
+#: .\ommonitor\models.py:109 .\ommonitor\templates\node_groups_manage.html:73
+#: .\ommonitor\templates\node_groups_manage.html:74
+msgid "群組名稱"
+msgstr "グループ名"
+
+#: .\ommonitor\models.py:137 .\ommonitor\templates\event_manage.html:172
+#: .\ommonitor\templates\event_manage.html:173
+#: .\ommonitor\templates\event_manage.html:267
+#: .\ommonitor\templates\event_manage.html:268
+#: .\ommonitor\templates\event_manage.html:658
+#: .\ommonitor\templates\event_manage.html:673
+#: .\ommonitor\templates\monitor_api_design.html:233
+#: .\ommonitor\templates\monitor_api_design.html:234
+#: .\ommonitor\templates\monitor_design.html:386
+#: .\ommonitor\templates\monitor_design.html:387
+msgid "應用程式"
+msgstr "アプリケーション"
+
+#: .\ommonitor\models.py:141 .\ommonitor\templates\event_manage.html:47
+#: .\ommonitor\templates\event_manage.html:242
+#: .\ommonitor\templates\event_manage.html:460
+#: .\ommonitor\templates\event_manage.html:658
+#: .\ommonitor\templates\event_manage.html:673
+#: .\ommonitor\templates\monitor_api_design.html:143
+#: .\ommonitor\templates\monitor_api_design.html:206
+#: .\ommonitor\templates\monitor_api_design.html:372
+#: .\ommonitor\templates\monitor_api_design.html:1199
+#: .\ommonitor\templates\monitor_design.html:296
+#: .\ommonitor\templates\monitor_design.html:359
+#: .\ommonitor\templates\monitor_design.html:546
+#: .\ommonitor\templates\monitor_design.html:1501
+msgid "嚴重等級"
+msgstr "レベル"
+
+#: .\ommonitor\models.py:143 .\ommonitor\templates\event_manage.html:50
+#: .\ommonitor\templates\event_manage.html:252
+#: .\ommonitor\templates\event_manage.html:253
+#: .\ommonitor\templates\event_manage.html:658
+#: .\ommonitor\templates\event_manage.html:673
+msgid "來源"
+msgstr "ソース"
+
+#: .\ommonitor\models.py:144
+msgid "來源2"
+msgstr "ソース2"
+
+#: .\ommonitor\models.py:147
+msgid "關單標記"
+msgstr "クローズマーク"
+
+#: .\ommonitor\models.py:159
+msgid "條件"
+msgstr "条件"
+
+#: .\ommonitor\templates\event_manage.html:12 .\templates\base_l_aside.html:46
+msgid "事件管理"
+msgstr "事件管理"
+
+#: .\ommonitor\templates\event_manage.html:15
+#: .\ommonitor\templates\monitor_api_design.html:16
+#: .\ommonitor\templates\monitor_api_manage.html:17
+#: .\ommonitor\templates\monitor_design.html:16
+#: .\ommonitor\templates\monitor_manage.html:17
+#: .\ommonitor\templates\node_list_manage.html:17
+msgid " 首頁"
+msgstr " ホーム"
+
+#: .\ommonitor\templates\event_manage.html:16
+#: .\ommonitor\templates\monitor_api_design.html:17
+#: .\ommonitor\templates\monitor_design.html:17
+#: .\ommonitor\templates\node_groups_manage.html:18
+#: .\ommonitor\templates\node_list_manage.html:18
+msgid " 資料收集"
+msgstr "データ収集"
+
+#: .\ommonitor\templates\event_manage.html:17
+msgid " 事件管理"
+msgstr "　事件管理"
+
+#: .\ommonitor\templates\event_manage.html:27
+msgid " 事件列表"
+msgstr " 事件リスト"
+
+#: .\ommonitor\templates\event_manage.html:28
+msgid " 事故規則"
+msgstr " 事件ルール"
+
+#: .\ommonitor\templates\event_manage.html:51
+#: .\ommonitor\templates\event_manage.html:193
+#: .\ommonitor\templates\event_manage.html:258
+#: .\ommonitor\templates\event_manage.html:259 .\templates\myform.html:85
+#: .\templates\myform.html:222
+msgid "時間"
+msgstr "時間"
+
+#: .\ommonitor\templates\event_manage.html:65
+#: .\ommonitor\templates\monitor_api_design.html:37
+#: .\ommonitor\templates\monitor_design.html:38
+#: .\templates\sidebar_design.html:26
+msgid " 儲存"
+msgstr " 保存する"
+
+#: .\ommonitor\templates\event_manage.html:73
+#: .\ommonitor\templates\monitor_api_design.html:140
+#: .\ommonitor\templates\monitor_api_design.html:199
+#: .\ommonitor\templates\monitor_api_design.html:200
+#: .\ommonitor\templates\monitor_design.html:293
+#: .\ommonitor\templates\monitor_design.html:352
+#: .\ommonitor\templates\monitor_design.html:353
+msgid "規則名稱"
+msgstr "ルール名"
+
+#: .\ommonitor\templates\event_manage.html:110
+#: .\ommonitor\templates\event_manage.html:111
+msgid "事故名稱"
+msgstr "事故名"
+
+#: .\ommonitor\templates\event_manage.html:114
+#: .\ommonitor\templates\event_manage.html:115
+msgid "事故主旨"
+msgstr "事故主旨"
+
+#: .\ommonitor\templates\event_manage.html:118
+#: .\ommonitor\templates\event_manage.html:119
+msgid "事故內容"
+msgstr "事故内容"
+
+#: .\ommonitor\templates\event_manage.html:125
+#: .\ommonitor\templates\event_manage.html:426
+msgid "影響性"
+msgstr "影響性"
+
+#: .\ommonitor\templates\event_manage.html:127
+#: .\ommonitor\templates\event_manage.html:136
+#: .\ommonitor\templates\event_manage.html:145
+msgid "嚴重"
+msgstr "クリティカル"
+
+#: .\ommonitor\templates\event_manage.html:128
+#: .\ommonitor\templates\event_manage.html:137
+#: .\ommonitor\templates\event_manage.html:146
+msgid "高"
+msgstr "高"
+
+#: .\ommonitor\templates\event_manage.html:129
+#: .\ommonitor\templates\event_manage.html:138
+#: .\ommonitor\templates\event_manage.html:147
+msgid "中"
+msgstr "中"
+
+#: .\ommonitor\templates\event_manage.html:130
+#: .\ommonitor\templates\event_manage.html:139
+#: .\ommonitor\templates\event_manage.html:148
+msgid "低"
+msgstr "低"
+
+#: .\ommonitor\templates\event_manage.html:134
+#: .\ommonitor\templates\event_manage.html:427
+msgid "緊急性"
+msgstr "緊急性"
+
+#: .\ommonitor\templates\event_manage.html:143
+#: .\ommonitor\templates\event_manage.html:428
+msgid "優先等級"
+msgstr "優先レベル"
+
+#: .\ommonitor\templates\event_manage.html:184
+msgid "事故觸發條件"
+msgstr "事故の触発条件"
+
+#: .\ommonitor\templates\event_manage.html:194
+msgid "時"
+msgstr "時間"
+
+#: .\ommonitor\templates\event_manage.html:195
+msgid "次數"
+msgstr "回"
+
+#: .\ommonitor\templates\event_manage.html:225
+msgid "事件內容"
+msgstr "事件內容"
+
+#: .\ommonitor\templates\event_manage.html:385
+#: .\ommonitor\templates\event_manage.html:856
+#: .\ommonitor\templates\event_manage.html:872 .\templates\myform.html:40
+msgid "服務水準"
+msgstr "SLA"
+
+#: .\ommonitor\templates\event_manage.html:389
+msgid "定期檢查"
+msgstr "定期檢查"
+
+#: .\ommonitor\templates\event_manage.html:393
+#: .\ommonitor\templates\monitor_api_manage.html:18
+#: .\ommonitor\templates\monitor_manage.html:18
+#: .\ommonitor\templates\monitor_parameter.html:17
+#: .\ommonitor\templates\node_manage.html:17 .\templates\base_l_aside.html:39
+msgid "資料收集"
+msgstr "データ収集"
+
+#: .\ommonitor\templates\event_manage.html:473
+msgid "新增事故規則"
+msgstr "事故ルールを作成します"
+
+#: .\ommonitor\templates\event_manage.html:497
+msgid "編輯事故規則"
+msgstr "事故ルールを編集します"
+
+#: .\ommonitor\templates\event_manage.html:532
+#: .\ommonitor\templates\monitor_api_design.html:901
+#: .\ommonitor\templates\monitor_design.html:1203
+msgid "刪除下列規則"
+msgstr "以下のルールを削除されます"
+
+#: .\ommonitor\templates\event_manage.html:658
+#: .\ommonitor\templates\event_manage.html:673
+#: .\ommonitor\templates\event_manage.html:875
+#: .\ommonitor\templates\monitor_api_manage.html:1012
+msgid "收集器"
+msgstr "コレクタ"
+
+#: .\ommonitor\templates\event_manage.html:659
+#: .\ommonitor\templates\event_manage.html:674
+msgid "包含"
+msgstr "含む"
+
+#: .\ommonitor\templates\event_manage.html:659
+#: .\ommonitor\templates\event_manage.html:674
+msgid "不包含"
+msgstr "含みません"
+
+#: .\ommonitor\templates\event_manage.html:672
+msgid "且"
+msgstr "AND"
+
+#: .\ommonitor\templates\event_manage.html:672
+msgid "或"
+msgstr "OR"
+
+#: .\ommonitor\templates\event_manage.html:682
+msgid "輸出結果"
+msgstr "アウトプット"
+
+#: .\ommonitor\templates\event_manage.html:858
+msgid "應用"
+msgstr "アプリケーション"
+
+#: .\ommonitor\templates\event_manage.html:859
+#: .\ommonitor\templates\event_manage.html:873
+#: .\ommonitor\templates\node_manage.html:30
+msgid "流程"
+msgstr "フロー"
+
+#: .\ommonitor\templates\event_manage.html:865
+msgid "系統定期檢查"
+msgstr "システム定期檢查"
+
+#: .\ommonitor\templates\event_manage.html:866
+msgid "收集器狀態檢查"
+msgstr "コレクタ状態檢查"
+
+#: .\ommonitor\templates\event_manage.html:874
+msgid "事件"
+msgstr "事件"
+
+#: .\ommonitor\templates\monitor_api_design.html:18
+#: .\ommonitor\templates\monitor_api_manage.html:13
+#: .\ommonitor\templates\monitor_api_manage.html:19
+msgid " 收集器API"
+msgstr "コレクタAPI"
+
+#: .\ommonitor\templates\monitor_api_design.html:30
+#: .\ommonitor\templates\monitor_design.html:30
+msgid " 參數設定"
+msgstr " 引数設定"
+
+#: .\ommonitor\templates\monitor_api_design.html:31
+#: .\ommonitor\templates\monitor_design.html:31
+msgid " 流程設計"
+msgstr " 流れ設計"
+
+#: .\ommonitor\templates\monitor_api_design.html:32
+#: .\ommonitor\templates\monitor_design.html:32
+msgid " 子流程"
+msgstr " サブ流れ"
+
+#: .\ommonitor\templates\monitor_api_design.html:33
+#: .\ommonitor\templates\monitor_design.html:34
+msgid " 事件開單"
+msgstr "事件ルール"
+
+#: .\ommonitor\templates\monitor_api_design.html:34
+#: .\ommonitor\templates\monitor_design.html:35
+msgid " 版本紀錄"
+msgstr "バージョン"
+
+#: .\ommonitor\templates\monitor_api_design.html:50
+#: .\ommonitor\templates\monitor_design.html:51
+msgid " 流程名稱"
+msgstr " フロー名"
+
+#: .\ommonitor\templates\monitor_api_design.html:54
+#: .\ommonitor\templates\monitor_design.html:55
+msgid " API 路徑"
+msgstr " API Path"
+
+#: .\ommonitor\templates\monitor_api_design.html:156
+#: .\ommonitor\templates\monitor_design.html:309
+msgid " 讀取"
+msgstr "読み込む"
+
+#: .\ommonitor\templates\monitor_api_design.html:313
+#: .\ommonitor\templates\monitor_design.html:469
+msgid "變數"
+msgstr "引数"
+
+#: .\ommonitor\templates\monitor_api_design.html:753
+#: .\ommonitor\templates\monitor_design.html:957
+msgid "子流程名稱重複，請重新輸入。"
+msgstr "サブ流れ名が重複しています。再入力してください。"
+
+#: .\ommonitor\templates\monitor_api_design.html:858
+#: .\ommonitor\templates\monitor_design.html:1160
+msgid "新增事件規則"
+msgstr "事件ルールを作成します"
+
+#: .\ommonitor\templates\monitor_api_design.html:874
+#: .\ommonitor\templates\monitor_design.html:1176
+msgid "編輯事件規則"
+msgstr "事件ルールを編集します"
+
+#: .\ommonitor\templates\monitor_api_design.html:1141
+#: .\ommonitor\templates\monitor_design.html:1443
+msgid "儲存後將覆蓋為最新版本"
+msgstr "保存した後、最新バージョンになりますか。"
+
+#: .\ommonitor\templates\monitor_api_manage.html:73
+#: .\ommonitor\templates\monitor_manage.html:73
+msgid "設定應用"
+msgstr "アプリ設定"
+
+#: .\ommonitor\templates\monitor_api_manage.html:118
+#: .\ommonitor\templates\monitor_api_manage.html:124
+#: .\ommonitor\templates\monitor_api_manage.html:309
+#: .\ommonitor\templates\monitor_manage.html:118
+#: .\ommonitor\templates\monitor_manage.html:124
+#: .\ommonitor\templates\monitor_manage.html:281
+msgid "派送"
+msgstr "ディスパッチ"
+
+#: .\ommonitor\templates\monitor_api_manage.html:125
+#: .\ommonitor\templates\monitor_manage.html:125
+msgid "移除"
+msgstr "削除"
+
+#: .\ommonitor\templates\monitor_api_manage.html:146
+#: .\ommonitor\templates\monitor_api_manage.html:309
+#: .\ommonitor\templates\monitor_manage.html:146
+#: .\ommonitor\templates\monitor_manage.html:281
+#: .\ommonitor\templates\node_manage.html:146
+#: .\ommonitor\templates\node_manage.html:291
+msgid "數據"
+msgstr "データ"
+
+#: .\ommonitor\templates\monitor_api_manage.html:154
+#: .\ommonitor\templates\monitor_manage.html:154
+#: .\ommonitor\templates\node_manage.html:154
+msgid "收集器名稱"
+msgstr "コレクタ名"
+
+#: .\ommonitor\templates\monitor_api_manage.html:161
+#: .\ommonitor\templates\monitor_manage.html:161
+#: .\ommonitor\templates\node_manage.html:161
+msgid "欄位名稱"
+msgstr "フィールド名"
+
+#: .\ommonitor\templates\monitor_api_manage.html:168
+#: .\ommonitor\templates\monitor_manage.html:168
+#: .\ommonitor\templates\node_manage.html:168
+msgid "範圍"
+msgstr "範囲"
+
+#: .\ommonitor\templates\monitor_api_manage.html:431
+#: .\ommonitor\templates\monitor_manage.html:403
+msgid "名稱 "
+msgstr "件名"
+
+#: .\ommonitor\templates\monitor_api_manage.html:432
+#: .\ommonitor\templates\monitor_manage.html:404
+#: .\ommonitor\templates\node_manage.html:59
+#: .\ommonitor\templates\node_manage.html:60
+msgid "主機位置"
+msgstr "IPアドレス"
+
+#: .\ommonitor\templates\monitor_api_manage.html:434
+#: .\ommonitor\templates\monitor_manage.html:406
+msgid "已派送版本"
+msgstr "ディスパッチしたバージョン"
+
+#: .\ommonitor\templates\monitor_api_manage.html:476
+#: .\ommonitor\templates\monitor_api_manage.html:562
+#: .\ommonitor\templates\monitor_manage.html:448
+#: .\ommonitor\templates\monitor_manage.html:534
+#: .\ommonitor\templates\node_manage.html:360
+msgid "已派送"
+msgstr "ディスパッチしました"
+
+#: .\ommonitor\templates\monitor_api_manage.html:535
+#: .\ommonitor\templates\monitor_manage.html:507
+msgid "派送中"
+msgstr "ディスパッチ中"
+
+#: .\ommonitor\templates\monitor_api_manage.html:540
+#: .\ommonitor\templates\monitor_manage.html:512
+#: .\ommonitor\templates\node_manage.html:340
+msgid "移除中"
+msgstr "削除中"
+
+#: .\ommonitor\templates\monitor_api_manage.html:620
+msgid "匯出下列收集器流程"
+msgstr "以下のコレクタフローがエクスポートします"
+
+#: .\ommonitor\templates\monitor_design.html:18
+#: .\ommonitor\templates\monitor_manage.html:13
+#: .\ommonitor\templates\monitor_manage.html:19
+msgid " 收集器流程"
+msgstr "コレクタフロー"
+
+#: .\ommonitor\templates\monitor_design.html:33
+msgid " 排程設定"
+msgstr "スケジュール設定"
+
+#: .\ommonitor\templates\monitor_design.html:165
+msgid "週期 "
+msgstr "サイクル "
+
+#: .\ommonitor\templates\monitor_manage.html:592
+msgid "匯出下列收集器API"
+msgstr "以下のコレクタAPIがエクスポートします"
+
+#: .\ommonitor\templates\monitor_parameter.html:18
+#: .\ommonitor\templates\node_manage.html:18 .\templates\base_l_aside.html:43
+msgid "收集器管理"
+msgstr "コレクタ管理"
+
+#: .\ommonitor\templates\node_groups_manage.html:13
+#: .\ommonitor\templates\node_list_manage.html:19
+msgid " 收集器管理"
+msgstr " コレクタ管理"
+
+#: .\ommonitor\templates\node_groups_manage.html:14
+msgid " 群組列表"
+msgstr " グループ"
+
+#: .\ommonitor\templates\node_groups_manage.html:17
+msgid "  首頁"
+msgstr "  ホーム"
+
+#: .\ommonitor\templates\node_groups_manage.html:19
+msgid "  收集器管理"
+msgstr "  コレクタ管理"
+
+#: .\ommonitor\templates\node_groups_manage.html:68
+msgid "建立群組"
+msgstr "グループ作成"
+
+#: .\ommonitor\templates\node_groups_manage.html:239
+msgid "新增群組"
+msgstr "グループ作成"
+
+#: .\ommonitor\templates\node_groups_manage.html:246
+msgid "編輯群組"
+msgstr "グループ編集"
+
+#: .\ommonitor\templates\node_groups_manage.html:251
+msgid "刪除下列群組"
+msgstr "以下のグループは削除されます"
+
+#: .\ommonitor\templates\node_list_manage.html:14
+msgid " 收集器列表"
+msgstr " コレクタリスト"
+
+#: .\ommonitor\templates\node_list_manage.html:29
+msgid " 移動"
+msgstr "移します"
+
+#: .\ommonitor\templates\node_list_manage.html:30
+#, fuzzy
+#| msgid "匯出下列收集器API"
+msgid "移除下列收集器"
+msgstr "以下のコレクタが削除します"
+
+#: .\ommonitor\templates\node_list_manage.html:70
+msgid "移動收集器"
+msgstr "移動式コレクタ"
+
+#: .\ommonitor\templates\node_list_manage.html:74
+msgid "目標群組"
+msgstr "目標グループ"
+
+#: .\ommonitor\templates\node_manage.html:29
+msgid "基本資料"
+msgstr "基本情報"
+
+#: .\ommonitor\templates\node_manage.html:52
+#: .\ommonitor\templates\node_manage.html:53
+msgid "最後更新時間"
+msgstr "最終更新時刻"
+
+#: .\ommonitor\templates\node_manage.html:64
+#: .\ommonitor\templates\node_manage.html:65
+msgid "PORT"
+msgstr "ポート"
+
+#: .\ommonitor\templates\node_manage.html:69
+#: .\ommonitor\templates\node_manage.html:70
+msgid "OMFLOW版本"
+msgstr "OMFLOWバージョン"
+
+#: .\ommonitor\templates\node_manage.html:81
+msgid "作業系統版本一"
+msgstr "OSバージョン1"
+
+#: .\ommonitor\templates\node_manage.html:82
+msgid "作業系統版本"
+msgstr "OSバージョン"
+
+#: .\ommonitor\templates\node_manage.html:86
+msgid "作業系統版本二"
+msgstr "OSバージョン2"
+
+#: .\ommonitor\templates\node_manage.html:98
+msgid "軟體資訊"
+msgstr "ソフトウェア情報"
+
+#: .\ommonitor\templates\node_manage.html:111
+msgid "移除下列監控原則"
+msgstr "以下の監視ルールを削除します"
+
+#: .\ommonitor\templates\node_manage.html:111
+msgid " 移除"
+msgstr " 削除する"
+
+#: .\ommonitor\templates\node_manage.html:120
+msgid "派送時間"
+msgstr "ディスパッチ時間"
+
+#: .\ommonitor\views.py:67
+msgid "更新失敗: 收集器數量已達上限。"
+msgstr "更新に失敗しました: コレクタ数が上限に達しました。"
+
+#: .\ommonitor\views.py:70
+msgid "更新失敗: "
+msgstr "更新に失敗しました： "
+
+#: .\ommonitor\views.py:325 .\ommonitor\views.py:326
+msgid "斷線。"
+msgstr "回線に落ちました。"
+
+#: .\ommonitor\views.py:605
+msgid "流程匯入失敗。"
+msgstr "フローはインポートに失敗しました。"
+
+#: .\ommonitor\views.py:609
+msgid "流程匯入失敗，結束點輸出變數名只能是英數字。"
+msgstr "フローのインポートに失敗しました。エンドポイントの出力変数名は英数字のみです。"
+
+#: .\ommonitor\views.py:613
+msgid "流程匯入失敗，名稱不得包含特殊符號(/,\\,<,>,|)。"
+msgstr "フローのインポートに失敗しました。名前に特殊記号（/、\\、<、>、|）を含めることはいきません。"
+
+#: .\ommonitor\views.py:674
+msgid "名稱不得包含特殊符號(/,\\,<,>,|)"
+msgstr "名前に特殊記号（/、\\、<、>、|）を含めることはいきません"
+
+#: .\ommonitor\views.py:677 .\ommonitor\views.py:835
+msgid "結束點輸出變數名只能是英數字。"
+msgstr "エンドポイントの出力引数名には、英数字のみを使用できます。"
+
+#: .\ommonitor\views.py:890
+msgid "已派送的流程無法更名。"
+msgstr "ディスパッチされたフローの名前は変更できません。"
+
+#: .\ommonitor\views.py:959
+msgid "api"
+msgstr "API"
+
+#: .\ommonitor\views.py:963
+msgid "api路徑不得為空。"
+msgstr "API Pathは空白にできません。"
+
+#: .\ommonitor\views.py:1049
+msgid "刪除失敗，下列流程有已派送之節點："
+msgstr "削除に失敗しました、コレクタは以下のフローでディスパッチされました："
+
+#: .\ommonitor\views.py:1188
+msgid "刪除失敗，下列版本有已派送之節點："
+msgstr "削除に失敗しました。以下のバージョンではディスパッチされたコレクタがあります："
+
+#: .\ommonitor\views.py:1236
+msgid "名稱錯誤。"
+msgstr "名称エラー"
+
+#: .\ommonitor\views.py:1270 .\ommonitor\views.py:1350
+msgid "找不到收集器。"
+msgstr "コレクタを見つかりません"
+
+#: .\ommonitor\views.py:1317 .\ommonitor\views.py:1320
+msgid "派送失敗："
+msgstr "ディスパッチに失敗しました"
+
+#: .\ommonitor\views.py:1369 .\ommonitor\views.py:1372
+msgid "下架失敗："
+msgstr "撤去に失敗しました："
+
+#: .\ommonitor\views.py:1404
+msgid "找不到主機。"
+msgstr "ホストは見つかりません"
+
+#: .\ommonitor\views.py:1519
+msgid "查詢失敗："
+msgstr "検索失敗："
+
+#: .\ommonitor\views.py:1613
+msgid "所有分散群組中的collector皆回傳失敗。"
+msgstr "分散したグループの全コレクターは戻ることに失敗しました。"
+
+#: .\ommonitor\views.py:1617
+msgid "分散式運算群組沒有Collector可使用。"
+msgstr "分散計算グループで使用できるコレクタはありません。"
+
+#: .\ommonitor\views.py:1621
+msgid "分散式運算錯誤："
+msgstr "分散計算エラー："
+
+#: .\ommonitor\views.py:1648
+msgid "更新失敗：該筆資料對應之uid錯誤。"
+msgstr "更新に失敗しました：データに対応するuidが間違っています。"
+
+#: .\ommonitor\views.py:1791
+msgid "群組名稱重複。"
+msgstr "グループ名が重複しています。"
+
+#: .\ommonitor\views.py:1793
+msgid "請輸入群組名稱。"
+msgstr "グループ名を入力してください。"
+
+#: .\ommonitor\views.py:1814 .\omuser\views.py:341 .\omuser\views.py:779
+msgid "更新失敗。"
+msgstr "更新に失敗しました。"
+
+#: .\ommonitor\views.py:1838
+msgid "刪除失敗。"
+msgstr "削除に失敗しました。"
+
+#: .\ommonitor\views.py:1840
+msgid "刪除失敗：未分類群組無法刪除。"
+msgstr "削除に失敗しました：分類されていないグループは削除できません。"
+
+#: .\ommonitor\views.py:1842
+msgid "刪除失敗：所選群組中還有尚未移出的收集器，請移至其他群組再進行刪除。"
+msgstr "削除に失敗しました：選択したグループにはまだ削除されていないコレクタがあります。削除する前に別のグループに移動してください。"
+
+#: .\ommonitor\views.py:2003
+msgid "建立失敗："
+msgstr "作成に失敗しました："
+
+#: .\ommonitor\views.py:2069
+msgid "請輸入群組名稱"
+msgstr "グループ名を入力してください"
+
+#: .\omorganization\templates\organization_manage.html:14
+#: .\omorganization\templates\organization_manage.html:20
+#: .\templates\base_l_aside.html:92
+msgid "組織圖管理"
+msgstr "組織図管理"
+
+#: .\omorganization\templates\organization_manage.html:19
+#: .\omorganization\templates\position_manage.html:17
+#: .\omuser\templates\change_password.html:16
+#: .\omuser\templates\group_detail.html:17
+#: .\omuser\templates\group_manage.html:17 .\omuser\templates\profile.html:17
+#: .\omuser\templates\role_detail.html:17
+#: .\omuser\templates\role_manage.html:17
+#: .\omuser\templates\user_manage.html:17 .\templates\base_l_aside.html:73
+msgid "人員管理"
+msgstr "ユーザー管理"
+
+#: .\omorganization\templates\organization_manage.html:61
+msgid "新組織"
+msgstr "新しいグループ"
+
+#: .\omorganization\templates\organization_manage.html:61
+msgid "新職務"
+msgstr "新しい職務"
+
+#: .\omorganization\templates\organization_manage.html:61
+msgid "新人員"
+msgstr "新しいユーザー"
+
+#: .\omorganization\templates\position_manage.html:12
+#: .\omorganization\templates\position_manage.html:18
+#: .\templates\base_l_aside.html:91
+msgid "職務管理"
+msgstr "職務管理"
+
+#: .\omorganization\templates\position_manage.html:29
+#: .\omorganization\templates\position_manage.html:204
+msgid "新增職務"
+msgstr "職務を作成します"
+
+#: .\omorganization\templates\position_manage.html:30
+#: .\omorganization\templates\position_manage.html:222
+msgid "刪除職務"
+msgstr "職務を削除します"
+
+#: .\omorganization\templates\position_manage.html:31
+msgid "篩選職務"
+msgstr "職務検索"
+
+#: .\omorganization\templates\position_manage.html:41
+#: .\omorganization\templates\position_manage.html:71
+#: .\omorganization\templates\position_manage.html:72
+msgid "職務名稱"
+msgstr "職務名"
+
+#: .\omorganization\templates\position_manage.html:213
+msgid "編輯職務"
+msgstr "職務を編集します"
+
+#: .\omservice\models.py:16
+msgid "服務編號"
+msgstr "サービス番号"
+
+#: .\omservice\models.py:18
+msgid "允許角色"
+msgstr "ロール"
+
+#: .\omservice\models.py:20 .\templates\base_component.html:379
+msgid "預設值"
+msgstr "デフォルト"
+
+#: .\omservice\models.py:29
+msgid "服務設計"
+msgstr "サービス設計"
+
+#: .\omservice\models.py:34
+msgid "服務請求管理"
+msgstr "サービス要求管理"
+
+#: .\omservice\templates\list.html:8 .\omservice\templates\list.html:12
+#: .\omservice\templates\list.html:121 .\templates\base_l_aside.html:30
+msgid "服務請求"
+msgstr "サービス要求"
+
+#: .\omservice\templates\list.html:31
+msgid "建立服務"
+msgstr "サービスを作成します"
+
+#: .\omservice\templates\list.html:32
+msgid "建立資料夾"
+msgstr "フォルダを作成します"
+
+#: .\omservice\templates\list.html:46 .\templates\base_component.html:112
+msgid "搜尋"
+msgstr "検索"
+
+#: .\omservice\templates\list.html:97
+msgid "重新匯入服務"
+msgstr "サービスの再インポート"
+
+#: .\omservice\templates\list.html:120
+msgid "全部"
+msgstr "全部"
+
+#: .\omservice\templates\list.html:123
+msgid "分隔線"
+msgstr "区分線"
+
+#: .\omservice\templates\list.html:124 .\templates\home.html:70
+msgid "顏色"
+msgstr "色"
+
+#: .\omservice\templates\list.html:127 .\templates\home.html:76
+msgid "圖示"
+msgstr "アイコン"
+
+#: .\omservice\templates\list.html:128 .\templates\home.html:91
+msgid "選擇表單"
+msgstr "フォーム選択"
+
+#: .\omservice\templates\list.html:129
+msgid "第一步驟"
+msgstr "第一歩"
+
+#: .\omservice\templates\list.html:130
+msgid "新步驟"
+msgstr "新しい手順"
+
+#: .\omservice\templates\list.html:132
+msgid "服務對象"
+msgstr "サービス対象"
+
+#: .\omservice\templates\list.html:133 .\templates\base_component.html:178
+#: .\templates\home.html:102
+msgid "藍"
+msgstr "青"
+
+#: .\omservice\templates\list.html:134 .\templates\home.html:103
+msgid "青"
+msgstr "水色"
+
+#: .\omservice\templates\list.html:135 .\templates\base_component.html:180
+#: .\templates\home.html:104
+msgid "綠"
+msgstr "緑"
+
+#: .\omservice\templates\list.html:136 .\templates\base_component.html:177
+#: .\templates\home.html:105
+msgid "黃"
+msgstr "黄色"
+
+#: .\omservice\templates\list.html:137 .\templates\base_component.html:176
+#: .\templates\home.html:106
+msgid "紅"
+msgstr "赤"
+
+#: .\omservice\templates\list.html:138 .\templates\home.html:107
+msgid "紫"
+msgstr "紫"
+
+#: .\omservice\templates\list.html:139 .\templates\base_component.html:175
+#: .\templates\home.html:108
+msgid "灰"
+msgstr "グレー"
+
+#: .\omservice\templates\list.html:140 .\templates\home.html:109
+msgid "深灰"
+msgstr "ディープグレー"
+
+#: .\omservice\templates\list.html:141
+msgid "米黃"
+msgstr "ベージュ"
+
+#: .\omservice\templates\list.html:142
+msgid "填寫表單"
+msgstr " "
+
+#: .\omservice\templates\list.html:143
+msgid "所有人"
+msgstr "持ち方"
+
+#: .\omservice\templates\list.html:145
+msgid "上傳檔案"
+msgstr "アップデート"
+
+#: .\omservice\templates\list.html:146
+msgid "必填"
+msgstr "必要"
+
+#: .\omservice\templates\list.html:148
+msgid "選擇檔案"
+msgstr "ファイル選択"
+
+#: .\omservice\templates\list.html:149
+msgid "輸入提示說明"
+msgstr "提示の説明を入力してください"
+
+#: .\omservice\templates\list.html:150
+msgid "不預選受派人"
+msgstr "担当者の事前選択なし"
+
+#: .\omservice\templates\list.html:151
+msgid "已新增所有欄位"
+msgstr "全フィールドが新しいファイルに追加されました"
+
+#: .\omservice\templates\list.html:152
+msgid "移除服務"
+msgstr "サービスを削除します"
+
+#: .\omservice\templates\list.html:153
+msgid "即將移除「 "
+msgstr "まもなく「 "
+
+#: .\omservice\templates\list.html:154
+msgid " 」，是否繼續？ "
+msgstr "」が削除されます，続きますか？ "
+
+#: .\omservice\templates\list.html:244 .\templates\home.html:197
+msgid "輸入標題，空白時會自動隱藏"
+msgstr "タイトルを入力してください。空白の場合は自動的に非表示になります"
+
+#: .\omservice\templates\list.html:249 .\templates\home.html:202
+msgid "輸入說明"
+msgstr "説明を入力してください"
+
+#: .\omservice\templates\list.html:257 .\templates\home.html:215
+msgid "齒輪"
+msgstr "ギア"
+
+#: .\omservice\templates\list.html:258 .\templates\home.html:216
+msgid "餐具"
+msgstr "食器"
+
+#: .\omservice\templates\list.html:259 .\templates\home.html:217
+msgid "咖啡"
+msgstr "コーヒー"
+
+#: .\omservice\templates\list.html:260 .\templates\home.html:218
+msgid "心跳"
+msgstr "ハートビート"
+
+#: .\omservice\templates\list.html:261 .\templates\home.html:219
+msgid "分享"
+msgstr "共有"
+
+#: .\omservice\templates\list.html:262 .\templates\home.html:220
+msgid "雪花"
+msgstr "雪の華"
+
+#: .\omservice\templates\list.html:263 .\templates\home.html:221
+msgid "溫度"
+msgstr "温度"
+
+#: .\omservice\templates\list.html:264 .\templates\home.html:222
+msgid "點讚"
+msgstr "お気に入り"
+
+#: .\omservice\templates\list.html:265 .\templates\home.html:223
+msgid "倒讚"
+msgstr "悪い"
+
+#: .\omservice\templates\list.html:266 .\templates\home.html:67
+#: .\templates\home.html:224 .\templates\home.html:498
+msgid "折線圖"
+msgstr "折れ線グラフ"
+
+#: .\omservice\templates\list.html:267 .\templates\home.html:225
+msgid "地球"
+msgstr "地球"
+
+#: .\omservice\templates\list.html:268 .\templates\home.html:226
+msgid "沙漏"
+msgstr "砂時計"
+
+#: .\omservice\templates\list.html:269 .\templates\home.html:227
+msgid "電力"
+msgstr "電"
+
+#: .\omservice\templates\list.html:271 .\templates\home.html:229
+msgid "群組"
+msgstr "グループ"
+
+#: .\omservice\templates\list.html:272 .\templates\home.html:230
+msgid "對話"
+msgstr "対話"
+
+#: .\omservice\templates\list.html:273 .\templates\home.html:231
+msgid "路標"
+msgstr "道路標識"
+
+#: .\omservice\templates\list.html:274 .\templates\home.html:232
+msgid "鑰匙"
+msgstr "鍵"
+
+#: .\omservice\templates\list.html:275 .\templates\base_component.html:529
+#: .\templates\home.html:233
+msgid "警告"
+msgstr "警告"
+
+#: .\omservice\templates\list.html:276 .\templates\home.html:234
+msgid "汽車"
+msgstr "車"
+
+#: .\omservice\templates\list.html:277 .\templates\home.html:235
+msgid "公車"
+msgstr "バス"
+
+#: .\omservice\templates\list.html:278 .\templates\home.html:236
+msgid "地鐵"
+msgstr "地下鉄"
+
+#: .\omservice\templates\list.html:279 .\templates\home.html:237
+msgid "船隻"
+msgstr "船"
+
+#: .\omservice\templates\list.html:280 .\templates\home.html:238
+msgid "飛機"
+msgstr "飛行機"
+
+#: .\omservice\templates\list.html:281 .\templates\home.html:239
+msgid "房屋"
+msgstr "家屋"
+
+#: .\omservice\templates\list.html:282 .\templates\home.html:240
+msgid "工廠"
+msgstr "工場"
+
+#: .\omservice\templates\list.html:283 .\templates\home.html:241
+#: .\templates\home.html:500
+msgid "圓餅圖"
+msgstr "円グラフ"
+
+#: .\omservice\templates\list.html:284 .\templates\home.html:242
+msgid "行事曆"
+msgstr "カレンダー"
+
+#: .\omservice\templates\list.html:285 .\templates\home.html:243
+msgid "購物袋"
+msgstr "ショッピングバッグ"
+
+#: .\omservice\templates\list.html:286 .\templates\home.html:244
+msgid "購物車"
+msgstr "ショッピングカート"
+
+#: .\omservice\templates\list.html:287 .\templates\home.html:245
+msgid "鈴鐺"
+msgstr "べる"
+
+#: .\omservice\templates\list.html:288 .\templates\home.html:246
+msgid "資料庫"
+msgstr "データベース"
+
+#: .\omservice\templates\list.html:290 .\templates\home.html:248
+msgid "時鐘"
+msgstr "時計"
+
+#: .\omservice\templates\list.html:291 .\templates\home.html:249
+msgid "葉子"
+msgstr "葉"
+
+#: .\omservice\templates\list.html:292 .\templates\home.html:250
+msgid "信封"
+msgstr "封筒"
+
+#: .\omservice\templates\list.html:293 .\templates\home.html:251
+msgid "金錢"
+msgstr "お金"
+
+#: .\omservice\templates\list.html:294 .\templates\home.html:252
+msgid "電腦"
+msgstr "コンピューター"
+
+#: .\omservice\templates\list.html:295 .\templates\home.html:253
+msgid "書籍"
+msgstr "本"
+
+#: .\omservice\templates\list.html:296 .\templates\home.html:254
+msgid "文件"
+msgstr "ファイル"
+
+#: .\omservice\templates\list.html:297 .\templates\home.html:255
+msgid "剪貼板"
+msgstr "クリップボード"
+
+#: .\omservice\templates\list.html:298 .\templates\home.html:256
+msgid "書寫"
+msgstr "書く"
+
+#: .\omservice\templates\list.html:967
+msgid "強制上傳檔案"
+msgstr "ファイルを強制にアップロードします"
+
+#: .\omservice\templates\list.html:1546
+msgid "請求成功"
+msgstr "リクエストが成功しました"
+
+#: .\omservice\templates\list.html:1869
+#, fuzzy
+#| msgid "服務請求"
+msgid "匯出所有服務請求"
+msgstr "全サービス要求のエクスポート"
+
+#: .\omservice\templates\list.html:1965 .\omservice\templates\list.html:1968
+msgid "資料格式不符"
+msgstr "データ形式が一致しません"
+
+#: .\omservice\views.py:63
+msgid "儲存成功。"
+msgstr "保存しました。"
+
+#: .\omservice\views.py:258
+msgid "查無此服務。"
+msgstr "そのようなサービスは見つかりません。"
+
+#: .\omuser\models.py:18 .\omuser\templates\register.html:12
+msgid "電子郵件"
+msgstr "メールアドレス"
+
+#: .\omuser\models.py:22
+msgid "暱稱"
+msgstr "ニックネーム"
+
+#: .\omuser\models.py:23 .\omuser\templates\profile.html:118
+msgid "生日"
+msgstr "生年月日"
+
+#: .\omuser\models.py:24 .\omuser\templates\profile.html:106
+msgid "性別"
+msgstr "性別"
+
+#: .\omuser\models.py:24 .\omuser\templates\profile.html:111
+msgid "男"
+msgstr "男"
+
+#: .\omuser\models.py:24 .\omuser\templates\profile.html:112
+msgid "女"
+msgstr "女"
+
+#: .\omuser\models.py:25 .\omuser\templates\profile.html:90
+#: .\omuser\templates\profile.html:93
+msgid "電話"
+msgstr "電話番号"
+
+#: .\omuser\models.py:26 .\omuser\templates\profile.html:98
+#: .\omuser\templates\profile.html:101
+msgid "手機"
+msgstr "携帯電話"
+
+#: .\omuser\models.py:27
+msgid "部門名稱"
+msgstr "部門名"
+
+#: .\omuser\models.py:28
+msgid "公司名稱"
+msgstr "会社名"
+
+#: .\omuser\models.py:29 .\omuser\models.py:63
+msgid "AD標記"
+msgstr "ADマーク"
+
+#: .\omuser\models.py:30
+msgid "AD_SID"
+msgstr "AD_SID"
+
+#: .\omuser\models.py:31
+msgid "更新頻率"
+msgstr "更新頻度"
+
+#: .\omuser\models.py:33 .\omuser\models.py:67
+msgid "uuid"
+msgstr "uuid"
+
+#: .\omuser\models.py:35
+msgid "預設群組"
+msgstr "初期グループ"
+
+#: .\omuser\models.py:36 .\omuser\templates\profile.html:126
+msgid "職代人"
+msgstr "代理人"
+
+#: .\omuser\models.py:43 .\omuser\templates\user_manage.html:28
+msgid "新增使用者"
+msgstr " "
+
+#: .\omuser\models.py:44
+msgid "修改使用者"
+msgstr " "
+
+#: .\omuser\models.py:45
+msgid "檢視使用者"
+msgstr " "
+
+#: .\omuser\models.py:46 .\omuser\templates\user_manage.html:29
+msgid "刪除使用者"
+msgstr " "
+
+#: .\omuser\models.py:60
+msgid "組織與角色"
+msgstr "グループとロール"
+
+#: .\omuser\models.py:61
+msgid "上層群組"
+msgstr "親グループ"
+
+#: .\omuser\models.py:62
+msgid "功能群組標記"
+msgstr "機能マーク"
+
+#: .\omuser\models.py:71
+msgid "新增組織/角色"
+msgstr " "
+
+#: .\omuser\models.py:72
+msgid "修改組織/角色"
+msgstr " "
+
+#: .\omuser\models.py:73
+msgid "檢視組織/角色"
+msgstr " "
+
+#: .\omuser\models.py:74
+msgid "刪除組織/角色"
+msgstr " "
+
+#: .\omuser\templates\change_password.html:11
+msgid "更改密碼"
+msgstr "パスワードを変更する"
+
+#: .\omuser\templates\change_password.html:17
+#: .\omuser\templates\profile.html:12 .\omuser\templates\profile.html:18
+#: .\omuser\templates\user_manage.html:12
+#: .\omuser\templates\user_manage.html:18 .\templates\base_l_aside.html:78
+msgid "使用者管理"
+msgstr "ユーザー管理"
+
+#: .\omuser\templates\change_password.html:24
+msgid "密碼更改後使用者將被登出"
+msgstr "パスワードが変更した後、ユーザーはログアウトされます"
+
+#: .\omuser\templates\change_password.html:31
+msgid "舊密碼"
+msgstr "旧パスワード"
+
+#: .\omuser\templates\change_password.html:37
+#: .\omuser\templates\change_password.html:43
+#: .\omuser\templates\profile.html:58 .\omuser\templates\register.html:10
+#: .\omuser\templates\register.html:11
+msgid "至少一個大寫字母及小寫字母，至少8個字。"
+msgstr "8文字以上で，少なくとも大文字と小文字が一つつ含めます。"
+
+#: .\omuser\templates\change_password.html:37
+#: .\omuser\templates\change_password.html:43
+msgid "新密碼"
+msgstr "新しいパスワード"
+
+#: .\omuser\templates\change_password.html:47
+msgid "確認修改"
+msgstr "変更を確認"
+
+#: .\omuser\templates\group_detail.html:12
+#: .\omuser\templates\group_detail.html:18
+#: .\omuser\templates\group_manage.html:12
+#: .\omuser\templates\group_manage.html:18 .\templates\base_l_aside.html:84
+msgid "組織管理"
+msgstr "グループ管理"
+
+#: .\omuser\templates\group_detail.html:41
+#: .\omuser\templates\group_detail.html:42
+#: .\omuser\templates\group_manage.html:81
+msgid "組織名稱"
+msgstr "グループ名"
+
+#: .\omuser\templates\group_detail.html:58
+#: .\omuser\templates\role_detail.html:65
+#: .\omuser\templates\user_manage.html:32
+msgid "篩選使用者"
+msgstr "ユーザー検索"
+
+#: .\omuser\templates\group_detail.html:73
+#: .\omuser\templates\role_detail.html:80
+#: .\omuser\templates\user_manage.html:42
+msgid "使用者帳號"
+msgstr "ユーザーアカウント"
+
+#: .\omuser\templates\group_detail.html:74
+#: .\omuser\templates\role_detail.html:81
+#: .\omuser\templates\user_manage.html:45
+msgid "使用者名稱"
+msgstr "ユーザー名"
+
+#: .\omuser\templates\group_detail.html:75 .\omuser\templates\profile.html:79
+#: .\omuser\templates\profile.html:82 .\omuser\templates\role_detail.html:82
+#: .\omuser\templates\user_manage.html:47
+msgid "公司"
+msgstr "会社"
+
+#: .\omuser\templates\group_manage.html:27
+msgid "創建"
+msgstr "作成"
+
+#: .\omuser\templates\group_manage.html:29 .\omuser\templates\profile.html:186
+msgid "展開 "
+msgstr "展開 "
+
+#: .\omuser\templates\group_manage.html:30 .\omuser\templates\profile.html:187
+msgid "收合 "
+msgstr "畳 "
+
+#: .\omuser\templates\group_manage.html:31 .\omuser\templates\profile.html:188
+msgid "篩選組織"
+msgstr "グループ検索"
+
+#: .\omuser\templates\group_manage.html:45 .\omuser\templates\profile.html:200
+msgid "所有組織列表"
+msgstr "全組織のリスト"
+
+#: .\omuser\templates\group_manage.html:70
+msgid "新增組織"
+msgstr "グループを作成します"
+
+#: .\omuser\templates\group_manage.html:74
+msgid "選擇所屬組織"
+msgstr "グループ選択"
+
+#: .\omuser\templates\group_manage.html:80
+msgid "新建組織名稱"
+msgstr "新しいグループ名"
+
+#: .\omuser\templates\group_manage.html:236
+msgid "下列組織將被刪除"
+msgstr "以下のグループを削除されました"
+
+#: .\omuser\templates\login.html:8
+msgid "帳號或是電子郵件"
+msgstr "アカウントまたはメール"
+
+#: .\omuser\templates\login.html:9 .\omuser\templates\profile.html:55
+#: .\omuser\templates\profile.html:58 .\omuser\templates\register.html:10
+#: .\omuser\templates\register.html:11
+msgid "密碼"
+msgstr "パスワード"
+
+#: .\omuser\templates\login.html:19
+msgid "登入"
+msgstr "ログイン"
+
+#: .\omuser\templates\login.html:21 .\omuser\templates\register.html:26
+msgid "註冊"
+msgstr "登録済み"
+
+#: .\omuser\templates\profile.html:19 .\templates\base_l_aside.html:80
+msgid "使用者設定"
+msgstr "ユーザーの設定"
+
+#: .\omuser\templates\profile.html:30 .\templates\base_component.html:322
+msgid "資料設定"
+msgstr "データの設定"
+
+#: .\omuser\templates\profile.html:31
+msgid "組織設定"
+msgstr "グループの設定"
+
+#: .\omuser\templates\profile.html:32
+msgid "角色設定"
+msgstr "ロールの設定"
+
+#: .\omuser\templates\profile.html:47 .\omuser\templates\profile.html:50
+#: .\omuser\templates\register.html:9
+msgid "帳號"
+msgstr "アカウント"
+
+#: .\omuser\templates\profile.html:50
+msgid "大小寫英文、數字及底線"
+msgstr "大文字と小文字の英語、数字、アンダースコア"
+
+#: .\omuser\templates\profile.html:71 .\omuser\templates\profile.html:74
+msgid "電子郵件地址"
+msgstr "メールアドレス"
+
+#: .\omuser\templates\profile.html:138
+msgid "預設組織"
+msgstr "初期グループ"
+
+#: .\omuser\templates\profile.html:146 .\templates\base_component.html:105
+msgid "組織"
+msgstr "グループ"
+
+#: .\omuser\templates\profile.html:154
+msgid "角色"
+msgstr "ロール"
+
+#: .\omuser\templates\profile.html:162
+msgid "通知更新頻率"
+msgstr "更新頻度を通知します"
+
+#: .\omuser\templates\profile.html:225
+msgid "篩選權限角色"
+msgstr "権限ロールを検分"
+
+#: .\omuser\templates\profile.html:238
+msgid "所有角色列表"
+msgstr "全ロールリスト"
+
+#: .\omuser\templates\profile.html:277
+msgid "職代人設定"
+msgstr "代理人設定"
+
+#: .\omuser\templates\register.html:17 .\templates\system_config.html:120
+#: .\templates\system_config.html:121
+msgid "個資使用同意"
+msgstr "個人情報の使いを同意します"
+
+#: .\omuser\templates\register.html:20 .\templates\system_config.html:128
+#: .\templates\system_config.html:129
+msgid "軟體使用同意"
+msgstr "ソフトウェアの使いを同意します"
+
+#: .\omuser\templates\register.html:24
+msgid "請確認使用同意"
+msgstr "同意書を確認してください"
+
+#: .\omuser\templates\register.html:74
+msgid "使用同意書"
+msgstr "同意書"
+
+#: .\omuser\templates\role_detail.html:12
+#: .\omuser\templates\role_detail.html:18
+#: .\omuser\templates\role_manage.html:12
+#: .\omuser\templates\role_manage.html:18
+msgid "權限角色管理"
+msgstr "権限ロール管理"
+
+#: .\omuser\templates\role_detail.html:48
+#: .\omuser\templates\role_detail.html:49
+msgid "角色說明"
+msgstr "ロールの説明"
+
+#: .\omuser\templates\role_detail.html:104
+msgid "篩選權限名稱"
+msgstr "権限を検分"
+
+#: .\omuser\templates\role_detail.html:117
+msgid "權限名稱"
+msgstr "権限名"
+
+#: .\omuser\templates\role_manage.html:29 .\templates\myform.html:523
+msgid "建立"
+msgstr "作成"
+
+#: .\omuser\templates\role_manage.html:31
+msgid "篩選腳色"
+msgstr "ロールを検分"
+
+#: .\omuser\templates\role_manage.html:41
+msgid "權限角色"
+msgstr "権限ロール"
+
+#: .\omuser\templates\role_manage.html:64
+msgid "建立權限角色"
+msgstr "権限ロールを作成されました。"
+
+#: .\omuser\templates\role_manage.html:221
+msgid "下列角色將被刪除"
+msgstr "以下のロールを削除されました"
+
+#: .\omuser\templates\user_manage.html:13
+msgid "使用者列表"
+msgstr "ユーザーリスト"
+
+#: .\omuser\templates\user_manage.html:30
+msgid "啟用使用者"
+msgstr "使用者を起動します"
+
+#: .\omuser\templates\user_manage.html:30
+msgid " 啟用"
+msgstr " 啟用"
+
+#: .\omuser\templates\user_manage.html:31
+msgid "停用使用者"
+msgstr "使用者を停止します"
+
+#: .\omuser\templates\user_manage.html:31
+msgid " 停用"
+msgstr " 停止"
+
+#: .\omuser\templates\user_manage.html:43
+msgid "狀態 "
+msgstr "状態 "
+
+#: .\omuser\templates\user_manage.html:44
+msgid "類別"
+msgstr "分類"
+
+#: .\omuser\templates\user_manage.html:46
+msgid "信箱"
+msgstr "メールアドレス"
+
+#: .\omuser\templates\user_manage.html:48
+msgid "上次登入時間"
+msgstr "最終ログイン時間"
+
+#: .\omuser\templates\user_manage.html:132
+msgid "管理員"
+msgstr "管理者"
+
+#: .\omuser\templates\user_manage.html:206
+msgid "下列使用者將被刪除"
+msgstr "以下のユーザーを削除されました"
+
+#: .\omuser\templates\user_manage.html:248
+msgid "下列使用者將被啟用"
+msgstr "以下のユーザーを起動されました"
+
+#: .\omuser\templates\user_manage.html:252
+msgid "下列使用者將被停用"
+msgstr "以下のユーザーを停止されました"
+
+#: .\omuser\views.py:69 .\omuser\views.py:88 .\omuser\views.py:120
+#: .\omuser\views.py:148
+msgid "登入失敗。"
+msgstr "ログインに失敗しました。"
+
+#: .\omuser\views.py:85
+msgid "登入成功。"
+msgstr "ログインしました。"
+
+#: .\omuser\views.py:91 .\omuser\views.py:151
+msgid "登入失敗，查無此使用者帳號。"
+msgstr "ログインに失敗しました，このユーザーアカウントは見つかりません。"
+
+#: .\omuser\views.py:132
+msgid "帳號已登入，是否取代線上使用者？"
+msgstr "アカウントはログインしています。オンラインユーザーを置き換えますか？"
+
+#: .\omuser\views.py:139
+msgid "重複登入。"
+msgstr "アカウントはログインしています。"
+
+#: .\omuser\views.py:187
+msgid "註冊失敗："
+msgstr "登録に失敗しました："
+
+#: .\omuser\views.py:212
+msgid "使用者名稱已被註冊。"
+msgstr "ユーザー名が登録されました。"
+
+#: .\omuser\views.py:218
+msgid "電子郵件已被註冊。"
+msgstr "メールを登録しました。"
+
+#: .\omuser\views.py:221
+msgid "註冊成功。"
+msgstr "登録を完了しました。"
+
+#: .\omuser\views.py:225
+msgid "兩次輸入的密碼不相同。"
+msgstr "2回入力したパスワードが異なります。"
+
+#: .\omuser\views.py:230 .\omuser\views.py:444 .\omuser\views.py:523
+msgid "使用者數量已達上限。"
+msgstr "ユーザー数が上限に達しています。"
+
+#: .\omuser\views.py:433
+msgid "新增使用者失敗: "
+msgstr "ユーザーを追加できません："
+
+#: .\omuser\views.py:436
+msgid "該使用者名稱已經被使用。"
+msgstr "ユーザー名は既に使用されています。"
+
+#: .\omuser\views.py:438
+msgid "新增使用者成功。"
+msgstr "ユーザーを作成しました"
+
+#: .\omuser\views.py:467
+msgid "無法刪除系統管理員。"
+msgstr "システム管理者を削除できません。"
+
+#: .\omuser\views.py:484
+msgid "刪除使用者成功。"
+msgstr "ユーザーを削除しました"
+
+#: .\omuser\views.py:514
+msgid "無法停用系統管理員。"
+msgstr "システム管理者を停止できません。"
+
+#: .\omuser\views.py:520
+msgid "啟用使用者成功。"
+msgstr "ユーザーを起動されました。"
+
+#: .\omuser\views.py:527
+msgid "停用使用者成功。"
+msgstr "ユーザーを停止されました。"
+
+#: .\omuser\views.py:530
+msgid "請選擇停用或啟用。"
+msgstr "起動/停止"
+
+#: .\omuser\views.py:563
+msgid "父群組錯誤"
+msgstr "親グループエラー"
+
+#: .\omuser\views.py:570
+msgid "名稱不得為空。"
+msgstr "名前は空きません。"
+
+#: .\omuser\views.py:623
+msgid "使用者錯誤。"
+msgstr "ユーザーエラー"
+
+#: .\omuser\views.py:801
+msgid "組織錯誤。"
+msgstr "グループエラー"
+
+#: .\omuser\views.py:845
+msgid "角色錯誤。"
+msgstr "ロールエラー"
+
+#: .\omuser\views.py:919
+msgid "密碼修改成功。"
+msgstr "パスワードのリセットが完了しました。"
+
+#: .\omuser\views.py:922
+msgid "請輸入相同密碼。"
+msgstr "同じパスワードを入力してください。"
+
+#: .\omuser\views.py:925
+msgid "舊密碼輸入錯誤。"
+msgstr "旧パスワードが間違います。"
+
+#: .\omuser\views.py:982 .\omuser\views.py:1052
+msgid "取得成功。"
+msgstr "成功。"
+
+#: .\omuser\views.py:985
+msgid "使用者不存在或未啟用。"
+msgstr "ユーザーが存在しないか、起動されていません。"
+
+#: .\templates\base.html:62
+msgid "版權所有."
+msgstr "著作権所有."
+
+#: .\templates\base_component.html:10
+msgid "提示"
+msgstr "提示"
+
+#: .\templates\base_component.html:13
+msgid "帳號已登入，是否登出其他使用者後登入"
+msgstr "アカウントはログインしており、この端末でリーサインしますか"
+
+#: .\templates\base_component.html:17 .\templates\base_component.html:60
+#: .\templates\myform.html:320 .\templates\myform.html:359
+msgid "確認"
+msgstr "確認"
+
+#: .\templates\base_component.html:74
+msgid "篩選設定"
+msgstr "検索設定"
+
+#: .\templates\base_component.html:96
+msgid "選擇"
+msgstr "選択"
+
+#: .\templates\base_component.html:103
+msgid "搜尋類型"
+msgstr "検索タイプ"
+
+#: .\templates\base_component.html:146
+msgid "上傳中"
+msgstr "アップロード中"
+
+#: .\templates\base_component.html:165
+msgid "區塊設定"
+msgstr "ブラック設定"
+
+#: .\templates\base_component.html:169
+msgid "標題文字"
+msgstr "タイトル"
+
+#: .\templates\base_component.html:170
+msgid "請輸入標題文字"
+msgstr "タイトルを入力してください"
+
+#: .\templates\base_component.html:173
+msgid "標示顏色"
+msgstr "表示色"
+
+#: .\templates\base_component.html:179
+msgid "水藍"
+msgstr "水色"
+
+#: .\templates\base_component.html:200
+msgid "新增項目"
+msgstr "項目を作成しました"
+
+#: .\templates\base_component.html:204
+msgid "選擇新增項目"
+msgstr "新しい項目を選択"
+
+#: .\templates\base_component.html:236
+msgid "備註"
+msgstr "備考"
+
+#: .\templates\base_component.html:265 .\templates\base_component.html:267
+msgid "資料夾名稱"
+msgstr "フォルダ名"
+
+#: .\templates\base_component.html:272
+msgid "資料夾圖示"
+msgstr "フォルダアイコン"
+
+#: .\templates\base_component.html:316 .\templates\base_component.html:348
+msgid "內容設定"
+msgstr "內容設定"
+
+#: .\templates\base_component.html:321 .\templates\base_component.html:377
+#: .\templates\system_config.html:35
+msgid "一般設定"
+msgstr "一般設定"
+
+#: .\templates\base_component.html:352
+msgid "輸入設計"
+msgstr "入力設計"
+
+#: .\templates\base_component.html:378
+msgid "步驟設計"
+msgstr "ステップ設計"
+
+#: .\templates\base_component.html:385 .\templates\base_component.html:399
+#: .\templates\base_component.html:478
+msgid "新增欄位"
+msgstr "フィールドを作成します"
+
+#: .\templates\base_component.html:386
+msgid "新增步驟"
+msgstr "ステップを作成します"
+
+#: .\templates\base_component.html:387
+msgid "允許上傳"
+msgstr "アップロード許可"
+
+#: .\templates\base_component.html:388
+msgid "設定預設值"
+msgstr "デフォルト値設定"
+
+#: .\templates\base_component.html:414
+msgid "上一步"
+msgstr "前"
+
+#: .\templates\base_component.html:415
+msgid "下一步"
+msgstr "次"
+
+#: .\templates\base_component.html:416 .\templates\myform.html:31
+msgid "送出"
+msgstr "提出する"
+
+#: .\templates\base_component.html:431
+msgid "服務修改"
+msgstr "サービスを編集します"
+
+#: .\templates\base_component.html:453
+msgid "新增服務"
+msgstr "サービスを作成します"
+
+#: .\templates\base_component.html:457
+msgid "選擇開立的表單"
+msgstr "操作したいフォーム選択"
+
+#: .\templates\base_component.html:482
+msgid "選擇新增的欄位"
+msgstr "新しいフィールド選択"
+
+#: .\templates\base_component.html:550
+msgid "完成"
+msgstr "完成"
+
+#: .\templates\base_component.html:594
+msgid "連線發生錯誤，請檢查網路連線是否正常，或與系統管理員聯絡"
+msgstr "接続エラー。ネットワーク状態を確認してください。或いは、システム管理者に連絡してください"
+
+#: .\templates\base_component.html:612
+msgid "資訊"
+msgstr "情報"
+
+#: .\templates\base_header.html:73
+msgid "個人資料"
+msgstr "個人情報"
+
+#: .\templates\base_header.html:76
+#, fuzzy
+#| msgid "更改密碼"
+msgid "更改密碼 "
+msgstr "パスワードを変更する "
+
+#: .\templates\base_header.html:79
+msgid "登出"
+msgstr "ログアウト"
+
+#: .\templates\base_header.html:113 .\templates\base_l_aside.html:146
+msgid "你已被登出"
+msgstr "ログアウトされました"
+
+#: .\templates\base_header.html:129 .\templates\base_l_aside.html:162
+msgid "主機連線不穩"
+msgstr "ホスト接続が不安定です"
+
+#: .\templates\base_l_aside.html:44
+msgid "收集器流程"
+msgstr "コレクタフロー"
+
+#: .\templates\base_l_aside.html:45
+msgid "收集器API"
+msgstr "コレクタAPI"
+
+#: .\templates\base_l_aside.html:83
+msgid "角色管理"
+msgstr "ロール管理"
+
+#: .\templates\base_l_aside.html:87
+msgid "AD檢視"
+msgstr "AD検分"
+
+#: .\templates\base_l_aside.html:102 .\templates\base_l_aside.html:106
+#: .\templates\file_manage.html:18 .\templates\sidebar_design.html:17
+#: .\templates\system_config.html:17
+msgid "系統設定"
+msgstr "システム設定"
+
+#: .\templates\base_l_aside.html:107 .\templates\file_manage.html:13
+#: .\templates\file_manage.html:19
+msgid "附加檔案維護"
+msgstr "アタッチメントメンテナンス"
+
+#: .\templates\base_l_aside.html:108 .\templates\sidebar_design.html:13
+#: .\templates\sidebar_design.html:18
+msgid "主選單管理"
+msgstr "メインメニュー管理"
+
+#: .\templates\file_manage.html:41
+msgid "篩選檔案"
+msgstr "ファイル検分"
+
+#: .\templates\file_manage.html:118
+msgid "上傳時間"
+msgstr "アップロード時間"
+
+#: .\templates\file_manage.html:246
+msgid "下列檔案將被刪除"
+msgstr "以下のファイルを削除されます"
+
+#: .\templates\home.html:31 .\templates\home.html:503
+msgid "1區塊"
+msgstr "全ブラック"
+
+#: .\templates\home.html:32 .\templates\home.html:504
+msgid "1/2區塊"
+msgstr "半ブラック"
+
+#: .\templates\home.html:33 .\templates\home.html:505
+msgid "2/3區塊"
+msgstr "3分の2ブラック"
+
+#: .\templates\home.html:34 .\templates\home.html:506
+msgid "1/3區塊"
+msgstr "3分の1ブラック"
+
+#: .\templates\home.html:35 .\templates\home.html:507
+msgid "3/4區塊"
+msgstr "4分の3ブラック"
+
+#: .\templates\home.html:36 .\templates\home.html:508
+msgid "1/4區塊"
+msgstr "4分の1ブラック"
+
+#: .\templates\home.html:64 .\templates\home.html:495
+msgid "顯示文字"
+msgstr "表示"
+
+#: .\templates\home.html:65 .\templates\home.html:496
+msgid "計量條"
+msgstr "測定ストリップ1"
+
+#: .\templates\home.html:66 .\templates\home.html:497
+msgid "計量圖"
+msgstr "測定ストリップ2"
+
+#: .\templates\home.html:68 .\templates\home.html:499
+msgid "長條圖"
+msgstr "棒グラフ"
+
+#: .\templates\home.html:69 .\templates\home.html:501
+msgid "世界地圖"
+msgstr "世界地図"
+
+#: .\templates\home.html:73 .\templates\home.html:544 .\templates\home.html:553
+#: .\templates\home.html:564
+msgid "單位"
+msgstr "単位"
+
+#: .\templates\home.html:74
+msgid "數值上限"
+msgstr "数值上限"
+
+#: .\templates\home.html:75
+msgid "高度"
+msgstr "高度"
+
+#: .\templates\home.html:79
+msgid "不分類"
+msgstr "不分類"
+
+#: .\templates\home.html:80
+msgid "縱軸(Y軸)起點"
+msgstr "縦軸スタート"
+
+#: .\templates\home.html:81
+msgid "時間範圍"
+msgstr "時間範囲"
+
+#: .\templates\home.html:82
+msgid "今天"
+msgstr "今日"
+
+#: .\templates\home.html:83
+msgid "昨天"
+msgstr "昨日"
+
+#: .\templates\home.html:86
+msgid "本月"
+msgstr "今月"
+
+#: .\templates\home.html:93
+msgid "查詢表單"
+msgstr "フォーム検索"
+
+#: .\templates\home.html:94
+msgid "查詢欄位"
+msgstr "フィールド検索"
+
+#: .\templates\home.html:95
+msgid "最新值"
+msgstr "最新値"
+
+#: .\templates\home.html:96
+msgid "平均值"
+msgstr "平均"
+
+#: .\templates\home.html:97
+msgid "最大值"
+msgstr "マックス"
+
+#: .\templates\home.html:98
+msgid "最小值"
+msgstr "ミニ"
+
+#: .\templates\home.html:99
+msgid "總和"
+msgstr "総計"
+
+#: .\templates\home.html:100
+msgid "數量"
+msgstr "量"
+
+#: .\templates\home.html:101
+msgid "資料起始顏色"
+msgstr "データ初期の色"
+
+#: .\templates\home.html:207
+msgid "輸入文字"
+msgstr "文字"
+
+#: .\templates\home.html:262 .\templates\home.html:267
+#: .\templates\home.html:320
+msgid "請輸入數字"
+msgstr "数字"
+
+#: .\templates\home.html:502
+msgid "顯示台灣地圖"
+msgstr "台湾"
+
+#: .\templates\home.html:850 .\templates\home.html:913
+msgid "周日"
+msgstr "日曜日"
+
+#: .\templates\home.html:850 .\templates\home.html:913
+msgid "周二"
+msgstr "火曜日"
+
+#: .\templates\home.html:850 .\templates\home.html:913
+msgid "周三"
+msgstr "水曜日"
+
+#: .\templates\home.html:850 .\templates\home.html:913
+msgid "周四"
+msgstr "木曜日"
+
+#: .\templates\home.html:850 .\templates\home.html:913
+msgid "周五"
+msgstr "金曜日"
+
+#: .\templates\home.html:850 .\templates\home.html:913
+msgid "周六"
+msgstr "土曜日"
+
+#: .\templates\myform.html:33 .\templates\myform.html:374
+msgid "歷程"
+msgstr "記録"
+
+#: .\templates\myform.html:34 .\templates\myform.html:67
+msgid "流程檢視"
+msgstr "フロー検分"
+
+#: .\templates\myform.html:35 .\templates\myform.html:248
+msgid "關聯操作"
+msgstr "関連操作"
+
+#: .\templates\myform.html:37 .\templates\myform.html:192
+msgid "工作日誌"
+msgstr "日誌"
+
+#: .\templates\myform.html:113
+msgid "輸入/輸出"
+msgstr "インプット/アウトプット"
+
+#: .\templates\myform.html:118
+msgid "輸入"
+msgstr "インプット"
+
+#: .\templates\myform.html:122
+msgid "輸出"
+msgstr "アウトプット"
+
+#: .\templates\myform.html:145
+msgid "搜尋..."
+msgstr "検索..."
+
+#: .\templates\myform.html:157 .\templates\system_config.html:150
+msgid "上傳"
+msgstr "アップロード"
+
+#: .\templates\myform.html:159
+msgid "重複名稱的檔案上傳後將覆蓋現有檔案"
+msgstr "重複した名前のファイルはアップロード後にカバーされます"
+
+#: .\templates\myform.html:160
+msgid "檔案上傳中，請勿離開此頁面"
+msgstr "ファイルをアップロードしています。このページから閉じないでください"
+
+#: .\templates\myform.html:170
+msgid "已上傳檔案"
+msgstr "ファイルはアップロードされました"
+
+#: .\templates\myform.html:256 .\templates\myform.html:307
+msgid "還原"
+msgstr "かんげん"
+
+#: .\templates\myform.html:257 .\templates\myform.html:514
+msgid "刪除關聯"
+msgstr "関連削除"
+
+#: .\templates\myform.html:258
+msgid "建立關聯"
+msgstr "関連作成"
+
+#: .\templates\myform.html:268
+msgid "已關單"
+msgstr "クローズしました"
+
+#: .\templates\myform.html:304
+msgid "選擇表單流程"
+msgstr "フォームフロー選択"
+
+#: .\templates\myform.html:335
+msgid "選擇關聯"
+msgstr "関連選択"
+
+#: .\templates\myform.html:342
+msgid "資料連結"
+msgstr "資料連結"
+
+#: .\templates\myform.html:343
+msgid "建立子單"
+msgstr "子フォーム作成"
+
+#: .\templates\myform.html:344
+msgid "成為子單"
+msgstr "子フォームになる"
+
+#: .\templates\myform.html:352
+msgid "影響百分比"
+msgstr "影響割合"
+
+#: .\templates\myform.html:387
+msgid "填表人"
+msgstr "作り方"
+
+#: .\templates\myform.html:415
+msgid "服務水準狀態"
+msgstr "SLA状態"
+
+#: .\templates\myform.html:426
+msgid "描述"
+msgstr "解説"
+
+#: .\templates\myform.html:427
+msgid "起算時間"
+msgstr "始まり時間"
+
+#: .\templates\myform.html:512
+msgid "--請選擇--"
+msgstr "--選択--"
+
+#: .\templates\myform.html:513
+msgid "產生關聯"
+msgstr "生んだ関連"
+
+#: .\templates\myform.html:515
+msgid "一般關聯"
+msgstr "一般的な関連"
+
+#: .\templates\myform.html:516
+msgid "母關聯"
+msgstr "親関連"
+
+#: .\templates\myform.html:517
+msgid "子關聯"
+msgstr "子関連"
+
+#: .\templates\myform.html:518
+msgid "影響關聯"
+msgstr "影響関連"
+
+#: .\templates\myform.html:519
+msgid "被影響關聯"
+msgstr "影響を受けた関連"
+
+#: .\templates\myform.html:520
+msgid "包含關聯"
+msgstr "含んだ関連"
+
+#: .\templates\myform.html:521
+msgid "所屬關聯"
+msgstr "従った関連"
+
+#: .\templates\myform.html:1591
+msgid "檔案上傳中..."
+msgstr "アップデート中..."
+
+#: .\templates\sidebar_design.html:26
+msgid "儲存設定"
+msgstr "保存設定"
+
+#: .\templates\sidebar_design.html:194
+msgid "新增資料夾"
+msgstr "フォルダを作成します"
+
+#: .\templates\sidebar_design.html:236
+msgid "請輸入資料夾名稱"
+msgstr "フォルダ名を入力します"
+
+#: .\templates\sidebar_design.html:262
+msgid "資料夾中尚有表單/流程，請移出流程後再刪除資料夾"
+msgstr "フォルダにはフォーム/フローがあります。フォルダを削除する前にフローを移動してください"
+
+#: .\templates\system_config.html:12
+msgid " 系統設定"
+msgstr "システム設定"
+
+#: .\templates\system_config.html:40 .\templates\system_config.html:41
+msgid "最大執行緒數量"
+msgstr "スレッドの最大数"
+
+#: .\templates\system_config.html:46
+msgid "LOG_等級"
+msgstr "LOG_レベル"
+
+#: .\templates\system_config.html:62
+msgid "LDAP 設定"
+msgstr "LDAP 設定"
+
+#: .\templates\system_config.html:62
+msgid "(修改設定後即自動同步)"
+msgstr "（設定変更後に自動的に同調）"
+
+#: .\templates\system_config.html:62
+msgid "LDAP 連線檢查"
+msgstr "LDAP接続チェック"
+
+#: .\templates\system_config.html:62
+msgid "連線檢查"
+msgstr "接続チェック"
+
+#: .\templates\system_config.html:149
+msgid "授權資料"
+msgstr "ライセンス資料"
+
+#: .\templates\system_config.html:206
+msgid "升級授權"
+msgstr "ライセンスアップグレード"
+
+#: .\templates\system_config.html:357
+msgid "授權檔案錯誤，請重新選擇檔案"
+msgstr "ライセンスファイルエラー、ファイルを再選択してください"
+
+#: .\templates\system_config.html:369
+msgid "升級中"
+msgstr "アップグレード中"
+
+#: .\templates\system_config.html:394
+msgid "授權資料上傳成功"
+msgstr "ライセンス資料がアップロードされました"
+
+#~ msgid "已關閉"
+#~ msgstr "閉じました"
+
+#~ msgid "未關閉"
+#~ msgstr "閉じていない"
+
+#~ msgid "流程執行中"
+#~ msgstr "フロー実行"
+
+#~ msgid "流程等待中"
+#~ msgstr "フローは待機中"
+
+#~ msgid "刪除檔案失敗，請聯絡管理員清理剩餘檔案。"
+#~ msgstr ""
+#~ "ファイルを削除できません。管理者に連絡して、残りのファイルをクリーンアップ"
+#~ "してください。"
+
+#~ msgid "査尋成功。"
+#~ msgstr "検索成功。"
+
+#~ msgid "AD名稱"
+#~ msgstr "AD名"
+
+#~ msgid "LDAP 同步"
+#~ msgstr "LDAP同調"
+
+#~ msgid "AD列表"
+#~ msgstr "ADリスト"
+
+#~ msgid "進階設定"
+#~ msgstr "高度な設定"

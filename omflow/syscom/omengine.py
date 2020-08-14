@@ -38,7 +38,6 @@ class OmEngine():
         self.data_no = data.get('data_no','')
         self.data_id = data.get('data_id','')
         self.error_pass = None
-#         self.flowobject = None
         self.flowactive = None
         self.table_uuid = data.get('table_uuid',None)
         self.flowlog = data.get('flowlog',None)
@@ -63,11 +62,9 @@ class OmEngine():
                 flowactive = FlowActiveGlobalObject.UUIDSearch(self.flow_uuid)
                 #檢查流程使否啟用
                 if flowactive.is_active:
-#                     self.flowobject = json.loads(flowactive.flowobject)
                     flowobject = json.loads(flowactive.flowobject)
                     self.flowactive = flowactive
                     #找出上一個點以及下一個點
-#                     flowobject_items = self.flowobject['items']
                     flowobject_items = flowobject['items']
                     for f_item in flowobject_items:
                         if f_item['id'] == chart_id_to:
@@ -233,7 +230,14 @@ class OmEngine():
                                         mission_param['create_user_id'] = m.create_user_id
                                         mission_param['update_user_id'] = m.create_user_id
                                         mission_param['ticket_createtime'] = m.init_data.createtime
-                                        group_str = m.group
+                                        
+                                        group_item_id_list = getSpecificTypeFormItem(fa.merge_formobject, 'h_group')
+                                        if group_item_id_list:
+                                            group_item_id = group_item_id_list[0]
+                                        else:
+                                            group_item_id = ''
+                                        group_str = formdata.get(group_item_id,None)
+                                        
                                         if group_str:
                                             group = json.loads(group_str)
                                             g = group.get('group',None)
@@ -250,6 +254,7 @@ class OmEngine():
                                 self.data_id = m.id
                                 self.data['data_id'] = m.id
                                 self.data.pop('formdata')
+                                
                                 #move file from temp to omdata if mapping_id has value
                                 if self.data.get('mapping_id',''):
                                     files = []
@@ -264,6 +269,29 @@ class OmEngine():
                                     from omformflow.views import uploadOmdataFiles
                                     uploadOmdataFiles(files, m.flow_uuid, m.data_no, m.id, m.create_user_id)
                                     TempFiles.objects.filter(mapping_id=mapping_id).delete()
+                                
+                                #如果是外部、內部流程，建立與主擔的關聯
+                                outflow_content = self.data.get('outflow_content','')
+                                if outflow_content:
+                                    try:
+                                        main_chart_id = outflow_content.get('chart_id_to','')
+                                        main_table_uuid = outflow_content.get('table_uuid','')
+                                        main_uuid = outflow_content.get('flow_uuid','')
+                                        main_data_no = outflow_content.get('data_no','')
+                                        main_data_id = outflow_content.get('data_id','')
+                                        stop_uuid = self.getchartpath(main_chart_id,outflow_content)
+                                        #get model
+                                        valuehistory_model = getModel('omformmodel', 'Omdata_' + main_table_uuid + '_ValueHistory')
+                                        main_inoutput = valuehistory_model.objects.get(flow_uuid=main_uuid,data_no=main_data_no,data_id=main_data_id,chart_id=stop_uuid)
+                                        input_data_str = main_inoutput.input_data
+                                        input_data = json.loads(input_data_str)
+                                        input_data['outflow_uuid'] = self.flow_uuid
+                                        input_data['outflow_data_no'] = self.data_no
+                                        main_inoutput.input_data = json.dumps(input_data)
+                                        main_inoutput.save()
+                                    except:
+                                        pass
+                                
                         self.inputLog(log, chart_id, self.flow_value, chart_text, chart_type)
                         return self.replaceFromTo()
                     elif hp_result['status'] == 'Y':
@@ -313,11 +341,24 @@ class OmEngine():
                         except Exception as e:
                             debug('OME StartPoint error:     %s' % e.__str__())
                     elif hp_result['status'] in ['E','F']:
+                        outflow_content = self.data.get('outflow_content','')
                         #remove file from temp db if mapping_id has value
                         if self.data.get('mapping_id',''):
                             mapping_id = self.data.pop('mapping_id')
                             TempFiles.objects.filter(mapping_id=mapping_id).delete()
-                        return hp_result['value']
+                        if outflow_content:
+                            #get outflow content
+                            outflow_content['outflow_done'] = True
+                            #把外部流程的單號跟流程編號拋給父流程
+                            output_obj = {}
+                            output_obj['outflow_uuid'] = self.flow_uuid
+                            output_obj['outflow_data_no'] = self.data_no
+                            outflow_content['chart_input'] = output_obj
+                            self.__init__(outflow_content['flow_uuid'], outflow_content)
+                            #回call check active
+                            return self.checkActive()
+                        else:
+                            return hp_result['value']
                 else:
                     return _('缺少必填變數：') + require_check
         except Exception as e:
@@ -604,7 +645,6 @@ class OmEngine():
                             require_list.append(name.lower())
                     #組成寫回資料庫的dict
                     formdata_list = []
-#                     formobject_items = self.flowobject['form_object']['items']
                     formobject_items = json.loads(self.flowactive.merge_formobject)
                     for key in temp_dict:
                         name = key
@@ -612,10 +652,6 @@ class OmEngine():
                         item = formobject_items.get(name,'')
                         if item:
                             FormatToFormdataList(item, value, formdata_list)
-#                         for item in formobject_items:
-#                             if item['id'] == name:
-#                                 FormatToFormdataList(item, value, formdata_list)
-#                                 break
                     if formdata_list:
                         for item in formdata_list:
                             item_id = item['id'].lower()
@@ -677,8 +713,15 @@ class OmEngine():
                                 mission_param['ticket_createtime'] = m.init_data.createtime
                                 action = self.getQuickAction(chart_id)
                                 mission_param['action'] = action
-                                if m.group:
-                                    group = json.loads(m.group)
+                                
+                                group_item_id_list = getSpecificTypeFormItem(fa.merge_formobject, 'h_group')
+                                if group_item_id_list:
+                                    group_item_id = group_item_id_list[0]
+                                else:
+                                    group_item_id = ''
+                                group_str = o_m.get(group_item_id,None)
+                                if group_str:
+                                    group = json.loads(group_str)
                                     g = group.get('group',None)
                                     if g:
                                         u = group.get('user',None)
@@ -1155,17 +1198,20 @@ class OmEngine():
                         outflow_content = json.dumps(self.data)
                         #組合外部流程的必要參數並呼叫開單
                         outside_flow = FlowActiveGlobalObject.NameSearch(outside_flow_name, None, outside_app_name)
-                        outside_flow_uuid = outside_flow.flow_uuid.hex
-                        outside_flow_formobject = json.loads(outside_flow.merge_formobject)
-                        from omformflow.views import createOmData
-                        formdata_list = []
-                        if form_input_dict:
-                            for key in form_input_dict:
-                                FormatToFormdataList(outside_flow_formobject[key], form_input_dict[key], formdata_list)
-                        param = {'flow_uuid':outside_flow_uuid,'formdata':formdata_list,'start_input':start_input_dict,'outflow_content':outflow_content}
-                        createomdata_result = createOmData(param)
-                        if not createomdata_result['status']:
-                            return self.markError(chart_id, chart_text, createomdata_result['message'])
+                        if outside_flow:
+                            outside_flow_uuid = outside_flow.flow_uuid.hex
+                            outside_flow_formobject = json.loads(outside_flow.merge_formobject)
+                            from omformflow.views import createOmData
+                            formdata_list = []
+                            if form_input_dict:
+                                for key in form_input_dict:
+                                    FormatToFormdataList(outside_flow_formobject[key], form_input_dict[key], formdata_list)
+                            param = {'flow_uuid':outside_flow_uuid,'formdata':formdata_list,'start_input':start_input_dict,'outflow_content':outflow_content}
+                            createomdata_result = createOmData(param)
+                            if not createomdata_result['status']:
+                                return self.markError(chart_id, chart_text, createomdata_result['message'])
+                        else:
+                            return self.markError(chart_id,chart_text,_('找不到流程。'))
                     else:
                         return self.markError(chart_id,chart_text,_('缺少必填變數：') + require_check)
         except Exception as e:
@@ -1439,7 +1485,6 @@ class OmEngine():
                         require_list.append(name.lower())
                 #組成寫回資料庫的dict
                 formdata_list = []
-#                 formobject_items = self.flowobject['form_object']['items']
                 formobject_items = json.loads(self.flowactive.merge_formobject)
                 for key in temp_dict:
                     name = key
@@ -1447,13 +1492,6 @@ class OmEngine():
                     item = formobject_items.get(name,'')
                     if item:
                         FormatToFormdataList(item, value, formdata_list)
-#                 for key in temp_dict:
-#                     name = key
-#                     value = temp_dict[key]
-#                     for item in formobject_items:
-#                         if item['id'] == name:
-#                             FormatToFormdataList(item, value, formdata_list)
-#                             break
                 if formdata_list:
                     for item in formdata_list:
                         item_id = item['id'].lower()
@@ -1694,10 +1732,10 @@ class OmEngine():
                 elif preflow_done == False:
                     self.data.pop('preflow_done')
                     status = 'F'
-                    value = _('預處理失敗。')
+                    value = _('驗證失敗。')
         except:
             status = 'E'
-            value = _('找不到預處理流程。')
+            value = _('找不到驗證流程。')
         finally:
             result = {}
             result['status'] = status
@@ -1829,11 +1867,6 @@ class OmEngine():
                 for c_row in calculate_list:
                     c_type = c_row['type']
                     var_dict = getVariable(self.flow_value, result, c_row, formdata)
-#                     if c_type == 'number':
-#                         try:
-#                             result[var_dict['to']] = int(var_dict['from'])
-#                         except:
-#                             result[var_dict['to']] = ''
                     if c_type == 'string':
                         try:
                             result[var_dict['to']] = str(var_dict['from'])
@@ -2067,8 +2100,15 @@ class OmEngine():
                             mission_param['stop_chart_text'] = stop_chart_text
                             mission_param['create_user_id'] = m.create_user_id
                             mission_param['ticket_createtime'] = m.init_data.createtime
-                            if m.group:
-                                group = json.loads(m.group)
+                            
+                            group_item_id_list = getSpecificTypeFormItem(fa.merge_formobject, 'h_group')
+                            if group_item_id_list:
+                                group_item_id = group_item_id_list[0]
+                            else:
+                                group_item_id = ''
+                            group_str = omdata_dict.get(group_item_id,None)
+                            if group_str:
+                                group = json.loads(group_str)
                                 g = group.get('group',None)
                                 if g:
                                     u = group.get('user',None)
@@ -2084,7 +2124,7 @@ class OmEngine():
             debug('OME MarkError error:     %s' % e.__str__())
     
     
-    def getchartpath(self,chart_id):
+    def getchartpath(self,chart_id,data=None):
         '''
         取得階層式流程架構的路徑
         '''
@@ -2102,8 +2142,13 @@ class OmEngine():
                 return getparentpath(g_parent) + '-' + chart_id_from
             else:
                 return chart_id_from
-        content = self.data.get('content','')
-        preflow_content = self.data.get('preflow_content','')
+        
+        if data:
+            pass
+        else:
+            data = self.data
+        content = data.get('content','')
+        preflow_content = data.get('preflow_content','')
         if content:
             parent = content
         elif preflow_content:
@@ -2264,7 +2309,9 @@ class OmEngine():
         #set ticket closed
         model_name = 'Omdata_' + self.table_uuid
         model = getModel('omformmodel', model_name)
-        model.objects.filter(id=self.data_id).update(running=False,closed=True,stop_uuid=stop_uuid,stop_chart_text=stop_chart_text,stoptime=stoptime)
+        model.objects.filter(id=self.data_id).update(running=False,closed=True,history=True,stop_uuid=stop_uuid,stop_chart_text=stop_chart_text,stoptime=stoptime)
+        #remove queue db
+        self.removeQueueDB()
     
     
     def getQuickAction(self, chart_id):
@@ -2356,3 +2403,18 @@ def getUserDefaultGroup(user_id):
         default_group_id = ''
     finally:
         return default_group_id
+
+
+def getSpecificTypeFormItem(formobject_items, item_type):
+    item_id_list = []
+    if formobject_items:
+        if isinstance(formobject_items, str):
+            formobject_items = json.loads(formobject_items)
+        for key_or_item in formobject_items:
+            if isinstance(key_or_item, dict):
+                item = key_or_item
+            else:
+                item = formobject_items[key_or_item]
+            if item['type'] == item_type:
+                item_id_list.append(item['id'].lower())
+    return item_id_list

@@ -9,9 +9,10 @@
 		<input type="password" id="token" placeholder="{% trans '密碼'%}">
 		<select name="language" >
 		  {% get_current_language as LANGUAGE_CODE %}
-	   	  {% for code,name in LANGUAGES %}
-	       	<option value="{{ code }}"{% if code == LANGUAGE_CODE %} selected="selected"{% endif %}>
-	          	{{ name }} ({{ code }})
+		  {% get_language_info_list for LANGUAGES  as LANGUAGES %}
+	   	  {% for lang in LANGUAGES %}
+	       	<option value="{{ lang.code }}"{% if lang.code == LANGUAGE_CODE %} selected="selected"{% endif %}>
+	          	{{ lang.name_local }} ({{ lang.code }})
 	       	</option>
 	      {% endfor %}
 		</select>

@@ -61,9 +61,9 @@ class QueueMonitor():
                 except Exception as e:
                     try:
                         if fa:
-                            error(_('找不到main.py'),e)
+                            error(_('找不到main.py')+str(e))
                         else:
-                            error(_('找不到流程'),e)
+                            error(_('找不到流程')+str(e))
                     except:
                         pass
             sleep(0.00001)

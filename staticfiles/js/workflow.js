@@ -1565,7 +1565,7 @@ var omfloweng = function(div_id)
 						+'          <td width="6%"></td>'
 						+'          <td width="30%"><select id="' + baseID_SLEEP + '_input_value" class="form-control select2" placeholder="'+gettext('輸入資料')+'" style="width:100%"></select></td>'
 						+'          <td width="30%"><input type="text" class="form-control " value="msec" readonly></td>'
-						+'          <td width="30%"><input type="text" class="form-control " placeholder="'+gettext('設定暫停的豪秒(ms)數')+'" readonly></td>'
+						+'          <td width="30%"><input type="text" class="form-control " placeholder="'+gettext('設定暫停的毫秒(ms)數')+'" readonly></td>'
 						+'         </tr></table>'
 						+'        </li>'
 						+'      </ul>'
@@ -1573,7 +1573,7 @@ var omfloweng = function(div_id)
 						
 						+'     <div class="tab-pane" id="' + baseID_SLEEP + '_config">'
 						+'		<div class="form-group">'
-						+'		  <label>'+gettext('暫停豪秒')+'</label>'
+						+'		  <label>'+gettext('暫停毫秒')+'</label>'
 						+'		  <input id="' + baseID_SLEEP + '_config_msec" type="text" name="refresh_rate_$" class="js-range-slider">'
 						+'		</div>'
 						
@@ -1599,7 +1599,7 @@ var omfloweng = function(div_id)
 				step    : 500,
 				from	: 5000,
 				type    : 'single',
-				postfix : gettext(' 豪秒'),
+				postfix : gettext(' 毫秒'),
 				prettify: false,
 				grid	: true,
 				grid_num: 200,
@@ -3918,8 +3918,8 @@ var omfloweng = function(div_id)
 		
 		$( '#' + top_id ).append(item_li_content.replace(/_index_/g,newindex));
 		
-		$( '#' + top_id  + '_value_' + newindex).html( select_option_value );
-		$( '#' + top_id  + '_name_' + newindex).html( select_option_form );
+		$( '#' + top_id  + '_value_' + newindex).html( select_option_value() );
+		$( '#' + top_id  + '_name_' + newindex).html( select_option_form() );
 		//select2 enable
 		$( '#' + top_id  + '_value_' + newindex).select2({tags: true,placeholder: gettext('輸入資料'),allowClear: true,dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}}});
 		$( '#' + top_id  + '_value_' + newindex).val(null).trigger('change');
@@ -3958,7 +3958,7 @@ var omfloweng = function(div_id)
 					+'<option value="add">'+gettext('字串相加')+'</option>'
 					+'<option value="num+">'+gettext('數字相加')+'</option>'
 					+'<option value="num-">'+gettext('數字相減')+'</option>'
-					+'<option value="num*">'+gettext('數字相成')+'</option>'
+					+'<option value="num*">'+gettext('數字相乘')+'</option>'
 					+'<option value="num/">'+gettext('數字相除')+'</option>'
 					+'<option value="num_mod">'+gettext('數字取餘數')+'</option>'
 					+'<option value="form_creater">'+gettext('開單人')+'</option>'
@@ -4281,7 +4281,7 @@ var omfloweng = function(div_id)
 		}
 		//read form field to select2
 		$( '#' + top_id  + '_value_' + newindex).html(options);
-		$( '#' + top_id  + '_name_' + newindex).html(select_option_value);
+		$( '#' + top_id  + '_name_' + newindex).html(select_option_value());
 		//select2 enable
 		$( '#' + top_id  + '_value_' + newindex).select2({tags: false , placeholder: gettext('輸入資料'), allowClear: true , dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}}});
 		$( '#' + top_id  + '_value_' + newindex).val(null).trigger('change');
@@ -6853,6 +6853,17 @@ var omformeng = function(div_id)
 	var event_get_group_list_callback = null;
 	var event_get_user_list_callback = null;
 	var group_tree_data_uuid =[];
+	
+	var event_get_app_list_callback = null;
+	var event_get_flow_list_callback = null;
+	var event_get_column_list_callback = null;
+	
+	var event_get_my_flow_list_callback = null;
+	var event_get_my_column_list_callback = null;
+	
+	var event_get_display_field_load_callback = null;
+	var event_get_omdata_list_callback = null;
+	var event_get_omdata_load_callback = null;
 	//====================
 	//===MODAL NAME ID==
 	//====================
@@ -6865,6 +6876,8 @@ var omformeng = function(div_id)
 	var baseID_CHECKBOX = active_id + '_' + 'checkbox_modal'; 
 	var baseID_DATE = active_id + '_' + 'date_modal'; 
 	var baseID_DATETIME = active_id + '_' + 'datetime_modal'; 
+	var baseID_SUBQUERY = active_id + '_' + 'subquery_modal'; 
+	var baseID_SUBQUERY_TABLE = active_id + '_' + 'subquery_table_modal'; 
 	
 	var baseID_HTITLE = active_id + '_' + 'h_title_modal';
 	var baseID_HLEVEL = active_id + '_' + 'h_level_modal';
@@ -7705,6 +7718,418 @@ var omformeng = function(div_id)
 			});
 		}
 		
+		//====================
+		//===MODAL CHART DATE 
+		//====================
+		var date_config_modal = '<div class="modal fade" id="' + baseID_DATE + '">'
+					+'<div class="modal-dialog modal-dialog-scrollable">'
+					+'<div class="modal-content">'
+					+'<div class="modal-header">'
+					+'<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
+					+'<span aria-hidden="true">&times;</span></button>'
+					+'<h4 class="modal-title"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;'+gettext('日期設定')+'</h4>'
+					+'</div>'
+					+'<div class="modal-body">'
+					+'<div class="form-group">'
+					+'<label>'+gettext('欄位名稱')+'</label>'
+					+'<input id="' + baseID_DATE + '_item_title" type="text" class="form-control" placeholder="'+gettext('請輸入欄位名稱')+'">'
+					+'</div>'
+					+'<div class="form-group">'
+					+'<label>'+gettext('註解說明')+'</label>'
+					+'<input id="' + baseID_DATE + '_item_placeholder" type="text" class="form-control" placeholder="'+gettext('請輸入註解文字')+'">'
+					+'</div>'
+					+'<div class="form-group">'
+					+'<label>'+gettext('預設值')+'</label>'
+					+'<input id="' + baseID_DATE + '_item_value" type="text" class="form-control" placeholder="'+gettext('請輸入預設值')+'" autocomplete="off">'
+					+'</div>'
+					
+					+'<div class="form-group">'
+					+'<label>'
+					+'<input id="' + baseID_DATE + '_item_require" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_DATE + '_item_require"></label>'
+					+' '+gettext('必填')+''
+					+'</label>'
+					+'</div>'
+					+'<div class="form-group">'
+					+'<label>'
+					+'<input id="' + baseID_DATE + '_item_readonly" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_DATE + '_item_readonly"></label>'
+					+' '+gettext('唯讀')+''
+					+'</label>'
+					+'</div>'
+					+'<div class="form-group">'
+					+'<label>'
+					+'<input id="' + baseID_DATE + '_item_hidden" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_DATE + '_item_hidden"></label>'
+					+' '+gettext('隱藏')+''
+					+'</label>'
+					+'</div>'
+					
+					+'</div>'
+					+'<div class="modal-footer">'
+					+'<button type="button" class="btn btn-default pull-left" id="' + baseID_DATE + '_close">'+gettext('取消')+'</button>'
+					+'<button type="button" class="btn btn-primary" id="' + baseID_DATE + '_submit">'+gettext('確定')+'</button>'
+					+'</div>'
+					+'</div>'
+					+'</div><!-- /.modal-content -->'
+					+'</div>';
+		//====================
+		//===MODAL INIT
+		//====================
+		if ($('#' + baseID_DATE ).length == 0)
+		{
+			formcontent.append(date_config_modal);
+			
+			$('#' + baseID_DATE + '_item_value').datetimepicker({minView:'month',format:'yyyy-mm-dd',locale:getCookie('django_language'),autoclose:true,todayHighlight:true});
+			$('#' + baseID_DATE + '_submit').click(function() 
+			{
+				modal_config_box_submit();
+			});
+			$('#' + baseID_DATE + '_close').click(function() 
+			{
+				$('#' + baseID_DATE ).modal('hide');
+			});
+		}
+		
+		//====================
+		//===MODAL CHART DATETIME 
+		//====================
+		var datetime_config_modal = '<div class="modal fade" id="' + baseID_DATETIME + '">'
+					+'<div class="modal-dialog modal-dialog-scrollable">'
+					+'<div class="modal-content">'
+					+'<div class="modal-header">'
+					+'<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
+					+'<span aria-hidden="true">&times;</span></button>'
+					+'<h4 class="modal-title"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;'+gettext('日期/時間設定')+'</h4>'
+					+'</div>'
+					+'<div class="modal-body">'
+					+'<div class="form-group">'
+					+'<label>'+gettext('欄位名稱')+'</label>'
+					+'<input id="' + baseID_DATETIME + '_item_title" type="text" class="form-control" placeholder="'+gettext('請輸入欄位名稱')+'">'
+					+'</div>'
+					+'<div class="form-group">'
+					+'<label>'+gettext('註解說明')+'</label>'
+					+'<input id="' + baseID_DATETIME + '_item_placeholder" type="text" class="form-control" placeholder="'+gettext('請輸入註解文字')+'">'
+					+'</div>'
+					+'<div class="form-group">'
+					+'<label>'+gettext('預設值')+'</label>'
+					+'<input id="' + baseID_DATETIME + '_item_value" type="text" class="form-control" placeholder="'+gettext('請輸入預設值')+'" autocomplete="off">'
+					+'</div>'
+					
+					+'<div class="form-group">'
+					+'<label>'
+					+'<input id="' + baseID_DATETIME + '_item_require" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_DATETIME + '_item_require"></label>'
+					+' '+gettext('必填')+''
+					+'</label>'
+					+'</div>'
+					+'<div class="form-group">'
+					+'<label>'
+					+'<input id="' + baseID_DATETIME + '_item_readonly" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_DATETIME + '_item_readonly"></label>'
+					+' '+gettext('唯讀')+''
+					+'</label>'
+					+'</div>'
+					+'<div class="form-group">'
+					+'<label>'
+					+'<input id="' + baseID_DATETIME + '_item_hidden" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_DATETIME + '_item_hidden"></label>'
+					+' '+gettext('隱藏')+''
+					+'</label>'
+					+'</div>'
+					
+					+'</div>'
+					+'<div class="modal-footer">'
+					+'<button type="button" class="btn btn-default pull-left" id="' + baseID_DATETIME + '_close">'+gettext('取消')+'</button>'
+					+'<button type="button" class="btn btn-primary" id="' + baseID_DATETIME + '_submit">'+gettext('確定')+'</button>'
+					+'</div>'
+					+'</div>'
+					+'</div><!-- /.modal-content -->'
+					+'</div>';
+		//====================
+		//===MODAL INIT
+		//====================
+		if ($('#' + baseID_DATETIME ).length == 0)
+		{
+			formcontent.append(datetime_config_modal);
+			
+			$('#' + baseID_DATETIME + '_item_value').datetimepicker({format:'yyyy-mm-dd hh:ii:ss',locale:getCookie('django_language'),autoclose:true,todayHighlight:true});
+			$('#' + baseID_DATETIME + '_submit').click(function() 
+			{
+				modal_config_box_submit();
+			});
+			$('#' + baseID_DATETIME + '_close').click(function() 
+			{
+				$('#' + baseID_DATETIME ).modal('hide');
+			});
+		}
+		
+		//====================
+		//===MODAL CHART SUBQUERY 
+		//====================
+		var subquery_config_modal = '<div class="modal fade" id="' + baseID_SUBQUERY + '">'
+					+'<div class="modal-dialog">'
+					+'<div class="modal-content">'
+					+'<div class="modal-header">'
+					+'<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
+					+'<span aria-hidden="true">&times;</span></button>'
+					+'<h4 class="modal-title"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;'+gettext('子查詢設定')+'</h4>'
+					+'</div>'
+					+'<div class="modal-body">'
+					+'<div class="nav-tabs-custom">'
+					+'<ul class="nav nav-tabs" style="overflow-x: auto;overflow-y: hidden;display: -webkit-box;display: -moz-box;">'					
+					+'<li class="active" style="float: none;"><a href="#' +baseID_SUBQUERY + '_config" data-toggle="tab">'+gettext('設定')+'</a></li>'
+					+'<li style="float: none;"><a href="#' + baseID_SUBQUERY + '_form" data-toggle="tab">'+gettext('表單')+'</a></li>'
+					+'<li style="float: none;"><a href="#' + baseID_SUBQUERY + '_rule" data-toggle="tab">'+gettext('條件')+'</a></li>'
+					+'<li style="float: none;"><a href="#' + baseID_SUBQUERY + '_fill" data-toggle="tab">'+gettext('回填')+'</a></li>'
+					+'</ul>'
+					+'<div class="tab-content">'
+					+'<div class="tab-pane active" id="' +baseID_SUBQUERY + '_config">'
+					
+					+'<div class="form-group">'
+					+'<label>'+gettext('欄位名稱')+'</label>'
+					+'<input id="' + baseID_SUBQUERY + '_item_title" type="text" class="form-control" placeholder="'+gettext('請輸入欄位名稱')+'">'
+					+'</div>'
+					+'<div class="form-group">'
+					+'<label>'+gettext('註解說明')+'</label>'
+					+'<input id="' + baseID_SUBQUERY + '_item_placeholder" type="text" class="form-control" placeholder="'+gettext('請輸入註解文字')+'">'
+					+'</div>'
+					+'<div class="form-group" style="display:none;">'
+					+'<label>'+gettext('類型')+'</label>'
+					+'<select id="' + baseID_SUBQUERY + '_item_type" class="form-control select2" style="width:100%"><option value="outflow">' + gettext('外部流程') + '</option><option value="inflow">' + gettext('呼叫流程') + '</option></select>'
+					+'</div>'
+					
+					+'<div class="form-group">'
+					+'<label>'
+					+'<input id="' + baseID_SUBQUERY + '_item_require" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_SUBQUERY + '_item_require"></label>'
+					+' '+gettext('必填')+''
+					+'</label>'
+					+'</div>'
+					+'<div class="form-group">'
+					+'<label>'
+					+'<input id="' + baseID_SUBQUERY + '_item_readonly" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_SUBQUERY + '_item_readonly"></label>'
+					+' '+gettext('唯讀')+''
+					+'</label>'
+					+'</div>'
+					+'<div class="form-group">'
+					+'<label>'
+					+'<input id="' + baseID_SUBQUERY + '_item_hidden" type="checkbox" class="icheckbox_minimal-blue" ><label for="' + baseID_SUBQUERY + '_item_hidden"></label>'
+					+' '+gettext('隱藏')+''
+					+'</label>'
+					+'</div>'
+					
+					+'</div>'
+					+'<div class="tab-pane" id="' +baseID_SUBQUERY + '_form">'
+					+'      <ul id="' + baseID_SUBQUERY + '_form_content" style="list-style-type: none; margin: 0; padding: 0">' 
+					+'<li class="ui-state-default" style=" margin: 0 0 0 0;height:30px;">'
+					+'<table width="100%"><tr>'
+					+'<td width="100%"></td>'
+					+'<td width="40%"><select id="' + baseID_SUBQUERY + '_select_app" class="form-control select2" style="width:100%"></select></td>'
+					+'<td width="40%"><select id="' + baseID_SUBQUERY + '_select_flow" class="form-control select2" style="width:100%"></select></td>'
+					+'</tr></table>'
+					+'</li>'
+					+'      </ul>'
+					+'</div>'
+					+'<div class="tab-pane" id="' +baseID_SUBQUERY + '_rule">'
+					+'      <button id="' + baseID_SUBQUERY + '_rule_content_add' + '" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> '+gettext('新增')+'</button>'
+					+'      <ul id="' + baseID_SUBQUERY + '_rule_content" style="list-style-type: none; margin: 0; padding: 0">' 
+					+'      </ul>'
+					+'</div>'
+					+'<div class="tab-pane" id="' +baseID_SUBQUERY + '_fill">'
+					+'      <button id="' + baseID_SUBQUERY + '_fill_content_add' + '" type="button" class="btn btn-default" style="margin:1px 0px;"><i class="fa fa-plus"></i> '+gettext('新增')+'</button>'
+					+'      <ul id="' + baseID_SUBQUERY + '_fill_content" style="list-style-type: none; margin: 0; padding: 0">' 
+					+'      </ul>'
+					+'</div>'
+					+'</div>'
+					+'</div>'
+					
+					+'</div>'
+					+'<div class="modal-footer">'
+					+'<button type="button" class="btn btn-default pull-left" id="' + baseID_SUBQUERY + '_close">'+gettext('取消')+'</button>'
+					+'<button type="button" class="btn btn-primary" id="' + baseID_SUBQUERY + '_submit">'+gettext('確定')+'</button>'
+					+'</div>'
+					+'</div>'
+					+'</div><!-- /.modal-content -->'
+					+'</div>';
+		//====================
+		//===MODAL INIT
+		//====================
+		if ($('#' + baseID_SUBQUERY ).length == 0)
+		{
+			formcontent.append(subquery_config_modal);
+			
+			var app_type = '';
+			var app_data = [];
+			var flow_data = [];
+			var app_option = '';
+			var flow_option = '';
+			var column_option = '';
+			$( '#' + baseID_SUBQUERY + '_item_type').select2({disabled:true, tags: false , placeholder: '',allowClear: false,dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}}});
+
+			$('#' +  baseID_SUBQUERY + '_item_type').change(function ()
+			{
+				app_type = $(this).val();
+				
+				if(app_type = 'outflow')
+				{
+					var select =  '<li class="ui-state-default" style=" margin: 0 0 0 0;height:30px;">'
+					+'<table width="100%"><tr>'
+					+'<td width="50%"><select id="' + baseID_SUBQUERY + '_select_app" class="form-control select2" style="width:100%"></select></td>'
+					+'<td width="50%"><select id="' + baseID_SUBQUERY + '_select_flow" class="form-control select2" style="width:100%"></select></td>'
+					+'</tr></table>'
+					+'</li>'
+					
+					$('#' + baseID_SUBQUERY + '_form_content').html(select);
+					$( '#' + baseID_SUBQUERY + '_select_app').select2({tags: false , placeholder: '',allowClear: true,dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}}});
+					$( '#' + baseID_SUBQUERY + '_select_flow').select2({tags: false , placeholder: '',allowClear: true,dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}}});
+					
+					app_option = '';
+					//變更時查詢app
+					if(event_get_app_list_callback == null)
+					{
+						app_data = [ 
+								{"id":"1","app_name":"測試用app1"},
+								{"id":"2","app_name":"測試用app2"}
+								]
+					}
+					else
+					{
+						app_data = event_get_app_list_callback();
+					}
+					
+					app_data.forEach(function(app_item) 
+					{
+						app_option += '<option value="' + app_item.app_name + '">' + app_item.app_name + '</option>'
+					});
+					$('#' + baseID_SUBQUERY + '_select_app').html(app_option);
+					$('#' + baseID_SUBQUERY + '_select_app').val(null).trigger('change');
+					
+					$('#' + baseID_SUBQUERY + '_select_app').change(function ()
+					{
+						flow_option = '';
+						//變更時查詢flow
+						if(event_get_flow_list_callback == null)
+						{
+							flow_data =[
+								{"flow_uuid":"3644a15122304e93a475312841c72643","flow_name":"流程1","flow_app_id":"1"},
+								{"flow_uuid":"f909603f3b004666b69516ba259765b0","flow_name":"流程2","flow_app_id":"1"}
+								]
+						}
+						else
+						{
+							flow_data = event_get_flow_list_callback($('#' + this.id).val());
+						}
+						
+						flow_data.forEach(function(flow_item) 
+						{
+							flow_option += '<option value="' + flow_item.flow_name + '">' + flow_item.flow_name + '</option>'
+						});
+						
+						$('#' + baseID_SUBQUERY + '_select_flow').html(flow_option);
+						$('#' + baseID_SUBQUERY + '_select_flow').val(null).trigger('change');
+					});
+				}
+				else if(app_type = 'inflow')
+				{
+					var select =  '<li class="ui-state-default" style=" margin: 0 0 0 0;height:30px;">'
+					+'<table width="100%"><tr>'
+					+'<td width="100%"><select id="' + baseID_SUBQUERY + '_select_flow" class="form-control select2" style="width:100%"></select></td>'
+					+'</tr></table>'
+					+'</li>'
+					
+					$('#' + baseID_SUBQUERY + '_form_content').html(select);
+					$( '#' + baseID_SUBQUERY + '_select_flow').select2({tags: false , placeholder: '',allowClear: true,dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}}});
+					
+					if(event_get_my_flow_list_callback == null)
+					{
+						flow_data = [
+								{"flow_name":"流程1"},
+								{"flow_name":"流程2"}
+								]
+					}
+					else
+					{
+						flow_data = event_get_my_flow_list_callback();
+					}
+					
+					flow_data.forEach(function(flow_item) 
+					{
+						flow_option += '<option value="' + flow_item.flow_name + '">' + flow_item.flow_name + '</option>'
+					});
+					$('#' + baseID_SUBQUERY + '_select_flow').html(flow_option);
+					$('#' + baseID_SUBQUERY + '_select_flow').val(null).trigger('change');
+				}
+				
+				$('#' + baseID_SUBQUERY + '_select_flow').change(function ()
+				{
+					column_option = select_flow_column_option(baseID_SUBQUERY);
+					$('[id^=' + baseID_SUBQUERY + '_rule_content_li_]').each(function()
+					{
+						var my_id = $(this).attr('id');
+						var my_val = $('#' + my_id.replace('_li_','_column_')).val()
+						$('#' + my_id.replace('_li_','_column_')).html(column_option).val(my_val).trigger('change');
+					});
+					$('[id^=' + baseID_SUBQUERY + '_fill_content_li_]').each(function()
+					{
+						var my_id = $(this).attr('id');
+						var my_var = $('#' + my_id.replace('_li_','_column_')).val()
+						$('#' + my_id.replace('_li_','_column_')).html(column_option).val(my_var).trigger('change');
+					});
+				});
+			});
+			
+			$('#' +  baseID_SUBQUERY + '_item_type').val('outflow').trigger('change');
+			
+			
+			$('#'+ baseID_SUBQUERY + '_rule_content_add').click(function () 
+			{
+				rule_sortable_add(baseID_SUBQUERY +  '_rule_content', column_option); 
+			});
+			$('#'+ baseID_SUBQUERY + '_fill_content_add').click(function () 
+			{
+				fill_sortable_add(baseID_SUBQUERY +  '_fill_content', column_option); 
+			});
+			$('#' + baseID_SUBQUERY + '_submit').click(function() 
+			{
+				modal_config_box_submit();
+			});
+			$('#' + baseID_SUBQUERY + '_close').click(function() 
+			{
+				$('#' + baseID_SUBQUERY ).modal('hide');
+			});
+		}
+		
+		//====================
+		//===MODAL CHART SUBQUERY TABLE 
+		//====================
+		var subquery_table_modal = '<div class="modal fade" id="' + baseID_SUBQUERY_TABLE + '">'
+					+'<div class="modal-dialog modal-lg">'
+					+'<div class="modal-content">'
+					+'<div class="modal-header">'
+					+'<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
+					+'<span aria-hidden="true">&times;</span></button>'
+					+'<h4 class="modal-title">&nbsp;&nbsp;'+gettext('子查詢')+'</h4>'
+					+'</div>'
+					+'<div class="modal-body">'
+					+'<table class="table table-bordered table-striped table-hover" id="' + baseID_SUBQUERY_TABLE + '_datatable" width="100%">'
+			  	   	  +'<thead>'
+			  	  	    +'<tr>'
+			  	  	      
+			  	  	  	+'</tr>'
+			  	  	  +'</thead>'
+			  	  	  +'<tbody>'
+			  	  	  +'</tbody>'
+			  	    +'</table>'
+					+'</div>'
+					+'<div class="modal-footer">'
+					+'<button type="button" class="btn btn-default pull-left" id="' + baseID_SUBQUERY_TABLE + '_close">'+gettext('取消')+'</button>'
+					+'<button type="button" class="btn btn-primary" id="' + baseID_SUBQUERY_TABLE + '_submit">'+gettext('確定')+'</button>'
+					+'</div>'
+					+'</div>'
+					+'</div><!-- /.modal-content -->'
+						+'</div>';
+		//====================
+		//===MODAL INIT
+		//====================
+		if ($('#' + baseID_SUBQUERY_TABLE ).length == 0)
+		{
+			formcontent.append(subquery_table_modal);
+		}
+		
 	}
 	function group_sortable_add(ul_id)
 	{	
@@ -7743,6 +8168,150 @@ var omformeng = function(div_id)
 		});
 		
 		
+	}
+	
+	function rule_sortable_add(ul_id, column_option)
+	{
+		var rule_item = '<li id="' + ul_id + '_li__index_" class="ui-state-default" style=" margin: 0 0 0 0;height:30px;">'
+					+ '<table width="100%"><tr>'
+					+'  <td width="4%"><span class="fa fa-arrows-v"></span></td>'
+					+'  <td width="35%"><select id="' + ul_id + '_column__index_" class="form-control select2" style="width:100%"></select></td>'
+					+'  <td width="22%"><select id="' + ul_id + '_condition__index_" class="form-control select2" style="width:100%"><option>></option><option>=</option><option><</option><option>!=</option><option value="contains">'+gettext('包含')+'</option><option value="exclude">'+gettext('不包含')+'</option></select></td>'
+					+'  <td width="35%"><input id="' + ul_id + '_value__index_" class="form-control"  placeholder="'+gettext('數字,字串')+'"></td>'
+					+'  <td width="4%" align="right" style="color:silver"><i class="far fa-trash-alt" id="remove_' + ul_id + '_li__index_"></i></td>'
+					+'</tr></table></li>';
+		var newindex = 0;
+		while($( '#' + ul_id  + '_li_' + newindex).length !=0)
+		{
+			newindex = newindex + 1;
+		}
+		$( '#' + ul_id ).append(rule_item.replace(/_index_/g,newindex));
+		
+		$('#' +  ul_id + '_column_' + newindex).html(column_option);
+		$('#' +  ul_id + '_column_' + newindex).select2({language: {noResults: function (params) {return " ";}}});	
+		$('#' +  ul_id + '_column_' + newindex).val(null).trigger('change');
+		$('#' +  ul_id + '_condition_' + newindex).select2({language: {noResults: function (params) {return " ";}}});	
+		$('#' +  ul_id + '_condition_' + newindex).val(null).trigger('change');
+		
+		//remove event
+		$('#remove_' + ul_id + '_li_' + newindex ).click(function()
+		{
+			var get_li_id =  $( this ).attr('id').replace('remove_','');
+			$('#' + get_li_id ).remove();
+		});
+		
+	}
+	function fill_sortable_add(ul_id, column_option)
+	{
+		var rule_item = '<li id="' + ul_id + '_li__index_" class="ui-state-default" style=" margin: 0 0 0 0;height:30px;">'
+					+ '<table width="100%"><tr>'
+					+'  <td width="4%"><span class="fa fa-arrows-v"></span></td>'
+					+'  <td width="42%"><select id="' + ul_id + '_column__index_" class="form-control select2" style="width:100%"></select></td>'
+					+'  <td width="42%"><select id="' + ul_id + '_target__index_" class="form-control select2" style="width:100%"></select></td>'
+					+'  <td width="4%" align="right" style="color:silver"><i class="far fa-trash-alt" id="remove_' + ul_id + '_li__index_"></i></td>'
+					+'</tr></table></li>';
+		var newindex = 0;
+		while($( '#' + ul_id  + '_li_' + newindex).length !=0)
+		{
+		newindex = newindex + 1;
+		}
+		$( '#' + ul_id ).append(rule_item.replace(/_index_/g,newindex));
+		
+		$('#' +  ul_id + '_column_' + newindex).html(column_option);
+		$('#' +  ul_id + '_column_' + newindex).select2({language: {noResults: function (params) {return " ";}}});	
+		$('#' +  ul_id + '_column_' + newindex).val(null).trigger('change');
+		$('#' +  ul_id + '_target_' + newindex).html(select_option_form());
+		$('#' +  ul_id + '_target_' + newindex).select2({language: {noResults: function (params) {return " ";}}});	
+		$('#' +  ul_id + '_target_' + newindex).val(null).trigger('change');
+		
+		//remove event
+		$('#remove_' + ul_id + '_li_' + newindex ).click(function()
+		{
+		var get_li_id =  $( this ).attr('id').replace('remove_','');
+		$('#' + get_li_id ).remove();
+		});
+		
+	}
+	
+	/**
+	 * form option maker for select2
+	 * input: 
+	 * return: select's options in workflow form var
+	 */
+	function select_option_form()
+	{
+		var output = '';
+		if(formobject != null)
+		{
+			if(formobject.items != null)
+			{
+				formobject.items.forEach(function(item, index, array) 
+				{
+					if(item.type.startsWith('box'))
+					{
+
+					}
+					else
+					{
+						if(item.type == 'h_group')
+						{
+							var option = '<option value="#G1(' + item.id + ')">'+gettext('欄位:') + item.config.group_title + '</option>'
+										+ '<option value="#G2(' + item.id + ')">'+gettext('欄位:') + item.config.user_title + '</option>';
+							output = output + option;
+							
+						}
+						else
+						{
+							var option = '<option value="#(' + item.id + ')">'+gettext('欄位:') + item.config.title + '</option>';
+							output = output + option;
+						}
+					}
+				});
+			}
+		}
+		
+		return output;
+	}
+	
+	function select_flow_column_option(baseID)
+	{
+		var app_type = $('#' + baseID + '_item_type').val()
+		column_option = '';
+		//變更時查詢column
+		if(app_type = 'outflow')
+		{
+			if(event_get_column_list_callback == null)
+			{
+				column_data = [ 
+						{"id":"formitm_1","field_name":"測試用app1"},
+						{"id":"formitm_2","field_name":"測試用app2"}
+						]
+			}
+			else
+			{
+				column_data = event_get_column_list_callback($('#' +  baseID_SUBQUERY + '_select_app').val(), $('#' +  baseID_SUBQUERY + '_select_flow').val());
+			}
+		}
+		else if(app_type = 'inflow')
+		{
+			if(event_get_my_column_list_callback == null)
+			{
+				column_data = [ 
+						{"id":"formitm_1","field_name":"測試用app1"},
+						{"id":"formitm_2","field_name":"測試用app2"}
+						]
+			}
+			else
+			{
+				column_data = event_get_my_column_list_callback($('#' +  baseID_SUBQUERY + '_select_flow').val());
+			}
+		}
+		$.each(column_data, function(column_index, column_value) 
+		{
+			column_option += '<option value="' + column_index + '">' + column_value + '</option>'
+		});
+		
+		return column_option
 	}
 	
 	function dropdown_sortable_add(ul_id)
@@ -8028,6 +8597,41 @@ var omformeng = function(div_id)
 		}
 		
 	}
+	
+	_self_.event_app_list = function(function_name)
+	{
+		event_get_app_list_callback = function_name;
+	}
+	_self_.event_flow_list = function(function_name)
+	{
+		event_get_flow_list_callback = function_name;
+	}
+	_self_.event_column_list = function(function_name)
+	{
+		event_get_column_list_callback = function_name;
+	}
+	
+	_self_.event_my_flow_list = function(function_name)
+	{
+		event_get_my_flow_list_callback = function_name;
+	}
+	_self_.event_my_column_list = function(function_name)
+	{
+		event_get_my_column_list_callback = function_name;
+	}
+	
+	_self_.event_display_field_load = function(function_name)
+	{
+		event_get_display_field_load_callback = function_name;
+	}
+	_self_.event_omdata_list_url = function(function_name)
+	{
+		event_get_omdata_list_callback = function_name;
+	}
+	_self_.event_omdata_load = function(function_name)
+	{
+		event_get_omdata_load_callback = function_name;
+	}
 	/**
 	 * get form design by string
 	 * input:
@@ -8213,6 +8817,44 @@ var omformeng = function(div_id)
 		return output;
 	}
 	
+	function date_object()
+	{
+		var output = {};
+		output["idcounter"] = 0;
+		output["title"] = '';
+		output["require"] = false;
+		output["placeholder"] = '';
+		output["value"] = '';
+		output["readonly"] = false;
+		
+		return output;
+	}
+	
+	function datetime_object()
+	{
+		var output = {};
+		output["idcounter"] = 0;
+		output["title"] = '';
+		output["require"] = false;
+		output["placeholder"] = '';
+		output["value"] = '';
+		output["readonly"] = false;
+		
+		return output;
+	}
+	function subquery_object()
+	{
+		var output = {};
+		output["idcounter"] = 0;
+		output["title"] = '';
+		output["require"] = false;
+		output["placeholder"] = '';
+		output["type"] = ''; //email/password/text
+		output["value"] = '';
+		output["readonly"] = false;
+		
+		return output;
+	}
 	
 
 	function check_h_exist(item_type)
@@ -8374,15 +9016,44 @@ var omformeng = function(div_id)
 				}
 				
 				content = '<div id="_pid_" class="form-group "' + drag + ' ' + hidden + '>'
-					+ remove_button + config_button
-					+'<label id="_pid__group_title">' + form_item.config.group_title + require
-					+'</label>'
-					+'<select id="_pid__group_item" class="form-control select2" ' + readonly + ' style="width:100%">' + dropdown_array_to_group(form_item,false) + '</select>'
-					+'<label id="_pid__user_title" style="' + display_none + '">' + form_item.config.user_title + user_require
-					+'</label>'
-					+'<select id="_pid__user_item" class="form-control select2" ' + readonly + ' style="width:100%;' + display_none + '"></select>'
-					+'</div>';
-
+						+ remove_button + config_button
+						+'<label id="_pid__group_title">' + form_item.config.group_title + require
+						+'</label>'
+						+'<select id="_pid__group_item" class="form-control select2" ' + readonly + ' style="width:100%">' + dropdown_array_to_group(form_item,false) + '</select>'
+						+'<label id="_pid__user_title" style="' + display_none + '">' + form_item.config.user_title + user_require
+						+'</label>'
+						+'<select id="_pid__user_item" class="form-control select2" ' + readonly + ' style="width:100%;' + display_none + '"></select>'
+						+'</div>';
+				break;
+			case 'date':
+				content = '<div id="_pid_" class="form-group "' + drag + ' ' + hidden + '>'
+						+ remove_button + config_button
+						+'<label id="_pid__title">' + form_item.config.title + require
+						+'</label>'
+						+'<input id="_pid__item" type="text" class="form-control" placeholder="' + form_item.config.placeholder + '" ' + readonly + ' autocomplete="off">'
+						+'</div>';
+				break;
+			case 'datetime':
+				content = '<div id="_pid_" class="form-group "' + drag + ' ' + hidden + '>'
+						+ remove_button + config_button
+						+'<label id="_pid__title">' + form_item.config.title + require
+						+'</label>'
+						+'<input id="_pid__item" type="text" class="form-control" placeholder="' + form_item.config.placeholder + '" ' + readonly + ' autocomplete="off">'
+						+'</div>';
+				break;
+			case 'subquery':
+				content = '<div id="_pid_" class="form-group "' + drag + ' ' + hidden + '>'
+						+ remove_button + config_button
+						+'<label id="_pid__title">' + form_item.config.title + require
+						+'</label>'
+						+'<div class="input-group" style="width:100%">'
+						+'<input id="_pid__item" type="text" class="form-control" placeholder="' + form_item.config.placeholder + '" ' + readonly + '>'
+						+'<span class="input-group-btn">'
+	                    +'<button type="button" id="_pid__subquery_button" class="btn btn-info btn-flat"><i class="fa fa-search"></i></button>'
+	                    +'</span>'
+	                    +'</div>' 
+	                    
+						+'</div>';
 				break;
 		}
 		
@@ -8427,8 +9098,27 @@ var omformeng = function(div_id)
 					$( '#' + active_id + '_' + form_item.id + '_user_item').select2({disabled:true});
 				}
 				break;
-			
-			
+			case 'date':
+				$( '#' + active_id + '_' + form_item.id + '_item').datetimepicker({minView:'month',format:'yyyy-mm-dd',language:getCookie('django_language'),autoclose:true,todayHighlight:true});
+				if(form_item.config.readonly)
+				{
+					$( '#' + active_id + '_' + form_item.id + '_item').datetimepicker('remove');
+				}
+				break;
+			case 'datetime':
+				$( '#' + active_id + '_' + form_item.id + '_item').datetimepicker({format:'yyyy-mm-dd hh:ii:ss',language:getCookie('django_language'),autoclose:true,todayHighlight:true});
+				if(form_item.config.readonly)
+				{
+					$( '#' + active_id + '_' + form_item.id + '_item').datetimepicker('remove');
+				}
+				break;
+			case 'subquery':
+				if(form_item.config.readonly)
+				{
+					$( '#' + active_id + '_' + form_item.id + '_subquery_button').attr('disabled', 'disabled');
+				}
+				break;
+				
 		}
 		
 		
@@ -8481,6 +9171,156 @@ var omformeng = function(div_id)
 				$('#' +  active_id + '_' + form_item.id + '_user_item').html(options);
 				$('#' +  active_id + '_' + form_item.id + '_user_item').select2({tags: false,placeholder: '',allowClear: true,dropdownAutoWidth: true, language: {noResults: function (params) {return " ";}}});
 			}
+		});
+		
+		var table;
+	    var data_tmp;
+		var data_len;
+		var data_page;
+		$( '#' + active_id + '_' + form_item.id + '_subquery_button').click(function()
+		{//子查詢動作
+			baseID_SUBQUERY_TABLE = active_id + '_' + 'subquery_table_modal'; 
+			//取得顯示欄位，組合成datatable 格式
+			var displayfield = {}
+			var table_column = [];
+			var omdata_ajax_var = event_get_omdata_list_callback;
+			if(table != undefined)
+			{
+				table.clear();
+				table.destroy();
+				$('#' + baseID_SUBQUERY_TABLE + '_datatable thead tr').html('');
+			}
+			
+			
+			if(event_get_display_field_load_callback == null)
+			{
+				
+			}
+			else
+			{
+				displayfield = event_get_display_field_load_callback(form_item.config.app_name, form_item.config.flow_name);
+			}
+			$('#' + baseID_SUBQUERY_TABLE + '_datatable thead tr').append('<th></th>');
+			table_column.push({"data": "id", "width": "15px", "orderable": false, "render": function(data, type, row)
+				{return '<input type="radio" class="iradio_minimal-blue" name="'+ form_item.id +'_radio" value="'+data+'" data-no="'+row.data_no+'" id="'+ form_item.id +'_omdata_'+data+'"><label for="'+ form_item.id +'_omdata_'+data+'"></label>'}
+			});
+			
+			$.each(displayfield, function(index, value){
+				$('#' + baseID_SUBQUERY_TABLE + '_datatable thead tr').append('<th>'+value+'</th>');
+				if(index == 'data_no')
+				{
+					table_column.push({"data": index, "render": function(data)
+						{	
+							return paddingLeft(data,8)
+						}	
+					});
+				}
+				else if(index == 'error')
+				{	
+					table_column.push({"data": index, "render": function(data)
+						{
+							if(data)
+							{return '<div class="label label-danger">'+gettext('異常')+'</div>'}
+							else
+							{return '<div class="label label-success">'+gettext('正常')+'</div>'}
+						}
+					});
+				}
+				else if(index == 'level')
+				{	
+					table_column.push({"data": index, "render": function(data)
+						{
+							if(data == 'yellow')
+								{return '<div class="label label-warning">'+gettext('黃燈')+'</div>'}
+							else if(data == 'red')
+								{return '<div class="label label-danger">'+gettext('紅燈')+'</div>'}
+							else
+								{return '<div class="label label-success">'+gettext('綠燈')+'</div>'}		
+						}
+					});
+				}
+				else if(index == 'updatetime')
+				{
+					table_column.push({"data": index, "render": function(data)
+						{
+							if(data)
+								{return data.slice(0,-7)}
+							else
+								{return data}
+						}
+					});
+				}
+				else if(index.indexOf('-group') > 0)
+				{
+					table_column.push({"data": 'group', "render": function(data)
+						{
+							data = JSON.parse(unescapeHtml(data));
+							if(data)
+								{return data.group}
+							else
+								{return ''}
+						}
+					});
+				}
+				else if(index.indexOf('-user') > 0)
+				{
+					table_column.push({"data": 'group', "render": function(data)
+						{
+							data = JSON.parse(unescapeHtml(data));
+							if(data)
+								{return data.user}
+							else
+								{return ''}
+						}
+					});
+				}
+				else
+				{
+					table_column.push({"data": index});
+				}
+			});
+			
+			table = $('#' + baseID_SUBQUERY_TABLE + '_datatable').DataTable({
+				"autoWidth"	: true,
+				"order"		: [[ 1, "desc" ]], 					//	default order column[1]
+				"serverSide": true,							//	serverside data loading
+				"dom"		:"<<t>'row'<'row'<'col-sm-5'i><'col-sm-7'p>>>",
+				"scrollX": true,
+				"language"	: __const_language__,
+				"ajax": {
+					"url": omdata_ajax_var.url,
+			    	"type": "POST",
+			    	"headers": { "X-CSRFToken": getCookie("csrftoken") },
+					"contentType": "application/json;charset=utf-8;",
+			    	"data":	function ( d ) {
+								return JSON.stringify($.extend( {}, d, {
+							        app_name	: form_item.config.app_name,
+							       	flow_name	: form_item.config.flow_name,
+							        condition	: form_item.config.rule,
+							        source_flow_uuid: omdata_ajax_var.flow_uuid,
+							        source_data_id: omdata_ajax_var.data_id
+							    }));
+							},
+					"dataSrc": function(data){
+						a = dataCompare(data,data_tmp,data_len,data_page,table);
+						data_tmp = a['data_tmp']
+						data_len = a['data_len']
+						data_page = a['data_page']
+						data.data = a['data.data']
+						return data.data;
+					},
+				},
+	        	"columns":	table_column
+			});
+			$('#' + baseID_SUBQUERY_TABLE).modal('show');
+			$('#' + baseID_SUBQUERY_TABLE + '_submit').off('click').click(function() 
+			{
+				modal_subquery_submit(baseID_SUBQUERY_TABLE, form_item);
+			});
+			$('#' + baseID_SUBQUERY_TABLE + '_close').click(function() 
+			{
+				$('#' + baseID_SUBQUERY_TABLE ).modal('hide');
+			});
 		});
 	}
 	
@@ -8577,6 +9417,35 @@ var omformeng = function(div_id)
 				confitem.user_require = false;
 				confitem.readonly = false;
 				break;
+			case 'date':
+				confitem = new date_object();
+				confitem.title = gettext('日期');
+				confitem.idcounter = formobject.form_item_counter;
+				confitem.require = false;
+				confitem.placeholder = '';
+				confitem.readonly = false;
+				break;
+			case 'datetime':
+				confitem = new datetime_object();
+				confitem.title = gettext('日期/時間');
+				confitem.idcounter = formobject.form_item_counter;
+				confitem.require = false;
+				confitem.placeholder = '';
+				confitem.readonly = false;
+				break;
+			case 'subquery':
+				confitem = new subquery_object();
+				confitem.title = gettext('子查詢');
+				confitem.idcounter = formobject.form_item_counter;
+				confitem.require = false;
+				confitem.placeholder = '';
+				confitem.type = 'outflow';
+				confitem.readonly = false;
+				confitem.app_name='';
+				confitem.flow_name='';
+				confitem.rule=[];
+				confitem.fill=[];
+				break;
 		}
 		return confitem;
 	}
@@ -8588,7 +9457,10 @@ var omformeng = function(div_id)
 		var deafult_option = '<option selected="selected" value="inputbox">'+gettext('輸入方塊')+'</option>'
 							+'<option value="areabox">'+gettext('多行輸入')+'</option>'
 							+'<option value="list">'+gettext('下拉選單')+'</option>'
-							+'<option value="checkbox">'+gettext('單選/複選選單')+'</option>';
+							+'<option value="checkbox">'+gettext('單選/複選選單')+'</option>'
+							+'<option value="date">'+gettext('日期')+'</option>'
+							+'<option value="datetime">'+gettext('日期/時間')+'</option>'
+							+'<option value="subquery">'+gettext('子查詢')+'</option>';
 		var header_option = '';
 		var addtion_option = '<option value="box6">'+gettext('半區塊')+'</option>';
 		
@@ -8767,6 +9639,46 @@ var omformeng = function(div_id)
 					$('#' + baseID_HGROUP ).modal('show');
 					
 				}
+				else if(item.type == 'date')
+				{
+					$('#' + baseID_DATE + '_item_title').val(item.config.title);
+					$('#' + baseID_DATE + '_item_require').prop("checked", item.config.require);
+					$('#' + baseID_DATE + '_item_placeholder').val(item.config.placeholder);
+					$('#' + baseID_DATE + '_item_value').val(item.config.value);
+					$('#' + baseID_DATE + '_item_hidden').prop("checked", item.hidden);
+					$('#' + baseID_DATE + '_item_readonly').prop("checked", item.config.readonly);
+					action_item_for_modal = item;
+					$('#' + baseID_DATE ).modal('show');
+				}
+				else if(item.type == 'datetime')
+				{
+					$('#' + baseID_DATETIME + '_item_title').val(item.config.title);
+					$('#' + baseID_DATETIME + '_item_require').prop("checked", item.config.require);
+					$('#' + baseID_DATETIME + '_item_placeholder').val(item.config.placeholder);
+					$('#' + baseID_DATETIME + '_item_value').val(item.config.value);
+					$('#' + baseID_DATETIME + '_item_hidden').prop("checked", item.hidden);
+					$('#' + baseID_DATETIME + '_item_readonly').prop("checked", item.config.readonly);
+					action_item_for_modal = item;
+					$('#' + baseID_DATETIME ).modal('show');
+				}
+				else if(item.type == 'subquery')
+				{
+					$('#' + baseID_SUBQUERY + '_item_title').val(item.config.title);
+					$('#' + baseID_SUBQUERY + '_item_require').prop("checked", item.config.require);
+					$('#' + baseID_SUBQUERY + '_item_placeholder').val(item.config.placeholder);
+					$('#' + baseID_SUBQUERY + '_item_type').val(item.config.type).trigger('change');
+					$('#' + baseID_SUBQUERY + '_item_hidden').prop("checked", item.hidden);
+					$('#' + baseID_SUBQUERY + '_item_readonly').prop("checked", item.config.readonly);
+					//clean all things
+					$('#' + baseID_SUBQUERY + '_rule_content').html('');
+					$('#' + baseID_SUBQUERY + '_fill_content').html('');
+					//load object to real
+					modal_load_subquery(baseID_SUBQUERY , item );
+					
+					action_item_for_modal = item;
+					
+					$('#' + baseID_SUBQUERY ).modal('show');
+				}
 			}
 		});
 		
@@ -8867,6 +9779,34 @@ var omformeng = function(div_id)
 			$('#' + baseID_HGROUP + '_group_content' + '_text_' + index).val(dropdown_item.text);
 		});
 	}
+	function modal_load_subquery(baseID , item)
+	{
+		if(item.config.type == 'outflow')
+		{
+			$('#' + baseID + '_select_app').val(item.config.app_name).trigger('change');
+			$('#' + baseID + '_select_flow').val(item.config.flow_name).trigger('change');
+		}
+		else if(item.config.type == 'inflow')
+		{
+			$('#' + baseID + '_select_flow').val(item.config.flow_name).trigger('change');
+		}
+		var column_option = select_flow_column_option(baseID_SUBQUERY);
+		item.config.rule.forEach(function(dropdown_item, index)
+		{
+			rule_sortable_add(baseID + '_rule_content', column_option);
+			$('#' + baseID + '_rule_content' + '_column_' + index).val(dropdown_item.column).trigger('change');
+			$('#' + baseID + '_rule_content' + '_condition_' + index).val(dropdown_item.condition).trigger('change');
+			$('#' + baseID + '_rule_content' + '_value_' + index).val(dropdown_item.value);
+		});
+		item.config.fill.forEach(function(dropdown_item, index)
+		{
+			fill_sortable_add(baseID + '_fill_content', column_option);
+			$('#' + baseID + '_fill_content' + '_column_' + index).val(dropdown_item.column).trigger('change');
+			$('#' + baseID + '_fill_content' + '_target_' + index).val(dropdown_item.target).trigger('change');
+		});
+		
+		
+	}
 	function modal_save_dropdown(baseID , item, keyword) 
 	{
 		item.config.lists = [];
@@ -8890,6 +9830,40 @@ var omformeng = function(div_id)
 		else
 		{
 			$('#' + active_id + '_' + item.id + '_item' ).html(dropdown_array_to_option(item));
+		}
+	}
+	function modal_save_subquery_dropdown(baseID , item, keyword) 
+	{
+		if(keyword == 'rule')
+		{
+			item.config.rule = [];
+			$('[id^=' + baseID + '_' + keyword + '_content' + '_li_]').each(function()
+			{
+				var my_id = $(this).attr('id');
+				var item_list = {};
+				item_list['column'] = $('#' + my_id.replace('_li_','_column_')).val();
+				item_list['condition'] = $('#' + my_id.replace('_li_','_condition_')).val();
+				item_list['value'] = $('#' + my_id.replace('_li_','_value_')).val();
+				if(item_list['column'] != null && item_list['condition'] != null)
+				{
+					item.config.rule.push(item_list);
+				}
+			});
+		}
+		else if(keyword == 'fill')
+		{
+			item.config.fill = [];
+			$('[id^=' + baseID + '_' + keyword + '_content' + '_li_]').each(function()
+			{
+				var my_id = $(this).attr('id');
+				var item_list = {};
+				item_list['column'] = $('#' + my_id.replace('_li_','_column_')).val();
+				item_list['target'] = $('#' + my_id.replace('_li_','_target_')).val();
+				if(item_list['column'] != null && item_list['target'] != null)
+				{
+					item.config.fill.push(item_list);
+				}
+			});
 		}
 	}
 	function modal_config_box_submit()
@@ -9152,8 +10126,169 @@ var omformeng = function(div_id)
 			
 			$('#' + baseID_HGROUP ).modal('hide');
 		}
+		else if(item.type == 'date')
+		{
+			//get modal data
+			item.config.title = $('#' + baseID_DATE + '_item_title').val();
+			item.config.require = $('#' + baseID_DATE + '_item_require').prop("checked");
+			item.config.placeholder = $('#' + baseID_DATE + '_item_placeholder').val();
+			item.config.value = $('#' + baseID_DATE + '_item_value').val();
+			item.hidden = $('#' + baseID_DATE + '_item_hidden').prop("checked");
+			item.config.readonly = $('#' + baseID_DATE + '_item_readonly').prop("checked");
+			//change ui object
+			if(item.config.require)
+			{
+				$('#' + active_id + '_' + item.id + '_title').html(item.config.title + '<font color="red">*</font>') ;
+			}
+			else
+			{
+				$('#' + active_id + '_' + item.id + '_title').html(item.config.title) ;
+			}
+			if(item.config.readonly)
+			{
+				$('#' + active_id + '_' + item.id + '_item').datetimepicker('remove');
+			}
+			else
+			{
+				$('#' + active_id + '_' + item.id + '_item').datetimepicker('show');
+			}
+			$('#' + active_id + '_' + item.id + '_item').prop('readonly',item.config.readonly);
+			$('#' + active_id + '_' + item.id + '_item').attr('placeholder',item.config.placeholder);
+			
+			$('#' + baseID_DATE ).modal('hide');
+		}
+		else if(item.type == 'datetime')
+		{
+			//get modal data
+			item.config.title = $('#' + baseID_DATETIME + '_item_title').val();
+			item.config.require = $('#' + baseID_DATETIME + '_item_require').prop("checked");
+			item.config.placeholder = $('#' + baseID_DATETIME + '_item_placeholder').val();
+			item.config.value = $('#' + baseID_DATETIME + '_item_value').val();
+			item.hidden = $('#' + baseID_DATETIME + '_item_hidden').prop("checked");
+			item.config.readonly = $('#' + baseID_DATETIME + '_item_readonly').prop("checked");
+			//change ui object
+			if(item.config.require)
+			{
+				$('#' + active_id + '_' + item.id + '_title').html(item.config.title + '<font color="red">*</font>') ;
+			}
+			else
+			{
+				$('#' + active_id + '_' + item.id + '_title').html(item.config.title) ;
+			}
+			if(item.config.readonly)
+			{
+				$('#' + active_id + '_' + item.id + '_item').datetimepicker('remove');
+			}
+			else
+			{
+				$('#' + active_id + '_' + item.id + '_item').datetimepicker('show');
+			}
+			$('#' + active_id + '_' + item.id + '_item').prop('readonly',item.config.readonly);
+			$('#' + active_id + '_' + item.id + '_item').attr('placeholder',item.config.placeholder);
+			
+			$('#' + baseID_DATETIME ).modal('hide');
+		}
+		else if(item.type == 'subquery')
+		{
+			//get modal data
+			item.config.title = $('#' + baseID_SUBQUERY + '_item_title').val();
+			item.config.require = $('#' + baseID_SUBQUERY + '_item_require').prop("checked");
+			item.config.placeholder = $('#' + baseID_SUBQUERY + '_item_placeholder').val();
+			item.config.type = $('#' + baseID_SUBQUERY + '_item_type').val();
+			item.hidden = $('#' + baseID_SUBQUERY + '_item_hidden').prop("checked");
+			item.config.readonly = $('#' + baseID_SUBQUERY + '_item_readonly').prop("checked");
+			item.config.app_name = $('#' + baseID_SUBQUERY + '_select_app').val();
+			item.config.flow_name = $('#' + baseID_SUBQUERY + '_select_flow').val();
+			//change ui object
+			if(item.config.require)
+			{
+				$('#' + active_id + '_' + item.id + '_title').html(item.config.title + '<font color="red">*</font>') ;
+			}
+			else
+			{
+				$('#' + active_id + '_' + item.id + '_title').html(item.config.title) ;
+			}
+			$('#' + active_id + '_' + item.id + '_item').attr('placeholder',item.config.placeholder);
+			$('#' + active_id + '_' + item.id + '_item').prop('type',item.config.type);
+			$('#' + active_id + '_' + item.id + '_item').prop('readonly',item.config.readonly);
+			$('#' + active_id + '_' + item.id + '_subquery_button').attr('disabled',item.config.readonly);
+			modal_save_subquery_dropdown(baseID_SUBQUERY, item, 'rule');
+			modal_save_subquery_dropdown(baseID_SUBQUERY, item, 'fill');
+			
+			$('#' + baseID_SUBQUERY ).modal('hide');
+		}
 		
 	}		
+	function modal_subquery_submit(baseID, item)
+	{
+		if($('#' + baseID + '_datatable input:radio:checked').length != 1)
+		{
+			
+		}
+		else
+		{
+			var omdata_value = [];
+			if(event_get_omdata_load_callback == null)
+			{
+				
+			}
+			else
+			{
+				var data_id = $('#' + baseID + '_datatable input:radio:checked').val();
+				var fields = [];
+				item.config.fill.forEach(function(fill_item, index)
+				{
+					fields.push(fill_item.column)
+				})
+				omdata_value = event_get_omdata_load_callback(item.config.app_name, item.config.flow_name, data_id, fields)
+			}
+			
+			item.config.fill.forEach(function(fill_item, index)
+			{
+				var type = '';
+				var target = '';
+				if(fill_item.target.startsWith('#('))
+				{
+					target = fill_item.target.slice(2,-1);
+					type = $('#formcontent_' + target + '_item:eq(0)').prop('localName');
+				}
+				else if(fill_item.target.startsWith('#G1('))
+				{
+					target = fill_item.target.slice(4,-1) + '_group';
+					type = 'select';
+				}
+				else if(fill_item.target.startsWith('#G2('))
+				{
+					target = fill_item.target.slice(4,-1) + '_user';
+					type = 'select';
+				}
+				if(type == 'select')
+				{
+					$('#formcontent_' + target + '_item').val(omdata_value[fill_item.column]).trigger('change');
+				}
+				else if(type == 'div')
+				{
+					$.each($('#formcontent_' + target + '_item input'), function()
+					{
+						if($(this).val() == omdata_value[fill_item.column])
+						{
+							
+							$(this).prop('checked', true);
+						}
+						else
+						{
+							$(this).prop('checked', false);
+						}
+					})
+				}
+				else
+				{
+					$('#formcontent_' + target + '_item').val(omdata_value[fill_item.column]);
+				}
+			})
+		}
+		$('#' + baseID).modal('hide')
+	}
 		
 	//===drop drag
 	_self_.boxdrag = function(ev)
@@ -9296,6 +10431,9 @@ var omformeng = function(div_id)
 				case 'inputbox':
 				case 'areabox':
 				case 'h_title':
+				case 'date': 
+				case 'datetime': 
+				case 'subquery': 
 					$('#' + active_id + '_' + item.id + '_item').val(item.value);
 					break;
 				case 'h_status':
@@ -9343,6 +10481,9 @@ var omformeng = function(div_id)
 					case 'inputbox':
 					case 'areabox':
 					case 'list':
+					case 'date':
+					case 'datetime':
+					case 'subquery':
 						var obj  = $('#' + active_id + '_' + item.id + '_item');
 						var item_data = {};
 						item_data['id'] = item.id;
@@ -9559,6 +10700,9 @@ var omformeng = function(div_id)
 					case 'inputbox':
 					case 'areabox':
 					case 'list':
+					case 'date':
+					case 'datetime':
+					case 'subquery':
 						var item_data = {};
 						item_data['id'] = item.id;
 						item_data['value'] = item.config.value;

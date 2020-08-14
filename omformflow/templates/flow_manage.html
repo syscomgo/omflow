@@ -32,6 +32,9 @@
 			    <button type="button" class="btn btn-default" onclick="filter_flowdesign()" style="margin:1px 0px;"><i class="fa fa-filter"></i> {% trans '篩選'%}</button>
                 <button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default" onclick="filter_default()" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
               </div>
+              <div class="pull-right">
+              	<button type="button" class="btn btn-default" onclick="app_translate()" style="margin:1px 0px;"><i class="fas fa-language"></i> {% trans '語言'%}</button>
+              </div>
       	    </div>
       	    <!-- box-header -->
       	    <div class="box-body">
@@ -78,7 +81,6 @@
 	</div>
 	
 	
-	<!-- List-Modal -->
     <div class="modal fade" id="modal-copy_flow" data-backdrop="static">
 	  <div class="modal-dialog">
 		<div class="modal-content">
@@ -103,6 +105,34 @@
 	  </div><!-- /.modal-content -->
 	</div>
     <!-- /.modal -->
+    
+    {% get_language_info_list for LANGUAGES  as LANGUAGES %}
+    {% get_current_language as LANGUAGE_CODE %}
+    <div class="modal fade" id="modal-app_translate" data-backdrop="static">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title"><i class="fas fa-language"></i>&nbsp;&nbsp;{% trans '語言翻譯'%}</h4>
+		  </div>
+		  <div class="modal-body">
+		  	<div class="form-group">
+			  <label>{% trans '選擇語系'%}</label>
+		  	  <select class="form-control" id="language-select">{% for lang in LANGUAGES%}<option value="{{lang.code}}">{{lang.name_translated}} ({{lang.code}}) </option>{% endfor %}</select>
+		  	</div>
+		  	<button type="button" class="btn btn-default" onclick="$('#file').click()" style="margin:1px 0px;"><i class="fa fa-download"></i> {% trans '匯入'%}</button>
+		  	<input type="file" id="file" onchange="translate_input(this.files)" style="display:none;"/>
+		  	<button type="button" class="btn btn-default" onclick="translate_output()" style="margin:1px 0px;"><i class="fa fa-upload"></i> {% trans '匯出'%}</button>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">{% trans '關閉'%}</button>
+		  </div>
+		</div>
+	  </div><!-- /.modal-content -->
+	</div>
+    <!-- /.modal -->
+    
 	
     <style>
 		table tr{
@@ -262,7 +292,7 @@
 				  position: 'bottom-start',
 				  showConfirmButton: false,
 				});
-				Swal.showLoading() ;
+				Swal.showLoading();
 				$('#modal-default-list').off('hidden.bs.modal');
 			});			
 		});
@@ -302,6 +332,97 @@
 			omflowJsonAjax(postbody, '{% url "copyFlowWorkspaceAjax"%}', actions)
 		});
 	}
+	
+	
+	function app_translate()
+	{
+		$('#modal-app_translate').modal('show');
+	}
+	
+	
+	function translate_output()
+	{
+		var postdata = {
+			language:	$('#language-select').val(),
+			app_id	:	{{app_id}}
+		}
+		omflowJsonAjax(postdata, '{% url 'exportAppLanguagePackageAjax'%}', output_action)
+		
+		function output_action(data)
+		{
+			if (data.status == 200)
+			{
+				omflowListDialogue('output', "{% trans '匯出翻譯包' %}", output_confirm);
+				var Data = data.result
+				var makeTextFile = function(Data) {
+					if (window.Blob && window.URL && window.URL.createObjectURL) {
+						var text = new Blob([Data], {
+							type: 'text/plain;charset=utf-8;'
+						});
+						return URL.createObjectURL(text);
+					}
+				}
+				
+				//產生檔名
+		        var NowDate = new Date();
+				var Y = NowDate.getYear()+1900;
+				var M = NowDate.getMonth()+1;
+				var d = NowDate.getDate();
+				var h = NowDate.getHours();
+				var m = NowDate.getMinutes();
+				var s = NowDate.getSeconds();
+				var tlang = $('#language-select').val();
+		        var filename = "OMFLOW-"+app_name+"_Translate Into_"+tlang+"-"+Y+"-"+M+"-"+d+"_"+h+"-"+m+"-"+s+".txt";
+				$('#modal-default-list-text').append('<li class="list-group-item"><div class="mailbox-attachment-info">'+
+					        	'<p class="mailbox-attachment-name" style="word-break: break-all;"><i class="fa fa-paperclip"></i>&nbsp;&nbsp;'+filename+'</p>'+
+					            '<span class="mailbox-attachment-size"></span>'+
+					      		'</div></li>')
+				
+				$('body').append($('<a id="exporta" href="'+makeTextFile(Data)+'" download="'+filename+'" style="display:none;"></a>'));
+				
+				function output_confirm()
+				{
+					$('#exporta')[0].click();
+					$('#exporta').remove();
+				}
+			}
+			else
+			{
+				actions(data)
+			}
+		}
+	}
+	
+	
+	var input_file = '';
+	function translate_input(files)
+	{
+		omflowListDialogue('input', "{% trans '匯入翻譯包' %}", input_confirm);
+		if (files.length) {
+	        var file = files[0];
+	        var reader = new FileReader();
+	        reader.onload = function(event) {
+	        	$('#modal-default-list-text').append('<li class="list-group-item"><div class="mailbox-attachment-info">'+
+			        	'<p class="mailbox-attachment-name" style="word-break: break-all;"><i class="fa fa-paperclip"></i>&nbsp;&nbsp;'+file.name+'</p>'+
+			            '<span class="mailbox-attachment-size">'+omflowSizeUnit(file.size)+'</span>'+
+			      		'</div></li>')
+				input_file = reader.result;
+	        }
+	            reader.readAsText(file);
+        }
+	}
+	
+	
+	function input_confirm()
+    {
+    	var postdata ={
+    		app_id	:	{{ app_id }},
+    		language:	$('#language-select').val(),
+    		language_list: input_file
+    	}
+    	omflowJsonAjax(postdata, '{% url "importAppLanguagePackageAjax"%}', actions)
+    }
+	
 	
 	    
     function actions(data)

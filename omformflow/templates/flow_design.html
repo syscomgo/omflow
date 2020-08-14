@@ -48,7 +48,11 @@
 				      <div class="col-md-6">
 					  	<div class="form-group has-warning">
 						  <label>{% trans '流程名稱'%}</label>
-						  <input type="text" class="form-control" name="flow_name" id="flow_name" placeholder="{% trans '請輸入流程名稱'%}">
+						  <input type="text" class="form-control" name="flow_name" id="flow_name" placeholder="{% trans '請輸入流程名稱'%}" pattern="(?=.+)">
+					  	</div>
+					  	<div class="form-group has-warning">
+						  <label>{% trans 'API 路徑'%}</label>
+						  <input type="text" class="form-control" name="api_path" id="api_path" placeholder="{% trans 'API 路徑'%}({% trans '小寫英文、數字及 -'%})" title="{% trans '小寫英文、數字及 -'%}" pattern="(?=.*[^a-z0-9\-])">
 					  	</div>
 					  	<div class="form-group">
 						  <label>{% trans '說明'%}</label>
@@ -56,11 +60,11 @@
 					  	</div>
 					  	<div class="form-group">
 						  <input type="checkbox" class="icheckbox_minimal-blue" id="flowlog" name="flowlog"><label for="flowlog"></label>
-						  <label>{% trans '執行過程紀錄'%}(LOG)</label>
+						  <label>{% trans '執行過程紀錄(LOG)'%}</label>
 					  	</div>
 					  	<div class="form-group">
 						  <input type="checkbox" class="icheckbox_minimal-blue" id="api" name="api"><label for="api"></label>
-						  <label>{% trans '應用程式介面'%}(API)</label>
+						  <label>{% trans '應用程式介面(API)'%}</label>
 					  	</div>
 					  </div>
 					  <div class="col-md-6">
@@ -293,6 +297,8 @@
 	    	formcontent.event_group_list(load_group_list);
 	    	formcontent.event_user_list(load_user_list);
 	    	formcontent.init(true);
+	    	var api_path = guid();
+	    	$('#api_path').val(api_path);
 	    	
 	    	config['permission'] = [];
 	    	$('#fp_show').prop('checked',true);
@@ -476,6 +482,7 @@
 			res = data.result;
 			config = JSON.parse(res.config);
 			$('#flow_name').val(res.flow_name);
+			$('#api_path').val(config.api_path);
 			$('#description').val(res.description);
 			$('#flowlog').prop('checked',config.flowlog);
 			$('#api').prop('checked',config.api);
@@ -490,10 +497,15 @@
 			
 			flow_info['id'] = res.id;
 			
+			formcontent.event_app_list(load_app_list);
+{#			formcontent.event_my_flow_list(my_flow_list);#}
+{#	    	formcontent.event_my_column_list(my_column_list);#}
 			formcontent.init(true);
 			formcontent.event_group_list(load_group_list);
 			formcontent.event_user_list(load_user_list);
 			formcontent.load(res.formobject);
+			formcontent.event_flow_list(load_flow_list);
+	    	formcontent.event_column_list(load_column_list);
 			
 			flowcontent.event_app_list(load_app_list);
 			flowcontent.event_my_flow_list(my_flow_list);
@@ -654,6 +666,30 @@
 	}
 	
 	
+	function load_column_list(app_name, flow_name)
+	{
+		var columnlist = []
+		var postbody = {app_name: app_name, flow_name: flow_name};
+		$.ajax({
+			url	: '{% url 'getFlowFieldNameForSubQueryAjax' %}',
+			type: 'post',
+			headers: { "X-CSRFToken": csrfmiddlewaretoken },
+	        data: JSON.stringify(postbody),
+	        async:false,
+	        dataType: 'json',
+	        contentType: "application/json;charset=utf-8;",
+	        success: function (data) {
+	            columnlist = data.result;
+	        },
+	        error: function(req, status, err) {
+				$('#modal_error').modal('show');
+	        	console.log('Something went wrong', status, err);
+	    	}
+		});
+		return columnlist;
+	}
+	
+	
 	function my_flow_list()
 	{
 		var myflowlist = []
@@ -713,6 +749,7 @@
 		Swal.showLoading();
 		config.name = $('#flow_name').val();
 		config.description = $('#description').val();
+		config.api_path = $('#api_path').val();
 		config.fp_show = $('#fp_show').prop('checked');
 		config.attachment = $('#attachment').prop('checked');
 		config.relation = $('#relation').prop('checked');
@@ -740,13 +777,24 @@
 				flowobject	: flowobject,
 				config		: JSON.stringify(config),
 			}
-		if ('{{flow_id}}' == 'newflow')
+		if (!checkPattern($('#api_path')) && $('#api_path').val().length && checkPattern($('#flow_name')) && $('#flow_name').val().length)
 		{
-			omflowJsonAjax(postbody, '{% url "createFlowWorkspaceAjax"%}', save_actions);
+			if ('{{flow_id}}' == 'newflow')
+			{
+				omflowJsonAjax(postbody, '{% url "createFlowWorkspaceAjax"%}', save_actions);
+			}
+			else
+			{
+				omflowJsonAjax(postbody, '{% url "updateFlowWorkspaceAjax"%}', save_actions);
+			}
 		}
 		else
 		{
-			omflowJsonAjax(postbody, '{% url "updateFlowWorkspaceAjax"%}', save_actions);
+			data = {
+				status: 500,
+				message: '{% trans '請檢查流程名稱或API路徑'%}'
+			}
+			save_actions(data)
 		}
 			
 	};

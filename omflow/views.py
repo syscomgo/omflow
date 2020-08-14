@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.translation import gettext as _
 from django.views.decorators.csrf import csrf_exempt
 from omflow.syscom.message import ResponseAjax, statusEnum
-from omflow.global_obj import GlobalObject
+from omflow.global_obj import GlobalObject, FlowActiveGlobalObject
 from omflow.models import SystemSetting
 from django.http.response import JsonResponse, StreamingHttpResponse
 from django.contrib import auth
@@ -16,7 +16,7 @@ from datetime import datetime, timedelta
 from importlib import import_module
 from django.urls.base import resolve
 from ommessage.models import MessageHistoryFiles
-from omflow.syscom.common import try_except, DatatableBuilder, DataChecker, check_app, License, getModel, getPostdata
+from omflow.syscom.common import try_except, DatatableBuilder, DataChecker, check_app, License, getModel, getPostdata, Translator
 from django.conf import settings
 from omflow.syscom.default_logger import critical, info, error, debug
 from django.http import QueryDict
@@ -87,6 +87,10 @@ def restapi(request,url):
             new_url = '/'+url+'/'
         module_name = resolve(new_url).func.__module__
         method = resolve(new_url).url_name
+        kwargs = resolve(new_url).kwargs
+        params = []
+        for k in kwargs:
+            params.append(kwargs[k])
     except:
         return ResponseAjax(statusEnum.no_permission, _('URL錯誤，請確認後重新發送請求。')).returnJSON()
     #get post data
@@ -111,7 +115,10 @@ def restapi(request,url):
                     auth.login(request, user)
                     #to real function
                     module = import_module(module_name)
-                    output = getattr(module, method)(request)
+                    if params:
+                        output = getattr(module, method)(request, *params)
+                    else:
+                        output = getattr(module, method)(request)
                     #logout user when api down
                     auth.logout(request)
                     return output
@@ -176,10 +183,10 @@ def loadSystemConfigAjax(request):
             result['Level_Change'] = True
         else:
             result['Level_Change'] = False
-        info(request ,'%s load SystemConfig success.' % request.user.username)
+        info('%s load SystemConfig success.' % request.user.username , request)
         return ResponseAjax(statusEnum.success, _('讀取成功。'), result).returnJSON()
     else:
-        info(request ,'%s has no permission.' % request.user.username)
+        info('%s has no permission.' % request.user.username , request)
         return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。'), result).returnJSON()
 
 
@@ -215,7 +222,7 @@ def updateSystemConfigAjax(request):
             logging.getLogger('django').setLevel(loglevel)
             #設定omflow log level
             logging.getLogger('omflowlog').setLevel(loglevel)
-            critical(request,'LOG等級已經改為 %s' % loglevel)
+            critical('LOG等級已經改為 %s' % loglevel,request)
             #write settings.py
             file_data = ""
             file_path = os.path.join(settings.BASE_DIR, 'omflow/', 'settings.py')
@@ -253,10 +260,10 @@ def updateSystemConfigAjax(request):
                 t.start()
         else:
             GlobalObject.__statusObj__["ldapRunning"] = False
-        info(request ,'%s update SystemConfig success.' % request.user.username)
+        info('%s update SystemConfig success.' % request.user.username , request)
         return ResponseAjax(statusEnum.success, _('更新成功。')).returnJSON()
     else:
-        info(request ,'%s update SystemConfig error.' % request.user.username)
+        info('%s update SystemConfig error.' % request.user.username , request)
         return ResponseAjax(statusEnum.no_permission, _('LDAP更新正在執行。')).returnJSON()
 
 
@@ -289,16 +296,16 @@ def listFilesAjax(request):
                 query = OmdataFiles.objects.filter(delete=False,createtime__lte=createtime).values('file','size','createtime')
             if field_list or query:
                 result = DatatableBuilder(request, query, field_list)
-                info(request ,'%s list file success.' % request.user.username)
+                info('%s list file success.' % request.user.username , request)
                 return JsonResponse(result)
             else:
-                info(request ,'%s list file error.' % request.user.username)
+                info('%s list file error.' % request.user.username , request)
                 return ResponseAjax(statusEnum.not_found, _('請提供正確的APP名稱。')).returnJSON()
         else:
-            info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+            info('%s missing some require variable or the variable type error.' % request.user.username , request)
             return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
     else:
-        info(request ,'%s has no permission.' % request.user.username)
+        info('%s has no permission.' % request.user.username , request)
         return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
 
 
@@ -336,13 +343,13 @@ def deleteFilesAjax(request):
                         omdatafiles = OmdataFiles.objects.get(file=path)
                         omdatafiles.delete = True
                         omdatafiles.save()
-            info(request ,'%s delete file success.' % request.user.username)
+            info('%s delete file success.' % request.user.username , request)
             return ResponseAjax(statusEnum.success, _('刪除成功。')).returnJSON()
         else:
-            info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+            info('%s missing some require variable or the variable type error.' % request.user.username , request)
             return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
     else:
-        info(request ,'%s has no permission.' % request.user.username)
+        info('%s has no permission.' % request.user.username , request)
         return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
 
 
@@ -363,7 +370,7 @@ def getDiskStatusAjax(request):
         result = True
     else:
         result = False
-    info(request ,'%s get disk status success.' % request.user.username)
+    info('%s get disk status success.' % request.user.username , request)
     return ResponseAjax(statusEnum.success, _('查詢成功。'), result).returnJSON()
     
     
@@ -384,7 +391,7 @@ def permissionDenied(request):
     return: json
     author: Kolin Hsu
     '''
-    info(request ,'%s has no permission.' % request.user.username)
+    info('%s has no permission.' % request.user.username , request)
     return ResponseAjax(statusEnum.no_permission,  _('您沒有權限進行此操作。')).returnJSON()
 
 
@@ -432,7 +439,7 @@ def loadWorkinfoAjax(request):
     except:
         missions ='999+'
     result = {'messages':messages, 'missions':missions, 'node':node}
-    debug(request ,'%s load workinfo success.' % request.user.username)
+    debug('%s load workinfo success.' % request.user.username , request)
     return ResponseAjax(statusEnum.success, _('更新成功。'), result).returnJSON()
 
 
@@ -460,10 +467,10 @@ def loadSidebarDesignAjax(request):
                     count = item_id
         result['sidebar_design'] = sidebar_design
         result['count'] = count
-        info(request ,'%s load SidebarDesign success.' % request.user.username)
+        info('%s load SidebarDesign success.' % request.user.username , request)
         return ResponseAjax(statusEnum.success, _('讀取成功。'), result).returnJSON()
     else:
-        info(request ,'%s has no permission.' % request.user.username)
+        info('%s has no permission.' % request.user.username , request)
         return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
     
 
@@ -542,17 +549,17 @@ def updateSidebarDesignAjax(request):
                 updatetime = datetime.now()
                 GlobalObject.__sidebarDesignObj__['sidebar_design'] = new_sidebar_design
                 GlobalObject.__sidebarDesignObj__['design_updatetime'] = updatetime
-                info(request ,'%s update SidebarDesign success.' % request.user.username)
+                info('%s update SidebarDesign success.' % request.user.username , request)
                 return ResponseAjax(statusEnum.success, _('更新成功。')).returnJSON()
             else:
-                info(request ,'%s update SidebarDesign error.' % request.user.username)
+                info('%s update SidebarDesign error.' % request.user.username , request)
                 error_message += _('無法刪除預設項目。')
                 return ResponseAjax(statusEnum.not_found, error_message).returnJSON()
         else:
-            info(request ,'%s update SidebarDesign error.' % request.user.username)
+            info('%s update SidebarDesign error.' % request.user.username , request)
             return ResponseAjax(statusEnum.not_found, error_message).returnJSON()
     else:
-        info(request ,'%s has no permission.' % request.user.username)
+        info('%s has no permission.' % request.user.username , request)
         return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
     
 
@@ -616,11 +623,29 @@ def loadLSideAjax(request):
                         sidebar = ''
                 else:
                     sidebar = ''
-            result = {'sidebar':sidebar,'mission':mission}
-        info(request ,'%s load LSide success.' % request.user.username)
+            
+            #載入語言包
+            language = request.COOKIES.get('django_language','zh-hant')
+            if isinstance(sidebar, list):
+                trans_sidebar_str = json.dumps(sidebar)
+                trans_sidebar = json.loads(trans_sidebar_str)
+                for s in trans_sidebar:
+                    app_id = None
+                    sidebar_id = s['id']
+                    if 'app-' in sidebar_id:
+                        app_id = sidebar_id[4:]
+                    elif 'formflow-' in sidebar_id:
+                        app_id = s['p_id'][4:]
+                    if app_id:
+                        s['name'] = Translator('single_app', 'active', language, app_id, None).Do(s['name'])
+            else:
+                trans_sidebar = sidebar
+            
+            result = {'sidebar':trans_sidebar,'mission':mission}
+        info('%s load LSide success.' % request.user.username,request)
         return ResponseAjax(statusEnum.success, _('讀取成功。'), result).returnJSON()
     else:
-        info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+        info('%s missing some require variable or the variable type error.' % request.user.username , request)
         return ResponseAjax(statusEnum.not_found, data_checker.get('message'), data_checker).returnJSON()
 
 
@@ -666,7 +691,7 @@ def listSidebarDesignAjax(request):
     for item in sidebar_design:
         if item['flow_uuid'] == 'custom':
             result.append(item)
-    info(request ,'%s list SidebarDesign success.' % request.user.username)
+    info('%s list SidebarDesign success.' % request.user.username , request)
     return ResponseAjax(statusEnum.success, _('讀取成功。'), result).returnJSON()
 
 
@@ -683,13 +708,13 @@ def ldapCheckConnectAjax(request):
         from omldap.views import ldapCheckConnect 
         result = ldapCheckConnect(request)
         if result["status"] == "success":
-            info(request ,'%s ldap Check Connect success.' % request.user.username)
+            info('%s ldap Check Connect success.' % request.user.username , request)
             return ResponseAjax(statusEnum.success, result['message']).returnJSON()
         else:
-            info(request ,'%s ldap Check Connect error.' % request.user.username)
+            info('%s ldap Check Connect error.' % request.user.username , request)
             return ResponseAjax(statusEnum.not_found, result['message']).returnJSON()
     else:
-        info(request ,'%s ldap Check Connect error.' % request.user.username)
+        info('%s ldap Check Connect error.' % request.user.username , request)
         return ResponseAjax(statusEnum.not_found, _('您尚未安裝omldap APP,請聯絡原廠。')).returnJSON()
 
 
@@ -706,16 +731,16 @@ def ldapManualSyncAjax(request):
         from omldap.views import ldapManualSync 
         result = ldapManualSync(request)
         if result["status"] == "success":
-            info(request ,'%s ldap Check Connect success.' % request.user.username)
+            info('%s ldap Check Connect success.' % request.user.username , request)
             return ResponseAjax(statusEnum.success, result['message']).returnJSON()
         elif result["status"] == "fail":
-            info(request ,'%s ldap Check Connect error.' % request.user.username)
+            info('%s ldap Check Connect error.' % request.user.username , request)
             return ResponseAjax(statusEnum.not_found, result['message']).returnJSON()
         else:
-            info(request ,'%s ldap Check Connect error.' % request.user.username)
+            info('%s ldap Check Connect error.' % request.user.username , request)
             return ResponseAjax(statusEnum.no_permission, result['message']).returnJSON()
     else:
-        info(request ,'%s ldap Check Connect error.' % request.user.username)
+        info('%s ldap Check Connect error.' % request.user.username , request)
         return ResponseAjax(statusEnum.not_found, _('您尚未安裝omldap APP,請聯絡原廠。')).returnJSON() 
 
 
@@ -732,6 +757,7 @@ def myformpage(request, url):
     data_no = url_list[1]
     if len(url_list) == 2:
         try:
+            app_id = FlowActiveGlobalObject.UUIDSearch(flow_uuid).flow_app_id
             model = getModel('omformmodel', 'Omdata_' + flow_uuid)
             omdata = model.objects.filter(data_no=data_no,history=False)[0]
             data_id = omdata.id
@@ -819,11 +845,11 @@ def uploadLicenseFileAjax(request):
             for chunk in upload_file.chunks():
                 license_file.write(chunk)
             license_file.close()
-            info(request ,'%s upload license file success.' % request.user.username)
+            info('%s upload license file success.' % request.user.username , request)
             return ResponseAjax(statusEnum.success, _('上傳成功。')).returnJSON()
         else:
-            info(request ,'%s upload license file error.' % request.user.username)
+            info('%s upload license file error.' % request.user.username , request)
             return ResponseAjax(statusEnum.not_found, _('請選擇檔案。')).returnJSON()
     else:
-        info(request ,'%s has no permission.' % request.user.username)
+        info('%s has no permission.' % request.user.username , request)
         return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()

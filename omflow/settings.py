@@ -39,10 +39,6 @@ INSTALLED_APPS = [
     'omformmodel',
     'omservice',
     'ommission',
-    #'omldap',
-    #'ommonitor',
-    #'ompolicymodel',
-    #'omorganization',
     #default
     #'django.contrib.admin',
     'django.contrib.auth',
@@ -118,8 +114,8 @@ LOCALE_PATHS = (
 )
 
 LANGUAGES = [
-#     ('en', "English"),
-    ('zh-hant', "Traditional_Chinese"),
+#     ('en', "English"),    
+    ("en", "English"),("zh-hant", "Traditional_Chinese"),("zh-hans", "Simplified_Chinese"),("ja", "Japanese")
 ]
 
 

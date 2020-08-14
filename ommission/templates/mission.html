@@ -7,7 +7,7 @@
 	<script src="/static/js/workflow.js?version={%omflow_version%}"></script>
     <section class="content-header">
       <h1>
-      	{% trans '我的任務	'%}
+      	{% trans '我的任務'%}
         <small></small>
       </h1>
       <ol class="breadcrumb">
@@ -487,7 +487,8 @@ table tr td:not(:last-child){
 				action	 : 'update',
 				quick_action: action,
 		}
-		omflowJsonAjax(postbody, '{% url "editOmDataAjax"%}', actions)
+		var thisurl = '{% url 'editOmDataAjax' None%}';
+		omflowJsonAjax(postbody, thisurl, actions)
  	}
  	
  	
@@ -502,7 +503,7 @@ table tr td:not(:last-child){
 		{
 			if (data.status == 200)
 			{
-				$('#modal_omdata_history .modal-title').text(data.result.flow_name)
+				$('#modal_omdata_history .modal-title').text(data.result.flow_name.trans)
 				$('#omdata_history_formcontent').empty();
 				omdata_history_formcontent.event_group_list(load_group_list);
 				omdata_history_formcontent.event_user_list(load_user_list);

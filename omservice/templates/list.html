@@ -28,18 +28,23 @@
 		        <button type="button" class="btn btn-default" id="read-mode_edit" onclick="ServiceRoot_edit()" style="display:none;"><i class="fa fa-pencil-square-o"></i> {% trans '編輯'%}</button>
 		      </div>
               <div class="pull-right" >
-			    <button type="button" class="btn btn-default move-in" id="edit-mode_addS" onclick="add_service()" style="margin:1px 0px;display:none;"><i class="fa fa-plus"></i> {% trans '建立服務'%}</button>
-			    <button type="button" class="btn btn-default move-in" id="edit-mode_addF" onclick="add_object('folder')" style="display:none;"><i class="fa fa-plus"></i> {% trans '建立資料夾'%}</button>
-      	      </div>
+			    <button type="button" class="btn btn-default" id="edit-mode_addS" onclick="add_service()" style="margin:1px 0px;display:none;"><i class="fa fa-plus"></i> {% trans '建立服務'%}</button>
+			    <button type="button" class="btn btn-default" id="edit-mode_addF" onclick="add_object('folder')" style="display:none;"><i class="fas fa-folder-plus"></i> {% trans '建立資料夾'%}</button>
+			    &nbsp;&nbsp;
+			    <button type="button" class="btn btn-default" id="edit-mode_Trans" onclick="app_translate()" style="display:none;"><i class="fas fa-language"></i> {% trans '語言'%}</button>
+			    <button type="button" class="btn btn-default" id="edit-mode_Import" onclick="$('#file2').click()" style="display:none;"><i class="fa fa-download"></i> {% trans '匯入'%}</button>
+                <input type="file" id="file2" onchange="service_inputFile(this.files)" style="display:none;"/>
+			    <button type="button" class="btn btn-default" id="edit-mode_Export" onclick="flowapp_output()" style="display:none;"><i class="fa fa-upload"></i> {% trans '匯出'%}</button>
+			  </div>
 			  {% endif%}
       	    </div>
       	    <!-- box-header -->
       	    <div class="box-body">
 	      	    <div class="input-group SearchBar">
 	                <input type="text" class="form-control" id="service_keyword" >
-	                    <span class="input-group-btn">
-	                      <button type="button" onclick="Service_Search()" class="btn btn-info btn-flat">{% trans '搜尋'%}</button>
-	                    </span>
+                    <span class="input-group-btn">
+                      <button type="button" onclick="Service_Search()" class="btn btn-info btn-flat">{% trans '搜尋'%}</button>
+                    </span>
 	            </div>
 	            <div class="col-md-2" style="padding: 0px 0px 0px 5px;">
 	            	<ul id="ServiceList"></ul>
@@ -55,6 +60,79 @@
       	<!-- col -->
       </div>
       <!-- row -->
+      {% get_language_info_list for LANGUAGES  as LANGUAGES %}
+      {% get_current_language as LANGUAGE_CODE %}
+      <div class="modal fade" id="modal-app_translate" data-backdrop="static">
+		<div class="modal-dialog">
+		  <div class="modal-content">
+		    <div class="modal-header">
+			  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			    <span aria-hidden="true">&times;</span></button>
+	          <h4 class="modal-title"><i class="fas fa-language"></i>&nbsp;&nbsp;{% trans '語言翻譯'%}</h4>
+		    </div>
+		    <div class="modal-body">
+		  	  <div class="form-group">
+			    <label>{% trans '選擇語系'%}</label>
+		  	    <select class="form-control" id="language-select">{% for lang in LANGUAGES%}<option value="{{lang.code}}">{{lang.name_translated}} ({{lang.code}}) </option>{% endfor %}</select>
+		  	  </div>
+		  	  <button type="button" class="btn btn-default" onclick="$('#file').click()" style="margin:1px 0px;"><i class="fa fa-download"></i> {% trans '匯入'%}</button>
+		  	  <input type="file" id="file" onchange="translate_input(this.files)" style="display:none;"/>
+		  	  <button type="button" class="btn btn-default" onclick="translate_output()" style="margin:1px 0px;"><i class="fa fa-upload"></i> {% trans '匯出'%}</button>
+		    </div>
+		    <div class="modal-footer">
+			  <button type="button" class="btn btn-default" data-dismiss="modal">{% trans '關閉'%}</button>
+		    </div>
+		  </div>
+	    </div><!-- /.modal-content -->
+	  </div>
+    <!-- /.modal -->
+    
+    <!-- .modal -->
+    <div class="modal fade" id="modal-service_input" data-backdrop="static">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title"><i class="fa fa-download"></i>&nbsp;&nbsp;{%trans '重新匯入服務'%}</h4>
+		  </div>
+		  <div class="modal-body">
+		  	<ul class="mailbox-attachments clearfix" id="service_input_name">
+            </ul>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">{%trans '取消'%}</button>
+			<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="service_inputSave()">{%trans '確定'%}</button>
+		  </div>
+		</div>
+	  </div><!-- /.modal-content -->
+	</div>
+	<!-- /.modal -->
+	
+	<!-- .modal -->
+	<div class="modal fade" id="formcontent_subquery_table_modal" style="z-index:1051;">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title"></h4>
+				</div>
+				<div class="modal-body">
+					<table class="table table-bordered table-striped table-hover" id="formcontent_subquery_table_modal_datatable" width="100%">
+			  	   	  	<thead><tr></tr></thead>
+			  	  	   	<tbody></tbody>
+			  	    </table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default pull-left" id="formcontent_subquery_table_modal_close">{%trans '取消'%}</button>
+					<button type="button" class="btn btn-primary" id="formcontent_subquery_table_modal_submit">{%trans '確定'%}</button>
+				</div>
+			</div>
+		</div><!-- /.modal-content -->
+	</div>
+	<!-- /.modal -->
+	
     </section>
 
 	<script>
@@ -110,8 +188,15 @@
 	var textFile = null; //設計檔案
 	var read_mode = true;
 	var csrfmiddlewaretoken="{{ csrf_token }}";
-	var timer_list = {} //重複更新需取消前次計時
-	var chart_list = {} //更新時須取消原圖
+	var timer_list = {}; //重複更新需取消前次計時
+	var chart_list = {}; //更新時須取消原圖
+	var input_file = '';
+	var lan_package = null;
+	var table = null; //子查詢專用
+	var data_tmp; //子查詢專用   
+	var data_len; //子查詢專用   
+	var data_page; //子查詢專用   
+	var data_drawn = false; //子查詢專用   
 	var color_set = [
 		{name:const_color_blue,color:"#337ab7"},
 		{name:const_color_sky,color:"#00c0ef"},
@@ -306,6 +391,12 @@
 			evt.target.value = null;
 			check_disk();
 		});
+		
+		$(document).on('keypress',function(e) {
+		    if(e.which == 13 && $("#service_keyword").is(':focus') ) {
+		        Service_Search();
+		    }
+		});
 	});
 	function actions(data,status)
 	{
@@ -313,15 +404,7 @@
 		if(data.status == 200)
 		{
 			LSide();
-			//table.draw();
-			Swal.fire({
-	      	  icon : 'success',
-	      	  title: status?status:"{% trans '成功'%}",
-	      	  toast: true,
-		  	  position: 'bottom-start',
-		  	  showConfirmButton: false,
-	      	  timer: 2000,
-  		    });
+			SweetAlert('success','{% trans '成功'%}');
 		}	
 		else if (data.status == 404)
 		{
@@ -379,7 +462,7 @@
 		if(read_mode)
 			DO_readmode();
 		else
-			ServiceRoot_edit();
+			UNDO_readmode();
 	}
 	
 	function Service_Search(){
@@ -391,8 +474,9 @@
 		}
 	}
 	
-    function ServiceRoot_edit(){
-		read_mode = false;
+    function UNDO_readmode(){
+		
+		//read_mode = false;
 		$(".readHide").show();
 		$(".borderHide").removeClass("no-border-top");
 		$('#ServiceRoot div[id^=ID_]').prop( "draggable" , true );
@@ -406,11 +490,14 @@
 		$("#edit-mode_cancel").show();
 		$("#edit-mode_addS").show();
 		$("#edit-mode_addF").show();
+		$("#edit-mode_Trans").show();
+		$("#edit-mode_Import").show();
+		$("#edit-mode_Export").show();
 		//$("#edit-mode_import").show();
 		//$("#edit-mode_export").show();
 	}
 	function DO_readmode(){
-		read_mode = true;
+		//read_mode = true;
 		$(".readHide").hide();
 		$(".borderHide").addClass("no-border-top");
 		$('#ServiceRoot div[id^=ID_]').prop( "draggable" , false );
@@ -423,17 +510,23 @@
 		$("#edit-mode_cancel").hide();
 		$("#edit-mode_addS").hide();
 		$("#edit-mode_addF").hide();
+		$("#edit-mode_Trans").hide();
+		$("#edit-mode_Import").hide();
+		$("#edit-mode_Export").hide();
 		//$("#edit-mode_import").hide();
 		//$("#edit-mode_export").hide();
 	}
     function ServiceRoot_load(){
-		var postbody = {};
+    	var postbody = {type:arguments[0]?arguments[0]:""};
 		var callback = function(){
 			data = arguments[0];
 			if (data.status==200){
 				box_object = data.result[0]?JSON.parse(data.result[0].content):box_object;
 				//console.log(box_object);
+				lan_package = null; //每次讀取清空翻譯
 				try{
+					$("#ServiceList").empty();
+					$("#ServiceRoot").empty();
 					ServiceRoot_build();
 				}catch(e){
 					$("#ServiceList").empty();
@@ -445,11 +538,6 @@
                     box_object["sort"] = [0];
                     ServiceRoot_build();
 				}
-				$(document).on('keypress',function(e) {
-				    if(e.which == 13 && $("#service_keyword").is(':focus') ) {
-				        Service_Search();
-				    }
-				});
 			}
 			else
 			{actions(data)}
@@ -480,24 +568,26 @@
 		ServiceRoot_input(0);
 		old_box_object = JSON.stringify(box_object);
 	}
+	
+	function ServiceRoot_edit(){
+		read_mode = false;
+		ServiceRoot_load("source");
+	}
+	
 	function ServiceRoot_save(){
+		read_mode = true;
+		
 		old_box_object = JSON.stringify(box_object);
-		var postdata = { content: JSON.stringify(box_object) }
-		var callback = function(){};
+		var postdata = { content: JSON.stringify(box_object), lan_package:lan_package }
+		var callback = function(){
+			ServiceRoot_load();
+		};
 		omflowJsonAjax(postdata,"{% url 'saveServiceAjax'%}",callback);
 		DO_readmode();
 	}
 	function ServiceRoot_cancel(){
-		box_object = JSON.parse(old_box_object);
-		$("#ServiceList li:eq(0)").nextAll().remove();
-		$.each(box_object.list,function(item_id,thisSer){
-		//$.each(box_object.tree,function(idx,item_id){
-			if(item_id!=0 && thisSer.type=="folder"){
-				box_new_item(thisSer,'ServiceList');
-			}
-		});
-		ServiceRoot_input(0);
-		DO_readmode();
+		read_mode = true;
+		ServiceRoot_load();
 	}
 	//設定路徑
 	function setPath(item_id){
@@ -530,7 +620,7 @@
     //區塊-新增區塊
     function add_object(){
     	var type = arguments[0];
-    	var flow_uuid = $("#modal-service-new select").val();
+    	var api_path = $("#modal-service-new select").val();
     	switch(type){
 	    	case "service":
 	    		var item = {
@@ -538,9 +628,9 @@
 					type:type,
 					available:1,
 					belong:box_container,
-					flow_uuid:flow_uuid,
+					api_path:api_path,
 					setting:{
-						setTitle:$("#modal-service-new option[value="+flow_uuid+"]").text(),
+						setTitle:$("#modal-service-new option[value="+api_path+"]").text(),
 						setTip:const_tip,
 						setIcon:"fas fa-edit",
 						setColor:0,
@@ -613,7 +703,7 @@
 		
 		//如果是資料夾
 		//if(typeof(box_object.tree[item_id])!='undefined'){
-		console.log(item.type);
+		//console.log(item.type);
 		if( item.type=='folder'){
     		//console.log('tree');
     		//移除sort
@@ -845,21 +935,33 @@
 			var callback = function(){
 				data = arguments[0];
 				if (data.status==200){
-					form_list = data.result;
+					form_list = {};
+					form_list.app = data.result.app;
+					form_list.flow = data.result.flow;
 					thisSelect=$("#modal-service-new select[name=setForm]").empty();
-					$.each(form_list,function(key,value){
-						thisSelect.append($('<option value="'+key+'">'+value+'</option>'))
+					$.each(form_list.app,function(idx,item){
+						thisSelect.append($('<option value="'+item.id+'" class="l1 non-leaf" disabled="disabled">'+item.app_name+'</option>'))
 					});
+					$.each(form_list.flow,function(idx,item){
+						thisSelect.find('option[value="'+item.flow_app_id+'"]').after($('<option value="'+item.api_path+'" data-id="'+item.id+'" data-pup="'+item.flow_app_id+'" class="l2">'+item.flow_name+'</option>'))
+					});
+					
+					thisSelect.select2ToTree();
 				}
 				else
 				{actions(data)}
 			};
-			omflowJsonAjax({},"{% url 'formServiceAjax'%}",callback);
+			omflowJsonAjax({},"{% url 'getFormListAjax'%}",callback);
 		}else{
 			thisSelect=$("#modal-service-new select[name=setForm]").empty();
-			$.each(form_list,function(key,value){
-				thisSelect.append($('<option value="'+key+'">'+value+'</option>'))
+			$.each(form_list.app,function(idx,item){
+				thisSelect.append($('<option value="'+item.id+'" class="l1 non-leaf" disabled="disabled">'+item.app_name+'</option>'))
 			});
+			$.each(form_list.flow,function(idx,item){
+				thisSelect.find('option[value="'+item.flow_app_id+'"]').after($('<option value="'+item.api_path+'" data-id="'+item.id+'" data-pup="'+item.flow_app_id+'" class="l2">'+item.flow_name+'</option>'))
+			});
+			
+			thisSelect.select2ToTree();
 		}	
 	}
 	
@@ -873,13 +975,13 @@
 				if(thisCol.type=="h_group"){
 					var require = thisCol.config.require ? true: thisCol.config.user_require ? true : false;
 					if(require)
-						thisSelect.find('select').append('<option style="color:red;" value='+thisCol.id+'>'+thisCol.config.group_title+'(必填)</option>');
+						thisSelect.find('select').append('<option style="color:red;" value='+thisCol.id+'>'+thisCol.config.group_title+'('+const_require+')</option>');
 					else
 						thisSelect.find('select').append('<option value='+thisCol.id+'>'+thisCol.config.group_title+'</option>');
 				}else{
 					var require = thisCol.config.require ? true: false;
 					if(require)
-						thisSelect.find('select').append('<option style="color:red;" value='+thisCol.id+'>'+thisCol.config.title+'(必填)</option>');
+						thisSelect.find('select').append('<option style="color:red;" value='+thisCol.id+'>'+thisCol.config.title+'('+const_require+')</option>');
 					else
 						thisSelect.find('select').append('<option value='+thisCol.id+'>'+thisCol.config.title+'</option>');
 				}
@@ -932,19 +1034,23 @@
 			thisDialog.find("#service-tab>ul").hide();
 			thisDialog.find("#service-tab").removeClass("nav-tabs-custom");
 		}else{
-			thisDialog.find("#service-grid-title").text(thisItem.setting.setTitle+" ( "+form_list[thisItem.flow_uuid]+" )");
+			var thisFlow = form_list.flow.find(function(item, index, array){
+				return item.api_path == thisItem.api_path;
+			});
+			thisDialog.find("#service-grid-title").text(thisItem.setting.setTitle+" ( "+thisFlow.flow_name+" )");
 		
 			thisDialog.find(".cls_edit").show();
 			thisDialog.find("#service-tab>ul").show();
 			thisDialog.find("#service-tab").addClass("nav-tabs-custom");
 		}
 		//讀取formObj
-		var postdata = { flow_uuid:box_object.list[item_id].flow_uuid };
+		var postdata = { api_path:box_object.list[item_id].api_path };
 		var callback = function(){
 			data = arguments[0];
 			if (data.status==200 && data.result.formobject){
 				form_object = JSON.parse(data.result.formobject);
 				form_object.attachment = data.result.attachment;
+				//console.log(form_object.items);
 				column_object = {};
 				$.each(form_object.items,function(idx,thisCol){
 					if(thisCol.type.indexOf('box')!=0){
@@ -1020,7 +1126,7 @@
 			}
 		};
 		
-		omflowJsonAjax(postdata,"{% url 'columnServiceAjax'%}",callback);
+		omflowJsonAjax(postdata,"{% url 'getFormObjAjax'%}",callback);
 	}
 	
 	//新增步驟
@@ -1028,13 +1134,13 @@
 		var thisDialog = $("#service-grid-config");
 		var item_id = thisDialog.attr('name');
 		var step_id = box_object.list[item_id].service.index++;
-		thisDialog.find(".td-tab").append($(
+		thisDialog.find(".td-tab").append($( 
 			'<div data-step="'+step_id+'" class="tablinks" onclick="Step_Switch('+item_id+','+step_id+')">'+
 				'<input type="text" value="'+const_new_step+'" >'+
 				'<i class="fa fa-remove" onclick="Step_remove('+step_id+')"></i>'+
 			'</div>'));
 		thisDialog.find("#tab-step .td-content").append($('<div data-step="'+step_id+'" class="tabcontent" style="display:none;"><ul class="tabcontent-ul"></ul><textarea type="text" placeholder="'+const_remind_tip+'" spellcheck="false" class="syscom-tip"></textarea></div>'));
-		
+		thisDialog.find("[data-step='"+step_id+"'] .tabcontent-ul").sortable();
 		autosize(thisDialog.find('[data-step="'+step_id+'"] .syscom-tip'));
 		Step_Switch(item_id,step_id);
 	}
@@ -1094,7 +1200,7 @@
 							'<li class="form-group" style="'+moveable+'" id="COL_'+thisCol.id+'" data-id="'+thisCol.id+'" data-type="'+thisCol.type+'">'+
 				                '<label class="text-light-blue">'+ thisCol.config.title + require +'</label>'+
 				                thisI+
-				                '<input name="setValue" type="text" value="'+thisValue+'" placeholder="'+thisCol.config.placeholder+'" class="form-control" '+readonly+'>'+
+				                '<input id="formcontent_' + thisCol.id + '_item" name="setValue" type="text" value="'+thisValue+'" placeholder="'+thisCol.config.placeholder+'" class="form-control" '+readonly+'>'+
 				            '</li>'
 				            );
 					break;
@@ -1102,7 +1208,7 @@
 						var content = $('<li class="form-group" style="'+moveable+'" id="COL_'+thisCol.id+'" data-id="'+thisCol.id+'" data-type="'+thisCol.type+'">'+
 				                '<label class="text-light-blue">'+ thisCol.config.title + require +'</label>'+
 				                thisI+
-				                '<select name="setValue" value="'+thisValue+'" class="form-control select2" style="width: 100%;" '+readonly+'>' + Array_to_Option(thisCol) + '</select>'+
+				                '<select id="formcontent_' + thisCol.id + '_item" name="setValue" value="'+thisValue+'" class="form-control select2" style="width: 100%;" '+readonly+'>' + Array_to_Option(thisCol) + '</select>'+
 				            '</li>');
 				        content.find('select').val(thisValue);
 						thisTabContent.append(content);
@@ -1113,7 +1219,7 @@
 							'<li class="form-group" style="'+moveable+'" id="COL_'+thisCol.id+'" data-id="'+thisCol.id+'" data-type="'+thisCol.type+'">'+
 				                '<label class="text-light-blue">'+ thisCol.config.title + require +'</label>'+
 				                thisI+
-				                '<input name="setValue" type="'+thisInputType+'" value="'+thisValue+'" placeholder="'+thisCol.config.placeholder+'" class="form-control" '+readonly+'>'+
+				                '<input id="formcontent_' + thisCol.id + '_item" name="setValue" type="'+thisInputType+'" value="'+thisValue+'" placeholder="'+thisCol.config.placeholder+'" class="form-control" '+readonly+'>'+
 				            '</li>'
 						);
 					break;
@@ -1121,7 +1227,7 @@
 						var content = $('<li class="form-group" style="'+moveable+'" id="COL_'+thisCol.id+'" data-id="'+thisCol.id+'" data-type="'+thisCol.type+'">'+
 				                '<label class="text-light-blue">'+ thisCol.config.title + require +'</label>'+
 				                thisI+
-				                '<textarea name="setValue" rows="' + thisCol.config.rows + '" class="form-control" '+readonly+'></textarea>'+
+				                '<textarea id="formcontent_' + thisCol.id + '_item" name="setValue" rows="' + thisCol.config.rows + '" class="form-control" '+readonly+'></textarea>'+
 				            '</li>');
 				        content.find('textarea').val(thisValue);
 						thisTabContent.append(content);
@@ -1130,7 +1236,7 @@
 						var content = $('<li class="form-group" style="'+moveable+'" id="COL_'+thisCol.id+'" data-id="'+thisCol.id+'" data-type="'+thisCol.type+'">'+
 				                '<label class="text-light-blue">'+ thisCol.config.title + require +'</label>'+
 				                thisI+
-				                '<select name="setValue" value="'+thisValue+'" class="form-control select2" '+readonly+'>' + Array_to_Option(thisCol) + '</select>'+
+				                '<select id="formcontent_' + thisCol.id + '_item" name="setValue" value="'+thisValue+'" class="form-control select2" '+readonly+'>' + Array_to_Option(thisCol) + '</select>'+
 				            '</li>');
 				        content.find('select').val(thisValue);
 						thisTabContent.append(content);
@@ -1139,7 +1245,7 @@
 						var content = $('<li class="form-group" style="'+moveable+'" id="COL_'+thisCol.id+'" data-id="'+thisCol.id+'" data-type="'+thisCol.type+'" >'+
 				                '<label class="text-light-blue">'+ thisCol.config.title + require +'</label>'+
 				                thisI+
-				                '<select name="setValue" value="'+thisValue+'" class="form-control select2" '+readonly+'>' + Array_to_Option(thisCol) + '</select>'+
+				                '<select id="formcontent_' + thisCol.id + '_item" name="setValue" value="'+thisValue+'" class="form-control select2" '+readonly+'>' + Array_to_Option(thisCol) + '</select>'+
 				            '</li>');
 				        content.find('select').val(thisValue);
 						thisTabContent.append(content);
@@ -1151,11 +1257,11 @@
 							'<li class="form-group" style="'+moveable+'" id="COL_'+thisCol.id+'" data-id="'+thisCol.id+'" data-type="'+thisCol.type+'" >'+
 				                '<label class="text-light-blue">'+ thisCol.config.group_title + require +'</label>'+
 				                thisI+
-				                '<select name="setValue1" class="form-control " style="width:100%;" '+readonly+'>' + 
+				                '<select id="formcontent_' + thisCol.id + '_group_item" name="setValue1" class="form-control " style="width:100%;" '+readonly+'>' + 
 				                GroupArray_to_Option() + 
 				                '</select>'+
 				                '<label style="margin-top:15px;" class="text-light-blue">'+ thisCol.config.user_title + user_require +'</label>'+
-				                '<select name="setValue2" class="form-control " '+readonly+'>' + '</select>'+
+				                '<select id="formcontent_' + thisCol.id + '_user_item" name="setValue2" class="form-control " '+readonly+'>' + '</select>'+
 				            '</li>'
 				        );
 				        var thisGroup = "";
@@ -1182,7 +1288,7 @@
 							'<li class="form-group" style="'+moveable+'" id="COL_'+thisCol.id+'" data-id="'+thisCol.id+'" data-type="'+thisCol.type+'" >'+
 				                '<label class="text-light-blue">'+ thisCol.config.title + require +'</label>'+
 				                thisI+
-				                '<div>' + Array_to_CheckBox(thisCol) + '</div>'+
+				                '<div id="formcontent_' + thisCol.id + '_item">' + Array_to_CheckBox(thisCol) + '</div>'+
 				            '</li>'
 				        );
 				        for(i=0;i<thisValue.length;i++){
@@ -1190,6 +1296,18 @@
 				        		thisTabContent.find('input[value='+thisValue[i]+']').prop('checked',true);
 				        }
 					break;
+					case "subquery":
+						thisTabContent.append(
+							'<li class="form-group" style="'+moveable+'" id="COL_'+thisCol.id+'" data-id="'+thisCol.id+'" data-type="'+thisCol.type+'">'+
+				                '<label class="text-light-blue">'+ thisCol.config.title + require +'</label>'+
+				                thisI+
+				                '<div class="input-group" style="width:100%">'+
+				                	'<input id="formcontent_' + thisCol.id + '_item" name="setValue" type="'+thisInputType+'" value="'+thisValue+'" placeholder="'+thisCol.config.placeholder+'" class="form-control" '+readonly+'>'+
+				                	'<span class="input-group-btn"><button type="button" onclick="SubQuery(\''+thisCol.id+'\')" class="btn btn-info btn-flat"><i class="fa fa-search"></i></button></span>'+
+				            	'</div>'+
+				            '</li>'
+				         );
+						
 				}
 			}
 			var addDialog = $("#modal-service-add-column");
@@ -1413,7 +1531,7 @@
 	//送出服務需求
 	function Request_Send(){
 		var thisDialog = $('#service-grid-config');
-		var flow_uuid = box_object.list[thisDialog.attr('name')].flow_uuid;
+		var api_path = box_object.list[thisDialog.attr('name')].api_path;
 
 		var data = getFormdata(thisDialog.find("#tab-step"));
 		
@@ -1434,13 +1552,12 @@
 			thisDialog.modal('hide');
 			return;
 		}
-		//omflowJsonAjax(postbody, '{% url "requestServiceAjax"%}', callback);
-		
+		//omflowJsonAjax(postbody, '{% url "requestAjax"%}', callback);
 		
 		var form_data = new FormData();
-		var url = '{% url "requestServiceAjax"%}';
+		var url = '{% url "requestAjax"%}';
 		form_data.append("csrfmiddlewaretoken", '{{ csrf_token }}');
-		form_data.append("flow_uuid", flow_uuid);
+		form_data.append("api_path", api_path);
 		form_data.append("service_id", thisDialog.attr('name'));
 		form_data.append("formdata", JSON.stringify(data));
 		for (var i = 0, len = filesToUpload.length; i < len; i++) {
@@ -1572,7 +1689,7 @@
 		{
 			if(multiple)
 			{
-				//checkbox
+				//checkbox  
 				output += '<div><input id="' + thisItem.id + '_' + index + '" name="' + thisItem.id + '" type="checkbox" class="icheckbox_minimal-blue" value="' + item.value + '" '+readonly+'><label for="' + thisItem.id + '_' + index + '"></label>' + item.text + '</div>'
 			}
 			else
@@ -1775,7 +1892,6 @@
     var fileIdCounter = 0;
 	var filesToUpload = [];
 	var fileTotalSize = 0;
-	 
 	
 	function remove_upload(th,item)
 	{
@@ -1791,7 +1907,197 @@
 			//{$('button[name="file_upload"]').hide();}
 	}
 	
+	//匯出服務
+	function flowapp_output(){
+		omflowListDialogue('output', "{% trans '匯出所有服務請求' %}", output_confirm);
+		//產生
+		var makeTextFile = function (text) {
+            var data = new Blob([text], {
+                type: 'text/plain'
+            });
+
+            // If we are replacing a previously generated file we need to
+            // manually revoke the object URL to avoid memory leaks.
+            if (textFile !== null) {
+                window.URL.revokeObjectURL(textFile);
+            }
+            textFile = window.URL.createObjectURL(data);
+
+            return textFile;
+        };
+        
+        //產生檔名
+        var NowDate = new Date();
+		var Y = NowDate.getYear()+1900;
+		var M = NowDate.getMonth()+1;
+		var d = NowDate.getDate();
+		var h = NowDate.getHours();
+		var m = NowDate.getMinutes();
+		var s = NowDate.getSeconds();
+        var filename = "OMFLOW-SERVICE_"+Y+"-"+M+"-"+d+"_"+h+"-"+m+"-"+s+".oms";
+		$('#modal-default-list-text').append('<li class="list-group-item"><div class="mailbox-attachment-info">'+
+			        	'<p class="mailbox-attachment-name" style="word-break: break-all;"><i class="fa fa-paperclip"></i>&nbsp;&nbsp;'+filename+'</p>'+
+			            '<span class="mailbox-attachment-size"></span>'+
+			      		'</div></li>')
+		
+		var app_id_list =[];
+		$('.table input:checkbox:checked').each(function(){
+			app_id_list.push($(this).attr('id'));
+		});
+		
+		var postbody = {app_id_list: app_id_list};
+		omflowJsonAjax(postbody, "{% url 'exportServcieAjax'%}", actions);
+		
+		function actions(data)
+		{	
+			$('body').append($('<a id="exporta" href="'+makeTextFile(JSON.stringify(data.result))+'" download="'+filename+'" style="display:none;"></a>'));
+		}
+		
+		function output_confirm()
+		{
+			$('#exporta')[0].click();
+			$('#exporta').remove();
+		}
+	}
 	
+	//選擇檔案-匯入服務請求
+	function service_inputFile(files) {
+	    if (files.length) {
+	        var file = files[0];
+	        var reader = new FileReader();
+	        reader.onload = function(event) {
+	        	$('#service_input_name').empty().append('<li style="width:100%;"><div class="mailbox-attachment-info">'+
+				        	'<p class="mailbox-attachment-name" style="word-break: break-all;"><i class="fa fa-paperclip"></i>&nbsp;&nbsp;'+file.name+'</p>'+
+				            '<span class="mailbox-attachment-size">'+omflowSizeUnit(file.size)+'</span>'+
+				      		'</div></li>')
+				$('#modal-service_input').modal('show');
+				input_file = reader.result;
+	        }
+	            reader.readAsText(file);
+	            
+        }
+    }
+    
+    //匯入服務請求
+    function service_inputSave(){
+    	input_file = JSON.parse(input_file);
+		if( input_file.box_object ){
+			//重新導入box_object
+			box_object = input_file.box_object;
+			try{
+				$("#ServiceList").empty();
+				$("#ServiceRoot").empty();
+				ServiceRoot_build();
+				
+				//設定lan_package
+				if( input_file.lan_package )
+					lan_package = input_file.lan_package;
+				
+				$('#file').val('');
+		    	SweetAlert('success','{% trans '成功'%}');
+			    
+			}catch(e){
+				$("#ServiceList").empty();
+				$("#ServiceRoot").empty();
+				box_object = {};
+                box_object["index"] = 1;
+                box_object["list"] = {};
+                box_object["tree"] = {0:[]};
+                box_object["sort"] = [0];
+                ServiceRoot_build();
+                SweetAlert('error','{% trans '資料格式不符'%}');
+			}
+		}else{
+	    	SweetAlert('error','{% trans '資料格式不符'%}');
+		}
+    }
+	
+	//翻譯
+	function app_translate()
+	{
+		$('#modal-app_translate').modal('show');
+	}
+	//匯出翻譯
+	function translate_output()
+	{
+		var postdata = {
+			language:	$('#language-select').val()
+		}
+		omflowJsonAjax(postdata, '{% url 'exportTranslationAjax'%}', output_action)
+		
+		function output_action(data)
+		{
+			if (data.status == 200)
+			{
+				omflowListDialogue('output', "{% trans '匯出翻譯包' %}", output_confirm);
+				var Data = data.result
+				var makeTextFile = function(Data) {
+					if (window.Blob && window.URL && window.URL.createObjectURL) {
+						var text = new Blob([Data], {
+							type: 'text/plain;charset=utf-8;'
+						});
+						return URL.createObjectURL(text);
+					}
+				}
+				
+				//產生檔名
+		        var NowDate = new Date();
+				var Y = NowDate.getYear()+1900;
+				var M = NowDate.getMonth()+1;
+				var d = NowDate.getDate();
+				var h = NowDate.getHours();
+				var m = NowDate.getMinutes();
+				var s = NowDate.getSeconds();
+				var tlang = $('#language-select').val();
+		        var filename = "OMFLOW-SERVICE_Translate Into_"+tlang+"-"+Y+"-"+M+"-"+d+"_"+h+"-"+m+"-"+s+".txt";
+				$('#modal-default-list-text').append('<li class="list-group-item"><div class="mailbox-attachment-info">'+
+					        	'<p class="mailbox-attachment-name" style="word-break: break-all;"><i class="fa fa-paperclip"></i>&nbsp;&nbsp;'+filename+'</p>'+
+					            '<span class="mailbox-attachment-size"></span>'+
+					      		'</div></li>')
+				
+				$('body').append($('<a id="exporta" href="'+makeTextFile(Data)+'" download="'+filename+'" style="display:none;"></a>'));
+				
+				function output_confirm()
+				{
+					$('#exporta')[0].click();
+					$('#exporta').remove();
+				}
+			}
+			else
+			{
+				actions(data)
+			}
+		}
+	}
+	
+	//匯入翻譯
+	function input_confirm()
+    {
+    	var postdata ={
+    		language:	$('#language-select').val(),
+    		language_list: input_file
+    	}
+    	omflowJsonAjax(postdata, '{% url "importTranslationAjax"%}', actions)
+    }
+	
+	function translate_input(files)
+	{
+		omflowListDialogue('input', "{% trans '匯入翻譯包' %}", input_confirm);
+		if (files.length) {
+	        var file = files[0];
+	        var reader = new FileReader();
+	        reader.onload = function(event) {
+	        	$('#modal-default-list-text').append('<li class="list-group-item"><div class="mailbox-attachment-info">'+
+			        	'<p class="mailbox-attachment-name" style="word-break: break-all;"><i class="fa fa-paperclip"></i>&nbsp;&nbsp;'+file.name+'</p>'+
+			            '<span class="mailbox-attachment-size">'+omflowSizeUnit(file.size)+'</span>'+
+			      		'</div></li>')
+				input_file = reader.result;
+	        }
+	        reader.readAsText(file);
+        }
+	}
+	
+	//檢查Server硬碟空間
 	function check_disk()
 	{
 		var postbody = { file_size: fileTotalSize };
@@ -1811,6 +2117,18 @@
 		}
 	}
     
+    //SweetAlert
+    function SweetAlert(){
+    	Swal.fire({
+			icon : arguments[0],
+			title: arguments[1],
+			toast: true,
+			position: 'bottom-start',
+			showConfirmButton: false,
+			timer: 2000,
+	    });
+    }
+    
     //改變欄位
     //drop、drag
 	function boxdrag(ev){
@@ -1825,14 +2143,7 @@
         if(target != source){
         	if(target.is('li') && source.is('div')){
 		        box_move_item(box_object.list[source.data('idx')],target.data('idx'));
-				Swal.fire({
-		      	  icon : 'success',
-		      	  title: '{% trans '成功'%}',
-		      	  toast: true,
-			  	  position: 'bottom-start',
-			  	  showConfirmButton: false,
-		      	  timer: 2000,
-	  		    });
+				SweetAlert('success','{% trans '成功'%}');
 			}else if(target.is('div') && source.is('div') || target.is('li') && source.is('li')){
 				var targetSpot = $('<span></span>');
 				var sourceSpot = $('<span></span>');
@@ -1848,6 +2159,280 @@
 	}
 	function boxAllowDrop(ev){
 	    ev.preventDefault();
+	}
+	
+	//----------------------------------------------------------
+	
+	
+	//子查詢動作
+	function SubQuery(){
+		var form_item = column_object[arguments[0]];
+		var active_id = 'formcontent';
+		var baseID_SUBQUERY_TABLE = active_id + '_' + 'subquery_table_modal'; 
+		
+		//取得顯示欄位，組合成datatable 格式
+		var displayfield = {}
+		var table_column = [];
+		var omdata_ajax_var = {url:'{% url 'SubQueryHeaderAjax'%}',service_id:'{{flow_uuid}}'};
+		
+		if(table != undefined)
+		{
+			table.clear();
+			table.destroy();
+			$('#' + baseID_SUBQUERY_TABLE + '_datatable thead tr').html('');
+		}
+		
+		
+		if(event_get_display_field_load_callback == null)
+		{
+			
+		}
+		else
+		{
+			displayfield = event_get_display_field_load_callback(form_item.config.app_name, form_item.config.flow_name);
+		}
+		$('#' + baseID_SUBQUERY_TABLE + '_datatable thead tr').append('<th></th>');
+		table_column.push({"data": "id", "width": "15px", "orderable": false, "render": function(data, type, row)
+			{return '<input type="radio" class="iradio_minimal-blue" name="'+ form_item.id +'_radio" value="'+data+'" data-no="'+row.data_no+'" id="'+ form_item.id +'_omdata_'+data+'"><label for="'+ form_item.id +'_omdata_'+data+'"></label>'}
+		});
+		
+		$.each(displayfield, function(index, value){
+			$('#' + baseID_SUBQUERY_TABLE + '_datatable thead tr').append('<th>'+value+'</th>');
+			if(index == 'data_no')
+			{
+				table_column.push({"data": index, "render": function(data)
+					{	
+						return paddingLeft(data,8)
+					}	
+				});
+			}
+			else if(index == 'error')
+			{	
+				table_column.push({"data": index, "render": function(data)
+					{
+						if(data)
+						{return '<div class="label label-danger">'+gettext('異常')+'</div>'}
+						else
+						{return '<div class="label label-success">'+gettext('正常')+'</div>'}
+					}
+				});
+			}
+			else if(index == 'level')
+			{	
+				table_column.push({"data": index, "render": function(data)
+					{
+						if(data == 'yellow')
+							{return '<div class="label label-warning">'+gettext('黃燈')+'</div>'}
+						else if(data == 'red')
+							{return '<div class="label label-danger">'+gettext('紅燈')+'</div>'}
+						else
+							{return '<div class="label label-success">'+gettext('綠燈')+'</div>'}		
+					}
+				});
+			}
+			else if(index == 'updatetime')
+			{
+				table_column.push({"data": index, "render": function(data)
+					{
+						if(data)
+							{return data.slice(0,-7)}
+						else
+							{return data}
+					}
+				});
+			}
+			else if(index.indexOf('-group') > 0)
+			{
+				table_column.push({"data": 'group', "render": function(data)
+					{
+						data = JSON.parse(unescapeHtml(data));
+						if(data)
+							{return data.group}
+						else
+							{return ''}
+					}
+				});
+			}
+			else if(index.indexOf('-user') > 0)
+			{
+				table_column.push({"data": 'group', "render": function(data)
+					{
+						data = JSON.parse(unescapeHtml(data));
+						if(data)
+							{return data.user}
+						else
+							{return ''}
+					}
+				});
+			}
+			else
+			{
+				table_column.push({"data": index});
+			}
+		});
+		
+		table = $('#' + baseID_SUBQUERY_TABLE + '_datatable').DataTable({
+			"autoWidth"	: true,
+			"order"		: [[ 1, "desc" ]], 					//	default order column[1]
+			"serverSide": true,							//	serverside data loading
+			"dom"		:"<<t>'row'<'row'<'col-sm-5'i><'col-sm-7'p>>>",
+			"scrollX": true,
+			"language"	: __const_language__,
+			"ajax": {
+				"url": omdata_ajax_var.url,
+		    	"type": "POST",
+		    	"headers": { "X-CSRFToken": getCookie("csrftoken") },
+				"contentType": "application/json;charset=utf-8;",
+		    	"data":	function ( d ) {
+							return JSON.stringify($.extend( {}, d, {
+						        app_name	: form_item.config.app_name,
+						       	flow_name	: form_item.config.flow_name,
+						        condition	: form_item.config.rule,
+						        service_id	: omdata_ajax_var.service_id
+						    }));
+						},
+				"dataSrc": function(data){
+					a = dataCompare(data,data_tmp,data_len,data_page,table);
+					data_tmp = a['data_tmp']
+					data_len = a['data_len']
+					data_page = a['data_page']
+					data.data = a['data.data']
+					return data.data;
+				},
+			},
+        	"columns":	table_column
+		});
+		$('#' + baseID_SUBQUERY_TABLE).modal('show');
+		$('#' + baseID_SUBQUERY_TABLE + '_submit').off('click').click(function() 
+		{
+			modal_subquery_submit(baseID_SUBQUERY_TABLE, form_item);
+		});
+		$('#' + baseID_SUBQUERY_TABLE + '_close').click(function() 
+		{
+			$('#' + baseID_SUBQUERY_TABLE ).modal('hide');
+		});
+	}
+	var event_get_display_field_load_callback = function(app_name, flow_name)
+	{
+		var displayfield = {};
+		var postbody = {'app_name': app_name, 'flow_name': flow_name};
+		$.ajax({
+			url: "{% url 'getFlowActiveDisplayFieldAjax' %}",
+			type: 'post',
+			headers: { "X-CSRFToken": csrfmiddlewaretoken },
+			data: JSON.stringify(postbody),
+			async:false,
+			dataType: 'json',
+			contentType: "application/json;charset=utf-8;",
+			success: function (data) {
+				displayfield = JSON.parse(data.result.display_field)
+			},
+			error: function(req, status, err) {
+				$('#modal_error').modal('show');
+	        	console.log('Something went wrong', status, err);
+	    	}
+		});
+		
+		return displayfield;
+	}
+	var event_get_omdata_load_callback = function(app_name, flow_name, data_id, fields, service_id)
+	{
+		var omdata_value = {};
+		var postbody =  {
+					        app_name			: app_name,
+					       	flow_name			: flow_name,
+					        data_id				: data_id,
+					        fields				: fields,
+					       	service_id			: service_id
+					    };
+		$.ajax({
+			url: "{% url 'SubQueryDataAjax' %}",
+			type: 'post',
+			headers: { "X-CSRFToken": csrfmiddlewaretoken },
+			data: JSON.stringify(postbody),
+			async:false,
+			dataType: 'json',
+			contentType: "application/json;charset=utf-8;",
+			success: function (data) {
+				omdata_value = data.result
+			},
+			error: function(req, status, err) {
+				$('#modal_error').modal('show');
+	        	console.log('Something went wrong', status, err);
+	    	}
+		});
+		
+		return omdata_value;
+	}
+	
+	function modal_subquery_submit(baseID, item)
+	{
+		if($('#' + baseID + '_datatable input:radio:checked').length != 1)
+		{
+			
+		}
+		else
+		{
+			var omdata_value = [];
+			if(event_get_omdata_load_callback == null)
+			{
+				
+			}
+			else
+			{
+				var data_id = $('#' + baseID + '_datatable input:radio:checked').val();
+				var fields = [];
+				item.config.fill.forEach(function(fill_item, index)
+				{
+					fields.push(fill_item.column)
+				})
+				omdata_value = event_get_omdata_load_callback(item.config.app_name, item.config.flow_name, data_id, fields)
+			}
+			
+			item.config.fill.forEach(function(fill_item, index)
+			{
+				var type = '';
+				var target = '';
+				if(fill_item.target.startsWith('#('))
+				{
+					target = fill_item.target.slice(2,-1);
+					type = $('#formcontent_' + target + '_item:eq(0)').prop('localName');
+				}
+				else if(fill_item.target.startsWith('#G1('))
+				{
+					target = fill_item.target.slice(4,-1) + '_group';
+					type = 'select';
+				}
+				else if(fill_item.target.startsWith('#G2('))
+				{
+					target = fill_item.target.slice(4,-1) + '_user';
+					type = 'select';
+				}
+				//console.log(type)
+				if(type == 'select')
+				{
+					//console.log(omdata_value)
+					$('#formcontent_' + target + '_item').val(omdata_value[fill_item.column]).trigger('change');
+				}
+				else if(type == 'div')
+				{
+					$.each($('#formcontent_' + target + '_item input'), function()
+					{
+						if($(this).val() == omdata_value[fill_item.column])
+						{
+							$(this).prop('checked', true);
+						}else{
+							$(this).prop('checked', false);
+						}
+					})
+				}
+				else
+				{
+					$('#formcontent_' + target + '_item').val(omdata_value[fill_item.column]);
+				}
+			})
+		}
+		$('#' + baseID).modal('hide')
 	}
     </script>
 {% endblock %}

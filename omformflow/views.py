@@ -1,9 +1,11 @@
-import uuid, os, json, shutil, time, re, copy
+import uuid, os, json, shutil, time, re, copy, operator
 from django.shortcuts import render
 from django.utils.translation import gettext as _
 from django.contrib.auth.decorators import login_required, permission_required
 from omflow.syscom.schedule_monitor import schedule_Execute, cancelScheduleJob
-from omflow.syscom.common import try_except, DataChecker, DatatableBuilder, getModel, FormDataChecker, FormatToFormdataList, getAppAttr, merge_formobject_items, FormatFormdataListToFormdata, check_app, getPostdata, listQueryBuilder
+from omflow.syscom.common import try_except, DataChecker, DatatableBuilder, getModel, FormDataChecker, FormatToFormdataList, getAppAttr
+from omflow.syscom.common import merge_formobject_items, FormatFormdataListToFormdata, check_app, getPostdata, listQueryBuilder
+from omflow.syscom.common import Translator, LanguageDictBuilder, searchConditionBuilder, datatableValueToText
 from omflow.syscom.message import ResponseAjax, statusEnum
 from omflow.global_obj import GlobalObject, FlowActiveGlobalObject
 from omflow.models import SystemSetting, Scheduler, TempFiles
@@ -20,6 +22,7 @@ from omflow.syscom.license import getRepository
 from ommission.views import setMission, deleteMission, updateMissionLevel
 from ommission.models import Missions
 from django.db.models import Q
+from _functools import reduce
 from omflow.syscom.default_logger import info,debug,error
 from django.contrib.auth.models import Permission
 from django.apps import apps
@@ -116,25 +119,32 @@ def editWorkspaceApplicationAjax(request):
             if app_name:
                 try:
                     updatetime = datetime.now()
-                    WorkspaceApplication.objects.create(app_name=app_name,updatetime=updatetime,user=request.user,app_attr=app_attr)
-                    info(request ,'%s create WorkspaceApplication success.' % request.user.username)
+                    l_dict = {app_name:''}
+                    language_package = {'zh-hant':l_dict,'en':l_dict,'ja':l_dict,'zh-hans':l_dict}
+                    language_package_str = json.dumps(language_package)
+                    WorkspaceApplication.objects.create(app_name=app_name,updatetime=updatetime,user=request.user,app_attr=app_attr,language_package=language_package_str)
+                    info('%s create WorkspaceApplication success.' % request.user.username,request)
                     return ResponseAjax(statusEnum.success, _('建立成功。')).returnJSON()
                 except:
-                    info(request ,'%s WorkspaceApplication already has same name.' % request.user.username)
+                    info('%s WorkspaceApplication already has same name.' % request.user.username,request)
                     return ResponseAjax(statusEnum.not_found, _('名稱重複。')).returnJSON()
             else:
-                info(request ,'%s application name cannot be null.' % request.user.username)
+                info('%s application name cannot be null.' % request.user.username,request)
                 return ResponseAjax(statusEnum.not_found, _('名稱不得為空值。')).returnJSON()
         else:
             try:
                 WorkspaceApplication.objects.filter(id__in=app_id_list).delete()
-                info(request ,'%s delete WorkspaceApplication success.' % request.user.username)
+                #delete global
+                for app_id in app_id_list:
+                    FlowActiveGlobalObject.deleteAppLanDict('workspace', app_id, None)
+                
+                info('%s delete WorkspaceApplication success.' % request.user.username,request)
                 return ResponseAjax(statusEnum.success, _('刪除成功。')).returnJSON()
             except:
-                info(request ,'%s cannot find WorkspaceApplication.' % request.user.username)
+                info('%s cannot find WorkspaceApplication.' % request.user.username,request)
                 return ResponseAjax(statusEnum.not_found, _('找不到該應用程式。')).returnJSON()
     else:
-        info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+        info('%s missing some require variable or the variable type error.' % request.user.username,request)
         return ResponseAjax(statusEnum.not_found, data_checker.get('message'), data_checker).returnJSON()
 
 
@@ -160,12 +170,109 @@ def listWorkspaceApplicationAjax(request):
         display_field =['id','app_name','app_attr','updatetime','active_app_name','user__username']
         query = WorkspaceApplication.objects.filterformat(*display_field,app_attr__in=app_attr,updatetime__lte=updatetime)
         result = DatatableBuilder(request, query, field_list)
-        info(request ,'%s list WorkspaceApplication success.' % request.user.username)
+#         #載入語言包
+#         language = request.COOKIES.get('django_language','zh-hant')
+#         result['data'] = Translator('datatable_multi_app', 'workspace', language, None, None).Do(result['data'])
+        info('%s list WorkspaceApplication success.' % request.user.username,request)
         return JsonResponse(result)
     else:
         result = list(WorkspaceApplication.objects.filterformat('id','app_name'))
-        info(request ,'%s list WorkspaceApplication success.' % request.user.username)
+        info('%s list WorkspaceApplication success.' % request.user.username,request)
         return ResponseAjax(statusEnum.success, _('讀取成功。'), result).returnJSON()
+
+
+@login_required
+@permission_required('omformflow.OmFormFlow_Manage','/api/permission/denied/')
+@try_except
+def exportAppLanguagePackageAjax(request):
+    '''
+    export workspace application language package
+    '''
+    #function variable
+    require_field = ['app_id','language']
+    #get postdata
+    postdata = getPostdata(request)
+    language = postdata.get('language','')
+    app_id = postdata.get('app_id','')
+    #server side rule check
+    checker = DataChecker(postdata, require_field)
+    if checker.get('status') == 'success':
+        #取得所有流程
+        flow_list = list(FlowWorkspace.objects.filter(flow_app_id=app_id).values('flow_name','description','flowobject','subflow'))
+        all_flow_list = []
+        for flow in flow_list:
+            f = {}
+            f['flow_name'] = flow['flow_name']
+            f['description'] = flow['description']
+            f['flowobject'] = flow['flowobject']
+            all_flow_list.append(f)
+            if flow['subflow']:
+                subflow_list = json.loads(flow['subflow'])
+                for subflow in subflow_list:
+                    s = {}
+                    s['flow_name'] = subflow['flow_name']
+                    s['description'] = subflow['description']
+                    s['flowobject'] = subflow['flowobject']
+                    all_flow_list.append(s)
+        #取得舊版語言包
+        wa = WorkspaceApplication.objects.get(id=app_id)
+        language_package_str = wa.language_package
+        language_package = json.loads(language_package_str)
+        if not language_package:
+            app_name = wa.app_name
+            l_dict = {app_name:''}
+            language_package = {'zh-hant':l_dict,'en':l_dict,'ja':l_dict,'zh-hans':l_dict}
+        ex_dict = language_package.get(language,{})
+        result = LanguageDictBuilder().buildLanDict(wa.app_name, all_flow_list, language, ex_dict)
+        
+        info('%s export language package success.' % request.user.username,request)
+        return ResponseAjax(statusEnum.success, _('匯出成功。'), result).returnJSON()
+    else:
+        info('%s missing some require variable or the variable type error.' % request.user.username,request)
+        return ResponseAjax(statusEnum.not_found, checker.get('message',''), checker).returnJSON()
+    
+
+@login_required
+@permission_required('omformflow.OmFormFlow_Manage','/api/permission/denied/')
+@try_except
+def importAppLanguagePackageAjax(request):
+    '''
+    import workspace application language package
+    input: request
+    return: json
+    author: Kolin Hsu
+    '''
+    #function variable
+    require_field = ['language']
+    #server side rule check
+    postdata = getPostdata(request)
+    language_str = postdata.get('language_list','')
+    language = postdata.get('language','')
+    app_id = postdata.get('app_id','')
+    checker = DataChecker(postdata, require_field)
+    if checker.get('status') == 'success':
+        wa = WorkspaceApplication.objects.get(id=app_id)
+        language_dict = json.loads(wa.language_package)
+        temp_dict = {}
+        language_list = language_str.split('\r\n')
+        for line in language_list:
+            if line:
+                sp_index = line.find(':')
+                if line[:sp_index] == 'original':
+                    key = line[sp_index+1:]
+                else:
+                    temp_dict[key] = line[sp_index+1:]
+        language_dict[language] = temp_dict
+        language_str = json.dumps(language_dict)
+        wa.language_package = language_str
+        wa.save()
+        #set global
+        FlowActiveGlobalObject.setAppLanDict('workspace', app_id, None, language_str)
+        info('%s import language package success.' % request.user.username,request)
+        return ResponseAjax(statusEnum.success, _('匯入成功。')).returnJSON()
+    else:
+        info('%s missing some require variable or the variable type error.' % request.user.username,request)
+        return ResponseAjax(statusEnum.not_found, checker.get('message',''), checker).returnJSON()
     
 
 @login_required
@@ -196,12 +303,13 @@ def exportWorkspaceApplicationAjax(request):
                 f['config'] = json.loads(f['config']) 
             app_dict['app_name'] = wa.app_name
             app_dict['app_attr'] = wa.app_attr
+            app_dict['language_package'] = wa.language_package
             app_dict['flow_list'] = fw
             result.append(app_dict)
-        info(request ,'%s export WorkspaceApplication success.' % request.user.username)
+        info('%s export WorkspaceApplication success.' % request.user.username ,request)
         return ResponseAjax(statusEnum.success, _('匯出成功。'), result).returnJSON()
     else:
-        info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+        info('%s missing some require variable or the variable type error.' % request.user.username,request)
         return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
     
 
@@ -224,13 +332,13 @@ def importWorkspaceApplicationAjax(request):
         app_list = postdata.get('app_list',[])
         result = importWorkspaceApplication(app_list, request.user)
         if result['status']:
-            info(request ,'%s import WorkspaceApplication success.' % request.user.username)
+            info('%s import WorkspaceApplication success.' % request.user.username,request)
             return ResponseAjax(statusEnum.success, _('匯入成功。')).returnJSON()
         else:
-            info(request ,'%s import WorkspaceApplication error.' % request.user.username)
+            info('%s import WorkspaceApplication error.' % request.user.username,request)
             return ResponseAjax(statusEnum.not_found, result['message']).returnJSON()
     else:
-        info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+        info('%s missing some require variable or the variable type error.' % request.user.username,request)
         return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
 
 
@@ -250,7 +358,12 @@ def importWorkspaceApplication(app_list, user):
             app_name = app['app_name']
             app_attr = app['app_attr']
             flow_list = app['flow_list']
-            wa = WorkspaceApplication.objects.create(app_name=app_name,updatetime=updatetime,user=user,app_attr=app_attr)
+            language_package = app.get('language_package','{}')
+            wa = WorkspaceApplication.objects.create(app_name=app_name,updatetime=updatetime,user=user,app_attr=app_attr,language_package=language_package)
+            
+            #建立語言包global
+            FlowActiveGlobalObject.setAppLanDict('workspace', wa.id, None, language_package)
+            
             app_id_list.append(wa.id)
             flow_name_list = []
             for flow in flow_list:
@@ -300,16 +413,16 @@ def createFlowWorkspaceAjax(request):
         if same_name == 0:
             result = createFlowWorkspace(postdata, request.user)
             if result:
-                info(request ,'%s create FlowWorkspace success.' % request.user.username)
+                info('%s create FlowWorkspace success.' % request.user.username,request)
                 return ResponseAjax(statusEnum.success, _('建立成功。'), result).returnJSON()
             else:
-                info(request ,'%s create FlowWorkspace error.' % request.user.username)
+                info('%s create FlowWorkspace error.' % request.user.username,request)
                 return ResponseAjax(statusEnum.not_found, _('建立失敗。')).returnJSON()
         else:
-            info(request ,'%s create fail, FlowWorkspace has same name in this application.' % request.user.username)
+            info('%s create fail, FlowWorkspace has same name in this application.' % request.user.username,request)
             return ResponseAjax(statusEnum.not_found, _('重複名稱。')).returnJSON()
     else:
-        info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+        info('%s missing some require variable or the variable type error.' % request.user.username,request)
         return ResponseAjax(statusEnum.not_found, data_checker.get('message'), data_checker).returnJSON()
 
 
@@ -415,7 +528,7 @@ def getOutsideFlowAjax(request):
         result = {'outside_input':outside_input,'outside_output':outside_output}
     else:
         result = None
-    info(request ,'%s load outside flow success.' % request.user.username)
+    info('%s load outside flow success.' % request.user.username,request)
     return ResponseAjax(statusEnum.success, _('讀取成功。'), result).returnJSON()
 
 
@@ -476,7 +589,7 @@ def getInsideFlowAjax(request):
         result = {'outside_input':outside_input,'outside_output':outside_output}
     else:
         result = None
-    info(request ,'%s load inside flow success.' % request.user.username)
+    info('%s load inside flow success.' % request.user.username,request)
     return ResponseAjax(statusEnum.success, _('讀取成功。'), result).returnJSON()
     
 
@@ -530,13 +643,13 @@ def updateFlowWorkspaceAjax(request):
             fw_obj['updatetime'] = datetime.now()
             FlowWorkspace.objects.filter(id=flow_id).update(**fw_obj)
             result['flow_id'] = flow_id
-            info(request ,'%s update FlowWorkspace success.' % request.user.username)
+            info('%s update FlowWorkspace success.' % request.user.username,request)
             return ResponseAjax(statusEnum.success, _('更新成功。'), result).returnJSON()
         else:
-            info(request ,'%s update FlowWorkspace error.' % request.user.username)
+            info('%s update FlowWorkspace error.' % request.user.username,request)
             return ResponseAjax(statusEnum.not_found, _('重複流程名稱。')).returnJSON()
     else:
-        info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+        info('%s missing some require variable or the variable type error.' % request.user.username,request)
         return ResponseAjax(statusEnum.not_found, data_checker.get('message'), data_checker).returnJSON()
 
 
@@ -562,7 +675,10 @@ def listFlowWorkspaceAjax(request):
         display_field =['id','flow_name','updatetime','description']
         query = FlowWorkspace.objects.filter(flow_app_id=app_id,updatetime__lte=updatetime).values(*display_field)
         result = DatatableBuilder(request, query, field_list)
-        info(request ,'%s list FlowWorkspace success.' % request.user.username)
+#         #載入語言包
+#         language = request.COOKIES.get('django_language','zh-hant')
+#         result['data'] = Translator('datatable_single_app', 'workspace', language, str(app_id), None).Do(result['data'])
+        info('%s list FlowWorkspace success.' % request.user.username,request)
         return JsonResponse(result)
     else:
         flow_id = postdata.get('flow_id',None)
@@ -570,7 +686,7 @@ def listFlowWorkspaceAjax(request):
             result = list(FlowWorkspace.objects.filter(flow_app_id=app_id).values('flow_name'))
         elif flow_id:
             result = list(FlowWorkspace.objects.filter(flow_app_id=app_id).exclude(id=flow_id).values('flow_name'))
-        info(request ,'%s list FlowWorkspace success.' % request.user.username)
+        info('%s list FlowWorkspace success.' % request.user.username,request)
         return ResponseAjax(statusEnum.success, _('查詢成功。'), result).returnJSON()
 
 
@@ -593,10 +709,10 @@ def loadFlowWorkspaceAjax(request):
     flow_id = postdata.get('flow_id','')
     if checker.get('status') == 'success':
         result = list(FlowWorkspace.objects.filter(id=flow_id).values('id','flow_name','description','formobject','flowobject','config'))[0]
-        info(request ,'%s load FlowWorkspace success.' % request.user.username)
+        info('%s load FlowWorkspace success.' % request.user.username,request)
         return ResponseAjax(statusEnum.success, _('讀取成功。'), result).returnJSON()
     else:
-        info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+        info('%s missing some require variable or the variable type error.' % request.user.username,request)
         return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
 
 
@@ -619,10 +735,10 @@ def deleteFlowWorkspaceAjax(request):
     flow_id_list = postdata.get('flow_id','')
     if checker.get('status') == 'success':
         FlowWorkspace.objects.filter(id__in=flow_id_list).delete()
-        info(request ,'%s delete FlowWorkspace success.' % request.user.username)
+        info('%s delete FlowWorkspace success.' % request.user.username,request)
         return ResponseAjax(statusEnum.success, _('刪除成功。')).returnJSON()
     else:
-        info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+        info('%s missing some require variable or the variable type error.' % request.user.username,request)
         return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
 
 
@@ -657,14 +773,14 @@ def copyFlowWorkspaceAjax(request):
             fw['flow_app_id'] = app_id
         duplicate_name = list(FlowWorkspace.objects.filter(flow_app_id=app_id,flow_name__in=flow_name_list).values_list('flow_name',flat=True))
         if len(duplicate_name):
-            info(request ,'%s copy FlowWorkspace error.' % request.user.username)
+            info('%s copy FlowWorkspace error.' % request.user.username,request)
             return ResponseAjax(statusEnum.not_found, _('複製失敗，該應用內含有同樣名稱之流程。')).returnJSON()
         else:
             FlowWorkspace.objects.bulk_create([FlowWorkspace(**fw) for fw in fw_list])
-            info(request ,'%s copy FlowWorkspace success.' % request.user.username)
+            info('%s copy FlowWorkspace success.' % request.user.username,request)
             return ResponseAjax(statusEnum.success, _('複製成功。')).returnJSON()
     else:
-        info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+        info('%s missing some require variable or the variable type error.' % request.user.username,request)
         return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
 
 
@@ -687,10 +803,10 @@ def listFlowVersionAjax(request):
     flow_uuid = postdata.get('flow_uuid','')
     if checker.get('status') == 'success':
         flowactive = list(FlowActive.objects.filterformat('flow_uuid','flow_name','version','description',flow_uuid=flow_uuid))
-        info(request ,'%s list flow version success.' % request.user.username)
+        info('%s list flow version success.' % request.user.username,request)
         return ResponseAjax(statusEnum.success, _('讀取成功。'), flowactive).returnJSON()
     else:
-        info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+        info('%s missing some require variable or the variable type error.' % request.user.username,request)
         return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
 
 
@@ -709,12 +825,17 @@ def deployWorkspaceApplicationAjax(request):
     #get post data
     postdata = getPostdata(request)
     a_app_id = postdata.get('a_app_id','')
+    w_app_id = postdata.get('w_app_id','')
     #check license
     if settings.OMFLOW_TYPE == 'server':
-        if a_app_id:
-            omlicense = checkLicense('app', True)
+        wa = WorkspaceApplication.objects.get(id=w_app_id)
+        if wa.app_attr in ['sys','lib']:
+            omlicense = True
         else:
-            omlicense = checkLicense('app')
+            if a_app_id:
+                omlicense = checkLicense('app', True)
+            else:
+                omlicense = checkLicense('app')
     else:
         omlicense = True
     if omlicense:
@@ -723,16 +844,16 @@ def deployWorkspaceApplicationAjax(request):
         if checker.get('status') == 'success':
             result = deployWorkspaceApplication(postdata, request.user)
             if result['status']:
-                info(request ,'%s deploy WorkspaceApplication success.' % request.user.username)
+                info('%s deploy WorkspaceApplication success.' % request.user.username,request)
                 return ResponseAjax(statusEnum.success, _('上架成功。')).returnJSON()
             else:
-                info(request ,'%s deploy WorkspaceApplication error.' % request.user.username)
+                info('%s deploy WorkspaceApplication error.' % request.user.username,request)
                 return ResponseAjax(statusEnum.not_found, result.get('message','')).returnJSON()
         else:
-            info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+            info('%s missing some require variable or the variable type error.' % request.user.username,request)
             return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
     else:
-        info(request ,'%s the license error.' % request.user.username)
+        info('%s the license error.' % request.user.username,request)
         return ResponseAjax(statusEnum.not_found, _('應用流程數量已達上限。')).returnJSON()
 
 
@@ -756,40 +877,53 @@ def deployWorkspaceApplication(postdata, user):
             a_app_id = caa_result['a_app_id']
             app_attr = caa_result.get('app_attr','user')
             #建立舊流程與新流程的對應關係
-            fw_list = list(FlowWorkspace.objects.filterformat('id','flow_name',flow_app_id=w_app_id))
+            check_api_path_list = []
+            fw_list = list(FlowWorkspace.objects.filterformat('id','flow_name','config',flow_app_id=w_app_id))
             if a_app_id:
                 a_app_id_list = list(ActiveApplication.objects.filter(app_name=new_app_name).values_list('id',flat=True))
-                fa_list = list(FlowActive.objects.filter(flow_app_id__in=a_app_id_list,parent_uuid=None).values('flow_uuid','flow_name'))
+                fa_list = list(FlowActive.objects.filter(flow_app_id__in=a_app_id_list,parent_uuid=None).values('flow_uuid','flow_name','api_path'))
                 for fw in fw_list:
                     mapping = False
                     for fa in fa_list:
                         if fw['flow_name'] == fa['flow_name']:
                             mapping = True
-                            flow_mapping[fw['id']] = fa['flow_uuid']
+                            flow_mapping[fw['id']] = {'flow_uuid':fa['flow_uuid'], 'api_path':fa['api_path']}
                             break
                     if not mapping:
-                        flow_mapping[fw['id']] = uuid.uuid4()
+                        flow_uuid = uuid.uuid4()
+                        api_path = json.loads(fw['config']).get('api_path',flow_uuid.hex)
+                        flow_mapping[fw['id']] = {'flow_uuid':flow_uuid, 'api_path':api_path}
+                        check_api_path_list.append(api_path)
             else:
                 for fw in fw_list:
-                    flow_mapping[fw['id']] = uuid.uuid4()
-            #建立該app的所有流程
-            flow_list = []
-            status = True
-            for flow_id in flow_mapping:
-                cfa_result = createFlowActive(new_app_id, flow_id, flow_mapping[flow_id], caa_result['version'], user, app_attr)
-                flow_list.append(cfa_result)
-                if not cfa_result['status']:
-                    status = False
-                    break
-            if status:
-                #create main flow python
-                for flow in flow_list:
-                    flowmaker = flowMaker(flow['flow_uuid'],flow['flowobject'],flow['version'],flow['subflow_mapping_dict'])
-                    if not flowmaker:
-                        all_success = False
-                        break
-            else:
+                    flow_uuid = uuid.uuid4()
+                    api_path = json.loads(fw['config']).get('api_path',flow_uuid.hex)
+                    flow_mapping[fw['id']] = {'flow_uuid':flow_uuid, 'api_path':api_path}
+                    check_api_path_list.append(api_path)
+            #檢查api路徑是否重複
+            duplicate_path = checkAPIpath(check_api_path_list)
+            if duplicate_path:
                 all_success = False
+                message = _('api路徑重複：') + str(duplicate_path)
+            else:
+                #建立該app的所有流程
+                flow_list = []
+                f_status = True
+                for flow_id in flow_mapping:
+                    cfa_result = createFlowActive(new_app_id, flow_id, flow_mapping[flow_id]['flow_uuid'], caa_result['version'], user, app_attr, flow_mapping[flow_id]['api_path'])
+                    flow_list.append(cfa_result)
+                    if not cfa_result['status']:
+                        f_status = False
+                        break
+                if f_status:
+                    #create main flow python
+                    for flow in flow_list:
+                        flowmaker = flowMaker(flow['flow_uuid'],flow['flowobject'],flow['version'],flow['subflow_mapping_dict'])
+                        if not flowmaker:
+                            all_success = False
+                            break
+                else:
+                    all_success = False
             if all_success:
                 #找出舊版流程的schedule
                 sch_dict = {}
@@ -833,6 +967,7 @@ def deployWorkspaceApplication(postdata, user):
                     redeployFlow(re_id)
                 #刪除新增的app，並重啟舊的app
                 ActiveApplication.objects.get(id=new_app_id).delete()
+                FlowActiveGlobalObject.deleteAppLanDict('active', new_app_id, None)
                 if a_app_id:
                     aa = ActiveApplication.objects.get(id=a_app_id)
                     aa.undeploy_flag = False
@@ -846,7 +981,17 @@ def deployWorkspaceApplication(postdata, user):
         message = e.__str__()
     finally:
         return {'status':status, 'message':message}
-        
+
+
+def checkAPIpath(api_path_list):
+    try:
+        duplicate_path =[]
+        if api_path_list:
+            duplicate_path = list(FlowActive.objects.filter(api_path__in=api_path_list,undeploy_flag=False).values('api_path').distinct())
+    except Exception as e:
+        error(e.__str__())
+    finally:
+        return duplicate_path
 
 
 def createActiveApplication(w_app_id, app_name, a_app_id, user):
@@ -899,9 +1044,10 @@ def createActiveApplication(w_app_id, app_name, a_app_id, user):
                     result['message'] = _('重複的應用程式名稱。')
             if result['status']:
                 updatetime = datetime.now()
-                new_aa = ActiveApplication.objects.create(app_name=app_name,user=user,updatetime=updatetime,version=version,app_attr=app_attr)
+                new_aa = ActiveApplication.objects.create(app_name=app_name,user=user,updatetime=updatetime,version=version,app_attr=app_attr,language_package=wa.language_package)
                 #set global
                 FlowActiveGlobalObject.setAppNameDict(new_aa.app_name, new_aa.id)
+                FlowActiveGlobalObject.setAppLanDict('active', new_aa.id, None, wa.language_package)
                 result['version'] = version
                 result['app_id'] = new_aa.id
                 result['app_name'] = new_aa.app_name
@@ -926,6 +1072,7 @@ def undeployActiveApplication(app_id, user):
         app_attr = aa.app_attr
         #delete global
         FlowActiveGlobalObject.deleteAppNameDict(aa.app_name)
+        FlowActiveGlobalObject.deleteAppLanDict('active', app_id, None)
         aa.undeploy_flag = True
         aa.updatetime = datetime.now()
         aa.user = user
@@ -941,7 +1088,7 @@ def undeployActiveApplication(app_id, user):
         return result
 
 
-def createFlowActive(new_app_id, flowworkspace_id, flow_uuid, version, user, app_attr):
+def createFlowActive(new_app_id, flowworkspace_id, flow_uuid, version, user, app_attr, api_path):
     '''
     create flow active
     input: flowworkspace_id, flowactive_id, version, user
@@ -962,6 +1109,7 @@ def createFlowActive(new_app_id, flowworkspace_id, flow_uuid, version, user, app
         config = json.loads(fw.config)
         active_obj['flow_name'] = flow_name
         active_obj['flow_uuid'] = flow_uuid
+        active_obj['api_path'] = api_path
         active_obj['create_user_id'] = user.id
         active_obj['description'] = fw.description
         active_obj['attr'] = app_attr
@@ -1233,7 +1381,7 @@ def listFlowActiveAjax(request):
         undeploy_flag = postdata.get('undeploy_flag', ['0'])
         query = FlowActive.objects.filter(flow_app_id__app_name=app_name,undeploy_flag__in=undeploy_flag,parent_uuid=None,deploytime__lte=deploytime,is_active__in=is_active).values('id','flow_uuid','flow_name','deploytime','version','is_active','description','flowlog','api','undeploy_flag')
         result = DatatableBuilder(request, query, field_list)
-        info(request ,'%s list FlowActive success.' % request.user.username)
+        info('%s list FlowActive success.' % request.user.username,request)
         return JsonResponse(result)
     else:
         display_field = ['id','flow_uuid','flow_name']
@@ -1241,7 +1389,7 @@ def listFlowActiveAjax(request):
             result = list(FlowActive.objects.filterformat(*display_field,flow_app_id__app_name=app_name,undeploy_flag=False,parent_uuid=None))
         else:
             result = []
-        info(request ,'%s list FlowActive success.' % request.user.username)
+        info('%s list FlowActive success.' % request.user.username,request)
         return ResponseAjax(statusEnum.success, _('查詢成功。'), result).returnJSON()
 
 
@@ -1286,13 +1434,13 @@ def updateFlowActiveAjax(request):
                 display_field = postdata.get('display_field','')
                 flowactive.display_field = display_field
             flowactive.save()
-            info(request ,'%s update FlowActive success.' % request.user.username)
+            info('%s update FlowActive success.' % request.user.username,request)
             return ResponseAjax(statusEnum.success, _('設定成功。')).returnJSON()
         except Exception as e:
-            error(request,e)
+            error(e.__str__(),request)
             return ResponseAjax(statusEnum.not_found, _('找不到該流程。')).returnJSON()
     else:
-        info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+        info('%s missing some require variable or the variable type error.' % request.user.username,request)
         return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
 
 
@@ -1325,10 +1473,10 @@ def activeFlowActiveAjax(request):
             flow_uuid = fa.flow_uuid.hex
             FlowActiveGlobalObject.deleteFlowActive(flow_uuid, None)
             FlowActiveGlobalObject.setFlowActive(fa)
-        info(request ,'%s active FlowActive success.' % request.user.username)
+        info('%s active FlowActive success.' % request.user.username,request)
         return ResponseAjax(statusEnum.success, _('設定成功。')).returnJSON()
     else:
-        info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+        info('%s missing some require variable or the variable type error.' % request.user.username,request)
         return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
 
 
@@ -1353,68 +1501,72 @@ def getFlowAPIFormatAjax(request):
     action = postdata.get('action','')
     fa = FlowActiveGlobalObject.NameSearch(flow_name, None, app_name)
     if fa:
-        items = json.loads(fa.merge_formobject)
-        for key in items:
-            field_dict = {}
-            item = items[key]
-            if item['type'] == 'checkbox':
-                field_dict = {'id':item['id'], 'value':'[<' + item['config']['title'] + '>,...]', 'type':item['type']}
-            elif item['type'] == 'h_status':
-                field_dict = {'id':item['id'], 'value':'<' + item['config']['title'] + '>', 'type':item['type']}
-                header_dict = {'id':'status', 'value':'<' + item['config']['title'] + '>', 'type':'header'}
-                formdata.append(header_dict)
-            elif item['type'] == 'h_group':
-                field_dict = {'id':item['id'], 'value':{'group':'<'+item['config']['group_title']+'>','user':'<'+item['config']['user_title']+'>'}, 'type':item['type']}
-                header_dict = {'id':'group', 'value':{'group':'<'+item['config']['group_title']+'>','user':'<'+item['config']['user_title']+'>'}, 'type':'header'}
-                formdata.append(header_dict)
-            elif item['type'] == 'h_title':
-                field_dict = {'id':item['id'], 'value':'<' + item['config']['title'] + '>', 'type':item['type']}
-                header_dict = {'id':'title', 'value':'<' + item['config']['title'] + '>', 'type':'header'}
-                formdata.append(header_dict)
-            elif item['type'] == 'h_level':
-                field_dict = {'id':item['id'], 'value':'<' + item['config']['title'] + '>', 'type':item['type']}
-                header_dict = {'id':'level', 'value':'<' + item['config']['title'] + '>', 'type':'header'}
-                formdata.append(header_dict)
-            else:
-                field_dict = {'id':item['id'], 'value':'<' + item['config']['title'] + '>', 'type':item['type']}
-            formdata.append(field_dict)
-        api_input['security'] = '<security>'
-        api_input['app_name'] = app_name
-        api_input['flow_name'] = flow_name
-        api_input['action'] = action
-        api_input['omflow_restapi'] = 1
-        if action == 'update':
-            api_input['data_id'] = '<data_id>'
-            #組裝推單回傳內容
-            s = {'status':'200', 'message':_('推單成功'), 'result':''}
-            e = {'status':'404', 'message':_('推單失敗')}
-            api_output = {'success':s, 'error':e}
-        elif action == 'create':
-            #組裝開單回傳內容
-            s1 = {'status':'200', 'message':_('開單成功'), 'result':'<data_no>'}
-            s2 = {'status':'200', 'message':_('開單成功'), 'result':''}
-            e = {'status':'404', 'message':_('開單失敗')}
-            api_output = {'success1':s1, 'success2':s2, 'error':e}
-            #如果沒有表單
-            if not formdata:
-                start_input = {}
-                items = json.loads(fa.flowobject)['items']
-                for item in items:
-                    if item['id'] == 'FITEM_1':
-                        break
-                input_list = item['config']['input']
-                for input_dict in input_list:
-                    name = input_dict['name']
-                    value = input_dict['value']
-                    start_input[name] = value
-                api_input['start_input'] = start_input
-        if formdata:
-            api_input['formdata'] = formdata
-        result = {'input':api_input, 'output':api_output}
-        info(request ,'%s list flow form point success.' % request.user.username)
+        if action == 'query':
+            result = fa.api_path
+        else:
+            items = json.loads(fa.merge_formobject)
+            for key in items:
+                field_dict = {}
+                item = items[key]
+                if item['type'] == 'checkbox':
+                    field_dict = {'id':item['id'], 'value':'[<' + item['config']['title'] + '>,...]', 'type':item['type']}
+                elif item['type'] == 'h_status':
+                    field_dict = {'id':item['id'], 'value':'<' + item['config']['title'] + '>', 'type':item['type']}
+#                     header_dict = {'id':'status', 'value':'<' + item['config']['title'] + '>', 'type':'header'}
+#                     formdata.append(header_dict)
+                elif item['type'] == 'h_group':
+                    field_dict = {'id':item['id'], 'value':{'group':'<'+item['config']['group_title']+'>','user':'<'+item['config']['user_title']+'>'}, 'type':item['type']}
+#                     header_dict = {'id':'group', 'value':{'group':'<'+item['config']['group_title']+'>','user':'<'+item['config']['user_title']+'>'}, 'type':'header'}
+#                     formdata.append(header_dict)
+                elif item['type'] == 'h_title':
+                    field_dict = {'id':item['id'], 'value':'<' + item['config']['title'] + '>', 'type':item['type']}
+#                     header_dict = {'id':'title', 'value':'<' + item['config']['title'] + '>', 'type':'header'}
+#                     formdata.append(header_dict)
+                elif item['type'] == 'h_level':
+                    field_dict = {'id':item['id'], 'value':'<' + item['config']['title'] + '>', 'type':item['type']}
+#                     header_dict = {'id':'level', 'value':'<' + item['config']['title'] + '>', 'type':'header'}
+#                     formdata.append(header_dict)
+                else:
+                    field_dict = {'id':item['id'], 'value':'<' + item['config']['title'] + '>', 'type':item['type']}
+                formdata.append(field_dict)
+            api_input['security'] = '<security>'
+#             api_input['app_name'] = app_name
+#             api_input['flow_name'] = flow_name
+            api_input['api_path'] = fa.api_path
+            api_input['action'] = action
+            api_input['omflow_restapi'] = 1
+            if action == 'update':
+                api_input['data_id'] = '<data_id>'
+                #組裝推單回傳內容
+                s = {'status':'200', 'message':_('推單成功'), 'result':''}
+                e = {'status':'404', 'message':_('推單失敗')}
+                api_output = {'success':s, 'error':e}
+            elif action == 'create':
+                #組裝開單回傳內容
+                s1 = {'status':'200', 'message':_('開單成功'), 'result':'<data_no>'}
+                s2 = {'status':'200', 'message':_('開單成功'), 'result':''}
+                e = {'status':'404', 'message':_('開單失敗')}
+                api_output = {'success1':s1, 'success2':s2, 'error':e}
+                #如果沒有表單
+                if not formdata:
+                    start_input = {}
+                    items = json.loads(fa.flowobject)['items']
+                    for item in items:
+                        if item['id'] == 'FITEM_1':
+                            break
+                    input_list = item['config']['input']
+                    for input_dict in input_list:
+                        name = input_dict['name']
+                        value = input_dict['value']
+                        start_input[name] = value
+                    api_input['start_input'] = start_input
+            if formdata:
+                api_input['formdata'] = formdata
+            result = {'input':api_input, 'output':api_output}
+        info('%s list flow form point success.' % request.user.username,request)
         return ResponseAjax(statusEnum.success, _('讀取成功。'), result).returnJSON()
     else:
-        info(request ,'%s list flow form point error.' % request.user.username)
+        info('%s list flow form point error.' % request.user.username,request)
         return ResponseAjax(statusEnum.success, _('讀取失敗。')).returnJSON()
 
 
@@ -1453,13 +1605,13 @@ def scheduleFlowActiveAjax(request):
                 status = False
                 message += c_s['message']
         if status:
-            info(request ,'%s schedule FlowActive success.' % request.user.username)
+            info('%s schedule FlowActive success.' % request.user.username,request)
             return ResponseAjax(statusEnum.success, _('設定成功。')).returnJSON()
         else:
-            info(request ,'%s schedule FlowActive error.' % request.user.username)
+            info('%s schedule FlowActive error.' % request.user.username,request)
             return ResponseAjax(statusEnum.not_found, message).returnJSON()
     else:
-        info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+        info('%s missing some require variable or the variable type error.' % request.user.username,request)
         return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
     
 
@@ -1575,13 +1727,13 @@ def activeScheduleAjax(request):
                 schedule_Execute(scheduler)
             scheduler.is_active = is_active
             scheduler.save()
-            info(request ,'%s active Schedule success.' % request.user.username)
+            info('%s active Schedule success.' % request.user.username,request)
             return ResponseAjax(statusEnum.success, _('設定成功。')).returnJSON()
         except:
-            info(request ,'%s active Schedule error.' % request.user.username)
+            info('%s active Schedule error.' % request.user.username,request)
             return ResponseAjax(statusEnum.not_found, _('找不到該排程。')).returnJSON()
     else:
-        info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+        info('%s missing some require variable or the variable type error.' % request.user.username,request)
         return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
 
     
@@ -1648,7 +1800,7 @@ def listSchedulerAjax(request):
                 datas[key]['input_param'] = formdata
             else:
                 datas[key]['input_param'] = start_input
-    info(request ,'%s list Schedule success.' % request.user.username)
+    info('%s list Schedule success.' % request.user.username,request)
     return JsonResponse(result)
 
 
@@ -1678,10 +1830,10 @@ def undeployActiveApplicationAjax(request):
         schedule_id_list = list(Scheduler.objects.filter(flowactive_id__in=flow_id_list).values_list('id',flat=True))
         if schedule_id_list:
             deleteSchedule(schedule_id_list)
-        info(request ,'%s undeploy ActiveApplication success.' % request.user.username)
-        return ResponseAjax(statusEnum.success, _('下線成功。')).returnJSON()
+        info('%s undeploy ActiveApplication success.' % request.user.username,request)
+        return ResponseAjax(statusEnum.success, _('下架成功。')).returnJSON()
     else:
-        info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+        info('%s missing some require variable or the variable type error.' % request.user.username,request)
         return ResponseAjax(statusEnum.not_found, _('請提供必要參數：app_id或是app_name。')).returnJSON()
 
 
@@ -1738,19 +1890,19 @@ def redeployActiveApplicationAjax(request):
                     #重新建立側邊選單
                     if app_attr in ['user','cloud','sys']:
                         createSidebar(flow_list, aa.id, aa.app_name, lside_pid)
-                    info(request ,'%s redeploy ActiveApplication success.' % request.user.username)
+                    info('%s redeploy ActiveApplication success.' % request.user.username,request)
                     return ResponseAjax(statusEnum.success, _('重新上架成功。')).returnJSON()
                 else:
-                    info(request ,'%s redeploy ActiveApplication error.' % request.user.username)
+                    info('%s redeploy ActiveApplication error.' % request.user.username,request)
                     return ResponseAjax(statusEnum.not_found, _('重新上架失敗。')).returnJSON()
             except Exception as e:
-                error(request,e)
+                error(e.__str__(),request)
                 return ResponseAjax(statusEnum.not_found, _('找不到該應用流程。')).returnJSON()
         else:
-            info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+            info('%s missing some require variable or the variable type error.' % request.user.username,request)
             return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
     else:
-        info(request ,'%s the license error.' % request.user.username)
+        info('%s the license error.' % request.user.username,request)
         return ResponseAjax(statusEnum.not_found, _('應用流程數量已達上限。')).returnJSON()
 
 
@@ -1778,7 +1930,7 @@ def listActiveApplicationAjax(request):
         display_field =['id','app_name','app_attr','updatetime','version','user_id__username','undeploy_flag']
         query = ActiveApplication.objects.filterformat(*display_field,app_attr__in=app_attr,updatetime__lte=updatetime,undeploy_flag__in=undeploy_flag)
         result = DatatableBuilder(request, query, field_list)
-        info(request ,'%s list ActiveApplication success.' % request.user.username)
+        info('%s list ActiveApplication success.' % request.user.username,request)
         return JsonResponse(result)
     else:
         schedule = postdata.get('schedule',None)
@@ -1792,7 +1944,7 @@ def listActiveApplicationAjax(request):
                 result = list(ActiveApplication.objects.filter(undeploy_flag=False).exclude(id=app_id).values('id','app_name'))
             else:
                 result = list(ActiveApplication.objects.filter(undeploy_flag=False).values('id','app_name'))
-        info(request ,'%s list ActiveApplication success.' % request.user.username)
+        info('%s list ActiveApplication success.' % request.user.username,request)
         return ResponseAjax(statusEnum.success, _('查詢成功。'), result).returnJSON()
 
 
@@ -1809,7 +1961,6 @@ def listActiveApplication4RelationAjax(request):
     app_id_list = []
     this_activeList = list(FlowActive.objects.filter(undeploy_flag=0,parent_uuid__isnull=True).values_list('flow_uuid', flat=True))
     this_activeList = [o.hex for o in this_activeList]
-    #print(this_activeList)
     if request.user.is_superuser:
         p = list(Permission.objects.filter(codename__contains="_View").values())
     else: 
@@ -1826,7 +1977,7 @@ def listActiveApplication4RelationAjax(request):
         app_id_list.append(f['flow_app_id'])
     app = list(ActiveApplication.objects.filter(id__in=app_id_list,undeploy_flag=False).values('id','app_name'))
     result = {'app':app,'flow':flow}
-    info(request ,'%s list ActiveApplication success.' % request.user.username)
+    info('%s list ActiveApplication success.' % request.user.username,request)
     return ResponseAjax(statusEnum.success, _('查詢成功。'), result).returnJSON()
 
 
@@ -2053,21 +2204,28 @@ def loadFormDesignAjax(request):
                             break
                 else:
                     result['start_input'] = []
-                result['flow_name'] = fa.flow_name
-                result['formobject'] = formobject
+                
+                #載入語言包
+                language = request.COOKIES.get('django_language','zh-hant')
+                formobject = Translator('formobject', 'active', language, fa.flow_app_id, None).Do(formobject)
+                trans_flow_name = Translator('single_app', 'active', language, fa.flow_app_id, None).Do(fa.flow_name)
+                if result['start_input']:
+                    result['start_input'] = Translator('single_app', 'active', language, fa.flow_app_id, None).Do(result['start_input'])
+                result['flow_name'] = trans_flow_name
+                result['formobject'] = json.dumps(formobject)
                 result['attachment'] = fa.attachment
                 result['use_form'] = use_form
-                info(request ,'%s load form design success.' % request.user.username)
+                info('%s load form design success.' % request.user.username,request)
                 return ResponseAjax(statusEnum.success, _('讀取成功。'), result).returnJSON()
             except Exception as e:
                 debug(e.__str__())
-                info(request ,'%s load form design error.' % request.user.username)
+                info('%s load form design error.' % request.user.username,request)
                 return ResponseAjax(statusEnum.not_found, _('找不到該流程。')).returnJSON()
         else:
-            info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+            info('%s missing some require variable or the variable type error.' % request.user.username,request)
             return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
     else:
-        info(request ,'%s has no permission.' % request.user.username)
+        info('%s has no permission.' % request.user.username,request)
         return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
 
 
@@ -2081,25 +2239,46 @@ def getApplicationFlowNameAjax(request):
     return: json
     author: Kolin Hsu
     '''
+    #function variable
+    trans_type = None
     #get post data
     postdata = getPostdata(request)
     a_flow_uuid = postdata.get('a_flow_uuid','')
     w_flow_id = postdata.get('w_flow_id','')
     a_app_id = postdata.get('a_app_id','')
     w_app_id = postdata.get('w_app_id','')
+    trans = postdata.get('trans',0)
     if a_flow_uuid:
         fa = FlowActiveGlobalObject.UUIDSearch(a_flow_uuid)
         aa = ActiveApplication.objects.get(id=fa.flow_app_id)
         result = {'flow_name':fa.flow_name,'app_name':aa.app_name}
+        if trans:
+            trans_type = 'active'
+            app_id = fa.flow_app_id
+        
     elif w_flow_id:
         fw = FlowWorkspace.objects.get(id=w_flow_id)
         wa = WorkspaceApplication.objects.get(id=fw.flow_app_id)
         result = {'flow_name':fw.flow_name,'app_name':wa.app_name}
+#         trans_type = 'workspace'
+#         app_id = fw.flow_app_id
+        
     elif a_app_id:
         result = ActiveApplication.objects.get(id=a_app_id).app_name
+#         trans_type = 'active'
+#         app_id = a_app_id
+        
     elif w_app_id:
         result = WorkspaceApplication.objects.get(id=w_app_id).app_name
-    info(request ,'%s get app name or flow name success.' % request.user.username)
+#         trans_type = 'workspace'
+#         app_id = w_app_id
+    
+    #載入語言包
+    if trans_type:
+        language = request.COOKIES.get('django_language','zh-hant')
+        result = Translator('single_app', trans_type, language, app_id, None).Do(result)
+    
+    info('%s get app name or flow name success.' % request.user.username,request)
     return ResponseAjax(statusEnum.success, _('讀取成功。'), result).returnJSON()
 
 
@@ -2149,6 +2328,7 @@ def exportActiveApplicationAjax(request):
                     config['history'] = flowactive['history']
                     config['mission'] = flowactive['mission']
                     config['flowlog'] = flowactive['flowlog']
+                    config['api_path'] = flowactive.get('api_path','')
                     config['api'] = flowactive['api']
                     config['subflow'] = subflow
                     config['permission'] = json.loads(flowactive['permission'])
@@ -2160,22 +2340,23 @@ def exportActiveApplicationAjax(request):
                 app_dict['app_name'] = aa.app_name
                 app_dict['app_attr'] = aa.app_attr
                 app_dict['flow_list'] = flow_list
+                app_dict['language_package'] = aa.language_package
                 result.append(app_dict)
-            info(request ,'%s export ActiveApplication success.' % request.user.username)
+            info('%s export ActiveApplication success.' % request.user.username,request)
             return ResponseAjax(statusEnum.success, _('匯出成功。'), result).returnJSON()
         except Exception as e:
-            debug(request,e.__str__())
-            info(request ,'%s export ActiveApplication error.' % request.user.username)
+            debug(e.__str__(),request)
+            info('%s export ActiveApplication error.' % request.user.username,request)
             return ResponseAjax(statusEnum.not_found, _('匯出失敗。')).returnJSON()
     else:
-        info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+        info('%s missing some require variable or the variable type error.' % request.user.username,request)
         return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
 
 
 #開單、推單、刪單
 @login_required
 @try_except
-def editOmDataAjax(request):
+def editOmDataAjax(request, api_path):
     '''
     create/update/delete ticket.
     input: request
@@ -2196,6 +2377,9 @@ def editOmDataAjax(request):
         fa = FlowActiveGlobalObject.NameSearch(flow_name, None, app_name)
         if fa:
             flow_uuid = fa.flow_uuid.hex
+        postdata['flow_uuid'] = flow_uuid
+    if api_path and api_path != 'None':
+        flow_uuid = FlowActiveGlobalObject.APIgetUUID(api_path)
         postdata['flow_uuid'] = flow_uuid
     #server side rule check
     omflow_restapi = postdata.get('omflow_restapi',False)
@@ -2227,31 +2411,64 @@ def editOmDataAjax(request):
             if per:
                 if result['status']:
                     data_no = result.get('data_no','')
-                    info(request ,'%s edit OmData success.' % request.user.username)
+                    info('%s edit OmData success.' % request.user.username,request)
                     return ResponseAjax(statusEnum.success, result['message'], data_no).returnJSON()
                 else:
-                    info(request ,'%s edit OmData error.' % request.user.username)
+                    info('%s edit OmData error.' % request.user.username,request)
                     return ResponseAjax(statusEnum.not_found, result['message']).returnJSON()
             else:
-                info(request ,'%s has no permission.' % request.user.username)
+                info('%s has no permission.' % request.user.username,request)
                 return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
         else:
-            info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+            info('%s missing some require variable or the variable type error.' % request.user.username,request)
             return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
     else:
-        info(request ,'%s edit omdata by rest api fail, because this flow did not active the api flag.' % request.user.username)
+        info('%s edit omdata by rest api fail, because this flow did not active the api flag.' % request.user.username,request)
         return ResponseAjax(statusEnum.not_found, _('該流程未啟用API呼叫。')).returnJSON()
     
 
-def checkOmDataPermission(user, flow_uuid, data_no, data_id, per_type):
+def checkOmDataPermission(user, flow_uuid, data_no, data_id, per_type, subquery_flow_name=None, subquery_app_name=None):
     '''
     檢查使用者是否有編輯權限，或是該使用者為該單的受派人，或是開單人
     '''
     try:
         result = False
+        #子查詢
+        subquery_per = False
+        if subquery_flow_name and subquery_app_name:
+            stop_formobject = None
+            source_main_fa = FlowActiveGlobalObject.UUIDSearch(flow_uuid)
+            if data_id:
+                #取得資料
+                source_omdata_model = getModel('omformmodel','Omdata_' + flow_uuid)
+                source_omdata = source_omdata_model.objects.get(id=data_id)
+                source_omdata_param = json.loads(source_omdata.data_param)
+                #透過資料中的flow_uuid取得流程
+                source_stop_fa = FlowActiveGlobalObject.UUIDSearch(source_omdata_param['flow_uuid'])
+                #取得停留點id
+                source_stop_uuid_list = source_omdata.stop_uuid.split('-')
+                source_stop_id = source_stop_uuid_list[-1]
+                #取得停留點的設計
+                stop_flow_items = json.loads(source_stop_fa.flowobject)['items']
+                for stop_flow_item in stop_flow_items:
+                    if stop_flow_item['id'] == source_stop_id:
+                        break
+                stop_formobject = stop_flow_item.get('form_object',{})
+            #如果當前停留點沒有表單設計，則取得主流程的原始表單
+            if not stop_formobject:
+                stop_formobject = json.loads(source_main_fa.formobject)
+            stop_form_items = stop_formobject['items']
+            for stop_form_item in stop_form_items:
+                stop_form_item_config = stop_form_item['config']
+                if stop_form_item['type'] == 'subquery':
+                    if stop_form_item_config['flow_name'] == subquery_flow_name and stop_form_item_config['app_name'] == subquery_app_name:
+                        subquery_per = True
+                        break
+        
         assign_per = False
         omdata_model = getModel('omformmodel','Omdata_' + flow_uuid)
-        user_groups = list(user.groups.all().values_list('id',flat=True))
+        user_groups = list(user.groups.all().values_list('omgroup__display_name',flat=True))
+        
         if data_id:
             omdata = omdata_model.objects.get(id=data_id)
             create_user_id = omdata.create_user_id
@@ -2259,10 +2476,8 @@ def checkOmDataPermission(user, flow_uuid, data_no, data_id, per_type):
             if group:
                 group = json.loads(group)
                 u = group.get('user','')
-                g = str(group.get('group',''))
-                if re.match(r'[0-9]+', g):
-                    g = int(g)
-                if u == str(user.id):
+                g = group.get('group','')
+                if u == user.nick_name:
                     assign_per = True
                 elif g in user_groups and not group['user']:
                     assign_per = True
@@ -2280,17 +2495,21 @@ def checkOmDataPermission(user, flow_uuid, data_no, data_id, per_type):
                 elif group:
                     group = json.loads(group)
                     u = group.get('user','')
-                    g = str(group.get('group',''))
-                    if re.match(r'[0-9]+', g):
-                        g = int(g)
-                    if u == str(user.id):
+                    g = group.get('group','')
+                    if u == user.nick_name:
                         assign_per = True
                         break
                     elif g in user_groups and not group['user']:
                         assign_per = True
                         break
-        if user.has_perm('omformmodel.Omdata_' + flow_uuid + per_type) or assign_per:
-            result = True
+        
+        if subquery_flow_name and subquery_app_name:
+            if subquery_per:
+                if user.has_perm('omformmodel.Omdata_' + flow_uuid + per_type) or assign_per:
+                    result = True
+        else:
+            if user.has_perm('omformmodel.Omdata_' + flow_uuid + per_type) or assign_per:
+                result = True
     except Exception as e:
         debug(e.__str__())
     finally:
@@ -2321,7 +2540,7 @@ def createOmData(param,user='system',files=None):
     if isinstance(formdata_list, str):
         formdata_list = json.loads(formdata_list)
     if formdata_list:
-        formdata = FormatFormdataListToFormdata(formdata_list)
+        formdata = FormatFormdataListToFormdata(formdata_list, flow_uuid, None)
     fillupFormdata(formdata, flow_uuid)
     #get flowactive object
     try:
@@ -2421,7 +2640,7 @@ def fillupFormdata(formdata, flow_uuid):
                     value = default_value
                 formdata[item_id] = value
     except Exception as e:
-        error('',e.__str__())
+        error(e.__str__())
 
  
 def updateOmData(param,user='system'):
@@ -2492,7 +2711,7 @@ def updateOmData(param,user='system'):
                                 formdata_list = doQuickAction(flowactive, quick_action, stop_uuid, omdata_dict)
                             #組合formdata
                             if formdata_list:
-                                formdata = FormatFormdataListToFormdata(formdata_list)
+                                formdata = FormatFormdataListToFormdata(formdata_list, None, formobject)
                             #check the required field have value in postdata
                             item_list = formobject.get('items',[])
                             if quick_action:
@@ -2607,84 +2826,78 @@ def deleteOmData(param):
     author: Kolin Hsu
     '''
     #function variable
-    result = {}
+    no_list = []
     message = ''
     status = False
     flow_uuid = param.get('flow_uuid','')
-    data_no = param.get('data_no','')
-    data_id = param.get('data_id','')
+    data_no_list = param.get('data_no',[])
+    if isinstance(data_no_list, str):
+        data_no_list = [data_no_list]
     #get omdata object
     try:
         omdata_model = getModel('omformmodel','Omdata_' + flow_uuid)
         omdata_value_history_model = getModel('omformmodel', 'Omdata_' + flow_uuid + '_ValueHistory')
         if omdata_model and omdata_value_history_model:
-            omdata = omdata_model.objects.get(id=data_id)
-            #check this ticket's status is not running
-            if not omdata.running:
-                #刪除該筆單以及所有歷史資料
-                omdata_model.objects.filter(data_no=data_no).delete()
-                #刪除該筆單的flow value
-                omdata_value_history_model.objects.filter(data_no=data_no).delete()
-                #刪除該筆單的附檔
-                d_f = deleteOmdataFiles(flow_uuid, data_no)
-                #刪除該筆單的所有mission
-                deleteMission(flow_uuid, data_no)
-                #刪除相關關聯
-                deleteOmDataRelationAjax(flow_uuid, [data_no])
-                
-                if d_f:
-                    message = _('刪除成功。')
-                    status = True
+            for data_no in data_no_list:
+                if data_no in no_list:
+                    pass
                 else:
-                    message = _('刪除檔案失敗，請聯絡管理員清理剩餘檔案。')
-                    status = False
-            else:
-                message = _('該單目前為執行狀態，無法進行更新/刪除。')
+                    #將單號放入陣列避免重複刪除
+                    no_list.append(data_no)
+                    #刪除該筆單以及所有歷史資料
+                    omdata_model.objects.filter(data_no=data_no).delete()
+                    #刪除該筆單的flow value
+                    omdata_value_history_model.objects.filter(data_no=data_no).delete()
+                    #刪除該筆單的附檔
+                    deleteOmdataFiles(flow_uuid, data_no)
+                    #刪除該筆單的所有mission
+                    deleteMission(flow_uuid, data_no)
+                    #刪除相關關聯
+                    deleteOmDataRelationAjax(flow_uuid, [data_no])
+                
+            message = _('刪除成功。')
+            status = True
         else:
             message = _('找不到該資料庫：Omdata_')+flow_uuid
     except Exception as e:
         debug(e.__str__())
         message = _('找不到該筆資料。')
     finally:
-        result['message'] = message
-        result['status'] = status
-        return result
+        return {'message':message, 'status':status}
 
 
 @login_required
 @try_except
-def getDataIDListAjax(request):
+def getDataIDListAjax(request, api_path):
     '''
     get data_id list
-    input: app_name, flow_name, data_no
+    input: api_path, data_no
     return: data_id, 
     author: Kolin Hsu
     '''
     #function variable
-    require_field = ['app_name','flow_name','data_no']
+    require_field = ['data_no']
     result = []
     #get post data
     postdata = getPostdata(request)
-    app_name = postdata.get('app_name','')
-    flow_name = postdata.get('flow_name','')
     data_no = postdata.get('data_no','')
     #server side rule check
     checker = DataChecker(postdata, require_field)
     if checker.get('status') == 'success':
-        fa = FlowActiveGlobalObject.NameSearch(flow_name, None, app_name)
+        fa = FlowActiveGlobalObject.APISearch(api_path)
         if fa:
             flow_uuid = fa.flow_uuid.hex
             omdata_model = getModel('omformmodel','Omdata_' + flow_uuid)
             omdata_list = list(omdata_model.objects.filter(data_no=data_no,history=False,running=False,closed=False).values('id','stop_chart_text'))
             for omdata in omdata_list:
                 result.append({'data_id':omdata['id'],'stop_chart_text':omdata['stop_chart_text']})
-            info(request ,'%s get OmData data_id list success.' % request.user.username)
+            info('%s get OmData data_id list success.' % request.user.username,request)
             return ResponseAjax(statusEnum.success, _('查詢成功。'), result).returnJSON()
         else:
-            info(request ,'%s get OmData data_id list error.' % request.user.username)
+            info('%s get OmData data_id list error.' % request.user.username,request)
             return ResponseAjax(statusEnum.not_found, _('查詢失敗。')).returnJSON()
     else:
-        info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+        info('%s missing some require variable or the variable type error.' % request.user.username,request)
         return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
 
 
@@ -2707,10 +2920,10 @@ def uploadOmdataFilesAjax(request):
     data_id = postdata.get('data_id','')
     if checkOmDataPermission(request.user, flow_uuid, None, data_id, '_Modify'):
         uploadOmdataFiles(files, flow_uuid, data_no, data_id, request.user.username)
-        info(request ,'%s upload OmData file success.' % request.user.username)
+        info('%s upload OmData file success.' % request.user.username,request)
         return ResponseAjax(statusEnum.success, _('上傳成功。')).returnJSON()
     else:
-        info(request ,'%s has no permission.' % request.user.username)
+        info('%s has no permission.' % request.user.username,request)
         return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
 
 
@@ -2790,10 +3003,10 @@ def listOmDataFilesAjax(request):
         #清除遭人為砍檔案的資料
         if delete_id_list:
             OmdataFiles.objects.filter(id__in=delete_id_list).update(delete=True)
-        info(request ,'%s load OmData file success.' % request.user.username)
+        info('%s load OmData file success.' % request.user.username,request)
         return ResponseAjax(statusEnum.success, _('讀取成功。'), distinct_file_list).returnJSON()
     else:
-        info(request ,'%s has no permission.' % request.user.username)
+        info('%s has no permission.' % request.user.username,request)
         return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
 
 
@@ -2820,36 +3033,43 @@ def getFlowFieldNameAjax(request):
     app_name = postdata.get('app_name','')
     need_default_field = postdata.get('need_default_field',False)
     if checker.get('status') == 'success':
-        try:
-            flowactive = FlowActiveGlobalObject.NameSearch(flow_name, None, app_name)
-            flow_uuid = flowactive.flow_uuid.hex
-            items = json.loads(flowactive.formobject)['items']
-            if need_default_field:
-                result['display_field'] = flowactive.display_field
-                #get omdata model
-                omdata_model = getModel('omformmodel','Omdata_' + flow_uuid)
-                #組合固定欄位
-                for field in omdata_model._meta.fields:
-                    if (field.name in default_field) and ('formitm_' not in field.name):
-                        result[field.name] = field.verbose_name
-            #組合動態欄位
-            for item in items:
-                if item['id'][:8] == 'FORMITM_':
-                    if item['type'] == 'h_group':
-                        result[item['id'].lower()+'-group'] = item['config']['group_title']
-                        result[item['id'].lower()+'-user'] = item['config']['user_title']
-                    elif need_default_field and item['type'] in ['h_level','h_status']:
-                        pass
-                    else:
-                        result[item['id'].lower()] = item['config']['title']
-            info(request ,'%s get flow field name success.' % request.user.username)
-            return ResponseAjax(statusEnum.success, _('讀取成功。'), result).returnJSON()
-        except Exception as e:
-            error(request,e)
-            return ResponseAjax(statusEnum.not_found, _('找不到該流程。')).returnJSON()
+        result = getFlowFieldName(app_name, flow_name, need_default_field, default_field)
+        info(request ,'%s get flow field name success.' % request.user.username)
+        return ResponseAjax(statusEnum.success, _('讀取成功。'), result).returnJSON()
     else:
-        info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+        info('%s missing some require variable or the variable type error.' % request.user.username,request)
         return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
+
+
+def getFlowFieldName(app_name, flow_name, need_default_field, default_field=None):
+    #function variable
+    result = {}
+    flowactive = FlowActiveGlobalObject.NameSearch(flow_name, None, app_name)
+    flow_uuid = flowactive.flow_uuid.hex
+    items = json.loads(flowactive.formobject)['items']
+    if need_default_field:
+        #get omdata model
+        omdata_model = getModel('omformmodel','Omdata_' + flow_uuid)
+        #組合固定欄位
+        for field in omdata_model._meta.fields:
+            if default_field:
+                result['display_field'] = flowactive.display_field
+                if (field.name in default_field) and ('formitm_' not in field.name):
+                    result[field.name] = field.verbose_name
+            else:
+                if 'formitm_' not in field.name:
+                    result[field.name] = field.verbose_name
+    #組合動態欄位
+    for item in items:
+        if item['id'][:8] == 'FORMITM_':
+            if item['type'] == 'h_group':
+                result[item['id'].lower()+'-group'] = item['config']['group_title']
+                result[item['id'].lower()+'-user'] = item['config']['user_title']
+            elif need_default_field and item['type'] in ['h_level','h_status']:
+                pass
+            else:
+                result[item['id'].lower()] = item['config']['title']
+    return result
 
 
 @login_required
@@ -2862,39 +3082,50 @@ def getFlowActiveDisplayFieldAjax(request):
     author: Kolin Hsu
     '''
     #get post data
-    result = {}
+    language = request.COOKIES.get('django_language','zh-hant')
     display_text = {}
     postdata = getPostdata(request)
+    app_name = postdata.get('app_name','')
+    flow_name = postdata.get('flow_name','')
     flow_uuid = postdata.get('a_flow_uuid','')
-    if request.user.has_perm('omformmodel.Omdata_' + flow_uuid + '_View'):
-        fa = FlowActiveGlobalObject.UUIDSearch(flow_uuid)
-        display_field = json.loads(fa.display_field)
-        new_display_field = {}
-        items = json.loads(fa.formobject)['items']
-        for key in display_field:
-            if key == 'create_user_id' or key == 'create_user':
-                new_key = 'create_user_id__nick_name'
-            elif key == 'update_user_id' or key == 'update_user':
-                new_key = 'update_user_id__nick_name'
-            else:
-                new_key = key
-            if key[:8] == 'formitm_':
-                for item in items:
-                    if item['id'].lower() == key:
-                        if item['config'].get('lists',''):
-                            display_text[key] = item['config'].get('lists','')
-            new_display_field[new_key] = display_field[key]
-        result = {'display_field':json.dumps(new_display_field),'display_text':display_text}
-        info(request ,'%s get flow display field success.' % request.user.username)
-        return ResponseAjax(statusEnum.success, _('讀取成功。'), result).returnJSON()
+    if app_name and flow_name:
+        fa = FlowActiveGlobalObject.NameSearch(flow_name, None, app_name)
     else:
-        info(request ,'%s has no permission.' % request.user.username)
-        return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
+        fa = FlowActiveGlobalObject.UUIDSearch(flow_uuid)
+    display_field = json.loads(fa.display_field)
+    new_display_field = {}
+    items = json.loads(fa.formobject)['items']
+    for key in display_field:
+        if key == 'create_user_id' or key == 'create_user':
+            new_key = 'create_user_id__nick_name'
+        elif key == 'update_user_id' or key == 'update_user':
+            new_key = 'update_user_id__nick_name'
+        else:
+            new_key = key
+        if key[:8] == 'formitm_':
+            for item in items:
+                if item['id'].lower() == key:
+                    if item['config'].get('lists',''):
+                        lists = item['config'].get('lists','')
+                        #載入語言包
+                        for lst_dict in lists:
+                            lst_dict['text'] = Translator('single_app', 'active', language, fa.flow_app_id, None).Do(lst_dict['text'])
+                        display_text[key] = lists
+            
+            trans_field_name = Translator('single_app', 'active', language, fa.flow_app_id, None).Do(display_field[key])
+        else:
+            trans_field_name = _(display_field[key])
+        
+        new_display_field[new_key] = trans_field_name
+    
+    result = {'display_field':json.dumps(new_display_field),'display_text':display_text}
+    info('%s get flow display field success.' % request.user.username,request)
+    return ResponseAjax(statusEnum.success, _('讀取成功。'), result).returnJSON()
 
 
 @login_required
 @try_except
-def listOmDataAjax(request):
+def listOmDataAjax(request, api_path):
     '''
     list omdata.
     input: request
@@ -2902,71 +3133,79 @@ def listOmDataAjax(request):
     author: Kolin Hsu
     '''
     #function variable
-    display_field_list = []
-    search_field_list = []
+    display_field_list = ['id','data_no','stop_uuid','stop_chart_text','error','error_message','closed','running']
     #get post data
     postdata = getPostdata(request)
     flow_uuid = postdata.get('flow_uuid','')
-    updatetime = postdata.get('updatetime','')
-    closed = postdata.get('closed',[0])
     app_name = postdata.get('app_name','')
     flow_name = postdata.get('flow_name','')
     omflow_restapi = postdata.get('omflow_restapi','')
+    updatetime = postdata.get('updatetime','')
+    closed = postdata.get('closed',[0])
+    
     if flow_name and app_name:
         flowactive = FlowActiveGlobalObject.NameSearch(flow_name, None, app_name)
-        if flowactive:
-            flow_uuid = flowactive.flow_uuid.hex
     else:
         flowactive = FlowActiveGlobalObject.UUIDSearch(flow_uuid)
+    
+    if api_path and api_path != 'None':
+        flowactive = FlowActiveGlobalObject.APISearch(api_path)
+    
     if flowactive:
+        flow_uuid = flowactive.flow_uuid.hex
         if request.user.has_perm('omformmodel.Omdata_' + flow_uuid + '_View'):
             if not omflow_restapi:
                 #get field setting
                 display_field_dict = json.loads(flowactive.display_field)
                 for key in display_field_dict:
                     if '-' in key:
-                        key = re.findall(r'(.+)-[a-z]', key)[0]
+                        key = 'group'
+#                         key = re.findall(r'(.+)-[a-z]', key)[0]
                     if key == 'create_user_id' or key == 'create_user':
                         key = 'create_user_id__nick_name'
                     elif key == 'update_user_id' or key == 'update_user':
                         key = 'update_user_id__nick_name'
                     display_field_list.append(key)
-                display_field_list.append('id')
-                display_field_list.append('data_no')
-                display_field_list.append('stop_uuid')
-                display_field_list.append('stop_chart_text')
-                display_field_list.append('error')
-                display_field_list.append('error_message')
-                display_field_list.append('closed')
-                display_field_list.append('running')
-                search_field_list = display_field_list.copy()
-#                 search_field_list.append('data_no')
-#                 search_field_list.append('create_user_id__username')
+                
                 #暫時先使用display_field當作search_field
+                search_field_list = display_field_list.copy()
                 field_list = list(map(lambda search_field : search_field + '__icontains', search_field_list))
+                
                 #get model
                 omdata_model = getModel('omformmodel','Omdata_' + flow_uuid)
                 query = omdata_model.objects.filter(closed__in=closed,updatetime__lte=updatetime,history=False).values(*display_field_list)
                 result = DatatableBuilder(request, query, field_list)
-                info(request ,'%s list OmData success.' % request.user.username)
+                
+                #載入語言包
+                language = request.COOKIES.get('django_language','zh-hant')
+                result['data'] = Translator('datatable_single_app', 'active', language, flowactive.flow_app_id, None).Do(result['data'])
+                
+                #轉換字與值
+                result['data'] = datatableValueToText(result['data'], flow_uuid)
+                
+                info('%s list OmData success.' % request.user.username,request)
                 return JsonResponse(result)
             else:
                 #api使用
-                omdata_model = getModel('omformmodel','Omdata_' + flow_uuid)
-                result = listQueryBuilder(omdata_model, postdata)
+                result = listOmData(postdata, flow_uuid)
                 if result['status']:
-                    info(request ,'%s list OmData success.' % request.user.username)
+                    info('%s list OmData success.' % request.user.username,request)
                     return ResponseAjax(statusEnum.success, result['message'], result['result']).returnJSON()
                 else:
-                    info(request ,'%s list OmData error.' % request.user.username)
+                    info('%s list OmData error.' % request.user.username,request)
                     return ResponseAjax(statusEnum.not_found, result['message']).returnJSON()
         else:
-            info(request ,'%s has no permission.' % request.user.username)
+            info('%s has no permission.' % request.user.username,request)
             return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
     else:
-        info(request ,'%s list OmData error.' % request.user.username)
+        info('%s list OmData error.' % request.user.username,request)
         return ResponseAjax(statusEnum.not_found, _('找不到流程。')).returnJSON()
 
+
+def listOmData(postdata, flow_uuid):
+    omdata_model = getModel('omformmodel','Omdata_' + flow_uuid)
+    result = listQueryBuilder(omdata_model, postdata)
+    return result
 
 @login_required
 @try_except
@@ -2999,10 +3238,10 @@ def listOmDataHistoryAjax(request):
         else:
             query = omdata_model.objects.filter(closed__in=closed,createtime__lte=createtime).values(*display_field)
         result = DatatableBuilder(request, query, field_list)
-        info(request ,'%s list OmDataHistory success.' % request.user.username)
+        info('%s list OmDataHistory success.' % request.user.username,request)
         return JsonResponse(result)
     else:
-        info(request ,'%s has no permission.' % request.user.username)
+        info('%s has no permission.' % request.user.username,request)
         return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
    
 
@@ -3075,10 +3314,10 @@ def listOmDataRelationAjax(request):
                 row['level'] = thisData.level
                 row['closed'] = thisData.closed
             
-        info(request ,'%s list OmDataRelation success.' % request.user.username)
+        info('%s list OmDataRelation success.' % request.user.username,request)
         return JsonResponse(result)
     else:
-        info(request ,'%s has no permission.' % request.user.username)
+        info('%s has no permission.' % request.user.username,request)
         return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
 
 
@@ -3109,11 +3348,11 @@ def editOmDataRelationAjax(request):
         if subject_flow == object_flow :
             #判斷是否為同編號
             if subject_no in object_no_list :
-                info(request ,'%s add OmDataRelation error.' % request.user.username)
+                info('%s add OmDataRelation error.' % request.user.username,request)
                 return ResponseAjax(statusEnum.success, _('關聯對象不可為同一資料。')).returnJSON()
         
         elif relation_type in ['parent','child']:
-            info(request ,'%s add OmDataRelation error.' % request.user.username)
+            info('%s add OmDataRelation error.' % request.user.username,request)
             return ResponseAjax(statusEnum.success, _('不同表單資料不可建立母子關聯。')).returnJSON()
         
         display_field = ['subject_flow','subject_no','object_flow','object_no','relation_type']
@@ -3139,22 +3378,22 @@ def editOmDataRelationAjax(request):
         
         OmdataRelation.objects.bulk_create(OmdataRelationList);
         
-        info(request ,'%s add OmDataRelation success.' % request.user.username)
+        info('%s add OmDataRelation success.' % request.user.username,request)
         return ResponseAjax(statusEnum.success, _('建立關聯成功。')).returnJSON()
     
     elif action == 'update' and (checkOmDataPermission(request.user, flow_uuid, data_no, data_id, '_Modify') or request.user.has_perm('omformflow.OmFormFlow_Manage')):
-        info(request ,'%s update OmDataRelation success.' % request.user.username)
+        info('%s update OmDataRelation success.' % request.user.username,request)
         return ResponseAjax(statusEnum.success, _('更改關聯成功。')).returnJSON()
     
     elif action == 'delete' and (checkOmDataPermission(request.user, flow_uuid, data_no, data_id, '_Modify') or request.user.has_perm('omformflow.OmFormFlow_Manage')):
         id_list = postdata.get('id',[])
         id_list = OmdataRelation.objects.filter(Q(subject_flow=flow_uuid,subject_no=data_no,id__in=id_list) | Q(object_flow=flow_uuid,object_no=data_no,id__in=id_list)).values_list('id', flat=True)
         OmdataRelation.objects.filter(id__in=id_list).delete()
-        info(request ,'%s delete OmDataRelation success.' % request.user.username)
+        info('%s delete OmDataRelation success.' % request.user.username,request)
         return ResponseAjax(statusEnum.success, _('刪除關聯成功。')).returnJSON()
     
     else:
-        info(request ,'%s has no permission.' % request.user.username)
+        info('%s has no permission.' % request.user.username,request)
         return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
 
 
@@ -3252,11 +3491,11 @@ def listOmData4RelationAjax(request):
         except:
             success_msg = '%s list OmData success but too many variables.'
         
-        info(request , success_msg % request.user.username)
+        info( success_msg % request.user.username,request)
         result = DatatableBuilder(request, query, field_list)
         return JsonResponse(result)
     else:
-        info(request ,'%s has no permission.' % request.user.username)
+        info('%s has no permission.' % request.user.username,request)
         return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
 
 
@@ -3288,7 +3527,8 @@ def loadOmDataAjax(request):
     require_field = ['flow_uuid','data_id']
     dict_type_list = ['h_group']
     list_type_list = ['checkbox']
-    quick_action = None
+    action1_text = ''
+    action2_text = ''
     find_item = False
     #server side rule check
     postdata = getPostdata(request)
@@ -3312,39 +3552,38 @@ def loadOmDataAjax(request):
                 #get files
                 omdata_files = list(OmdataFiles.objects.filterformat('file','size','createtime','delete','file_name','upload_user_id__nick_name',flow_uuid=flow_uuid,data_id=data_id))
                 stop_uuid = omdata.stop_uuid
-                stop_uuid_list = stop_uuid.split('-')
-                stop_uuid_index = len(stop_uuid_list) - 1
-                chart_id = stop_uuid_list[stop_uuid_index]
-                items = flowobject['items']
-                for item in items:
-                    if item['id'] == chart_id:
-                        if item['type'] == 'form':
-                            find_item = True
-                            #找出快速操作設定
-                            action1_text = ''
-                            action2_text = ''
-                            if fa.action1:
-                                action1 = json.loads(fa.action1).get(chart_id,'')
-                                if action1:
-                                    action1_text = action1['text']
-                            if fa.action2:
-                                action2 = json.loads(fa.action2).get(chart_id,'')
-                                if action2:
-                                    action2_text = action2['text']
-                            quick_action = action1_text + ',' + action2_text
-                            #如果停留點是form，取得該人工點的表單設計
-                            if not item['config']['form_object']:
-                                if fa.formobject:
-                                    formobject = json.loads(fa.formobject)
+                #判斷目前狀態是否停留
+                if stop_uuid:
+                    stop_uuid_list = stop_uuid.split('-')
+                    stop_uuid_index = len(stop_uuid_list) - 1
+                    chart_id = stop_uuid_list[stop_uuid_index]
+                    items = flowobject['items']
+                    for item in items:
+                        if item['id'] == chart_id:
+                            if item['type'] == 'form':
+                                find_item = True
+                                #找出快速操作設定
+                                if fa.action1:
+                                    action1 = json.loads(fa.action1).get(chart_id,'')
+                                    if action1:
+                                        action1_text = action1['text']
+                                if fa.action2:
+                                    action2 = json.loads(fa.action2).get(chart_id,'')
+                                    if action2:
+                                        action2_text = action2['text']
+                                #如果停留點是form，取得該人工點的表單設計
+                                if not item['config']['form_object']:
+                                    if fa.formobject:
+                                        formobject = json.loads(fa.formobject)
+                                    else:
+                                        p_fa = FlowActiveGlobalObject.UUIDSearch(fa.parent_uuid.hex)
+                                        formobject = json.loads(p_fa.formobject)
                                 else:
-                                    p_fa = FlowActiveGlobalObject.UUIDSearch(fa.parent_uuid.hex)
-                                    formobject = json.loads(p_fa.formobject)
-                            else:
-                                if isinstance(item['config']['form_object'], dict):
-                                    formobject = item['config']['form_object']
-                                elif isinstance(item['config']['form_object'], str):
-                                    formobject = json.loads(item['config']['form_object'])
-                        break
+                                    if isinstance(item['config']['form_object'], dict):
+                                        formobject = item['config']['form_object']
+                                    elif isinstance(item['config']['form_object'], str):
+                                        formobject = json.loads(item['config']['form_object'])
+                            break
                 if not find_item:
                     if flow_uuid == omdata_param['flow_uuid']:
                         formobject = json.loads(fa.formobject)
@@ -3372,17 +3611,34 @@ def loadOmDataAjax(request):
                         form_dict['value'] = json_value
                         form_dict['type'] = form_item['type']
                         formdata.append(form_dict)
-                result = {'formobject':formobject, 'formdata':formdata, 'config':config, 'flow_name':main_fa.flow_name, 'app_name':app_name, 'quick_action':quick_action, 'files':omdata_files, 'find_item':find_item, 'closed':omdata.closed}
-                info(request ,'%s load OmData success.' % request.user.username)
+                
+                #載入語言包
+                language = request.COOKIES.get('django_language','zh-hant')
+                formobject = Translator('formobject', 'active', language, None, app_name).Do(formobject)
+                trans_app_name = Translator('single_app', 'active', language, None, app_name).Do(app_name)
+                trans_flow_name = Translator('single_app', 'active', language, None, app_name).Do(main_fa.flow_name)
+                if action1_text or action2_text:
+                    action1_text = Translator('single_app', 'active', language, None, app_name).Do(action1_text)
+                    action2_text = Translator('single_app', 'active', language, None, app_name).Do(action2_text)
+                    quick_action = action1_text + ',' + action2_text
+                else:
+                    quick_action = None
+                f = {'trans':trans_flow_name, 'original':main_fa.flow_name}
+                a = {'trans':trans_app_name, 'original':app_name}
+                
+                #輸出結果
+                result = {'formobject':formobject, 'formdata':formdata, 'config':config, 'flow_name':f, 'app_name':a, 'quick_action':quick_action, 'files':omdata_files, 'find_item':find_item, 'closed':omdata.closed}
+                
+                info('%s load OmData success.' % request.user.username,request)
                 return ResponseAjax(statusEnum.success, _('讀取成功。'), result).returnJSON()
             except Exception as e:
-                info(request ,'load OmData error: ' + e.__str__())
+                info('load OmData error: ' + e.__str__(),request)
                 return ResponseAjax(statusEnum.not_found, _('找不到該流程。')).returnJSON()
         else:
-            info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+            info('%s missing some require variable or the variable type error.' % request.user.username,request)
             return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
     else:
-        info(request ,'%s has no permission.' % request.user.username)
+        info('%s has no permission.' % request.user.username,request)
         return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
 
 
@@ -3412,10 +3668,10 @@ def getFlowValueAjax(request):
         data_str = list(omdata_model.objects.filter(data_no=data_no,id=data_id).values_list('data_param',flat=True))[0]
         data_dict = json.loads(data_str)
         result = data_dict.get('flow_value','')
-        info(request ,'%s get flow value success.' % request.user.username)
+        info('%s get flow value success.' % request.user.username,request)
         return ResponseAjax(statusEnum.success, _('讀取成功。'), result).returnJSON()
     else:
-        info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+        info('%s missing some require variable or the variable type error.' % request.user.username,request)
         return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
     
 
@@ -3464,25 +3720,25 @@ def updateFlowValueAjax(request):
                         data['chart_id_from'] = None
                         omengine_result = OmEngine(flow_uuid, data).checkActive()
                         if isinstance(omengine_result, str):
-                            info(request ,'%s update flow value error.' % request.user.username)
+                            info('%s update flow value error.' % request.user.username,request)
                             return ResponseAjax(statusEnum.success, _('更新失敗：') + omengine_result).returnJSON()
                         else:
-                            info(request ,'%s update flow value success.' % request.user.username)
+                            info('%s update flow value success.' % request.user.username,request)
                             return ResponseAjax(statusEnum.success, _('更新成功。')).returnJSON()
                     else:
-                        info(request ,'%s update flow value error.' % request.user.username)
+                        info('%s update flow value error.' % request.user.username,request)
                         return ResponseAjax(statusEnum.not_found, _('此筆資料並無錯誤，無法進行修改。')).returnJSON()
                 else:
-                    info(request ,'%s update flow value error.' % request.user.username)
+                    info('%s update flow value error.' % request.user.username,request)
                     return ResponseAjax(statusEnum.not_found, _('此筆資料正在執行中，無法進行修改。')).returnJSON()
             else:
-                info(request ,'%s update flow value error.' % request.user.username)
+                info('%s update flow value error.' % request.user.username,request)
                 return ResponseAjax(statusEnum.not_found, _('此筆資料已經關閉，無法進行修改。')).returnJSON()
         else:
-            info(request ,'%s update flow value error.' % request.user.username)
+            info('%s update flow value error.' % request.user.username,request)
             return ResponseAjax(statusEnum.not_found, _('無法修改歷史資料。')).returnJSON()
     else:
-        info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+        info('%s missing some require variable or the variable type error.' % request.user.username,request)
         return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
     
 
@@ -3517,25 +3773,36 @@ def loadFlowObjectAjax(request):
                 if flow_uid: #子流程
                     fa = FlowActive.objects.filter(parent_uuid=flow_uuid,flow_uid=flow_uid).order_by('deploytime').reverse()[0]
                     subflow_uuid = fa.flow_uuid.hex
+                    app_id = FlowActiveGlobalObject.UUIDSearch(flow_uuid).flow_app_id
                 elif flow_name and flow_uuid: #內部流程
                     app_id = FlowActiveGlobalObject.UUIDSearch(flow_uuid).flow_app_id
                     fa = FlowActive.objects.filter(flow_app_id=app_id,flow_name=flow_name).order_by('deploytime').reverse()[0]
                 elif flow_name and app_name: #外部流程
                     fa = FlowActive.objects.filter(flow_app_id__app_name=app_name,flow_name=flow_name).order_by('deploytime').reverse()[0]
+                    app_id = fa.flow_app_id
                 else: #主流程
                     fa = FlowActive.objects.filter(flow_uuid=flow_uuid).order_by('deploytime').reverse()[0]
+                    app_id = fa.flow_app_id
                 inoutput = listFlowInOutput(flow_uuid, data_no, flow_level, subflow_uuid, parent_chart_id)
-                result = {'flowobject':fa.flowobject,'inoutput':inoutput, 'flow_name':fa.flow_name}
-                info(request ,'%s load flow object success.' % request.user.username)
+                
+                #載入語言包
+                language = request.COOKIES.get('django_language','zh-hant')
+                flowobject = Translator('flowobject', 'active', language, app_id, None).Do(fa.flowobject)
+                flowobject = json.dumps(flowobject)
+                inoutput = Translator('datatable_single_app', 'active', language, app_id, None).Do(inoutput)
+                trans_flow_name = Translator('single_app', 'active', language, app_id, None).Do(fa.flow_name)
+                
+                result = {'flowobject':flowobject, 'inoutput':inoutput, 'flow_name':trans_flow_name}
+                info('%s load flow object success.' % request.user.username,request)
                 return ResponseAjax(statusEnum.success, _('更新成功。'), result).returnJSON()
             except Exception as e:
-                error(request,e)
+                error(e.__str__(),request)
                 return ResponseAjax(statusEnum.not_found, _('找不到流程。')).returnJSON()
         else:
-            info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+            info('%s missing some require variable or the variable type error.' % request.user.username,request)
             return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
     else:
-        info(request ,'%s has no permission.' % request.user.username)
+        info('%s has no permission.' % request.user.username,request)
         return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
 
 
@@ -3581,19 +3848,30 @@ def listFlowInOutput(flow_uuid,data_no,flow_level,subflow_uuid,parent_chart_id):
                         i['input_data'] = json.loads(i['input_data'])
                     except:
                         i['input_data'] = i['input_data']
+                    #如果是外部流程或內部流程點，將output中的outflow_uuid以及outflow_data_no
+                    #取出並另外拋給前端
+                    if type_dict[chart_id] in ['outflow','inflow']:
+                        try:
+                            i['outflow_uuid'] = i['input_data'].get('outflow_uuid','')
+                            i['outflow_data_no'] = i['input_data'].get('outflow_data_no','')
+                        except:
+                            pass
+                
                 if i['output_data']:
                     try:
                         i['output_data'] = json.loads(i['output_data'])
                     except:
                         i['output_data'] = i['output_data']
-                    #如果是外部流程或內部流程點，將output中的outflow_uuid以及outflow_data_no
-                    #取出並另外拋給前端
+                    #同樣是取出外部或內部流程的flow_uuid以及data_no
+                    #此處是為了向下相容舊版所以保留
                     if type_dict[chart_id] in ['outflow','inflow']:
                         try:
-                            i['outflow_uuid'] = i['output_data'].pop('outflow_uuid')
-                            i['outflow_data_no'] = i['output_data'].pop('outflow_data_no')
+                            if not i['outflow_data_no']:
+                                i['outflow_uuid'] = i['output_data'].get('outflow_uuid','')
+                                i['outflow_data_no'] = i['output_data'].get('outflow_data_no','')
                         except:
                             pass
+                
                 if type_dict[chart_id] == 'subflow':
                     try:
                         i['subflow_uid'] = subid_dict.get(chart_id,'')
@@ -3634,13 +3912,13 @@ def createOmDataWorkLogAjax(request):
     if checkOmDataPermission(request.user, flow_uuid, None, data_id, '_Modify'):
         if checker.get('status') == 'success':
             OmdataWorklog.objects.create(flow_uuid=flow_uuid,data_no=data_no,content=content,create_user=request.user)
-            info(request ,'%s create omdata worklog success.' % request.user.username)
+            info('%s create omdata worklog success.' % request.user.username,request)
             return ResponseAjax(statusEnum.success, _('建立成功。')).returnJSON()
         else:
-            info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+            info('%s missing some require variable or the variable type error.' % request.user.username,request)
             return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
     else:
-        info(request ,'%s has no permission.' % request.user.username)
+        info('%s has no permission.' % request.user.username,request)
         return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
     
 
@@ -3666,13 +3944,13 @@ def listOmDataWorkLogAjax(request):
     if checkOmDataPermission(request.user, flow_uuid, None, data_id, '_View'):
         if checker.get('status') == 'success':
             result = list(OmdataWorklog.objects.filterformat('flow_uuid','create_user_id__nick_name','content','createtime',flow_uuid=flow_uuid,data_no=data_no))
-            info(request ,'%s list omdata worklog success.' % request.user.username)
+            info('%s list omdata worklog success.' % request.user.username,request)
             return ResponseAjax(statusEnum.success, _('搜尋成功。'), result).returnJSON()
         else:
-            info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+            info('%s missing some require variable or the variable type error.' % request.user.username,request)
             return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
     else:
-        info(request ,'%s has no permission.' % request.user.username)
+        info('%s has no permission.' % request.user.username,request)
         return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
 
 
@@ -3698,16 +3976,16 @@ def createOmParameterAjax(request):
         if per_type:
             result = createOmParameter(postdata)
             if result['status']:
-                info(request ,'%s create parameter success.' % request.user.username)
+                info('%s create parameter success.' % request.user.username,request)
                 return ResponseAjax(statusEnum.success, _('建立成功。')).returnJSON()
             else:
-                info(request ,'%s create parameter error.' % request.user.username)
+                info('%s create parameter error.' % request.user.username,request)
                 return ResponseAjax(statusEnum.not_found, result['message']).returnJSON()
         else:
-            info(request ,'%s create parameter error.' % request.user.username)
+            info('%s create parameter error.' % request.user.username,request)
             return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作')).returnJSON()
     else:
-        info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+        info('%s missing some require variable or the variable type error.' % request.user.username,request)
         return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
 
 
@@ -3763,16 +4041,16 @@ def updateOmParameterAjax(request):
         if per_type:
             result = updateOmParameter(postdata)
             if result['status']:
-                info(request ,'%s create parameter success.' % request.user.username)
+                info('%s create parameter success.' % request.user.username,request)
                 return ResponseAjax(statusEnum.success, _('更新成功。')).returnJSON()
             else:
-                info(request ,'%s create parameter error.' % request.user.username)
+                info('%s create parameter error.' % request.user.username,request)
                 return ResponseAjax(statusEnum.not_found, result['message']).returnJSON()
         else:
-            info(request ,'%s create parameter error.' % request.user.username)
+            info('%s create parameter error.' % request.user.username,request)
             return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作')).returnJSON()
     else:
-        info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+        info('%s missing some require variable or the variable type error.' % request.user.username,request)
         return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
 
 
@@ -3829,13 +4107,13 @@ def deleteOmParameterAjax(request):
         per_type = checkParameterPermission(group_id, request.user)
         if per_type:
             deleteOmParameter(id_list, group_id)
-            info(request ,'%s create parameter success.' % request.user.username)
+            info('%s create parameter success.' % request.user.username,request)
             return ResponseAjax(statusEnum.success, _('刪除成功。')).returnJSON()
         else:
-            info(request ,'%s create parameter error.' % request.user.username)
+            info('%s create parameter error.' % request.user.username,request)
             return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
     else:
-        info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+        info('%s missing some require variable or the variable type error.' % request.user.username,request)
         return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
 
 
@@ -3876,14 +4154,14 @@ def listOmParameterAjax(request):
             else:
                 query = OmParameter.objects.filter(group_id=None).values()
             result = DatatableBuilder(request, query, field_list)
-            info(request ,'%s list parameter success.' % request.user.username)
+            info('%s list parameter success.' % request.user.username,request)
             return JsonResponse(result)
         else:
             result = listOmParameter(group_id)
-            info(request ,'%s list parameter success.' % request.user.username)
+            info('%s list parameter success.' % request.user.username,request)
             return ResponseAjax(statusEnum.success, _('查詢成功。'), result).returnJSON()
     else:
-        info(request ,'%s create parameter error.' % request.user.username)
+        info('%s create parameter error.' % request.user.username,request)
         return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
 
 
@@ -4000,13 +4278,13 @@ def receivePolicyAjax(request):
             OmParameter.objects.bulk_create([OmParameter(**p) for p in omparameter_group])
             #刪除workspace
             WorkspaceApplication.objects.all().delete()
-            info(request ,'%s receive policy success.' % request.user.username)
+            info('%s receive policy success.' % request.user.username,request)
             return ResponseAjax(statusEnum.success, _('派送成功。')).returnJSON()
         else:
-            info(request ,'%s receive policy error.' % request.user.username)
+            info('%s receive policy error.' % request.user.username,request)
             return ResponseAjax(statusEnum.not_found, dwa_result['message']).returnJSON()
     else:
-        info(request ,'%s receive policy error.' % request.user.username)
+        info('%s receive policy error.' % request.user.username,request)
         return ResponseAjax(statusEnum.not_found, iwa_result['message']).returnJSON()
     
 
@@ -4392,13 +4670,13 @@ def createSLARuleAjax(request):
         same_name = SLARule.objects.filter(sla_name=update_dict['sla_name']).exists()
         if not same_name:
             SLARule.objects.create(**update_dict)
-            info(request ,'%s create sla rule success.' % request.user.username)
+            info('%s create sla rule success.' % request.user.username,request)
             return ResponseAjax(statusEnum.success, _('建立成功。'), result).returnJSON()
         else:
-            info(request ,'%s create sla rule error.' % request.user.username)
+            info('%s create sla rule error.' % request.user.username,request)
             return ResponseAjax(statusEnum.not_found, _('重複名稱。')).returnJSON()
     else:
-        info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+        info('%s missing some require variable or the variable type error.' % request.user.username,request)
         return ResponseAjax(statusEnum.not_found, data_checker.get('message'), data_checker).returnJSON()
 
 
@@ -4433,13 +4711,13 @@ def updateSLARuleAjax(request):
         same_name = SLARule.objects.filter(sla_name=update_dict['sla_name']).exclude(id=sla_id).exists()
         if not same_name:
             SLARule.objects.filter(id=sla_id).update(**update_dict)
-            info(request ,'%s update sla rule success.' % request.user.username)
+            info('%s update sla rule success.' % request.user.username,request)
             return ResponseAjax(statusEnum.success, _('更新成功。'), result).returnJSON()
         else:
-            info(request ,'%s update sla rule error.' % request.user.username)
+            info('%s update sla rule error.' % request.user.username,request)
             return ResponseAjax(statusEnum.not_found, _('重複名稱。')).returnJSON()
     else:
-        info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+        info('%s missing some require variable or the variable type error.' % request.user.username,request)
         return ResponseAjax(statusEnum.not_found, data_checker.get('message'), data_checker).returnJSON()
 
 
@@ -4462,10 +4740,10 @@ def deleteSLARuleAjax(request):
     sla_id = postdata.get('sla_id','')
     if data_checker.get('status') == 'success':
         SLARule.objects.filter(id__in=sla_id).delete()
-        info(request ,'%s delete sla rule success.' % request.user.username)
+        info('%s delete sla rule success.' % request.user.username,request)
         return ResponseAjax(statusEnum.success, _('建立成功。'), result).returnJSON()
     else:
-        info(request ,'%s missing some require variable or the variable type error.' % request.user.username)
+        info('%s missing some require variable or the variable type error.' % request.user.username,request)
         return ResponseAjax(statusEnum.not_found, data_checker.get('message'), data_checker).returnJSON()
 
 
@@ -4488,10 +4766,10 @@ def loadSLARuleAjax(request):
     else:
         result = list(SLARule.objects.filter(sla_name=sla_name).values())[0]
     if result:
-        info(request ,'%s load sla rule success.' % request.user.username)
+        info('%s load sla rule success.' % request.user.username,request)
         return ResponseAjax(statusEnum.success, _('查詢成功。'), result[0]).returnJSON()
     else:
-        info(request ,'%s load sla rule error.' % request.user.username)
+        info('%s load sla rule error.' % request.user.username,request)
         return ResponseAjax(statusEnum.not_found, _('查詢失敗。')).returnJSON()
 
 
@@ -4525,12 +4803,12 @@ def listSLARuleAjax(request):
             for row in data:
                 for key in ['target', 'remind', 'violation', 'advanced', 'notify_user', 'notify_group','timer_start','timer_end']:
                     row[key] = json.loads(row[key])
-        info(request ,'%s list sla rule success.' % request.user.username)
+        info('%s list sla rule success.' % request.user.username,request)
         return JsonResponse(result)
     else:
         #目前尚無功能使用
         result = list(SLARule.objects.filterformat('id','sla_name',type=sla_type))
-        info(request ,'%s list sla rule success.' % request.user.username)
+        info('%s list sla rule success.' % request.user.username,request)
         return ResponseAjax(statusEnum.success, _('讀取成功。'), result).returnJSON()
 
 
@@ -4846,7 +5124,171 @@ def listSLADataAjax(request):
         data_mapping = sla_data_dict.get(sla_id,{})
         sla_rule['level'] = data_mapping.get('level','green')
         sla_rule['createtime'] = data_mapping.get('createtime',None)
-    info(request ,'%s list sla data success.' % request.user.username)
+    info('%s list sla data success.' % request.user.username,request)
     return ResponseAjax(statusEnum.success, _('讀取成功。'), sla_rule_list).returnJSON()
 
 
+#自訂應用--子查詢
+#查詢列表
+@login_required
+@try_except
+def listOmDataForSubQueryAjax(request):
+    '''
+    list omdata for subquery.
+    input: request
+    return: json
+    author: Kolin Hsu
+    '''
+    #function variable
+    display_field_list = ['id','data_no','stop_uuid','stop_chart_text','error','error_message','closed','running']
+    #get post data
+    postdata = getPostdata(request)
+    app_name = postdata.get('app_name','')
+    flow_name = postdata.get('flow_name','')
+    condition = postdata.get('condition',[])
+    source_flow_uuid = postdata.get('source_flow_uuid','')
+    source_data_id = postdata.get('source_data_id','')
+    flowactive = FlowActiveGlobalObject.NameSearch(flow_name, None, app_name)
+    flow_uuid = flowactive.flow_uuid.hex
+    if source_data_id:
+        action = '_Modify'
+    else:
+        action = '_Add'
+    if checkOmDataPermission(request.user, source_flow_uuid, None, source_data_id, action, flow_name, app_name):
+        #get field setting
+        display_field_dict = json.loads(flowactive.display_field)
+        for key in display_field_dict:
+            if '-' in key:
+                key = 'group'
+            if key == 'create_user_id' or key == 'create_user':
+                key = 'create_user_id__nick_name'
+            elif key == 'update_user_id' or key == 'update_user':
+                key = 'update_user_id__nick_name'
+            display_field_list.append(key)
+        search_field_list = display_field_list.copy()
+        #暫時先使用display_field當作search_field
+        field_list = list(map(lambda search_field : search_field + '__icontains', search_field_list))
+        
+        #sp conditions
+        search_conditions = [{'column':'history','condition':'=','value':False}]
+        exclude_conditions = []
+        for con in condition:
+            if con['condition'] == '!=':
+                con['condition'] = '='
+                exclude_conditions.append(con)
+            elif con['condition'] == 'exclude':
+                con['condition'] = 'contains'
+                exclude_conditions.append(con)
+            else:
+                search_conditions.append(con)
+        
+        sc = searchConditionBuilder(search_conditions)
+        ec = searchConditionBuilder(exclude_conditions)
+        #get model
+        omdata_model = getModel('omformmodel','Omdata_' + flow_uuid)
+        if ec:
+            query = omdata_model.objects.filter(reduce(operator.and_, sc)).exclude(reduce(operator.and_, ec)).values(*display_field_list)
+        else:
+            query = omdata_model.objects.filter(reduce(operator.and_, sc)).values(*display_field_list)
+        
+        result = DatatableBuilder(request, query, field_list)
+        
+        #載入語言包
+        language = request.COOKIES.get('django_language','zh-hant')
+        result['data'] = Translator('datatable_single_app', 'active', language, flowactive.flow_app_id, None).Do(result['data'])
+        
+        #轉換字與值
+        result['data'] = datatableValueToText(result['data'], flow_uuid)
+        
+        info(request ,'%s list OmData success.' % request.user.username)
+        return JsonResponse(result)
+    else:
+        info('%s has no permission.' % request.user.username,request)
+        return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
+
+
+@login_required
+@try_except
+def loadOmDataForSubQueryAjax(request):
+    '''
+    load omdata.
+    input: request
+    return: json
+    author: Kolin Hsu
+    '''
+    #function variable
+    require_field = ['app_name','flow_name','data_id']
+    #server side rule check
+    postdata = getPostdata(request)
+    checker = DataChecker(postdata, require_field)
+    #get post data
+    app_name = postdata.get('app_name','')
+    flow_name = postdata.get('flow_name','')
+    data_id = postdata.get('data_id','')
+    field_list = postdata.get('fields',[])
+    source_flow_uuid = postdata.get('source_flow_uuid','')
+    source_data_id = postdata.get('source_data_id','')
+    if source_data_id:
+        action = '_Modify'
+    else:
+        action = '_Add'
+    if checkOmDataPermission(request.user, source_flow_uuid, None, source_data_id, action, flow_name, app_name):
+        if checker.get('status') == 'success':
+            #get model
+            fa = FlowActiveGlobalObject.NameSearch(flow_name, None, app_name)
+            omdata_model = getModel('omformmodel', 'Omdata_' + fa.flow_uuid.hex)
+            #整理欄位
+            new_field_list = []
+            group_user = []
+            group_user_id = None
+            for f in field_list:
+                if re.match(r'formitm_[0-9]+-.+', f):
+                    group_user_id = re.findall(r'(.+)-.+', f)[0]
+                    group_user.append(f)
+                    new_field_list.append(group_user_id)
+                else:
+                    new_field_list.append(f)
+            
+            #取得資料
+            omdata = list(omdata_model.objects.filterformat(*new_field_list,id=data_id))
+            
+            if omdata:
+                result = omdata[0]
+                if group_user_id:
+                    group_user_dict = json.loads(result.pop(group_user_id))
+                    for g_u in group_user:
+                        key = re.findall(r'.+-(.+)', g_u)[0]
+                        result[g_u] = group_user_dict.get(key,'')
+            else:
+                result = {}
+            
+            info('%s load OmData success.' % request.user.username,request)
+            return ResponseAjax(statusEnum.success, _('讀取成功。'), result).returnJSON()
+        else:
+            info('%s missing some require variable or the variable type error.' % request.user.username,request)
+            return ResponseAjax(statusEnum.not_found, checker.get('message'), checker).returnJSON()
+    else:
+        info('%s has no permission.' % request.user.username,request)
+        return ResponseAjax(statusEnum.no_permission, _('您沒有權限進行此操作。')).returnJSON()
+
+
+@login_required
+@try_except
+def getFlowFieldNameForSubQueryAjax(request):
+    '''
+    get flow field.
+    input: request
+    return: json
+    author: Kolin Hsu
+    '''
+    #function variable
+    result = {}
+    #get post data
+    postdata = getPostdata(request)
+    flow_name = postdata.get('flow_name','')
+    app_name = postdata.get('app_name','')
+    if flow_name and app_name:
+        result = getFlowFieldName(app_name, flow_name, True, None)
+    info(request ,'%s get flow field name success.' % request.user.username)
+    return ResponseAjax(statusEnum.success, _('讀取成功。'), result).returnJSON()
+    

@@ -3,6 +3,7 @@ Created on 2019年9月4日
 
 @author: Kolin Hsu
 '''
+import json
 
 class GlobalObject():
     __userObj__ = {}                #api token物件
@@ -29,6 +30,22 @@ class FlowActive():
         self.id_dict = {}           #{flow_id : flow_uuid}
         self.uid_dict = {}          #{parent_uuid : {flow_uid : flow_uuid}}
         self.appname_dict = {}      #{app_name : app_id}
+        self.api_path_dict = {}     #{api_path : flow_uuid}
+        '''
+        app_lan_dict是存放各app翻譯包的物件。
+        {
+            "active" : {app_id : lan_package}
+            "workspace" : {app_id : lan_package}
+        }
+        '''
+        self.app_lan_dict = {'active':{}, 'workspace':{}}
+        '''
+        sys_lan_dict系統相關翻譯包的物件。
+        {
+            service:{'en':{}, 'ja':{}, 'zh-hant':{}, 'zh-hans':{}} 
+        }
+        '''
+        self.sys_lan_dict = {}
     
     
     #利用flow_uuid搜尋flowactive
@@ -109,6 +126,29 @@ class FlowActive():
             return self.uid_dict.get(parent_uuid,{}).get(flow_uid,'')
     
     
+    #利用api_path搜尋flowactive
+    def APISearch(self, api_path):
+        if api_path:
+            flow_uuid = self.APIgetUUID(api_path)
+            if flow_uuid:
+                return self.UUIDSearch(flow_uuid)
+            else:
+                return None
+        else:
+            return None
+    
+    
+    def APIgetUUID(self, api_path):
+        if api_path:
+            return self.api_path_dict.get(api_path,'')
+
+    def UUIDgetAPI(self, flow_uuid):
+        if flow_uuid:
+            for api_path in self.api_path_dict:
+                if flow_uuid == self.api_path_dict[api_path]:
+                    return api_path
+        return None    
+    
     #上架流程時建立flowactive
     def setFlowActive(self, fa):
         if fa:
@@ -116,9 +156,11 @@ class FlowActive():
             flow_name = fa.flow_name
             app_id = fa.flow_app_id
             flow_id = fa.id
+            api_path = fa.api_path
             self.flowactive[flow_uuid] = fa
             self.setIDDict(flow_id, flow_uuid)
             self.setNameDict(app_id, flow_name, flow_uuid)
+            self.setAPIDict(flow_uuid, api_path)
             if fa.parent_uuid:
                 parent_flow_uuid = fa.parent_uuid.hex
                 flow_uid = fa.flow_uid
@@ -160,6 +202,14 @@ class FlowActive():
             else:
                 sub_dict = {flow_uid : flow_uuid}
                 self.uid_dict[parent_flow_uuid] = sub_dict
+            return True
+        else:
+            return None
+    
+    
+    def setAPIDict(self, flow_uuid, api_path):
+        if flow_uuid and api_path:
+            self.api_path_dict[api_path] = flow_uuid
             return True
         else:
             return None
@@ -236,13 +286,14 @@ class FlowActive():
     #上架應用時建立appname_dict
     def setAppNameDict(self, app_name, app_id):
         if app_name and app_id:
+            app_id = str(app_id)
             self.appname_dict[app_name] = app_id
             return True
         else:
             return False
     
     
-    #刪除應用時刪除appname_dict
+    #下架應用時刪除appname_dict
     def deleteAppNameDict(self, app_name):
         if app_name:
             result = self.appname_dict.pop(app_name)
@@ -251,17 +302,95 @@ class FlowActive():
             return False
     
     
+    #建立/編輯應用或流程、上架應用時建立app_lan_dict
+    def setAppLanDict(self, app_flow_type, app_id, app_name, lan_package):
+        if app_id:
+            app_id = str(app_id)
+        if app_flow_type and (app_id or app_name) and lan_package:
+            if isinstance(lan_package, str):
+                lan_package = json.loads(lan_package)
+            if app_name and app_flow_type == 'active':
+                app_id = self.getAppID(app_name)
+            if app_id:
+                self.app_lan_dict[app_flow_type][app_id] = lan_package
+                return True
+            else:
+                return False
+        else:
+            return False
+    
+    def setSysLanDict(self, name, lang, package):
+        try:
+            if lang:
+                self.sys_lan_dict[name][lang] = package
+            else:
+                self.sys_lan_dict[name] = package
+        except:
+            pass
+        
+    def getSysLanDict(self, name):
+        return self.sys_lan_dict.get(name,{})
+        
+    #刪除或下架應用時刪除app_lan_dict
+    def deleteAppLanDict(self, app_flow_type, app_id=None, app_name=None):
+        if app_id:
+            app_id = str(app_id)
+        if app_flow_type and (app_id or app_name):
+            if app_name and app_flow_type == 'active':
+                app_id = self.getAppID(app_name)
+            if app_id:
+                self.app_lan_dict[app_flow_type].pop(app_id)
+                return True
+            else:
+                return False
+        else:
+            return False
+        
+        
+    #取得app_lan_dict
+    def getAppLanDict(self, app_flow_type, app_id=None, app_name=None):
+        if app_id:
+            app_id = str(app_id)
+        if app_flow_type and (app_id or app_name):
+            if app_name and app_flow_type == 'active':
+                app_id = self.getAppID(app_name)
+            if app_id:
+                lan_package = self.app_lan_dict.get(app_flow_type,{}).get(app_id,{})
+                return lan_package
+            else:
+                return {}
+        else:
+            return {}
+    
+    
+    #啟動server時進行初始化
     def ServerStart(self):
-        from omformflow.models import FlowActive, ActiveApplication
+        from omformflow.models import FlowActive, ActiveApplication, WorkspaceApplication
         fa_list = list(FlowActive.objects.filter(undeploy_flag=False))
-        aa_list = list(ActiveApplication.objects.filter(undeploy_flag=False).values('id','app_name'))
+        aa_list = list(ActiveApplication.objects.filter(undeploy_flag=False).values('id','app_name','language_package'))
+        wa_list = list(WorkspaceApplication.objects.all().values('id','language_package'))
+        
         for fa in fa_list:
             self.setFlowActive(fa)
         for aa in aa_list:
             app_id = str(aa['id'])
             app_name = aa['app_name']
+            language_package = aa['language_package']
             self.setAppNameDict(app_name, app_id)
-
-
-
+            self.setAppLanDict('active', app_id, None, language_package)
+        for wa in wa_list:
+            wapp_id = str(wa['id'])
+            wa_language_package = wa['language_package']
+            self.setAppLanDict('workspace', wapp_id, None, wa_language_package)
+        
+        #建立「服務請求」Global語言包
+        from omservice.models import OmServiceDesign
+        service_list = list(OmServiceDesign.objects.all().order_by("-id"))
+        if len(service_list):
+            if service_list[0].language_package:
+                lan_package = json.loads(service_list[0].language_package)
+            else:
+                lan_package = {}
+            self.sys_lan_dict['service'] = lan_package
+            
 FlowActiveGlobalObject = FlowActive()

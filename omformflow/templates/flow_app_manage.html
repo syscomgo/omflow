@@ -646,7 +646,7 @@
 				}
 				data.result.content.forEach(function(item){
 					var des = escapeHtml(item.description)
-					des = des.replaceAll('\n', '<br>');
+					des = des.replace(/\n/g, '<br />');
 					if (item.type == 'main')
 					{
 						$('#cloud_flow_table tbody').append('<tr onclick="cloud_input(\''+item.path+'\', \''+item.file+'\', \'next\')" title="{% trans '檢視'%}'+item.name+'"><th><i class="fa fa-folder" style="color:#79b8ff"></i></th><th>'+item.name+'</th><th>'+des+'</th><th>'+item.version+'</th><th>'+item.update_time+'</th><th></th></tr>')

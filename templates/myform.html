@@ -1049,7 +1049,6 @@
 				$('#OMD_relationData_table thead tr').append('<th></th>');
 				
 			table_column.push(
-			
 			{"data": "id", "width": "15px", "orderable": false, "render": function(data, type, row)
 				{
 					if( $('#OMD_relationObject_type').val()=="parent" )
@@ -1066,28 +1065,6 @@
 						{	
 							return paddingLeft(data,8)
 						}	
-					});
-				}
-				else if(index == 'closed')
-				{
-					table_column.push({"data": index, "render": function(data)
-						{
-							if(data)
-								{return "{% trans '已關閉'%}"}
-							else
-								{return "{% trans '未關閉'%}"}
-						}
-					});
-				}
-				else if(index == 'running')
-				{
-					table_column.push({"data": index, "render": function(data)
-						{
-							if(data)
-								{return "{% trans '流程執行中'%}"}
-							else
-								{return "{% trans '流程等待中'%}"}		
-						}
 					});
 				}
 				else if(index == 'error')
@@ -1126,26 +1103,26 @@
 					});
 				}else if(index.indexOf('-group') > 0)
 				{
-					table_column.push({"data": index.replace('-group', ''), "width": "150px", "render": function(data)
+					table_column.push({"data": 'group', "width": "150px", "render": function(data)
 						{
 							data = JSON.parse(unescapeHtml(data));
 							if(data)
 								{return data.group}
 							else
-								{return data.group}
+								{return ''}
 						}
 					});
 				}
 				else if(index.indexOf('-user') > 0)
 				{
 					console.log(index.replace('-user', ''))
-					table_column.push({"data": index.replace('-user', ''), "width": "150px", "render": function(data)
+					table_column.push({"data": 'group', "width": "150px", "render": function(data)
 						{
 							data = JSON.parse(unescapeHtml(data));
 							if(data)
 								{return data.user}
 							else
-								{return data.user}
+								{return ''}
 						}
 					});
 				}
@@ -1803,6 +1780,63 @@
 		return userlist;
 	}
     
+    
+    function load_display_field(app_name, flow_name)
+	{
+		var displayfield = {};
+		var postbody = {'app_name': app_name, 'flow_name': flow_name};
+		$.ajax({
+			url: "{% url 'getFlowActiveDisplayFieldAjax' %}",
+			type: 'post',
+			headers: { "X-CSRFToken": csrfmiddlewaretoken },
+			data: JSON.stringify(postbody),
+			async:false,
+			dataType: 'json',
+			contentType: "application/json;charset=utf-8;",
+			success: function (data) {
+				displayfield = JSON.parse(data.result.display_field)
+			},
+			error: function(req, status, err) {
+				$('#modal_error').modal('show');
+	        	console.log('Something went wrong', status, err);
+	    	}
+		});
+		
+		return displayfield;
+	}
+    
+    
+	function loda_omdata_value(app_name, flow_name, data_id, fields)
+	{
+		var omdata_value = {};
+		var postbody =  {
+					        app_name			: app_name,
+					       	flow_name			: flow_name,
+					        data_id				: data_id,
+					        fields				: fields,
+					       	source_flow_uuid	: '{{flow_uuid}}',
+					        source_data_id		: '{{data_id}}'
+					    };
+		$.ajax({
+			url: "{% url 'loadOmDataForSubQueryAjax' %}",
+			type: 'post',
+			headers: { "X-CSRFToken": csrfmiddlewaretoken },
+			data: JSON.stringify(postbody),
+			async:false,
+			dataType: 'json',
+			contentType: "application/json;charset=utf-8;",
+			success: function (data) {
+				omdata_value = data.result
+			},
+			error: function(req, status, err) {
+				$('#modal_error').modal('show');
+	        	console.log('Something went wrong', status, err);
+	    	}
+		});
+		
+		return omdata_value;
+	}
+    
       
     function readform(data_id)
     {
@@ -1815,6 +1849,14 @@
     			omdata_info = data.result;
     			if(data.result.closed)
     			{$('#updateOmdata').hide();}
+    			if(data.result.running | data.result.history)
+    			{
+    				$('#updateOmdata').hide();
+    				$('#attachment_input').hide();
+    			}
+    			formcontent.event_display_field_load(load_display_field);
+				formcontent.event_omdata_list_url({url:'{% url 'listOmDataForSubQueryAjax'%}',flow_uuid:'{{flow_uuid}}',data_id:''});
+				formcontent.event_omdata_load(loda_omdata_value);
 	    		formcontent.init(false);
 	    		formcontent.event_group_list(load_group_list);
 				formcontent.event_user_list(load_user_list);
@@ -1826,14 +1868,14 @@
 	    		})
 		    	if(url.indexOf('/my-mission/page/myform/') >= 0)
 		    	{	
-		    		$('ol.breadcrumb').append('<li><a href="/my-mission/page/mission/">{% trans '我的任務'%}</a></li><li>'+data.result.flow_name+'</li>');
-		    		$('.content-header h1').append(paddingLeft('{{data_no}}', 8)+'<small>'+data.result.flow_name+'</small>');
+		    		$('ol.breadcrumb').append('<li><a href="/my-mission/page/mission/">{% trans '我的任務'%}</a></li><li>'+data.result.flow_name.trans+'</li>');
+		    		$('.content-header h1').append(paddingLeft('{{data_no}}', 8)+'<small>'+data.result.flow_name.trans+'</small>');
 		    		$('li a[href="/my-mission/page/mission/#mymission"]').parent().siblings().removeClass('active').end().addClass('active');
 				}
 		    	else if(url.indexOf('/flowmanage/page/myform/') >= 0)
 		    	{	
-					$('ol.breadcrumb').append('<li><a href="javascript:history.back();">'+data.result.flow_name+'</a></li><li>'+paddingLeft('{{data_no}}', 8)+'</li>');
-	    			$('.content-header h1').append(paddingLeft('{{data_no}}', 8)+'<small>'+data.result.flow_name+'</small>')	    			
+					$('ol.breadcrumb').append('<li><a href="/flowmanage/page/workflowPage/{{app_id}}/{{flow_uuid}}">'+data.result.flow_name.trans+'</a></li><li>'+paddingLeft('{{data_no}}', 8)+'</li>');
+	    			$('.content-header h1').append(paddingLeft('{{data_no}}', 8)+'<small>'+data.result.flow_name.trans+'</small>')	    			
 		    	}
 		    	{% if 'omformmodel.Omdata_'|add:flow_uuid|add:'_Modify' in perms or check%}
 {#		    	if(data.result.quick_action != null)#}
@@ -1895,6 +1937,7 @@
 			var formdata = formcontent.getData()
 			if (formdata.checker.length == 0)
 			{
+				var thisurl = '{% url 'editOmDataAjax' None %}';
 				var postbody = { 
 						flow_uuid: '{{flow_uuid}}',
 						data_id	 : '{{data_id}}',
@@ -1902,7 +1945,7 @@
 						formdata : formdata.values
 				}
 				
-				omflowJsonAjax(postbody, '{% url "editOmDataAjax"%}', actions)
+				omflowJsonAjax(postbody, thisurl, actions)
 			}
 			else
 			{
@@ -1910,7 +1953,7 @@
 					$('#formcontent_'+item).addClass('has-warning');
 				})
 				Swal.close();
-				omflowAlert('blue', '缺少必填欄位');
+				omflowAlert('blue', '{% trans '缺少必填欄位'%}');
 			}
 		}
 	
@@ -1922,7 +1965,7 @@
 {#									action	 : 'update',#}
 {#									quick_action: action,#}
 {#					}#}
-{#			omflowJsonAjax(postbody, '{% url "editOmDataAjax"%}', actions)#}
+{#			omflowJsonAjax(postbody, '{% url "editOmDataAjax" None%}', actions)#}
 {#	 	}#}
 	{% endif%}
 	
@@ -1945,7 +1988,7 @@
 	    	}
 	    	else if(url.indexOf('/flowmanage/page/myform/') >= 0)
 	    	{	
-	    		window.history.back()
+	    		window.location.href = '/flowmanage/page/workflowPage/{{app_id}}/{{flow_uuid}}'
 	    	}
 		}
 		else if (data.status == 404)
@@ -2010,8 +2053,8 @@
     function SLA_view_browser()
     {
     	var postdata = {
-    		app_name	:	omdata_info.app_name,
-    		flow_name	:	omdata_info.flow_name,
+    		app_name	:	omdata_info.app_name.original,
+    		flow_name	:	omdata_info.flow_name.original,
     		data_no		:	{{data_no}}
     	}
     	omflowJsonAjax(postdata, '{% url "listSLADataAjax"%}', callback)
