@@ -60,7 +60,7 @@ msgstr "一致する条件の結果は見つかりません。"
 
 #: .\staticfiles\js\constant.js:12
 msgid "顯示第 _START_至 _END_項結果，共_TOTAL_項"
-msgstr "結果を表示しています_START_〜_ AND_ / _TOTAL_"
+msgstr "結果を表示しています _START_ - _END_ / _TOTAL_"
 
 #: .\staticfiles\js\constant.js:13
 msgid "顯示第 0 至 0 項結果，共 0 項"

@@ -39,10 +39,6 @@ INSTALLED_APPS = [
     'omformmodel',
     'omservice',
     'ommission',
-    'omldap',
-    'ommonitor',
-    'ompolicymodel',
-    'omorganization',
     #default
     #'django.contrib.admin',
     'django.contrib.auth',
