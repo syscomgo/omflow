@@ -30,6 +30,8 @@ class Missions(models.Model):
     action = models.TextField(verbose_name= _('快速操作'),null=True, blank=True)
     attachment = models.BooleanField(verbose_name = _('附加檔案'), default=False)
     closed = models.BooleanField(verbose_name = _('關單'), default=False)
+    is_active = models.BooleanField(verbose_name = _('啟用/停用'), default=True)
+    deploy_flag = models.BooleanField(verbose_name = _('上架'), default=True)
     
     objects = FormatManager()
     

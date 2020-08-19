@@ -61,6 +61,22 @@ def setMission(action, flow_uuid, data_no, data_id, update_user):
             m.save()
         elif action == 'closed':
             Missions.objects.filter(flow_uuid=flow_uuid,data_no=data_no).update(closed=True)
+        elif action in ['active','inactive']:
+            if flow_uuid:
+                active_map = {'active':True,'inactive':False}
+                is_active = active_map[action]
+                if isinstance(flow_uuid, list):
+                    Missions.objects.filter(flow_uuid__in=flow_uuid).update(is_active=is_active)
+                else:
+                    Missions.objects.filter(flow_uuid=flow_uuid).update(is_active=is_active)
+        elif action in ['deploy','undeploy']:
+            if flow_uuid:
+                deploy_map = {'deploy':True,'undeploy':False}
+                deploy_flag = deploy_map[action]
+                if isinstance(flow_uuid, list):
+                    Missions.objects.filter(flow_uuid__in=flow_uuid).update(deploy_flag=deploy_flag)
+                else:
+                    Missions.objects.filter(flow_uuid=flow_uuid).update(deploy_flag=deploy_flag)
     except Exception as e:
         debug('set mission error:     %s' % e.__str__())
         status =  False
@@ -120,7 +136,7 @@ def listMyMissionAjax(request):
         field_list = ['title__icontains','flow_name__icontains','status__icontains','create_user_id__nick_name__icontains']
         display_field = ['flow_name','flow_uuid','level','status','title','create_user_id__nick_name','assign_group_id__display_name','assignee_id__nick_name','ticket_createtime','data_id','data_no','action','attachment']
         group_id_list = list(request.user.groups.all().values_list('id',flat=True))
-        query = Missions.objects.filter((Q(assignee_id=request.user.id) | (Q(assign_group_id__in=group_id_list) & Q(assignee_id=None))) & Q(history=False) & Q(ticket_createtime__range=ticket_createtime)).values(*display_field)
+        query = Missions.objects.filter((Q(assignee_id=request.user.id) | (Q(assign_group_id__in=group_id_list) & Q(assignee_id=None))) & Q(history=False) & Q(ticket_createtime__range=ticket_createtime) & Q(is_active=True) & Q(deploy_flag=True)).values(*display_field)
         result = DatatableBuilder(request, query, field_list)
         
         #載入語言包
@@ -155,7 +171,7 @@ def listMyMissionAjax(request):
     else:
         #api使用
         group_id_list = list(request.user.groups.all().values_list('id',flat=True))
-        query = Missions.objects.filter((Q(assignee_id=request.user.id) | (Q(assign_group_id__in=group_id_list) & Q(assignee_id=None))) & Q(history=False))
+        query = Missions.objects.filter((Q(assignee_id=request.user.id) | (Q(assign_group_id__in=group_id_list) & Q(assignee_id=None))) & Q(history=False) & Q(is_active=True) & Q(deploy_flag=True))
         result = listQueryBuilder(None, postdata, query)
         if result['status']:
             info('%s list Mission success.' % request.user.username,request)
@@ -183,9 +199,9 @@ def listHistoryMissionAjax(request):
     display_field = ['flow_name','flow_uuid','title','create_user_id__nick_name','data_id','data_no','updatetime','assign_group_id','assign_group_id__display_name','assignee_id__nick_name','attachment']
     if group_id:
         username_list = list(OmUser.objects.filter(groups__id=group_id,delete=False).values_list('username',flat=True))
-        query = Missions.objects.filter(Q(update_user_id__in=username_list) & Q(updatetime__range=updatetime) & Q(history=True)).values(*display_field)
+        query = Missions.objects.filter(Q(update_user_id__in=username_list) & Q(updatetime__range=updatetime) & Q(history=True) & Q(is_active=True) & Q(deploy_flag=True)).values(*display_field)
     else:
-        query = Missions.objects.filter(Q(update_user_id=request.user.username) & Q(updatetime__range=updatetime) & Q(history=True)).values(*display_field)
+        query = Missions.objects.filter(Q(update_user_id=request.user.username) & Q(updatetime__range=updatetime) & Q(history=True) & Q(is_active=True) & Q(deploy_flag=True)).values(*display_field)
     result = DatatableBuilder(request, query, field_list)
         
     #載入語言包
@@ -215,9 +231,9 @@ def listHistoryMissionCurrentStateAjax(request):
     #取得我(群組)曾經處理過的任務
     if group_id:
         username_list = list(OmUser.objects.filter(groups__id=group_id,delete=False).values_list('username',flat=True))
-        mission_list = list(Missions.objects.filter(Q(update_user_id__in=username_list) & Q(ticket_createtime__range=ticket_createtime) & Q(history=True) & Q(closed=False)).values('flow_uuid','data_no'))
+        mission_list = list(Missions.objects.filter(Q(update_user_id__in=username_list) & Q(ticket_createtime__range=ticket_createtime) & Q(history=True) & Q(closed=False) & Q(is_active=True) & Q(deploy_flag=True)).values('flow_uuid','data_no'))
     else:
-        mission_list = list(Missions.objects.filter(Q(update_user_id=request.user.username) & Q(ticket_createtime__range=ticket_createtime) & Q(history=True) & Q(closed=False)).values('flow_uuid','data_no'))
+        mission_list = list(Missions.objects.filter(Q(update_user_id=request.user.username) & Q(ticket_createtime__range=ticket_createtime) & Q(history=True) & Q(closed=False) & Q(is_active=True) & Q(deploy_flag=True)).values('flow_uuid','data_no'))
     #將查詢結果分為兩個list  建立對照的dict--(以flow_uuid為KEY，該流程的單號組成list為VALUE)
     flow_uuid_list = []
     data_no_list = []

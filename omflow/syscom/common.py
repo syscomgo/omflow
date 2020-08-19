@@ -980,9 +980,9 @@ class Translator():
             elif c == 'single_app':
                 result = self.single_app(content)
             else:
-                result = None
+                result = content
         except:
-            result = None
+            result = content
         finally:
             return result
     
@@ -1054,7 +1054,11 @@ class Translator():
                 for s_k in line:
                     if isinstance(line[s_k], str):
                         if line.get('flow_uuid',None):
-                            app_id = FlowActiveGlobalObject.UUIDSearch(line.get('flow_uuid',None)).flow_app_id
+                            fa = FlowActiveGlobalObject.UUIDSearch(line.get('flow_uuid',None))
+                            if fa:
+                                app_id = fa.flow_app_id
+                            else:
+                                app_id = None
                             app_name = None
                         else:
                             app_id = line.get('id',None)
@@ -1066,7 +1070,11 @@ class Translator():
                 for s_k in line:
                     if isinstance(line[s_k], str):
                         if line.get('flow_uuid',None):
-                            app_id = FlowActiveGlobalObject.UUIDSearch(line.get('flow_uuid',None)).flow_app_id
+                            fa = FlowActiveGlobalObject.UUIDSearch(line.get('flow_uuid',None))
+                            if fa:
+                                app_id = fa.flow_app_id
+                            else:
+                                app_id = None
                             app_name = None
                         else:
                             app_id = line.get('id',None)

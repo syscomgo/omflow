@@ -864,6 +864,7 @@ def deployWorkspaceApplication(postdata, user):
         message = ''
         all_success = True
         flow_mapping = {}
+        flow_uuid_list = []
         lside_pid = postdata.get('lside_pid','')
         w_app_id = postdata.get('w_app_id','')
         app_name = postdata.get('app_name','')
@@ -876,6 +877,7 @@ def deployWorkspaceApplication(postdata, user):
             undeploy_list = caa_result['undeploy_list']
             a_app_id = caa_result['a_app_id']
             app_attr = caa_result.get('app_attr','user')
+            mission_undeploy_uuid_list = caa_result.get('undeploy_uuid_list',[])
             #建立舊流程與新流程的對應關係
             check_api_path_list = []
             fw_list = list(FlowWorkspace.objects.filterformat('id','flow_name','config',flow_app_id=w_app_id))
@@ -918,6 +920,7 @@ def deployWorkspaceApplication(postdata, user):
                 if f_status:
                     #create main flow python
                     for flow in flow_list:
+                        flow_uuid_list.append(flow['flow_uuid'])
                         flowmaker = flowMaker(flow['flow_uuid'],flow['flowobject'],flow['version'],flow['subflow_mapping_dict'])
                         if not flowmaker:
                             all_success = False
@@ -957,6 +960,21 @@ def deployWorkspaceApplication(postdata, user):
                     createSidebar(flow_list, new_app_id, new_app_name, lside_pid)
                 status = True
                 message = _('上架成功。')
+                
+                #設定任務狀態為上架或下架
+                if a_app_id:
+                    if mission_undeploy_uuid_list:
+                        mission_deploy_list = list(set(flow_uuid_list)-set(mission_undeploy_uuid_list))
+                        if mission_deploy_list:
+                            setMission('deploy', mission_deploy_list, None, None, None)
+                        mission_undeploy_list = list(set(mission_undeploy_uuid_list)-set(flow_uuid_list))
+                        if mission_deploy_list:
+                            setMission('undeploy', mission_undeploy_list, None, None, None)
+                    else:
+                        #設定任務狀態為上架
+                        setMission('deploy', flow_uuid_list, None, None, None)
+                else:
+                    pass
             else:
                 #建立失敗時要刪除剛才建立的所有資料
                 for flow in flow_list:
@@ -1030,6 +1048,7 @@ def createActiveApplication(w_app_id, app_name, a_app_id, user):
                     if aa.undeploy_flag == False:
                         uaa_result = undeployActiveApplication(a_app_id, user)
                         result['undeploy_list'] = uaa_result['flow_id_list']
+                        result['undeploy_uuid_list'] = uaa_result['flow_uuid_list']
             else:
                 if len(ActiveApplication.objects.filter(app_name=app_name,undeploy_flag=False)) == 0:
                     aa_list = list(ActiveApplication.objects.filter(app_name=app_name).order_by('version').reverse())
@@ -1077,13 +1096,18 @@ def undeployActiveApplication(app_id, user):
         aa.updatetime = datetime.now()
         aa.user = user
         aa.save()
-        flow_id_list = list(FlowActive.objects.filter(flow_app_id=app_id,parent_uuid=None).values_list('id',flat=True))
+        flow_list = list(FlowActive.objects.filter(flow_app_id=app_id,parent_uuid=None).values('id','flow_uuid'))
+        flow_id_list = []
+        flow_uuid_list = []
+        for f in flow_list:
+            flow_id_list.append(f['id'])
+            flow_uuid_list.append(f['flow_uuid'].hex)
         undeployFlow(flow_id_list)
-        result = {'app_attr':app_attr,'flow_id_list':flow_id_list}
+        result = {'app_attr':app_attr,'flow_id_list':flow_id_list,'flow_uuid_list':flow_uuid_list}
         return flow_id_list
     except Exception as e:
         debug(e.__str__())
-        result = {'app_attr':'','flow_id_list':[]}
+        result = {'app_attr':'','flow_id_list':[],'flow_uuid_list':[]}
     finally:
         return result
 
@@ -1418,8 +1442,12 @@ def updateFlowActiveAjax(request):
             if action_field == 'is_active':
                 if flowactive.is_active:
                     flowactive.is_active = False
+                    #停用任務，讓使用者在任務列表、進行中的任務、處理紀錄看不到資料
+                    setMission('inactive', flowactive.flow_uuid.hex, None, None, None)
                 else:
                     flowactive.is_active = True
+                    #啟用任務，讓使用者可以在任務列表、進行中的任務、處理紀錄看到資料
+                    setMission('active', flowactive.flow_uuid.hex, None, None, None)
             elif action_field == 'api':
                 if flowactive.api:
                     flowactive.api = False
@@ -1456,6 +1484,7 @@ def activeFlowActiveAjax(request):
     '''
     #function variable
     require_field = ['id','active']
+    flow_uuid_list = []
     #server side rule check
     postdata = getPostdata(request)
     checker = DataChecker(postdata, require_field)
@@ -1471,8 +1500,15 @@ def activeFlowActiveAjax(request):
         fa_list = FlowActive.objects.filter(id__in=flow_id_list)
         for fa in fa_list:
             flow_uuid = fa.flow_uuid.hex
+            flow_uuid_list.append(flow_uuid)
             FlowActiveGlobalObject.deleteFlowActive(flow_uuid, None)
             FlowActiveGlobalObject.setFlowActive(fa)
+        if is_active:
+            #啟用任務，讓使用者可以在任務列表、進行中的任務、處理紀錄看到資料
+            setMission('active', flow_uuid_list, None, None, None)
+        else:
+            #停用任務，讓使用者在任務列表、進行中的任務、處理紀錄看不到資料
+            setMission('inactive', flow_uuid_list, None, None, None)
         info('%s active FlowActive success.' % request.user.username,request)
         return ResponseAjax(statusEnum.success, _('設定成功。')).returnJSON()
     else:
@@ -1830,6 +1866,10 @@ def undeployActiveApplicationAjax(request):
         schedule_id_list = list(Scheduler.objects.filter(flowactive_id__in=flow_id_list).values_list('id',flat=True))
         if schedule_id_list:
             deleteSchedule(schedule_id_list)
+        #設定任務狀態為下架，讓使用者在任務列表、進行中的任務、處理紀錄看不到資料
+        flow_uuid_list = uaa_result['flow_uuid_list']
+        setMission('undeploy', flow_uuid_list, None, None, None)
+        
         info('%s undeploy ActiveApplication success.' % request.user.username,request)
         return ResponseAjax(statusEnum.success, _('下架成功。')).returnJSON()
     else:
@@ -1850,6 +1890,8 @@ def redeployActiveApplicationAjax(request):
     #function variable
     require_field = ['new_app_id','lside_pid']
     status = True
+    uaa_result = None
+    flow_uuid_list = []
     #get post data
     postdata = getPostdata(request)
     lside_pid = postdata.get('lside_pid','')
@@ -1885,11 +1927,24 @@ def redeployActiveApplicationAjax(request):
                     #重新上架流程
                     flow_list = list(FlowActive.objects.filterformat('id','flow_uuid','flow_name',flow_app_id=aa.id))
                     for fa in flow_list:
+                        flow_uuid_list.append(fa['flow_uuid'])
                         flow_id = fa['id']
                         redeployFlow(flow_id)
                     #重新建立側邊選單
                     if app_attr in ['user','cloud','sys']:
                         createSidebar(flow_list, aa.id, aa.app_name, lside_pid)
+                    #設定任務狀態為上架或下架
+                    if uaa_result:
+                        uaa_flow_uuid_list = uaa_result['flow_uuid_list']
+                        mission_deploy_list = list(set(flow_uuid_list)-set(uaa_flow_uuid_list))
+                        if mission_deploy_list:
+                            setMission('deploy', mission_deploy_list, None, None, None)
+                        mission_undeploy_list = list(set(uaa_flow_uuid_list)-set(flow_uuid_list))
+                        if mission_deploy_list:
+                            setMission('undeploy', mission_undeploy_list, None, None, None)
+                    else:
+                        #設定任務狀態為上架
+                        setMission('deploy', flow_uuid_list, None, None, None)
                     info('%s redeploy ActiveApplication success.' % request.user.username,request)
                     return ResponseAjax(statusEnum.success, _('重新上架成功。')).returnJSON()
                 else:
@@ -2473,7 +2528,9 @@ def checkOmDataPermission(user, flow_uuid, data_no, data_id, per_type, subquery_
             omdata = omdata_model.objects.get(id=data_id)
             create_user_id = omdata.create_user_id
             group = omdata.group
+            print(data_id)
             if group:
+                print(group)
                 group = json.loads(group)
                 u = group.get('user','')
                 g = group.get('group','')
@@ -2485,6 +2542,7 @@ def checkOmDataPermission(user, flow_uuid, data_no, data_id, per_type, subquery_
                 if create_user_id == user.username:
                     assign_per = True
         elif data_no:
+            print(data_no)
             omdata = list(omdata_model.objects.filter(data_no=data_no).values('group','create_user_id'))
             for omdata_row in omdata:
                 create_user_id = omdata_row['create_user_id']
@@ -2511,6 +2569,7 @@ def checkOmDataPermission(user, flow_uuid, data_no, data_id, per_type, subquery_
             if user.has_perm('omformmodel.Omdata_' + flow_uuid + per_type) or assign_per:
                 result = True
     except Exception as e:
+        print(e.__str__())
         debug(e.__str__())
     finally:
         return result
@@ -3058,14 +3117,14 @@ def getFlowFieldName(app_name, flow_name, need_default_field, default_field=None
                     result[field.name] = field.verbose_name
             else:
                 if 'formitm_' not in field.name:
-                    result[field.name] = field.verbose_name
+                    result[field.name] = field.verbose_name         # + '  (內建參數)'
     #組合動態欄位
     for item in items:
         if item['id'][:8] == 'FORMITM_':
             if item['type'] == 'h_group':
                 result[item['id'].lower()+'-group'] = item['config']['group_title']
                 result[item['id'].lower()+'-user'] = item['config']['user_title']
-            elif need_default_field and item['type'] in ['h_level','h_status']:
+            elif need_default_field and item['type'] in ['h_level','h_status'] and default_field:
                 pass
             else:
                 result[item['id'].lower()] = item['config']['title']
@@ -3269,15 +3328,15 @@ def listOmDataRelationAjax(request):
         result = copy.deepcopy(DatatableBuilder(request, query, field_list))
         if isinstance(result["data"], list):
             for row in result["data"]:
-                isSubject = True if row['subject_flow']==flow_uuid and row['subject_no']==data_no else False
+                isSubject = True if row['subject_flow']==flow_uuid and str(row['subject_no'])==data_no else False
                 if isSubject:
-                    object_flow = row['subject_flow']
-                    object_no = row['subject_no']
-                    row['relation_type'] = switchRelation(row['relation_type'])
-                else:
                     object_flow = row['object_flow']
                     object_no = row['object_no']
-                    
+                    row['relation_type'] = switchRelation(row['relation_type'])
+                else:
+                    object_flow = row['subject_flow']
+                    object_no = row['subject_no']
+                 
                 thisFlow = FlowActiveGlobalObject.UUIDSearch(object_flow)
                 thisModel = getModel('omformmodel','Omdata_' + object_flow)
                 thisData = thisModel.objects.filter(data_no=object_no).last()#.aggregate(Max('id'))
@@ -3293,14 +3352,14 @@ def listOmDataRelationAjax(request):
         elif isinstance(result["data"], dict):
             for key in result["data"]:
                 row = result["data"][key]
-                isSubject = True if row['subject_flow']==flow_uuid and row['subject_no']==data_no else False
+                isSubject = True if row['subject_flow']==flow_uuid and str(row['subject_no'])==data_no else False
                 if isSubject:
-                    object_flow = row['subject_flow']
-                    object_no = row['subject_no']
-                    row['relation_type'] = switchRelation(row['relation_type'])
-                else:
                     object_flow = row['object_flow']
                     object_no = row['object_no']
+                    row['relation_type'] = switchRelation(row['relation_type'])
+                else:
+                    object_flow = row['subject_flow']
+                    object_no = row['subject_no']
                     
                 thisFlow = FlowActiveGlobalObject.UUIDSearch(object_flow)
                 thisModel = getModel('omformmodel','Omdata_' + object_flow)
@@ -3414,6 +3473,8 @@ def switchRelation(relation_type):
         return 'belong'
     elif relation_type == 'belong':
         return 'own'
+    else:
+        return relation_type
 
 
 def deleteOmDataRelationAjax(flow_uuid,data_no_list):
@@ -5022,60 +5083,62 @@ def checkSLAData(*args):
                                 param['title'] = _('[提醒] ') + sla.title
                                 critical = 3
                     if create_event:
-                        #取得omdata
                         fa = FlowActiveGlobalObject.NameSearch(sla_data.flow_name, None, sla_data.app_name)
-                        flow_uuid = fa.flow_uuid.hex
-                        model = getModel('omformmodel', 'Omdata_' + flow_uuid)
-                        omdata_list = model.objects.filter(data_no=sla_data.data_no,history=False)
-                        omdata = omdata_list[0]
-                        #組合開event的內容
-                        url = 'http://' + settings.LOCAL_IP + ':' + settings.LOCAL_PORT + '/my-mission/page/myform/' + flow_uuid + '/' + str(sla_data.data_no)
-                        param['content'] = sla.content + '\n' + url
-                        param['critical'] = critical
-                        param['source'] = 'sla'
-                        param['source2'] = sla.sla_name + '<' + sla_data.app_name + '><' + sla_data.flow_name + '><' + str(sla_data.data_no) + '>'
-                        users = ''
-                        if sla.notify_createuser:
-                            users += omdata.create_user.email
-                             
-                        notify_group = json.loads(sla.notify_group)
-                        if notify_group:
-                            group_user_list = list(OmUser.objects.filter(groups__id__in=notify_group).values_list('email',flat=True))
-                            for i in group_user_list:
-                                users += ';' + i
-                        notify_user = json.loads(sla.notify_user)
-                        if notify_user:
-                            user_list = list(OmUser.objects.filter(id__in=notify_user).values_list('email',flat=True))
-                            for i in user_list:
-                                users += ';' + i
-                        param['users'] = users
-                        createEvent(param)
-                        #更新sla data
-                        sla_data.level = level
-                        sla_data.save()
-                        #更新燈號
-                        level_list = list(SLAData.objects.filter(app_name=sla_data.app_name,flow_name=sla_data.flow_name,data_no=omdata.data_no).values_list('level',flat=True))
-                        update_level = 'green'
-                        for i in level_list:
-                            if i == 'red':
-                                update_level = i
-                                break
-                            elif i == 'yellow':
-                                update_level = i
-                        update_dict = {'level':update_level}
-                        #找到燈號欄位
-                        level_id = None
-                        items = json.loads(fa.merge_formobject)
-                        for key in items:
-                            item = items[key]
-                            if item['type'] == 'h_level':
-                                level_id = item['id'].lower()
-                                break
-                        if level_id:
-                            update_dict[level_id] = update_level
-                        omdata_list.update(**update_dict)
-                        #更改my mission燈號
-                        updateMissionLevel(flow_uuid, sla_data.data_no, update_level)
+                        #確認流程是否停用、下架
+                        if fa.is_active and not fa.undeploy_flag:
+                            flow_uuid = fa.flow_uuid.hex
+                            #取得omdata
+                            model = getModel('omformmodel', 'Omdata_' + flow_uuid)
+                            omdata_list = model.objects.filter(data_no=sla_data.data_no,history=False)
+                            omdata = omdata_list[0]
+                            #組合開event的內容
+                            url = 'http://' + settings.LOCAL_IP + ':' + settings.LOCAL_PORT + '/my-mission/page/myform/' + flow_uuid + '/' + str(sla_data.data_no)
+                            param['content'] = sla.content + '\n' + url
+                            param['critical'] = critical
+                            param['source'] = 'sla'
+                            param['source2'] = sla.sla_name + '<' + sla_data.app_name + '><' + sla_data.flow_name + '><' + str(sla_data.data_no) + '>'
+                            users = ''
+                            if sla.notify_createuser:
+                                users += omdata.create_user.email
+                                 
+                            notify_group = json.loads(sla.notify_group)
+                            if notify_group:
+                                group_user_list = list(OmUser.objects.filter(groups__id__in=notify_group).values_list('email',flat=True))
+                                for i in group_user_list:
+                                    users += ';' + i
+                            notify_user = json.loads(sla.notify_user)
+                            if notify_user:
+                                user_list = list(OmUser.objects.filter(id__in=notify_user).values_list('email',flat=True))
+                                for i in user_list:
+                                    users += ';' + i
+                            param['users'] = users
+                            createEvent(param)
+                            #更新sla data
+                            sla_data.level = level
+                            sla_data.save()
+                            #更新燈號
+                            level_list = list(SLAData.objects.filter(app_name=sla_data.app_name,flow_name=sla_data.flow_name,data_no=omdata.data_no).values_list('level',flat=True))
+                            update_level = 'green'
+                            for i in level_list:
+                                if i == 'red':
+                                    update_level = i
+                                    break
+                                elif i == 'yellow':
+                                    update_level = i
+                            update_dict = {'level':update_level}
+                            #找到燈號欄位
+                            level_id = None
+                            items = json.loads(fa.merge_formobject)
+                            for key in items:
+                                item = items[key]
+                                if item['type'] == 'h_level':
+                                    level_id = item['id'].lower()
+                                    break
+                            if level_id:
+                                update_dict[level_id] = update_level
+                            omdata_list.update(**update_dict)
+                            #更改my mission燈號
+                            updateMissionLevel(flow_uuid, sla_data.data_no, update_level)
                 except:
                     pass
     except Exception as e:
@@ -5148,6 +5211,8 @@ def listOmDataForSubQueryAjax(request):
     condition = postdata.get('condition',[])
     source_flow_uuid = postdata.get('source_flow_uuid','')
     source_data_id = postdata.get('source_data_id','')
+    print(source_data_id)
+    print('....')
     flowactive = FlowActiveGlobalObject.NameSearch(flow_name, None, app_name)
     flow_uuid = flowactive.flow_uuid.hex
     if source_data_id:
@@ -5289,6 +5354,8 @@ def getFlowFieldNameForSubQueryAjax(request):
     app_name = postdata.get('app_name','')
     if flow_name and app_name:
         result = getFlowFieldName(app_name, flow_name, True, None)
+    for i in result:
+        print(i,':    ',result[i])
     info(request ,'%s get flow field name success.' % request.user.username)
     return ResponseAjax(statusEnum.success, _('讀取成功。'), result).returnJSON()
     

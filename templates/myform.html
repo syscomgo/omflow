@@ -866,7 +866,9 @@
 			}
 			else
 			{
-				omflowAlert('red', data.message);
+				$('#omdata_history_formcontent').empty();
+				$('#attach_box').remove();
+				$('#omdata_history_formcontent').html('<h3><i class="fa fa-warning text-red"></i> Oops ! No Permission !</h3>');
 			}
 		}
 		
@@ -1424,7 +1426,9 @@
 			}
 			else
 			{
-				omflowAlert('red', data.message)
+				$('#omdata_history_formcontent').empty();
+				$('#attach_box').remove();
+				$('#omdata_history_formcontent').html('<h3><i class="fa fa-warning text-red"></i> Oops ! No Permission !</h3>');
 			}
 		}
     }
@@ -1855,7 +1859,7 @@
     				$('#attachment_input').hide();
     			}
     			formcontent.event_display_field_load(load_display_field);
-				formcontent.event_omdata_list_url({url:'{% url 'listOmDataForSubQueryAjax'%}',flow_uuid:'{{flow_uuid}}',data_id:''});
+				formcontent.event_omdata_list_url({url:'{% url 'listOmDataForSubQueryAjax'%}',flow_uuid:'{{flow_uuid}}',data_id:data_id});
 				formcontent.event_omdata_load(loda_omdata_value);
 	    		formcontent.init(false);
 	    		formcontent.event_group_list(load_group_list);
@@ -1897,7 +1901,11 @@
 				{% endif %}
 			}
 			else
-			{omflowAlert('red', data.message)}
+			{
+				$('#formcontent').empty();
+				$('#formcontent').html('<h3><i class="fa fa-warning text-red"></i> Oops ! No Permission !</h3>');
+				omflowAlert('red', data.message)
+			}
     	}
     }
     

@@ -69,7 +69,7 @@
 	                <div class="pull-right">
 	                  <select id="currentmission_group_select" class="select2 form-control" style="width:150px">
 	                  	<option value="">{% trans '所有組織'%}</option>
-	                  {% for group in user.groups.all %}<option value="{{group.id}}">{{group.name}}</option> {% endfor %}
+	                  {% for group in user.groups.all %}{% if group.omgroup.functional_flag == False%}<option value="{{group.id}}">{{group.name}}</option> {% endif %}{% endfor %}
 	                  </select>
 	                </div>
 	              </div>
@@ -106,7 +106,7 @@
 	                <div class="pull-right">
 	                  <select id="historymission_group_select" class="select2 form-control" style="width:150px">
 	                  	<option value="">{% trans '所有組織'%}</option>
-	                  {% for group in user.groups.all %}<option value="{{group.id}}">{{group.name}}</option> {% endfor %}
+	                  {% for group in user.groups.all %}{% if group.omgroup.functional_flag == False%}<option value="{{group.id}}">{{group.name}}</option> {% endif %}{% endfor %}
 	                  </select>
 	                </div>
 	              </div>

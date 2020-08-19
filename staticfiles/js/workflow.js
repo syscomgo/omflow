@@ -1361,6 +1361,9 @@ var omfloweng = function(div_id)
 				formobject_for_modal.event_group_list(event_get_group_list_callback);
 				formobject_for_modal.event_user_list(event_get_user_list_callback);
 				formobject_for_modal.load(JSON.stringify(flowobject.form_object));
+				formobject_for_modal.event_app_list(event_get_app_list_callback);
+				formobject_for_modal.event_flow_list(event_get_flow_list_callback);
+				formobject_for_modal.event_column_list(event_get_column_list_callback);
 				
 				//setData
 				//formobject_for_modal.setData(item.config.form_setdata);
@@ -3206,6 +3209,10 @@ var omfloweng = function(div_id)
 	{
 		event_get_flow_list_callback = function_name;
 	}
+	_self_.event_column_list = function(function_name)
+	{
+		event_get_column_list_callback = function_name;
+	}
 	_self_.event_flowIO_list = function(function_name)
 	{
 		event_get_flowIO_list_callback = function_name;
@@ -5035,6 +5042,9 @@ var omfloweng = function(div_id)
 					formobject_for_modal.event_group_list(event_get_group_list_callback);
 					formobject_for_modal.event_user_list(event_get_user_list_callback);
 					formobject_for_modal.load(JSON.stringify(action_item_for_modal.config.form_object));
+					formobject_for_modal.event_app_list(event_get_app_list_callback);
+					formobject_for_modal.event_flow_list(event_get_flow_list_callback);
+					formobject_for_modal.event_column_list(event_get_column_list_callback);
 					//formobject_for_modal.setData(action_item_for_modal.config.form_setdata);
 					$('#' + baseID_FORM + '_myform_button_new_box6').css('display','');
 					$('#' + baseID_FORM + '_myform_button_new_box12').css('display','');
@@ -8093,43 +8103,6 @@ var omformeng = function(div_id)
 			});
 		}
 		
-		//====================
-		//===MODAL CHART SUBQUERY TABLE 
-		//====================
-		var subquery_table_modal = '<div class="modal fade" id="' + baseID_SUBQUERY_TABLE + '">'
-					+'<div class="modal-dialog modal-lg">'
-					+'<div class="modal-content">'
-					+'<div class="modal-header">'
-					+'<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
-					+'<span aria-hidden="true">&times;</span></button>'
-					+'<h4 class="modal-title">&nbsp;&nbsp;'+gettext('子查詢')+'</h4>'
-					+'</div>'
-					+'<div class="modal-body">'
-					+'<table class="table table-bordered table-striped table-hover" id="' + baseID_SUBQUERY_TABLE + '_datatable" width="100%">'
-			  	   	  +'<thead>'
-			  	  	    +'<tr>'
-			  	  	      
-			  	  	  	+'</tr>'
-			  	  	  +'</thead>'
-			  	  	  +'<tbody>'
-			  	  	  +'</tbody>'
-			  	    +'</table>'
-					+'</div>'
-					+'<div class="modal-footer">'
-					+'<button type="button" class="btn btn-default pull-left" id="' + baseID_SUBQUERY_TABLE + '_close">'+gettext('取消')+'</button>'
-					+'<button type="button" class="btn btn-primary" id="' + baseID_SUBQUERY_TABLE + '_submit">'+gettext('確定')+'</button>'
-					+'</div>'
-					+'</div>'
-					+'</div><!-- /.modal-content -->'
-						+'</div>';
-		//====================
-		//===MODAL INIT
-		//====================
-		if ($('#' + baseID_SUBQUERY_TABLE ).length == 0)
-		{
-			formcontent.append(subquery_table_modal);
-		}
-		
 	}
 	function group_sortable_add(ul_id)
 	{	
@@ -9054,6 +9027,34 @@ var omformeng = function(div_id)
 	                    +'</div>' 
 	                    
 						+'</div>';
+				
+			var subquery_table_modal = '<div class="modal fade" id="' + active_id + '_' + form_item.id + '_subquery_table_modal">'
+						+'<div class="modal-dialog modal-lg">'
+						+'<div class="modal-content">'
+						+'<div class="modal-header">'
+						+'<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
+						+'<span aria-hidden="true">&times;</span></button>'
+						+'<h4 class="modal-title">&nbsp;&nbsp;'+gettext('子查詢')+'</h4>'
+						+'</div>'
+						+'<div class="modal-body">'
+						+'<table class="table table-bordered table-striped table-hover" id="' + active_id + '_' + form_item.id + '_subquery_table_modal_datatable" width="100%">'
+				  	   	  +'<thead>'
+				  	  	    +'<tr>'
+				  	  	      
+				  	  	  	+'</tr>'
+				  	  	  +'</thead>'
+				  	  	  +'<tbody>'
+				  	  	  +'</tbody>'
+				  	    +'</table>'
+						+'</div>'
+						+'<div class="modal-footer">'
+						+'<button type="button" class="btn btn-default pull-left" id="' + active_id + '_' + form_item.id + '_subquery_table_modal_close">'+gettext('取消')+'</button>'
+						+'<button type="button" class="btn btn-primary" id="' + active_id + '_' + form_item.id + '_subquery_table_modal_submit">'+gettext('確定')+'</button>'
+						+'</div>'
+						+'</div>'
+						+'</div><!-- /.modal-content -->'
+							+'</div>';
+				formcontent.append(subquery_table_modal);
 				break;
 		}
 		
@@ -9179,11 +9180,12 @@ var omformeng = function(div_id)
 		var data_page;
 		$( '#' + active_id + '_' + form_item.id + '_subquery_button').click(function()
 		{//子查詢動作
-			baseID_SUBQUERY_TABLE = active_id + '_' + 'subquery_table_modal'; 
+			baseID_SUBQUERY_TABLE = active_id + '_' + form_item.id + '_subquery_table_modal'; 
 			//取得顯示欄位，組合成datatable 格式
 			var displayfield = {}
 			var table_column = [];
 			var omdata_ajax_var = event_get_omdata_list_callback;
+			
 			if(table != undefined)
 			{
 				table.clear();

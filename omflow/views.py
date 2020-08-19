@@ -409,10 +409,10 @@ def loadWorkinfoAjax(request):
     else:
         node = 0
     #get new workinfo data
-    messages = request.user.messagebox_set.filter(read=0).count()
+    messages = 0        #request.user.messagebox_set.filter(read=0).count()
     #mission
     #取得我(群組)曾經處理過的任務
-    mission_list = list(Missions.objects.filter(Q(update_user_id=request.user.username) & Q(history=True) & Q(closed=False)).values('flow_uuid','data_no'))
+    mission_list = list(Missions.objects.filter(Q(update_user_id=request.user.username) & Q(history=True) & Q(closed=False) & Q(is_active=True) & Q(deploy_flag=True)).values('flow_uuid','data_no'))
     #將查詢結果分為兩個list  建立對照的dict--(以flow_uuid為KEY，該流程的單號組成list為VALUE)
     flow_uuid_list = []
     data_no_list = []
@@ -586,7 +586,7 @@ def loadLSideAjax(request):
         else:
             #get mission
             group_id_list = list(request.user.groups.all().values_list('id',flat=True))
-            level_list = list(Missions.objects.filter((Q(assignee_id=request.user.id) | (Q(assign_group_id__in=group_id_list) & Q(assignee_id=None))) & Q(history=False)).values_list('level',flat=True))
+            level_list = list(Missions.objects.filter((Q(assignee_id=request.user.id) | (Q(assign_group_id__in=group_id_list) & Q(assignee_id=None))) & Q(history=False) & Q(is_active=True) & Q(deploy_flag=True)).values_list('level',flat=True))
             green = 0
             red = 0
             yellow = 0
@@ -755,16 +755,18 @@ def myformpage(request, url):
     url_list = url.split('/')
     flow_uuid = url_list[0]
     data_no = url_list[1]
-    if len(url_list) == 2:
-        try:
-            app_id = FlowActiveGlobalObject.UUIDSearch(flow_uuid).flow_app_id
+    try:
+        fa = FlowActiveGlobalObject.UUIDSearch(flow_uuid)
+        if fa:
+            app_id = fa.flow_app_id
+        if len(url_list) == 2:
             model = getModel('omformmodel', 'Omdata_' + flow_uuid)
             omdata = model.objects.filter(data_no=data_no,history=False)[0]
             data_id = omdata.id
-        except:
-            pass
-    else:
-        data_id = url_list[2]
+        else:
+            data_id = url_list[2]
+    except:
+        pass
     return render(request, "myform.html", locals())
 
 

@@ -1,11 +1,13 @@
 {% load static %}
 {% load i18n %} 
     <!-- Logo -->
-    <a href="{% url 'homePage' %}" class="logo">
+    <a href="{% url 'homePage' %}" class="logo" style="padding-top:8px;">
       <!-- mini logo for sidebar mini 50x50 pixels -->
-      <span class="logo-mini" ><font style='font-family:"Bauhaus 93";font-size:x-large'>OM</font></span>
+      <img src="{% static "img/om.svg" %}" class="logo-mini" style="width:50px;">
       <!-- logo for regular state and mobile devices -->
-      <span class="logo-lg"><font style='font-family:"Bauhaus 93";font-size:x-large'>OM</font><font style='font-family:"Eras ITC";font-size:x-large'><b>F</b></font><font style='font-family:"Bauhaus 93";font-size:x-large'>LOW</font></span>
+      <img src="{% static "img/omflow.svg" %}" class="logo-lg" style="width:150px;"> 	
+
+	 
     </a>
 
     <!-- Header Navbar -->

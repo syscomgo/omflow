@@ -133,6 +133,26 @@
 	</div>
 	<!-- /.modal -->
 	
+	<!-- 資料夾設定 -->
+	<div class="modal fade" id="modal-folder-config" name="">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      	      <span aria-hidden="true">&times;</span>
+      	    </button>
+            <h4 class="modal-title"><i class="fa fa-gear"></i>&nbsp;&nbsp;{% trans '內容設定'%}</h4>
+          </div>
+          <div class="modal-body">
+          	<table style="width:100%;"></table>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">{% trans '取消'%}</button>
+            <button type="button" class="btn btn-primary" onclick="Grid_submit()">{% trans '確定'%}</button>
+          </div>
+        </div>
+	  </div>
+	</div>
     </section>
 
 	<script>
@@ -863,7 +883,7 @@
     function box_button_config_item(item_id, item_type, type){
 		var item = box_object.list[item_id];
 		
-		var thisDialog = type=="service"? $("#tab-setting") : $("#modal-grid-config");
+		var thisDialog = type=="service"? $("#tab-setting") : $("#modal-folder-config");
 			thisDialog.attr('name',item_id);
 		switch(item_type)
 		{
@@ -890,7 +910,7 @@
         var thisList = arguments[0];
         var type = arguments[1];
         var count=1;
-        var thisDialogBody = type=="service"? $("#tab-setting").find("table").empty() : $("#modal-grid-config").find("table:eq(0)").empty();
+        var thisDialogBody = type=="service"? $("#tab-setting").find("table").empty() : $("#modal-folder-config").find("table:eq(0)").empty();
         $.each(thisList,function(idx,name){
             if(count%2)
                 thisDialogBody.append($('<tr><td style="width:50%;padding-right:7px;"></td></tr>'));
@@ -902,7 +922,7 @@
         });
     }
     function Grid_submit(type){
-		var thisDialog = type=="service"? $("#tab-setting") : $("#modal-grid-config");
+		var thisDialog = type=="service"? $("#tab-setting") : $("#modal-folder-config");
 		var item_id = thisDialog.attr('name');
 		var item = box_object.list[item_id];
 		var thisSetting = {};
@@ -924,7 +944,7 @@
 		
 		item.setting = thisSetting;
 		if(type!="service")
-			$('#modal-grid-config').modal('hide');
+			$('#modal-folder-config').modal('hide');
 		box_init_item(item);
 		
 		item_id = undefined;
@@ -1396,6 +1416,7 @@
 				case 'inputbox':
 				case 'areabox':
 				case 'list':
+				case "subquery":
 					var thisValue=thisDom.find('[name=setValue]:eq(0)').val();
 					if(thisDom.find('font[color=red]').length && (null==thisValue || thisValue.length==0))
 						RequireWarning = true;

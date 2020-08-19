@@ -516,6 +516,7 @@
 			flowcontent.load(res.flowobject);
 			flowcontent.event_flow_list(load_flow_list);
 	    	flowcontent.event_flowIO_list(load_flowIO_list);
+	    	flowcontent.event_column_list(load_column_list);
 	    	
 			flowcontent.form(formcontent.getObject());
 			JSON.parse(res.flowobject).subflow.forEach(function(item,index){
