@@ -1,4 +1,4 @@
-<a href="https://github.com/syscomgo/omflow/blob/master/README.md">English</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/syscomgo/omflow/blob/master/README_TW.md">中文</a>
+<a href="https://github.com/syscomgo/omflow/blob/master/README.md">English</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/syscomgo/omflow/blob/master/README_TW.md">中文</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/syscomgo/omflow/blob/master/README_JP.md">日本語</a>
 
 OMFLOW 流程引擎
 =================
