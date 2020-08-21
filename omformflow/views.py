@@ -9,7 +9,7 @@ from omflow.syscom.common import Translator, LanguageDictBuilder, searchConditio
 from omflow.syscom.message import ResponseAjax, statusEnum
 from omflow.global_obj import GlobalObject, FlowActiveGlobalObject
 from omflow.models import SystemSetting, Scheduler, TempFiles
-from omuser.views import addPermissionToRole, checkLicense
+from omuser.views import addPermissionToRole, checkLicense, removePermissionToRole
 from omuser.models import OmUser
 from omformflow.models import FlowWorkspace, FlowActive, WorkspaceApplication, ActiveApplication, OmdataFiles, OmdataRelation, OmdataWorklog, OmParameter, SLARule, SLAData
 from django.http.response import JsonResponse
@@ -25,6 +25,7 @@ from django.db.models import Q
 from _functools import reduce
 from omflow.syscom.default_logger import info,debug,error
 from django.contrib.auth.models import Permission
+from django.utils.translation import get_language
 from django.apps import apps
 if check_app('ommonitor'):
     from ommonitor.views import createEvent
@@ -171,7 +172,7 @@ def listWorkspaceApplicationAjax(request):
         query = WorkspaceApplication.objects.filterformat(*display_field,app_attr__in=app_attr,updatetime__lte=updatetime)
         result = DatatableBuilder(request, query, field_list)
 #         #載入語言包
-#         language = request.COOKIES.get('django_language','zh-hant')
+#         language = get_language()
 #         result['data'] = Translator('datatable_multi_app', 'workspace', language, None, None).Do(result['data'])
         info('%s list WorkspaceApplication success.' % request.user.username,request)
         return JsonResponse(result)
@@ -676,7 +677,7 @@ def listFlowWorkspaceAjax(request):
         query = FlowWorkspace.objects.filter(flow_app_id=app_id,updatetime__lte=updatetime).values(*display_field)
         result = DatatableBuilder(request, query, field_list)
 #         #載入語言包
-#         language = request.COOKIES.get('django_language','zh-hant')
+#         language = get_language()
 #         result['data'] = Translator('datatable_single_app', 'workspace', language, str(app_id), None).Do(result['data'])
         info('%s list FlowWorkspace success.' % request.user.username,request)
         return JsonResponse(result)
@@ -883,24 +884,24 @@ def deployWorkspaceApplication(postdata, user):
             fw_list = list(FlowWorkspace.objects.filterformat('id','flow_name','config',flow_app_id=w_app_id))
             if a_app_id:
                 a_app_id_list = list(ActiveApplication.objects.filter(app_name=new_app_name).values_list('id',flat=True))
-                fa_list = list(FlowActive.objects.filter(flow_app_id__in=a_app_id_list,parent_uuid=None).values('flow_uuid','flow_name','api_path'))
+                fa_list = list(FlowActive.objects.filter(flow_app_id__in=a_app_id_list,parent_uuid=None).values('flow_uuid','flow_name','api_path','display_field').order_by('-id'))
                 for fw in fw_list:
                     mapping = False
                     for fa in fa_list:
                         if fw['flow_name'] == fa['flow_name']:
                             mapping = True
-                            flow_mapping[fw['id']] = {'flow_uuid':fa['flow_uuid'], 'api_path':fa['api_path']}
+                            flow_mapping[fw['id']] = {'flow_uuid':fa['flow_uuid'], 'api_path':fa['api_path'], 'display_field':fa['display_field']}
                             break
                     if not mapping:
                         flow_uuid = uuid.uuid4()
                         api_path = json.loads(fw['config']).get('api_path',flow_uuid.hex)
-                        flow_mapping[fw['id']] = {'flow_uuid':flow_uuid, 'api_path':api_path}
+                        flow_mapping[fw['id']] = {'flow_uuid':flow_uuid, 'api_path':api_path, 'display_field':None}
                         check_api_path_list.append(api_path)
             else:
                 for fw in fw_list:
                     flow_uuid = uuid.uuid4()
                     api_path = json.loads(fw['config']).get('api_path',flow_uuid.hex)
-                    flow_mapping[fw['id']] = {'flow_uuid':flow_uuid, 'api_path':api_path}
+                    flow_mapping[fw['id']] = {'flow_uuid':flow_uuid, 'api_path':api_path, 'display_field':None}
                     check_api_path_list.append(api_path)
             #檢查api路徑是否重複
             duplicate_path = checkAPIpath(check_api_path_list)
@@ -912,7 +913,7 @@ def deployWorkspaceApplication(postdata, user):
                 flow_list = []
                 f_status = True
                 for flow_id in flow_mapping:
-                    cfa_result = createFlowActive(new_app_id, flow_id, flow_mapping[flow_id]['flow_uuid'], caa_result['version'], user, app_attr, flow_mapping[flow_id]['api_path'])
+                    cfa_result = createFlowActive(new_app_id, flow_id, flow_mapping[flow_id]['flow_uuid'], caa_result['version'], user, app_attr, flow_mapping[flow_id]['api_path'], flow_mapping[flow_id]['display_field'])
                     flow_list.append(cfa_result)
                     if not cfa_result['status']:
                         f_status = False
@@ -1112,7 +1113,7 @@ def undeployActiveApplication(app_id, user):
         return result
 
 
-def createFlowActive(new_app_id, flowworkspace_id, flow_uuid, version, user, app_attr, api_path):
+def createFlowActive(new_app_id, flowworkspace_id, flow_uuid, version, user, app_attr, api_path, display_field):
     '''
     create flow active
     input: flowworkspace_id, flowactive_id, version, user
@@ -1126,7 +1127,13 @@ def createFlowActive(new_app_id, flowworkspace_id, flow_uuid, version, user, app
         active_obj = {}
         tf_list = ['fp_show','attachment','relation','worklog','history','mission','flowlog','api']
         subflow_mapping_dict = {}
-        display_field = {'data_no':'資料編號','stop_chart_text':'關卡名稱','error':'是否異常','error_message':'錯誤訊息','create_user':'開單人員','updatetime':'更新時間'}
+        if display_field:
+            try:
+                display_field = json.loads(display_field)
+            except:
+                display_field = {'data_no':'資料編號','stop_chart_text':'關卡名稱','error':'是否異常','error_message':'錯誤訊息','create_user':'開單人員','updatetime':'更新時間'}
+        else:
+            display_field = {'data_no':'資料編號','stop_chart_text':'關卡名稱','error':'是否異常','error_message':'錯誤訊息','create_user':'開單人員','updatetime':'更新時間'}
         fw = FlowWorkspace.objects.get(id=flowworkspace_id)
         flow_name = fw.flow_name
         #build flowactive dict
@@ -1223,23 +1230,7 @@ def createFlowActive(new_app_id, flowworkspace_id, flow_uuid, version, user, app
         formmodel = OMFormModel.deployModel(flow_uuid.hex, flow_name, int(flowactive.formcounter))
         #add permission to role
         if p:
-            for p_config in p:
-                per_list = []
-                role_name = p_config.get('role_name','')
-                value = p_config.get('value',{})
-                if value.get('view',False):
-                    p_code_name = 'Omdata_' + flow_uuid.hex + '_View'
-                    per_list.append(p_code_name)
-                if value.get('delete',False):
-                    p_code_name = 'Omdata_' + flow_uuid.hex + '_Delete'
-                    per_list.append(p_code_name)
-                if value.get('modify',False):
-                    p_code_name = 'Omdata_' + flow_uuid.hex + '_Modify'
-                    per_list.append(p_code_name)
-                if value.get('add',False):
-                    p_code_name = 'Omdata_' + flow_uuid.hex + '_Add'
-                    per_list.append(p_code_name)
-                addPermissionToRole(role_name, per_list)
+            buildPermissionCodeName('add', p, flow_uuid.hex)
         if formmodel:
             #create subflow
             flowmaker_sub = True
@@ -1380,6 +1371,31 @@ def createSidebar(flow_list, app_id, app_name, lside_pid):
         GlobalObject.__sidebarDesignObj__['design_updatetime'] = updatetime
     except Exception as e:
         debug(e.__str__())
+
+
+def buildPermissionCodeName(action ,permission_config_list, flow_uuid):
+    for p_config in permission_config_list:
+        per_list = []
+        role_name = p_config.get('role_name','')
+        value = p_config.get('value',{})
+        if value.get('view',False):
+            p_code_name = 'Omdata_' + flow_uuid + '_View'
+            per_list.append(p_code_name)
+        if value.get('delete',False):
+            p_code_name = 'Omdata_' + flow_uuid + '_Delete'
+            per_list.append(p_code_name)
+        if value.get('modify',False):
+            p_code_name = 'Omdata_' + flow_uuid + '_Modify'
+            per_list.append(p_code_name)
+        if value.get('add',False):
+            p_code_name = 'Omdata_' + flow_uuid + '_Add'
+            per_list.append(p_code_name)
+            
+        if action == 'add':
+            addPermissionToRole(role_name, per_list)
+        elif action == 'remove':
+            removePermissionToRole(role_name, per_list)
+    
 
 
 @login_required
@@ -2089,6 +2105,12 @@ def undeployFlow(flow_id_list):
             #remove chart compile object
             all_subflow_uuid_list.append(flow_uuid)
             removeChartCompileObject(all_subflow_uuid_list)
+            #remove permission from role
+            p = main_flow.permission
+            if p:
+                permission_config_list = json.loads(p)
+                buildPermissionCodeName('remove', permission_config_list, flow_uuid)
+            
     except Exception as e:
         debug(e.__str__())
         status = False
@@ -2140,6 +2162,12 @@ def redeployFlow(flow_id):
                 flowMaker(sb_flow_uuid,s_flowobject,version,subflow_mapping_dict)
         #create mainflow main.py
         flowMaker(flow_uuid,main_flow.flowobject,version,subflow_mapping_dict)
+        #add permission to role
+        permission_str = main_flow.permission
+        if permission_str:
+            permission_config_list = json.loads(permission_str)
+            if permission_config_list:
+                buildPermissionCodeName('add', permission_config_list, flow_uuid)
     except Exception as e:
         status = False
         message = e.__str__()
@@ -2261,7 +2289,7 @@ def loadFormDesignAjax(request):
                     result['start_input'] = []
                 
                 #載入語言包
-                language = request.COOKIES.get('django_language','zh-hant')
+                language = get_language()
                 formobject = Translator('formobject', 'active', language, fa.flow_app_id, None).Do(formobject)
                 trans_flow_name = Translator('single_app', 'active', language, fa.flow_app_id, None).Do(fa.flow_name)
                 if result['start_input']:
@@ -2330,7 +2358,7 @@ def getApplicationFlowNameAjax(request):
     
     #載入語言包
     if trans_type:
-        language = request.COOKIES.get('django_language','zh-hant')
+        language = get_language()
         result = Translator('single_app', trans_type, language, app_id, None).Do(result)
     
     info('%s get app name or flow name success.' % request.user.username,request)
@@ -2452,7 +2480,7 @@ def editOmDataAjax(request, api_path):
                 else:
                     per = False
             elif action == 'delete':
-                if request.user.has_perm('omformmodelOmdata_' + flow_uuid + '_Delete'):
+                if request.user.has_perm('omformmodel.Omdata_' + flow_uuid + '_Delete'):
                     result = deleteOmData(postdata)
                 else:
                     per = False
@@ -2484,7 +2512,7 @@ def editOmDataAjax(request, api_path):
 
 def checkOmDataPermission(user, flow_uuid, data_no, data_id, per_type, subquery_flow_name=None, subquery_app_name=None):
     '''
-    檢查使用者是否有編輯權限，或是該使用者為該單的受派人，或是開單人
+    檢查使用者是否有權限，或是該使用者為該單的受派人，或是開單人
     '''
     try:
         result = False
@@ -2527,10 +2555,9 @@ def checkOmDataPermission(user, flow_uuid, data_no, data_id, per_type, subquery_
         if data_id:
             omdata = omdata_model.objects.get(id=data_id)
             create_user_id = omdata.create_user_id
+            #是否為受派人
             group = omdata.group
-            print(data_id)
             if group:
-                print(group)
                 group = json.loads(group)
                 u = group.get('user','')
                 g = group.get('group','')
@@ -2538,11 +2565,30 @@ def checkOmDataPermission(user, flow_uuid, data_no, data_id, per_type, subquery_
                     assign_per = True
                 elif g in user_groups and not group['user']:
                     assign_per = True
+            
+            #若為歷史資料，且使用者資料的非受派人時，檢查該單當前的所有未關閉的停留點
+            if omdata.history and not assign_per:
+                omdata_data_no = omdata.data_no
+                non_historical_omdata_list = list(omdata_model.objects.filter(data_no=omdata_data_no,history=False,closed=False,running=False))
+                for non_historical_omdata in non_historical_omdata_list:
+                    n_group = non_historical_omdata.group
+                    if n_group:
+                        n_group = json.loads(n_group)
+                        n_u = n_group.get('user','')
+                        n_g = n_group.get('group','')
+                        if n_u == user.nick_name:
+                            assign_per = True
+                        elif n_g in user_groups and not group['user']:
+                            assign_per = True
+                    #如果找到，則直接離開迴圈
+                    if assign_per:
+                        break
+                        
+            #是否為開單人且操作為檢視單
             if per_type == '_View' and not assign_per:
                 if create_user_id == user.username:
                     assign_per = True
         elif data_no:
-            print(data_no)
             omdata = list(omdata_model.objects.filter(data_no=data_no).values('group','create_user_id'))
             for omdata_row in omdata:
                 create_user_id = omdata_row['create_user_id']
@@ -2569,7 +2615,6 @@ def checkOmDataPermission(user, flow_uuid, data_no, data_id, per_type, subquery_
             if user.has_perm('omformmodel.Omdata_' + flow_uuid + per_type) or assign_per:
                 result = True
     except Exception as e:
-        print(e.__str__())
         debug(e.__str__())
     finally:
         return result
@@ -3141,7 +3186,7 @@ def getFlowActiveDisplayFieldAjax(request):
     author: Kolin Hsu
     '''
     #get post data
-    language = request.COOKIES.get('django_language','zh-hant')
+    language = get_language()
     display_text = {}
     postdata = getPostdata(request)
     app_name = postdata.get('app_name','')
@@ -3235,12 +3280,12 @@ def listOmDataAjax(request, api_path):
                 query = omdata_model.objects.filter(closed__in=closed,updatetime__lte=updatetime,history=False).values(*display_field_list)
                 result = DatatableBuilder(request, query, field_list)
                 
-                #載入語言包
-                language = request.COOKIES.get('django_language','zh-hant')
-                result['data'] = Translator('datatable_single_app', 'active', language, flowactive.flow_app_id, None).Do(result['data'])
-                
                 #轉換字與值
                 result['data'] = datatableValueToText(result['data'], flow_uuid)
+                
+                #載入語言包
+                language = get_language()
+                result['data'] = Translator('datatable_single_app', 'active', language, flowactive.flow_app_id, None).Do(result['data'])
                 
                 info('%s list OmData success.' % request.user.username,request)
                 return JsonResponse(result)
@@ -3674,7 +3719,7 @@ def loadOmDataAjax(request):
                         formdata.append(form_dict)
                 
                 #載入語言包
-                language = request.COOKIES.get('django_language','zh-hant')
+                language = get_language()
                 formobject = Translator('formobject', 'active', language, None, app_name).Do(formobject)
                 trans_app_name = Translator('single_app', 'active', language, None, app_name).Do(app_name)
                 trans_flow_name = Translator('single_app', 'active', language, None, app_name).Do(main_fa.flow_name)
@@ -3847,7 +3892,7 @@ def loadFlowObjectAjax(request):
                 inoutput = listFlowInOutput(flow_uuid, data_no, flow_level, subflow_uuid, parent_chart_id)
                 
                 #載入語言包
-                language = request.COOKIES.get('django_language','zh-hant')
+                language = get_language()
                 flowobject = Translator('flowobject', 'active', language, app_id, None).Do(fa.flowobject)
                 flowobject = json.dumps(flowobject)
                 inoutput = Translator('datatable_single_app', 'active', language, app_id, None).Do(inoutput)
@@ -5211,8 +5256,6 @@ def listOmDataForSubQueryAjax(request):
     condition = postdata.get('condition',[])
     source_flow_uuid = postdata.get('source_flow_uuid','')
     source_data_id = postdata.get('source_data_id','')
-    print(source_data_id)
-    print('....')
     flowactive = FlowActiveGlobalObject.NameSearch(flow_name, None, app_name)
     flow_uuid = flowactive.flow_uuid.hex
     if source_data_id:
@@ -5258,12 +5301,12 @@ def listOmDataForSubQueryAjax(request):
         
         result = DatatableBuilder(request, query, field_list)
         
-        #載入語言包
-        language = request.COOKIES.get('django_language','zh-hant')
-        result['data'] = Translator('datatable_single_app', 'active', language, flowactive.flow_app_id, None).Do(result['data'])
-        
         #轉換字與值
         result['data'] = datatableValueToText(result['data'], flow_uuid)
+        
+        #載入語言包
+        language = get_language()
+        result['data'] = Translator('datatable_single_app', 'active', language, flowactive.flow_app_id, None).Do(result['data'])
         
         info(request ,'%s list OmData success.' % request.user.username)
         return JsonResponse(result)
@@ -5354,8 +5397,6 @@ def getFlowFieldNameForSubQueryAjax(request):
     app_name = postdata.get('app_name','')
     if flow_name and app_name:
         result = getFlowFieldName(app_name, flow_name, True, None)
-    for i in result:
-        print(i,':    ',result[i])
     info(request ,'%s get flow field name success.' % request.user.username)
     return ResponseAjax(statusEnum.success, _('讀取成功。'), result).returnJSON()
     

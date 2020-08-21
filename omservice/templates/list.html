@@ -1223,6 +1223,30 @@
 				                '<input id="formcontent_' + thisCol.id + '_item" name="setValue" type="text" value="'+thisValue+'" placeholder="'+thisCol.config.placeholder+'" class="form-control" '+readonly+'>'+
 				            '</li>'
 				            );
+				    break;
+					case "date":
+						thisTabContent.append(
+							'<li class="form-group" style="'+moveable+'" id="COL_'+thisCol.id+'" data-id="'+thisCol.id+'" data-type="'+thisCol.type+'">'+
+				                '<label class="text-light-blue">'+ thisCol.config.title + require +'</label>'+
+				                thisI+
+				                '<input id="formcontent_' + thisCol.id + '_item" name="setValue" type="text" value="'+thisValue+'" placeholder="'+thisCol.config.placeholder+'" autocomplete="off" class="form-control" '+readonly+'>'+
+				            '</li>'
+				            );
+				        if(step_id=="default"||!thisCol.config.readonly||read_mode){
+				        	thisTabContent.find('#formcontent_' + thisCol.id + '_item').datetimepicker({minView:'month',format:'yyyy-mm-dd',language:getCookie('django_language'),autoclose:true,todayHighlight:true});
+				        }
+				    break;
+					case "datetime":
+						thisTabContent.append(
+							'<li class="form-group" style="'+moveable+'" id="COL_'+thisCol.id+'" data-id="'+thisCol.id+'" data-type="'+thisCol.type+'">'+
+				                '<label class="text-light-blue">'+ thisCol.config.title + require +'</label>'+
+				                thisI+
+				                '<input id="formcontent_' + thisCol.id + '_item" name="setValue" type="text" value="'+thisValue+'" placeholder="'+thisCol.config.placeholder+'" autocomplete="off" class="form-control" '+readonly+'>'+
+				            '</li>'
+				            );
+				        if(step_id=="default"||!thisCol.config.readonly||read_mode){
+				        	thisTabContent.find('#formcontent_' + thisCol.id + '_item').datetimepicker({format:'yyyy-mm-dd hh:ii:ss',language:getCookie('django_language'),autoclose:true,todayHighlight:true});
+				        }
 					break;
 					case "h_status":
 						var content = $('<li class="form-group" style="'+moveable+'" id="COL_'+thisCol.id+'" data-id="'+thisCol.id+'" data-type="'+thisCol.type+'">'+
@@ -1417,6 +1441,8 @@
 				case 'areabox':
 				case 'list':
 				case "subquery":
+				case "date":
+				case "datetime":
 					var thisValue=thisDom.find('[name=setValue]:eq(0)').val();
 					if(thisDom.find('font[color=red]').length && (null==thisValue || thisValue.length==0))
 						RequireWarning = true;

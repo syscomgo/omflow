@@ -11,6 +11,7 @@ from omuser.models import OmUser
 from django.db.models.aggregates import Max
 from omflow.syscom.default_logger import info,debug,error
 from omflow.global_obj import FlowActiveGlobalObject
+from django.utils.translation import get_language
 
 
 @login_required
@@ -140,7 +141,7 @@ def listMyMissionAjax(request):
         result = DatatableBuilder(request, query, field_list)
         
         #載入語言包
-        language = request.COOKIES.get('django_language','zh-hant')
+        language = get_language()
         data = result['data']
         if isinstance(data, str):
             pass
@@ -205,7 +206,7 @@ def listHistoryMissionAjax(request):
     result = DatatableBuilder(request, query, field_list)
         
     #載入語言包
-    language = request.COOKIES.get('django_language','zh-hant')
+    language = get_language()
     result['data'] = Translator('datatable_multi_app', 'active', language, None, None).Do(result['data'])
     
     info('%s list MissionHistory success.' % request.user.username,request)
@@ -266,7 +267,7 @@ def listHistoryMissionCurrentStateAjax(request):
     result['toomany'] = toomany
         
     #載入語言包
-    language = request.COOKIES.get('django_language','zh-hant')
+    language = get_language()
     result['data'] = Translator('datatable_multi_app', 'active', language, None, None).Do(result['data'])
     
     info('%s list MissionCurrentState success.' % request.user.username,request)

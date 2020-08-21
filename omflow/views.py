@@ -25,6 +25,7 @@ from omformflow.models import OmdataFiles, ActiveApplication
 from ommission.models import Missions
 from django.db.models import Q
 from django.db.models.aggregates import Max
+from django.utils.translation import get_language
 
 
 #app variable
@@ -625,7 +626,7 @@ def loadLSideAjax(request):
                     sidebar = ''
             
             #載入語言包
-            language = request.COOKIES.get('django_language','zh-hant')
+            language = get_language()
             if isinstance(sidebar, list):
                 trans_sidebar_str = json.dumps(sidebar)
                 trans_sidebar = json.loads(trans_sidebar_str)

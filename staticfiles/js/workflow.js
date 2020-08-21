@@ -34,6 +34,7 @@ var omfloweng = function(div_id)
 	var event_get_app_list_callback = null;
 	var event_get_flow_list_callback = null;
 	var event_get_flowIO_list_callback = null;
+	var event_get_column_list_callback = null;
 	
 	var event_get_my_flow_list_callback = null;
 	var event_get_my_flowIO_list_callback = null;
@@ -10546,7 +10547,7 @@ var omformeng = function(div_id)
 						header_item_data['id'] = 'level';
 						header_item_data['value'] = obj.val();
 						header_item_data['type'] = 'header';
-						data.values.push(header_item_data);
+//						data.values.push(header_item_data);
 						if(item.config.require)
 						{
 							if(item_data['value'] == null)
@@ -10574,7 +10575,7 @@ var omformeng = function(div_id)
 						header_item_data['id'] = 'title';
 						header_item_data['value'] = obj.val();
 						header_item_data['type'] = 'header';
-						data.values.push(header_item_data);
+//						data.values.push(header_item_data);
 						if(item.config.require)
 						{
 							if(item_data['value'] == null)
@@ -10610,7 +10611,7 @@ var omformeng = function(div_id)
 						});
 						
 						header_item_data['type'] = 'header';
-						data.values.push(header_item_data);
+//						data.values.push(header_item_data);
 						if(item.config.require)
 						{
 							if(item_data['value'] == null)
@@ -10638,7 +10639,7 @@ var omformeng = function(div_id)
 						header_item_data['id'] = 'group';
 						header_item_data['value'] = {'group':obj1.val(),'user':obj2.val()};
 						header_item_data['type'] = 'header';
-						data.values.push(header_item_data);
+//						data.values.push(header_item_data);
 						var require_checker = false;
 						
 						if(item.config.user_require)

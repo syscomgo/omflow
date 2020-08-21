@@ -545,39 +545,26 @@ def FormatFormdataListToFormdata(formdata_list, flow_uuid=None, formobject=None)
     
     for item_id in header_dict:
         header_type = header_dict[item_id]
-        header = formdata.get(header_type,None)
         if header_type in ['title','level']:
-            if header:
-                pass
-            else:
-                formdata[header_type] = formdata[item_id]
+            formdata[header_type] = formdata[item_id]
         elif header_type == 'status':
-            value_to_text = True
-            if header:
-                if header != formdata[item_id]:
-                    value_to_text = False
-            if value_to_text:
-                try:
-                    formdata[header_type] = getFormobjectListText(item_id, formdata[item_id], flow_uuid, formobject)
-                except:
-                    formdata[header_type] = formdata[item_id]
+            try:
+                formdata[header_type] = getFormobjectListText(item_id, formdata[item_id], flow_uuid, formobject)
+            except:
+                formdata[header_type] = formdata[item_id]
         elif header_type == 'group':
-            value_to_text = True
-            if header:
-                if header != formdata[item_id]:
-                    value_to_text = False
-            if value_to_text:
-                try:
-                    new_header = json.loads(formdata[item_id])
-                    new_header['group'] = getGroupName(new_header['group'])
-                    new_header['user'] = getUserName(new_header['user'])
-                    formdata[header_type] = json.dumps(new_header)
-                except:
-                    formdata[header_type] = formdata[item_id]
+            try:
+                new_header = json.loads(formdata[item_id])
+                new_header['group'] = getGroupName(new_header['group'])
+                new_header['user'] = getUserName(new_header['user'])
+                formdata[header_type] = json.dumps(new_header)
+            except:
+                formdata[header_type] = formdata[item_id]
     return formdata
 
 
 def getFormobjectListText(item_id, value, flow_uuid, formobject):
+    item_id = item_id.upper()
     text = value
     lists = []
     if flow_uuid:

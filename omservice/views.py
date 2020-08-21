@@ -11,6 +11,7 @@ from omformflow.models import FlowActive
 from django.db.models import Max
 from omflow.global_obj import FlowActiveGlobalObject
 from omformflow.models import ActiveApplication
+from django.utils.translation import get_language
 
 #SubQuery
 from omflow.syscom.common import searchConditionBuilder, DatatableBuilder, getModel
@@ -139,7 +140,7 @@ def loadServiceAjax(request):
             
             #翻譯語言
             if postdata.get('type') != "source":
-                language_type = request.COOKIES.get('django_language','zh-hant')
+                language_type = get_language()
                 #print(FlowActiveGlobalObject.getSysLanDict('service'))
                 lan_package = FlowActiveGlobalObject.getSysLanDict('service').get(language_type,None)
                 
@@ -189,7 +190,7 @@ def getFormListAjax(request):
         result = {'app':app,'flow':flow}
         
         #翻譯
-        lang = request.COOKIES.get('django_language','zh-hant')
+        lang = get_language()
         result['app'] = Translator('datatable_multi_app','active', lang, None,None).Do(result['app'])
         result['flow'] = Translator('datatable_multi_app','active', lang, None,None).Do(result['flow'])
 
@@ -219,7 +220,7 @@ def getFormObjAjax(request):
             thisQuery = list(FlowActive.objects.filter(flow_uuid=flow_uuid,undeploy_flag=False).values('formobject','attachment'))
             if len(thisQuery):
                 result = thisQuery[0]
-                language = request.COOKIES.get('django_language','zh-hant')
+                language = get_language()
                 app_id = FlowActiveGlobalObject.UUIDSearch(flow_uuid).flow_app_id
                 formobject = Translator('formobject','active', language, app_id, None).Do(result['formobject'])
                 result['formobject'] = json.dumps(formobject)
@@ -344,7 +345,7 @@ def exportTranslationAjax(request):
             box_object = json.loads(result[0]["content"])
 
             #翻譯語言
-            #language_type = request.COOKIES.get('django_language','zh-hant')
+            #language_type = get_language()
             lan_package = FlowActiveGlobalObject.getSysLanDict('service').get(language_type,{})
             
             #翻譯「全部」
@@ -467,12 +468,12 @@ def SubQueryHeaderAjax(request):
         
         result = DatatableBuilder(request, query, field_list)
         
-        #載入語言包
-        language = request.COOKIES.get('django_language','zh-hant')
-        result['data'] = Translator('datatable_single_app', 'active', language, flowactive.flow_app_id, None).Do(result['data'])
-        
         #轉換字與值
         result['data'] = datatableValueToText(result['data'], flow_uuid)
+        
+        #載入語言包
+        language = get_language()
+        result['data'] = Translator('datatable_single_app', 'active', language, flowactive.flow_app_id, None).Do(result['data'])
         
         info(request ,'%s list OmData success.' % request.user.username)
         return JsonResponse(result)

@@ -8,6 +8,7 @@ from omflow.syscom.message import ResponseAjax, statusEnum
 from omflow.global_obj import FlowActiveGlobalObject
 from omformflow.models import ActiveApplication
 from django.apps import apps
+from django.utils.translation import get_language
 #APP
 from omdashboard.models import OmDashboard
 from omformflow.models import FlowActive
@@ -459,7 +460,7 @@ def getFormListAjax(request):
         result = {'app':app,'flow':flow}
         
         #翻譯
-        lang = request.COOKIES.get('django_language','zh-hant')
+        lang = get_language()
         result['app'] = Translator('datatable_multi_app','active', lang, None,None).Do(result['app'])
         result['flow'] = Translator('datatable_multi_app','active', lang, None,None).Do(result['flow'])
         
@@ -538,7 +539,7 @@ def getColumnListAjax(request):
                             else:
                                 result[field.name] = field.verbose_name
                                 
-                    lang = request.COOKIES.get('django_language','zh-hant')
+                    lang = get_language()
                     app_id = FlowActiveGlobalObject.UUIDSearch(flow_uuid).flow_app_id
                     result = Translator( 'single_app','active', lang, app_id, None ).Do( result )
             

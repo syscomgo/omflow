@@ -607,6 +607,7 @@ def groupUserAjax(request):
     return: json
     author: Kolin Hsu
     '''
+    d_group = []
     #get postdata
     postdata = getPostdata(request)
     group_list = postdata.get('group_list','')
@@ -633,6 +634,15 @@ def groupUserAjax(request):
             if add_list:
                 a_group = Group.objects.filter(name__in=add_list)
                 user.groups.add(*a_group)
+        
+        #修正default group
+        d_list = []
+        for g in d_group:
+            d_list.append(str(g.id))
+        if user.default_group in d_list:
+            user.default_group = ''
+            user.save()
+            
         info('%s add an user to groups success' % request.user.username,request)
         return ResponseAjax(statusEnum.success, _('更新成功。')).returnJSON()
     else:
@@ -868,14 +878,25 @@ def addPermissionToRole(role_name, per_list):
     '''
     try:
         group = OmGroup.objects.get_or_create(name=role_name,display_name=role_name,functional_flag=True)[0]
-        group_per_list = list(group.permissions.all().values_list('codename',flat=True))
-        add_list = list(set(per_list) - set(group_per_list))
-        if add_list:
-            a_pers = Permission.objects.filter(codename__in=add_list)
-            group.permissions.add(*a_pers)
+        pers = Permission.objects.filter(codename__in=per_list)
+        group.permissions.add(*pers)
         return True
     except Exception as e:
         debug('add permission to role error: ' % e.__str__())
+        return False
+
+
+def removePermissionToRole(role_name, per_list):
+    '''
+    remove permission from role
+    '''
+    try:
+        group = OmGroup.objects.get(name=role_name,display_name=role_name,functional_flag=True)
+        pers = Permission.objects.filter(codename__in=per_list)
+        group.permissions.remove(*pers)
+        return True
+    except Exception as e:
+        debug('remove permission to role error: ' % e.__str__())
         return False
 
 
