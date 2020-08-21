@@ -10,7 +10,7 @@ omflowは、ビジネスプロセスとIT自動化プロセスを組み合わせ
 omflowのプロセスエンジンはPython + Djangoを使用して開発されています。つまり、便利なプロセス設計に加えて、
 また、Pythonコードとコミュニティアプリケーションを簡単に接続して自動化を実現できるため、ITメンテナンスの管理と自動化だけでなく、エンタープライズERPやその他のアプリケーションにも非常に適しています。
  
-documents : https://doc.omflow.com.tw/
+Full documents : https://doc.omflow.com.tw/v/japan/
  
 
 ソフトウェア機能
