@@ -75,11 +75,13 @@ default user is admin , password is admin
 Roadmap
 =======
 
-*  multi-language support
-*  form and data relation
-*  subform and more form field
-*  more workflow chart
-*  download app from cloud
+*  Report
+*  Form front-end change actions
+*  workflow's Python Point assign a collector 
+*  Event API
+*  data sub relations
+*  web automation support(selenium)
+
 
 Creator
 =======
