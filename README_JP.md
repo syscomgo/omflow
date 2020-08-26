@@ -66,9 +66,12 @@ docker run -d --name omflow -p 0.0.0.0:80:80 omflow/open
 Roadmap
 =======
 
-*より多くのデータ操作とデータの関連付け
-*その他のフォームコンポーネント-サブフォーム、日付と時刻
-*他のパラメーターフィルターを取得し、新しいクロールシステムパラメーター/フォームデータパラメーターを追加するためのプロセスサポート
+*  Report
+*  Form front-end change actions
+*  workflow's Python Point assign a collector 
+*  Event API
+*  data sub relations
+*  web automation support(selenium)
 
 著者
 =======
