@@ -66,12 +66,12 @@ docker run -d --name omflow -p 0.0.0.0:80:80 omflow/open
 Roadmap
 =======
 
-*  Report
-*  Form front-end change actions
-*  workflow's Python Point assign a collector 
-*  Event API
-*  data sub relations
-*  web automation support(selenium)
+*  レポート機能
+*  フロントエンドフォームコンポーネントの相互作用
+*  プロセス設計はPythonが実行するコレクターを選択できます
+*  イベント管理API
+*  親子手形関連付け機能
+*  Webオートメーションサポート（selenium）
 
 著者
 =======
