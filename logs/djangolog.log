@@ -1,0 +1,8 @@
+[2021-01-21 16:53:38] - ERROR    - "POST /api/l-side/load/ HTTP/1.1" 500 59
+[2021-01-21 17:04:14] - ERROR    - "GET /flowmanage/page/flow-app/ HTTP/1.1" 500 59
+[2021-01-21 17:04:17] - ERROR    - "POST /api/l-side/load/ HTTP/1.1" 500 59
+[2021-01-21 17:04:20] - ERROR    - "POST /my-mission/api/my-mission/list/ HTTP/1.1" 500 59
+[2021-01-21 17:04:20] - ERROR    - "POST /api/workinfo/load/ HTTP/1.1" 500 59
+[2021-01-21 17:08:27] - ERROR    - "POST /flowmanage/api/omdata/list/None/ HTTP/1.1" 500 59
+[2021-01-21 17:08:41] - ERROR    - "POST /api/l-side/load/ HTTP/1.1" 500 59
+[2021-01-21 18:25:39] - ERROR    - "POST /api/workinfo/load/ HTTP/1.1" 500 59

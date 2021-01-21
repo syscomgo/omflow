@@ -41,25 +41,37 @@ Hardware and Software Requirement
 
 *  support windows and linux system
 *  Python 3 or higher 
-*  Django 2.X
+*  Django < 3
 
-you can install django using pip
+
 <pre><code>
-pip install django
+you can install conda invironment as
+conda create -n omflow python==3.7
 
+in windows
+source activate omflow
+
+in linux
+conda activate omflow
 </code></pre>
 
 *  support browser:Firefox , Chrome , Edge , Safari , IE11 or higher
 *  1 core cpu and 1g ram , 1g disk space
 *  if your python is 3.5 or lower , please use django 2.x
+*  if your python is 3.7 or lower , please use django 3.x
 
 Install and Run
 ===========
 
 Download the omflow .zip file the unzip , then run server.
 
+change "settings - Copy.py" in workflow to settings.py (becuase its special for every developer for its passowrd sites)
+
+install package by 
+pip install -r requirements.txt
+
 <pre><code>
-python manage.py runserver 0.0.0.0:8000
+python manage.py runserver
 
 </code></pre>
 
@@ -71,6 +83,9 @@ docker run -d --name omflow -p 0.0.0.0:80:80 omflow/open
 </code></pre>
 
 default user is admin , password is admin 
+if not work you can create you admeb by
+
+python manage.py createsuperuser
 
 Roadmap
 =======
@@ -81,7 +96,7 @@ Roadmap
 *  Event API
 *  data sub relations
 *  web automation support(selenium)
-
+*  menu control by level herarcy
 
 Creator
 =======
