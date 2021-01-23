@@ -112,29 +112,29 @@ class FormModel():
             file_content += "class " + model_name + "(models.Model):\n"
             code_space = "    "
             file_content += code_space + "table_name = _('"+flow_name+"')\n"
-            file_content += code_space + "flow_uuid = models.UUIDField(verbose_name= _('流程編號'), null=True, blank=True)\n"
-            file_content += code_space + "dataid_header = models.CharField(verbose_name= _('資料代碼'), max_length=3)\n"
-            file_content += code_space + "data_no = models.IntegerField(verbose_name = _('資料編號'), null=True, blank=True)\n"
-            file_content += code_space + "history = models.BooleanField(verbose_name = _('歷史資料'), default=False)\n"
-            file_content += code_space + "status = models.CharField(verbose_name= _('狀態'), max_length=200,null=True, blank=True)\n"
-            file_content += code_space + "title = models.CharField(verbose_name= _('標題'), max_length=200,null=True, blank=True)\n"
-            file_content += code_space + "level = models.CharField(verbose_name= _('燈號'), max_length=200,null=True, blank=True)\n"
-            file_content += code_space + "group = models.CharField(verbose_name= _('受派群組'), max_length=500,null=True, blank=True)\n"
-            file_content += code_space + "closed = models.BooleanField(verbose_name = _('關閉標記'), default=False)\n"
-            file_content += code_space + "stop_uuid = models.TextField(verbose_name = _('關卡'), blank=True, null=True)\n"
-            file_content += code_space + "stop_chart_type = models.TextField(verbose_name = _('關卡類型'), blank=True, null=True)\n"
-            file_content += code_space + "stop_chart_text = models.TextField(verbose_name = _('關卡名稱'), blank=True, null=True)\n"
-            file_content += code_space + "running = models.BooleanField(verbose_name = _('執行標記'), default=False)\n"
-            file_content += code_space + "error = models.BooleanField(verbose_name = _('是否異常'), default=False)\n"
-            file_content += code_space + "createtime = models.DateTimeField(verbose_name = _('建立時間'), auto_now_add=True)\n"
-            file_content += code_space + "updatetime = models.DateTimeField(verbose_name = _('更新時間'), auto_now=True)\n"
-            file_content += code_space + "stoptime = models.DateTimeField(verbose_name = _('停止時間'), null=True,blank=True)\n"
-            file_content += code_space + "create_user = models.ForeignKey('omuser.OmUser', verbose_name = _('開單人員'), to_field='username', on_delete=models.SET_NULL, blank=True, null=True, related_name='create_"+flow_uuid+"')\n"
-            file_content += code_space + "update_user = models.ForeignKey('omuser.OmUser', verbose_name = _('更新人員'), to_field='username', on_delete=models.SET_NULL, blank=True, null=True, related_name='update_"+flow_uuid+"')\n"
-            file_content += code_space + "data_param = models.TextField(verbose_name = _('流程參數'), null=True,blank=True)\n"
-            file_content += code_space + "error_message = models.TextField(verbose_name = _('錯誤訊息'), null=True,blank=True)\n"
-            file_content += code_space + "init_data = models.ForeignKey('self', blank=True, null=True, related_name='extra_data', verbose_name = _('初始資料'), on_delete=models.CASCADE)\n"
-            file_content += code_space + "is_child = models.BooleanField(verbose_name = _('子單'), default=False)\n"
+            file_content += code_space + "flow_uuid = models.UUIDField(verbose_name= _('flow uuid'), null=True, blank=True)\n"
+            file_content += code_space + "dataid_header = models.CharField(verbose_name= _('Dataid Header'), max_length=3)\n"
+            file_content += code_space + "data_no = models.IntegerField(verbose_name = _('Data No'), null=True, blank=True)\n"
+            file_content += code_space + "history = models.BooleanField(verbose_name = _('History'), default=False)\n"
+            file_content += code_space + "status = models.CharField(verbose_name= _('Status'), max_length=200,null=True, blank=True)\n"
+            file_content += code_space + "title = models.CharField(verbose_name= _('Title'), max_length=200,null=True, blank=True)\n"
+            file_content += code_space + "level = models.CharField(verbose_name= _('Level'), max_length=200,null=True, blank=True)\n"
+            file_content += code_space + "group = models.CharField(verbose_name= _('Group'), max_length=500,null=True, blank=True)\n"
+            file_content += code_space + "closed = models.BooleanField(verbose_name = _('Closed'), default=False)\n"
+            file_content += code_space + "stop_uuid = models.TextField(verbose_name = _('Stop Uuid'), blank=True, null=True)\n"
+            file_content += code_space + "stop_chart_type = models.TextField(verbose_name = _('Stop Chart Type'), blank=True, null=True)\n"
+            file_content += code_space + "stop_chart_text = models.TextField(verbose_name = _('Stop Chart Text'), blank=True, null=True)\n"
+            file_content += code_space + "running = models.BooleanField(verbose_name = _('Running'), default=False)\n"
+            file_content += code_space + "error = models.BooleanField(verbose_name = _('Error'), default=False)\n"
+            file_content += code_space + "createtime = models.DateTimeField(verbose_name = _('Create Time'), auto_now_add=True)\n"
+            file_content += code_space + "updatetime = models.DateTimeField(verbose_name = _('Update Time'), auto_now=True)\n"
+            file_content += code_space + "stoptime = models.DateTimeField(verbose_name = _('Stop Time'), null=True,blank=True)\n"
+            file_content += code_space + "create_user = models.ForeignKey('omuser.OmUser', verbose_name = _('Create User'), to_field='username', on_delete=models.SET_NULL, blank=True, null=True, related_name='create_"+flow_uuid+"')\n"
+            file_content += code_space + "update_user = models.ForeignKey('omuser.OmUser', verbose_name = _('Update User'), to_field='username', on_delete=models.SET_NULL, blank=True, null=True, related_name='update_"+flow_uuid+"')\n"
+            file_content += code_space + "data_param = models.TextField(verbose_name = _('Data Parameter'), null=True,blank=True)\n"
+            file_content += code_space + "error_message = models.TextField(verbose_name = _('Error Message'), null=True,blank=True)\n"
+            file_content += code_space + "init_data = models.ForeignKey('self', blank=True, null=True, related_name='extra_data', verbose_name = _('Initial Data'), on_delete=models.CASCADE)\n"
+            file_content += code_space + "is_child = models.BooleanField(verbose_name = _('Is Child'), default=False)\n"
             for i in range(form_item_counter):
                 file_content += code_space + "formitm_" + str(i+1) + " = models.TextField(null=True,blank=True)\n"
             file_content += code_space + "objects = FormatManager()\n"
@@ -142,27 +142,27 @@ class FormModel():
             code_space += "    "
             file_content += code_space + "default_permissions = ()\n"
             file_content += code_space + "permissions = (\n"
-            file_content += code_space + "    ('"+model_name+"_Add', _('新增"+flow_name+"')),\n"
-            file_content += code_space + "    ('"+model_name+"_Modify', _('修改"+flow_name+"')),\n"
-            file_content += code_space + "    ('"+model_name+"_View', _('檢視"+flow_name+"')),\n"
-            file_content += code_space + "    ('"+model_name+"_Delete', _('刪除"+flow_name+"')),\n"
+            file_content += code_space + "    ('"+model_name+"_Add', _('Add"+flow_name+"')),\n"
+            file_content += code_space + "    ('"+model_name+"_Modify', _('Modify"+flow_name+"')),\n"
+            file_content += code_space + "    ('"+model_name+"_View', _('View"+flow_name+"')),\n"
+            file_content += code_space + "    ('"+model_name+"_Delete', _('Delete"+flow_name+"')),\n"
             file_content += code_space + ")\n"
             code_space = code_space.replace("    ", "", 1)
             code_space = code_space.replace("    ", "", 1)
             file_content += code_space + "\n"
             file_content += "class " + model_name + "_ValueHistory(models.Model):\n"
             code_space = "    "
-            file_content += code_space + "flow_uuid = models.UUIDField(verbose_name= _('流程編號'), null=True, blank=True)\n"
-            file_content += code_space + "data_no = models.IntegerField(verbose_name = _('資料編號'), null=True, blank=True)\n"
-            file_content += code_space + "data_id = models.IntegerField(verbose_name = _('多重資料編號'), blank=True, null=True)\n"
-            file_content += code_space + "chart_id = models.CharField(verbose_name= _('功能點'), max_length=500,null=True, blank=True)\n"
-            file_content += code_space + "stop_chart_type = models.TextField(verbose_name = _('關卡類型'), blank=True, null=True)\n"
-            file_content += code_space + "stop_chart_text = models.TextField(verbose_name = _('關卡名稱'), blank=True, null=True)\n"
-            file_content += code_space + "input_data = models.TextField(verbose_name= _('輸入參數'),null=True, blank=True)\n"
-            file_content += code_space + "output_data = models.TextField(verbose_name= _('輸出參數'),null=True, blank=True)\n"
-            file_content += code_space + "createtime = models.DateTimeField(verbose_name = _('建立時間'), auto_now_add=True)\n"
-            file_content += code_space + "updatetime = models.DateTimeField(verbose_name = _('更新時間'), auto_now=True)\n"
-            file_content += code_space + "error = models.BooleanField(verbose_name = _('異常標記'), default=False)\n"
+            file_content += code_space + "flow_uuid = models.UUIDField(verbose_name= _('Flow Uuid'), null=True, blank=True)\n"
+            file_content += code_space + "data_no = models.IntegerField(verbose_name = _('data_no'), null=True, blank=True)\n"
+            file_content += code_space + "data_id = models.IntegerField(verbose_name = _('Data ID'), blank=True, null=True)\n"
+            file_content += code_space + "chart_id = models.CharField(verbose_name= _('chart Id'), max_length=500,null=True, blank=True)\n"
+            file_content += code_space + "stop_chart_type = models.TextField(verbose_name = _('Stop Chart Type'), blank=True, null=True)\n"
+            file_content += code_space + "stop_chart_text = models.TextField(verbose_name = _('Stop Chart Text'), blank=True, null=True)\n"
+            file_content += code_space + "input_data = models.TextField(verbose_name= _('Input Data'),null=True, blank=True)\n"
+            file_content += code_space + "output_data = models.TextField(verbose_name= _('Output Data'),null=True, blank=True)\n"
+            file_content += code_space + "createtime = models.DateTimeField(verbose_name = _('Create Time'), auto_now_add=True)\n"
+            file_content += code_space + "updatetime = models.DateTimeField(verbose_name = _('Update Time'), auto_now=True)\n"
+            file_content += code_space + "error = models.BooleanField(verbose_name = _('Error'), default=False)\n"
             file_content += code_space + "objects = FormatManager()\n"
             file_content += code_space + "class Meta:\n"
             code_space += "    "
@@ -172,7 +172,7 @@ class FormModel():
             file_content += code_space + "\n"
             file_content += "class " + model_name + "_DataNo(models.Model):\n"
             code_space = "    "
-            file_content += code_space + "createtime = models.DateTimeField(verbose_name = _('建立時間'), auto_now_add=True)\n"
+            file_content += code_space + "createtime = models.DateTimeField(verbose_name = _('Create Time'), auto_now_add=True)\n"
             file_content += code_space + "objects = FormatManager()\n"
             file_content += code_space + "class Meta:\n"
             code_space += "    "
@@ -187,62 +187,62 @@ class FormModel():
             class Meta:
                 default_permissions = ()
                 permissions = (
-                    (model_name+"_Add", _('新增')+flow_name),
-                    (model_name+"_Modify", _('修改')+flow_name),
-                    (model_name+"_View", _('檢視')+flow_name),
-                    (model_name+"_Delete", _('刪除')+flow_name),
+                    (model_name+"_Add", _('Add')+flow_name),
+                    (model_name+"_Modify", _('Modify')+flow_name),
+                    (model_name+"_View", _('View')+flow_name),
+                    (model_name+"_Delete", _('Delete')+flow_name),
                 )
             class Meta2:
                 default_permissions = ()
             #add model to memory
             attrs = {'__module__': 'omformmodel.models','Meta': Meta}
             attrs['table_name'] = flow_name
-            attrs['flow_uuid'] = models.UUIDField(verbose_name= _('流程編號'), null=True, blank=True)
-            attrs['dataid_header'] = models.CharField(verbose_name= _('資料代碼'), max_length=3)
-            attrs['data_no'] = models.IntegerField(verbose_name = _('資料編號'), null=True, blank=True)
-            attrs['history'] = models.BooleanField(verbose_name = _('歷史資料'), default=False)
-            attrs['status'] = models.CharField(verbose_name= _('狀態'), max_length=200,null=True, blank=True)
-            attrs['title'] = models.CharField(verbose_name= _('標題'), max_length=200,null=True, blank=True)
-            attrs['level'] = models.CharField(verbose_name= _('燈號'), max_length=200,null=True, blank=True)
-            attrs['group'] = models.CharField(verbose_name= _('受派群組'), max_length=500,null=True, blank=True)
-            attrs['closed'] = models.BooleanField(verbose_name = _('關閉標記'), default=False)
-            attrs['stop_uuid'] = models.TextField(verbose_name = _('關卡'), blank=True, null=True)
-            attrs['stop_chart_type'] = models.TextField(verbose_name = _('關卡類型'), blank=True, null=True)
-            attrs['stop_chart_text'] = models.TextField(verbose_name = _('關卡名稱'), blank=True, null=True)
-            attrs['running'] = models.BooleanField(verbose_name = _('執行標記'), default=False)
-            attrs['error'] = models.BooleanField(verbose_name = _('是否異常'), default=False)
-            attrs['createtime'] = models.DateTimeField(verbose_name = _('建立時間'), auto_now_add=True)
-            attrs['updatetime'] = models.DateTimeField(verbose_name = _('更新時間'), auto_now=True)
-            attrs['stoptime'] = models.DateTimeField(verbose_name = _('停止時間'), null=True,blank=True)
-            attrs['create_user'] = models.ForeignKey('omuser.OmUser', verbose_name = _('開單人員'), to_field='username', on_delete=models.SET_NULL, blank=True, null=True, related_name='create_'+flow_uuid)
-            attrs['update_user'] = models.ForeignKey('omuser.OmUser', verbose_name = _('更新人員'), to_field='username', on_delete=models.SET_NULL, blank=True, null=True, related_name='update_'+flow_uuid)
-            attrs['data_param'] = models.TextField(verbose_name = _('流程參數'), null=True,blank=True)
-            attrs['error_message'] = models.TextField(verbose_name = _('錯誤訊息'), null=True,blank=True)
-            attrs['init_data'] = models.ForeignKey('self', blank=True, null=True, related_name='extra_data', verbose_name = _('初始資料'), on_delete=models.CASCADE)
-            attrs['is_child'] = models.BooleanField(verbose_name = _('子單'), default=False)
+            attrs['flow_uuid'] = models.UUIDField(verbose_name= _('Flow Uuid'), null=True, blank=True)
+            attrs['dataid_header'] = models.CharField(verbose_name= _('Dataid Header'), max_length=3)
+            attrs['data_no'] = models.IntegerField(verbose_name = _('Data No'), null=True, blank=True)
+            attrs['history'] = models.BooleanField(verbose_name = _('History'), default=False)
+            attrs['status'] = models.CharField(verbose_name= _('Status'), max_length=200,null=True, blank=True)
+            attrs['title'] = models.CharField(verbose_name= _('Title'), max_length=200,null=True, blank=True)
+            attrs['level'] = models.CharField(verbose_name= _('Level'), max_length=200,null=True, blank=True)
+            attrs['group'] = models.CharField(verbose_name= _('Group'), max_length=500,null=True, blank=True)
+            attrs['closed'] = models.BooleanField(verbose_name = _('closed'), default=False)
+            attrs['stop_uuid'] = models.TextField(verbose_name = _('Stop Uuid'), blank=True, null=True)
+            attrs['stop_chart_type'] = models.TextField(verbose_name = _('stop Chart Type'), blank=True, null=True)
+            attrs['stop_chart_text'] = models.TextField(verbose_name = _('Stop Chart Text'), blank=True, null=True)
+            attrs['running'] = models.BooleanField(verbose_name = _('running'), default=False)
+            attrs['error'] = models.BooleanField(verbose_name = _('error'), default=False)
+            attrs['createtime'] = models.DateTimeField(verbose_name = _('Create Time'), auto_now_add=True)
+            attrs['updatetime'] = models.DateTimeField(verbose_name = _('Update Time'), auto_now=True)
+            attrs['stoptime'] = models.DateTimeField(verbose_name = _('Stop Time'), null=True,blank=True)
+            attrs['create_user'] = models.ForeignKey('omuser.OmUser', verbose_name = _('Create User'), to_field='username', on_delete=models.SET_NULL, blank=True, null=True, related_name='create_'+flow_uuid)
+            attrs['update_user'] = models.ForeignKey('omuser.OmUser', verbose_name = _('Update User'), to_field='username', on_delete=models.SET_NULL, blank=True, null=True, related_name='update_'+flow_uuid)
+            attrs['data_param'] = models.TextField(verbose_name = _('Data Param'), null=True,blank=True)
+            attrs['error_message'] = models.TextField(verbose_name = _('Error Message'), null=True,blank=True)
+            attrs['init_data'] = models.ForeignKey('self', blank=True, null=True, related_name='extra_data', verbose_name = _('Initial Data'), on_delete=models.CASCADE)
+            attrs['is_child'] = models.BooleanField(verbose_name = _('Is Child'), default=False)
             for i in range(form_item_counter):
                 attrs['formitm_'+str(i+1)] = models.TextField(null=True,blank=True)
             attrs['objects'] = FormatManager()
             type(model_name, (models.Model,), attrs)
             #flow value history
             attrs_vh = {'__module__': 'omformmodel.models','Meta': Meta2}
-            attrs_vh['flow_uuid'] = models.UUIDField(verbose_name= _('流程編號'), null=True, blank=True)
-            attrs_vh['data_no'] = models.IntegerField(verbose_name = _('資料編號'), null=True, blank=True)
-            attrs_vh['data_id'] = models.IntegerField(verbose_name = _('多重資料編號'), blank=True, null=True)
-            attrs_vh['chart_id'] = models.CharField(verbose_name= _('功能點'), max_length=500,null=True, blank=True)
-            attrs_vh['stop_chart_type'] = models.TextField(verbose_name = _('關卡類型'), blank=True, null=True)
-            attrs_vh['stop_chart_text'] = models.TextField(verbose_name = _('關卡名稱'), blank=True, null=True)
-            attrs_vh['input_data'] = models.TextField(verbose_name= _('輸入參數'),null=True, blank=True)
-            attrs_vh['output_data'] = models.TextField(verbose_name= _('輸出參數'),null=True, blank=True)
-            attrs_vh['error'] = models.BooleanField(verbose_name = _('異常標記'), default=False)
-            attrs_vh['createtime'] = models.DateTimeField(verbose_name = _('建立時間'), auto_now_add=True)
-            attrs_vh['updatetime'] = models.DateTimeField(verbose_name = _('更新時間'), auto_now=True)
+            attrs_vh['flow_uuid'] = models.UUIDField(verbose_name= _('Flow Uuid'), null=True, blank=True)
+            attrs_vh['data_no'] = models.IntegerField(verbose_name = _('Data No'), null=True, blank=True)
+            attrs_vh['data_id'] = models.IntegerField(verbose_name = _('Data ID'), blank=True, null=True)
+            attrs_vh['chart_id'] = models.CharField(verbose_name= _('chart Id'), max_length=500,null=True, blank=True)
+            attrs_vh['stop_chart_type'] = models.TextField(verbose_name = _('Stop Chart Type'), blank=True, null=True)
+            attrs_vh['stop_chart_text'] = models.TextField(verbose_name = _('Stop Chart Text'), blank=True, null=True)
+            attrs_vh['input_data'] = models.TextField(verbose_name= _('Input Data'),null=True, blank=True)
+            attrs_vh['output_data'] = models.TextField(verbose_name= _('Output Data'),null=True, blank=True)
+            attrs_vh['error'] = models.BooleanField(verbose_name = _('Error'), default=False)
+            attrs_vh['createtime'] = models.DateTimeField(verbose_name = _('Create Time'), auto_now_add=True)
+            attrs_vh['updatetime'] = models.DateTimeField(verbose_name = _('Update Time'), auto_now=True)
             attrs_vh['objects'] = FormatManager()
             model_name_vh = model_name + '_ValueHistory'
             type(model_name_vh, (models.Model,), attrs_vh)
             #flow data no
             attrs_no = {'__module__': 'omformmodel.models','Meta': Meta2}
-            attrs_no['createtime'] = models.DateTimeField(verbose_name = _('建立時間'), auto_now_add=True)
+            attrs_no['createtime'] = models.DateTimeField(verbose_name = _('Create Time'), auto_now_add=True)
             attrs_no['objects'] = FormatManager()
             model_name_no = model_name + '_DataNo'
             type(model_name_no, (models.Model,), attrs_no)

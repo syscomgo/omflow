@@ -184,7 +184,7 @@ def registerAjax(request):
     omlicense = checkLicense('user')
     if omlicense:
         #function variable
-        error_message = _('註冊失敗：')
+        error_message = _('error_message')
         #Server Side Rule Check
         require_field = ['username', 'email_@', 'token', 'token2']
         postdata = getPostdata(request)

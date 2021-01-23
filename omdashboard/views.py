@@ -238,7 +238,7 @@ def updateGridAjax(request):
                 else:
                     gte_list.append(today.replace(year=1970))
                     lt_list.append(today + datetime.timedelta(days=1))
-                    result["labels"].append(_('所有時間'))
+                    result["labels"].append(_('Labels'))
                 
                 #print(gte_list)
                 #print(lt_list)
@@ -514,7 +514,7 @@ def getColumnListAjax(request):
                         fa = list(MonitorFlow.objects.filter(table_id=this_table_id).values('flowobject'))
                         if len(fa):
                             fa = json.loads(fa[0]['flowobject'])
-                            result["collector_id"] = "收集器ID"
+                            result["collector_id"] = "collectorID"
                             for item in fa['items']:
                                 if item['type'] == "end":
                                     for output in item['config']['output']:
@@ -572,46 +572,46 @@ def switch00(num):
 
 def translateM(num):
     if str(num)=='1':
-        return _("一月")
+        return _("1")
     elif str(num)=='2':
-        return _("二月")
+        return _("2")
     elif str(num)=='3':
-        return _("三月")
+        return _("3")
     elif str(num)=='4':
-        return _("四月")
+        return _("4")
     elif str(num)=='5':
-        return _("五月")
+        return _("5")
     elif str(num)=='6':
-        return _("六月")
+        return _("6")
     elif str(num)=='7':
-        return _("七月")
+        return _("7")
     elif str(num)=='8':
-        return _("八月")
+        return _("8")
     elif str(num)=='9':
-        return _("九月")
+        return _("9")
     elif str(num)=='10':
-        return _("十月")
+        return _("10")
     elif str(num)=='11':
-        return _("十一月")
+        return _("11")
     elif str(num)=='12':
-        return _("十二月")
+        return _("12")
     else:
-        return _("無法辨識")
+        return _("No identity")
     
 def translateW(num):
     if str(num)=='1':
-        return _("星期一")
+        return _("1")
     elif str(num)=='2':
-        return _("星期二")
+        return _("2")
     elif str(num)=='3':
-        return _("星期三")
+        return _("3")
     elif str(num)=='4':
-        return _("星期四")
+        return _("4")
     elif str(num)=='5':
-        return _("星期五")
+        return _("5")
     elif str(num)=='6':
-        return _("星期六")
+        return _("6")
     elif str(num)=='7':
-        return _("星期日")
+        return _("6")
     
     

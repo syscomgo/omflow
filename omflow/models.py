@@ -15,10 +15,10 @@ class SystemSetting(models.Model):
     left sidebar management
     author: Kolin Hsu
     '''
-    name = models.CharField(verbose_name= _('名稱'), max_length=50)
-    value = models.TextField(verbose_name = _('值'))
-    description = models.TextField(verbose_name= _('說明'), null=True, blank=True)
-    updatetime = models.DateTimeField(verbose_name = _('更新時間'), auto_now=True)
+    name = models.CharField(verbose_name= _('name'), max_length=50)
+    value = models.TextField(verbose_name = _('value'))
+    description = models.TextField(verbose_name= _('description'), null=True, blank=True)
+    updatetime = models.DateTimeField(verbose_name = _('updatetime'), auto_now=True)
     
     objects = FormatManager()
     
@@ -32,26 +32,26 @@ class Scheduler(models.Model):
     author: Kolin Hsu
     '''
     Recurrence = (   
-                ("ONCE", _("執行一次")),
-                ("SECONDLY", _("每秒鐘")),
-                ("MINUTELY", _("每分鐘")),
-                ("HOURLY", _("每小時")),
-                ("DAILY", _("每天")),
-                ("WEEKLY", _("每週")),
-                ("MONTHLY", _("每月")),
+                ("ONCE", _("ONCE")),
+                ("SECONDLY", _("SECONDLY")),
+                ("MINUTELY", _("MINUTELY")),
+                ("HOURLY", _("HOURLY")),
+                ("DAILY", _("DAILY")),
+                ("WEEKLY", _("WEEKLY")),
+                ("MONTHLY", _("MONTHLY")),
             )
-    create_time = models.DateTimeField(verbose_name= _('建立時間'),auto_now_add=True)
-    exec_time = models.DateTimeField(verbose_name= _('執行時間'),null=True, blank=True)
-    every = models.CharField(verbose_name= _('每次'),max_length=50,null=True, blank=True)
-    cycle = models.CharField(verbose_name= _('週期'), max_length=50,choices=Recurrence,null=True, blank=True)
-    cycle_date = models.CharField(verbose_name= _('週期執行日期'), max_length=50,null=True, blank=True)
-    exec_fun = models.CharField(verbose_name= _('執行功能'), max_length=500)
-    input_param = models.TextField(verbose_name = _('輸入參數'))
-    is_active = models.BooleanField(verbose_name = _('啟用/停用'), default=True)
-    last_exec_time = models.TextField(verbose_name = _('上次執行時間'), null=True, blank=True)
-    next_exec_time = models.TextField(verbose_name = _('下次執行時間'), null=True, blank=True)
+    create_time = models.DateTimeField(verbose_name= _('Create Time'),auto_now_add=True)
+    exec_time = models.DateTimeField(verbose_name= _('Exec Time'),null=True, blank=True)
+    every = models.CharField(verbose_name= _('Every'),max_length=50,null=True, blank=True)
+    cycle = models.CharField(verbose_name= _('Cycle'), max_length=50,choices=Recurrence,null=True, blank=True)
+    cycle_date = models.CharField(verbose_name= _('Cycle Date'), max_length=50,null=True, blank=True)
+    exec_fun = models.CharField(verbose_name= _('Exec Fun'), max_length=500)
+    input_param = models.TextField(verbose_name = _('Input Param'))
+    is_active = models.BooleanField(verbose_name = _('Is Active'), default=True)
+    last_exec_time = models.TextField(verbose_name = _('Last executing Time'), null=True, blank=True)
+    next_exec_time = models.TextField(verbose_name = _('Next Executing Time'), null=True, blank=True)
     flowactive = models.ForeignKey('omformflow.FlowActive', related_name="specific_flowactive",on_delete=models.SET_NULL, blank=True, null=True)
-    type = models.TextField(verbose_name = _('分類'), null=True, blank=True)
+    type = models.TextField(verbose_name = _('type'), null=True, blank=True)
     
     
     objects = FormatManager()
@@ -65,11 +65,11 @@ class QueueData(models.Model):
     Queue Data
     author: Kolin Hsu
     '''
-    queue_id = models.TextField(verbose_name= _('佇列編號'), null=True, blank=True)
-    name = models.CharField(verbose_name= _('名稱'), max_length=50)
-    module_name = models.TextField(verbose_name= _('模組名稱'), null=True, blank=True)
-    method_name = models.TextField(verbose_name= _('方法名稱'), null=True, blank=True)
-    input_param = models.TextField(verbose_name= _('輸入參數'), null=True, blank=True)
+    queue_id = models.TextField(verbose_name= _('Queue Id'), null=True, blank=True)
+    name = models.CharField(verbose_name= _('Name'), max_length=50)
+    module_name = models.TextField(verbose_name= _('Module Name'), null=True, blank=True)
+    method_name = models.TextField(verbose_name= _('Method Name'), null=True, blank=True)
+    input_param = models.TextField(verbose_name= _('Input Parameter'), null=True, blank=True)
     
     objects = FormatManager()
     
@@ -86,9 +86,9 @@ class TempFiles(models.Model):
     classdocs
     '''
     file = models.FileField(upload_to=get_file_path)
-    size = models.IntegerField(verbose_name = _('大小'), blank=True)
-    file_name = models.TextField(verbose_name= _('檔案名稱'),null=True, blank=True)
-    mapping_id = models.TextField(verbose_name= _('對照編號'),null=True, blank=True)
+    size = models.IntegerField(verbose_name = _('Size'), blank=True)
+    file_name = models.TextField(verbose_name= _('File Name'),null=True, blank=True)
+    mapping_id = models.TextField(verbose_name= _('Mapping Id'),null=True, blank=True)
     class Meta:
         default_permissions = ()
         
@@ -107,7 +107,7 @@ class Translation(models.Model):
     '''
     classdocs
     '''
-    language = models.TextField(verbose_name= _('語言'),null=True, blank=True)
-    trans = models.TextField(verbose_name= _('翻譯表'),null=True, blank=True)
+    language = models.TextField(verbose_name= _('Language'),null=True, blank=True)
+    trans = models.TextField(verbose_name= _('Translating'),null=True, blank=True)
     class Meta:
         default_permissions = ()

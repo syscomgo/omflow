@@ -14,6 +14,6 @@ class OmDashboard(models.Model):
     author: Arthur
     '''
     user = models.ForeignKey('omuser.OmUser', on_delete=models.CASCADE)
-    content = models.TextField(verbose_name = _('儀錶板設計'), blank=True)
+    content = models.TextField(verbose_name = _('Content'), blank=True)
     class Meta:
         default_permissions = ()

@@ -114,8 +114,8 @@ LOCALE_PATHS = (
 )
 
 LANGUAGES = [
-#     ('en', "English"),    
-    ("en", "English"),("zh-hant", "Traditional_Chinese"),("zh-hans", "Simplified_Chinese"),("ja", "Japanese")
+
+    ("en", "English"),("zh-hant", "Traditional_Chinese"),("zh-hans", "Simplified_Chinese"),("ja", "Japanese",("ar","Arabic")
 ]
 
 
