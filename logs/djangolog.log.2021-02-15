@@ -1,0 +1,317 @@
+[2021-02-15 15:40:20] - ERROR    - Internal Server Error: /accounts/login/
+Traceback (most recent call last):
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\core\handlers\base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "E:\programing\python\qhse-erp\home\aeraeg\python\apps\omflow\omuser\views.py", line 43, in loginPage
+    return render(request, "login.html")
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\shortcuts.py", line 19, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\backends\django.py", line 61, in render
+    return self.template.render(context)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\base.py", line 168, in render
+    with context.bind_template(self):
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\contextlib.py", line 112, in __enter__
+    return next(self.gen)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\context.py", line 240, in bind_template
+    processors = (template.engine.template_context_processors +
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\utils\functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\engine.py", line 85, in template_context_processors
+    return tuple(import_string(path) for path in context_processors)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\engine.py", line 85, in <genexpr>
+    return tuple(import_string(path) for path in context_processors)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\utils\module_loading.py", line 17, in import_string
+    module = import_module(module_path)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\importlib\__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1006, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 983, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 965, in _find_and_load_unlocked
+ModuleNotFoundError: No module named 'django_settings_export'
+[2021-02-15 15:40:21] - ERROR    - "GET /accounts/login/?next=/ HTTP/1.1" 500 146957
+[2021-02-15 15:40:33] - ERROR    - Internal Server Error: /accounts/login/
+Traceback (most recent call last):
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\core\handlers\base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "E:\programing\python\qhse-erp\home\aeraeg\python\apps\omflow\omuser\views.py", line 43, in loginPage
+    return render(request, "login.html")
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\shortcuts.py", line 19, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\backends\django.py", line 61, in render
+    return self.template.render(context)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\base.py", line 168, in render
+    with context.bind_template(self):
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\contextlib.py", line 112, in __enter__
+    return next(self.gen)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\context.py", line 240, in bind_template
+    processors = (template.engine.template_context_processors +
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\utils\functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\engine.py", line 85, in template_context_processors
+    return tuple(import_string(path) for path in context_processors)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\engine.py", line 85, in <genexpr>
+    return tuple(import_string(path) for path in context_processors)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\utils\module_loading.py", line 17, in import_string
+    module = import_module(module_path)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\importlib\__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1006, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 983, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 965, in _find_and_load_unlocked
+ModuleNotFoundError: No module named 'django_settings_export'
+[2021-02-15 15:40:33] - ERROR    - "GET /accounts/login/?next=/ HTTP/1.1" 500 147094
+[2021-02-15 15:42:22] - ERROR    - Internal Server Error: /accounts/login/
+Traceback (most recent call last):
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\core\handlers\base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "E:\programing\python\qhse-erp\home\aeraeg\python\apps\omflow\omuser\views.py", line 43, in loginPage
+    return render(request, "login.html")
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\shortcuts.py", line 19, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\backends\django.py", line 61, in render
+    return self.template.render(context)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\base.py", line 168, in render
+    with context.bind_template(self):
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\contextlib.py", line 112, in __enter__
+    return next(self.gen)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\context.py", line 240, in bind_template
+    processors = (template.engine.template_context_processors +
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\utils\functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\engine.py", line 85, in template_context_processors
+    return tuple(import_string(path) for path in context_processors)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\engine.py", line 85, in <genexpr>
+    return tuple(import_string(path) for path in context_processors)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\utils\module_loading.py", line 17, in import_string
+    module = import_module(module_path)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\importlib\__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1006, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 983, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 965, in _find_and_load_unlocked
+ModuleNotFoundError: No module named 'django_settings_export'
+[2021-02-15 15:42:22] - ERROR    - "GET /accounts/login/?next=/ HTTP/1.1" 500 147094
+[2021-02-15 15:43:18] - ERROR    - Internal Server Error: /accounts/login/
+Traceback (most recent call last):
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\core\handlers\base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "E:\programing\python\qhse-erp\home\aeraeg\python\apps\omflow\omuser\views.py", line 43, in loginPage
+    return render(request, "login.html")
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\shortcuts.py", line 19, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\backends\django.py", line 61, in render
+    return self.template.render(context)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\base.py", line 168, in render
+    with context.bind_template(self):
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\contextlib.py", line 112, in __enter__
+    return next(self.gen)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\context.py", line 240, in bind_template
+    processors = (template.engine.template_context_processors +
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\utils\functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\engine.py", line 85, in template_context_processors
+    return tuple(import_string(path) for path in context_processors)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\engine.py", line 85, in <genexpr>
+    return tuple(import_string(path) for path in context_processors)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\utils\module_loading.py", line 17, in import_string
+    module = import_module(module_path)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\importlib\__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1006, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 983, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 965, in _find_and_load_unlocked
+ModuleNotFoundError: No module named 'django_settings_export'
+[2021-02-15 15:43:18] - ERROR    - "GET /accounts/login/?next=/ HTTP/1.1" 500 147094
+[2021-02-15 15:43:21] - ERROR    - Internal Server Error: /accounts/login/
+Traceback (most recent call last):
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\core\handlers\base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "E:\programing\python\qhse-erp\home\aeraeg\python\apps\omflow\omuser\views.py", line 43, in loginPage
+    return render(request, "login.html")
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\shortcuts.py", line 19, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\backends\django.py", line 61, in render
+    return self.template.render(context)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\base.py", line 168, in render
+    with context.bind_template(self):
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\contextlib.py", line 112, in __enter__
+    return next(self.gen)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\context.py", line 240, in bind_template
+    processors = (template.engine.template_context_processors +
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\utils\functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\engine.py", line 85, in template_context_processors
+    return tuple(import_string(path) for path in context_processors)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\engine.py", line 85, in <genexpr>
+    return tuple(import_string(path) for path in context_processors)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\utils\module_loading.py", line 17, in import_string
+    module = import_module(module_path)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\importlib\__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1006, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 983, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 965, in _find_and_load_unlocked
+ModuleNotFoundError: No module named 'django_settings_export'
+[2021-02-15 15:43:21] - ERROR    - "GET /accounts/login/?next=/ HTTP/1.1" 500 147094
+[2021-02-15 15:43:48] - ERROR    - Internal Server Error: /accounts/login/
+Traceback (most recent call last):
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\core\handlers\base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "E:\programing\python\qhse-erp\home\aeraeg\python\apps\omflow\omuser\views.py", line 43, in loginPage
+    return render(request, "login.html")
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\shortcuts.py", line 19, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\backends\django.py", line 61, in render
+    return self.template.render(context)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\base.py", line 168, in render
+    with context.bind_template(self):
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\contextlib.py", line 112, in __enter__
+    return next(self.gen)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\context.py", line 240, in bind_template
+    processors = (template.engine.template_context_processors +
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\utils\functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\engine.py", line 85, in template_context_processors
+    return tuple(import_string(path) for path in context_processors)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\engine.py", line 85, in <genexpr>
+    return tuple(import_string(path) for path in context_processors)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\utils\module_loading.py", line 17, in import_string
+    module = import_module(module_path)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\importlib\__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1006, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 983, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 965, in _find_and_load_unlocked
+ModuleNotFoundError: No module named 'django_settings_export'
+[2021-02-15 15:43:48] - ERROR    - "GET /accounts/login/?next=/ HTTP/1.1" 500 147094
+[2021-02-15 15:43:54] - ERROR    - Internal Server Error: /accounts/login/
+Traceback (most recent call last):
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\core\handlers\base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "E:\programing\python\qhse-erp\home\aeraeg\python\apps\omflow\omuser\views.py", line 43, in loginPage
+    return render(request, "login.html")
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\shortcuts.py", line 19, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\backends\django.py", line 61, in render
+    return self.template.render(context)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\base.py", line 168, in render
+    with context.bind_template(self):
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\contextlib.py", line 112, in __enter__
+    return next(self.gen)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\context.py", line 240, in bind_template
+    processors = (template.engine.template_context_processors +
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\utils\functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\engine.py", line 85, in template_context_processors
+    return tuple(import_string(path) for path in context_processors)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\engine.py", line 85, in <genexpr>
+    return tuple(import_string(path) for path in context_processors)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\utils\module_loading.py", line 17, in import_string
+    module = import_module(module_path)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\importlib\__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1006, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 983, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 965, in _find_and_load_unlocked
+ModuleNotFoundError: No module named 'django_settings_export'
+[2021-02-15 15:43:54] - ERROR    - "GET /accounts/login/?next=/ HTTP/1.1" 500 147094
+[2021-02-15 15:45:13] - ERROR    - Internal Server Error: /accounts/login/
+Traceback (most recent call last):
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\core\handlers\base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "E:\programing\python\qhse-erp\home\aeraeg\python\apps\omflow\omuser\views.py", line 43, in loginPage
+    return render(request, "login.html")
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\shortcuts.py", line 19, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\backends\django.py", line 61, in render
+    return self.template.render(context)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\base.py", line 168, in render
+    with context.bind_template(self):
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\contextlib.py", line 112, in __enter__
+    return next(self.gen)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\context.py", line 240, in bind_template
+    processors = (template.engine.template_context_processors +
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\utils\functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\engine.py", line 85, in template_context_processors
+    return tuple(import_string(path) for path in context_processors)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\engine.py", line 85, in <genexpr>
+    return tuple(import_string(path) for path in context_processors)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\utils\module_loading.py", line 17, in import_string
+    module = import_module(module_path)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\importlib\__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1006, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 983, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 965, in _find_and_load_unlocked
+ModuleNotFoundError: No module named 'django_settings_export'
+[2021-02-15 15:45:13] - ERROR    - "GET /accounts/login/?next=/ HTTP/1.1" 500 147094
+[2021-02-15 15:45:21] - ERROR    - Internal Server Error: /accounts/login/
+Traceback (most recent call last):
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\core\handlers\base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "E:\programing\python\qhse-erp\home\aeraeg\python\apps\omflow\omuser\views.py", line 43, in loginPage
+    return render(request, "login.html")
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\shortcuts.py", line 19, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\backends\django.py", line 61, in render
+    return self.template.render(context)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\base.py", line 168, in render
+    with context.bind_template(self):
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\contextlib.py", line 112, in __enter__
+    return next(self.gen)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\context.py", line 240, in bind_template
+    processors = (template.engine.template_context_processors +
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\utils\functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\engine.py", line 85, in template_context_processors
+    return tuple(import_string(path) for path in context_processors)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\template\engine.py", line 85, in <genexpr>
+    return tuple(import_string(path) for path in context_processors)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\utils\module_loading.py", line 17, in import_string
+    module = import_module(module_path)
+  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\importlib\__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1006, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 983, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 965, in _find_and_load_unlocked
+ModuleNotFoundError: No module named 'django_settings_export'
+[2021-02-15 15:45:21] - ERROR    - "GET /accounts/login/?next=/ HTTP/1.1" 500 147094
+[2021-02-15 16:04:30] - ERROR    - "POST /api/workinfo/load/ HTTP/1.1" 500 59
+[2021-02-15 16:04:30] - ERROR    - "POST /api/l-side/load/ HTTP/1.1" 500 59

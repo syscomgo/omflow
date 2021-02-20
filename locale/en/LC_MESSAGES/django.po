@@ -463,18 +463,15 @@ msgstr "OME system error (code point), please notify the system administrator."
 
 #: .\omflow\syscom\omengine.py:779
 msgid "OME系統錯誤(人工點)，請通知系統管理員。"
-msgstr ""
-"OME system error (manual point), please notify the system administrator."
+msgstr "OME system error (manual point), please notify the system administrator."
 
 #: .\omflow\syscom\omengine.py:827
 msgid "OME系統錯誤(並行點)，請通知系統管理員。"
-msgstr ""
-"OME system error (parallel point), please notify the system administrator."
+msgstr "OME system error (parallel point), please notify the system administrator."
 
 #: .\omflow\syscom\omengine.py:913
 msgid "OME系統錯誤(集合點)，請通知系統管理員。"
-msgstr ""
-"OME system error (meeting point), please notify the system administrator."
+msgstr "OME system error (meeting point), please notify the system administrator."
 
 #: .\omflow\syscom\omengine.py:999
 msgid "OME系統錯誤(判斷點)，請通知系統管理員。"
@@ -483,8 +480,7 @@ msgstr ""
 
 #: .\omflow\syscom\omengine.py:1073
 msgid "OME系統錯誤(子流程點)，請通知系統管理員。"
-msgstr ""
-"OME system error (sub-flow point), please notify the system administrator."
+msgstr "OME system error (sub-flow point), please notify the system administrator."
 
 #: .\omflow\syscom\omengine.py:1200 .\omformflow\views.py:3204
 #: .\omformflow\views.py:3802
@@ -493,8 +489,7 @@ msgstr "Cannot find the flow."
 
 #: .\omflow\syscom\omengine.py:1206
 msgid "OME系統錯誤(外部流程點)，請通知系統管理員。"
-msgstr ""
-"OME system error (external flow point), please notify the system "
+msgstr "OME system error (external flow point), please notify the system "
 "administrator."
 
 #: .\omflow\syscom\omengine.py:1321
@@ -503,18 +498,15 @@ msgstr "This flow cannot be found in the APP:"
 
 #: .\omflow\syscom\omengine.py:1336
 msgid "OME系統錯誤(呼叫流程點)，請通知系統管理員。"
-msgstr ""
-"OME system error (call flow point), please notify the system administrator."
+msgstr "OME system error (call flow point), please notify the system administrator."
 
 #: .\omflow\syscom\omengine.py:1384
 msgid "OME系統錯誤(暫停點)，請通知系統管理員。"
-msgstr ""
-"OME system error (pause point), please notify the system administrator."
+msgstr "OME system error (pause point), please notify the system administrator."
 
 #: .\omflow\syscom\omengine.py:1510
 msgid "OME系統錯誤(自動輸入點)，請通知系統管理員。"
-msgstr ""
-"OME system error (automatic input point), please notify the system "
+msgstr "OME system error (automatic input point), please notify the system "
 "administrator."
 
 #: .\omflow\syscom\omengine.py:1596 .\omflow\syscom\omengine.py:1688
@@ -528,8 +520,7 @@ msgstr ""
 
 #: .\omflow\syscom\omengine.py:1695
 msgid "OME系統錯誤(部門角色點)，請通知系統管理員。"
-msgstr ""
-"OME system error (department role point), please notify the system "
+msgstr "OME system error (department role point), please notify the system "
 "administrator."
 
 #: .\omflow\syscom\omengine.py:1721
@@ -562,9 +553,7 @@ msgstr "The security code has expired. Please obtain a new security code."
 
 #: .\omflow\views.py:121
 msgid "安全碼錯誤，請確認安全碼或重新取得新的安全碼。"
-msgstr ""
-"The security code is wrong. Please confirm the security code or obtain a new "
-"security code."
+msgstr "The security code is wrong. Please confirm the security code or obtain a new security code."
 
 #: .\omflow\views.py:123
 msgid "缺少安全碼。"
@@ -630,8 +619,7 @@ msgstr "Cannot delete preset items."
 
 #: .\omflow\views.py:711 .\omflow\views.py:737
 msgid "您尚未安裝omldap APP,請聯絡原廠。"
-msgstr ""
-"You have not installed the omldap APP, please contact the original factory."
+msgstr "You have not installed the omldap APP, please contact the original factory."
 
 #: .\omflow\views.py:841 .\omformflow\views.py:2926
 msgid "上傳成功。"
@@ -2363,9 +2351,9 @@ msgstr "Add"
 #: .\omformflow\templates\workflow.html:522
 #: .\omservice\templates\list.html:1153 .\templates\myform.html:158
 msgid "硬碟容量不足，請移除部分檔案再上傳或聯絡系統管理員"
-msgstr ""
-"Insufficient hard disk capacity, please remove some files before uploading "
+msgstr "Insufficient hard disk capacity, please remove some files before uploading "
 "or contact the system administrator"
+
 
 #: .\omformflow\templates\workflow.html:618
 msgid "下列表單將被刪除"
@@ -2450,8 +2438,7 @@ msgstr "The unique number of the data, used when pushing data"
 #: .\omformflow\templates\workflow_manage.html:679
 #: .\omformflow\templates\workflow_manage.html:682
 msgid "停留的關卡名稱(人工處理點名稱"
-msgstr ""
-"The name of the stage to stay at (the name of the manual processing point"
+msgstr "The name of the stage to stay at (the name of the manual processing point"
 
 #: .\omformflow\views.py:127 .\omformflow\views.py:417
 #: .\omformflow\views.py:3918 .\omformflow\views.py:3982
@@ -2664,9 +2651,7 @@ msgstr ""
 
 #: .\omformflow\views.py:2766
 msgid "該流程有多個已上架的版本，請聯絡系統管理員協助處理。"
-msgstr ""
-"There are multiple versions of this flow that have been released, please "
-"contact the system administrator for assistance."
+msgstr "There are multiple versions of this flow that have been released, please contact the system administrator for assistance."
 
 #: .\omformflow\views.py:2768
 msgid "該流程沒有已上架的版本"
@@ -2690,8 +2675,7 @@ msgstr "The related objects cannot be the same data."
 
 #: .\omformflow\views.py:3358
 msgid "不同表單資料不可建立母子關聯。"
-msgstr ""
-"Mother-child relationship cannot be established for different form data."
+msgstr "Mother-child relationship cannot be established for different form data."
 
 #: .\omformflow\views.py:3384
 msgid "建立關聯成功。"
@@ -2794,6 +2778,22 @@ msgstr "Flow Parameters"
 #: .\omformmodel\views.py:220 .\ompolicymodel\views.py:98
 msgid "錯誤訊息"
 msgstr "Error Message"
+
+#: .\omformmodel\models.py:51
+msgid "修改任務單"
+msgstr "order modification"
+
+#: .\omformmodel\models.py:15
+msgid "任務單"
+msgstr "Menu"
+
+#: .\omformmodel\models.py:52
+msgid "檢視任務單"
+msgstr "change Menu"
+
+#: .\omformmodel\models.py:53
+msgid "刪除任務單"
+msgstr "Delete the Order"
 
 #: .\omformmodel\views.py:221
 msgid "初始資料"
@@ -3034,7 +3034,7 @@ msgstr "Cannot find message data"
 
 #: .\ommission\models.py:12 .\ommission\templates\mission.html:10
 #: .\ommission\templates\mission.html:15 .\templates\base_l_aside.html:17
-#: .\templates\myform.html:1871
+#: .\templates\myform.html:1875
 msgid "我的任務"
 msgstr "My Mission"
 
@@ -4403,8 +4403,7 @@ msgstr "Old Password"
 #: .\omuser\templates\profile.html:58 .\omuser\templates\register.html:10
 #: .\omuser\templates\register.html:11
 msgid "至少一個大寫字母及小寫字母，至少8個字。"
-msgstr ""
-"At least one uppercase letter and lowercase letter, at least 8 characters."
+msgstr "At least one uppercase letter and lowercase letter, at least 8 characters."
 
 #: .\omuser\templates\change_password.html:37
 #: .\omuser\templates\change_password.html:43
@@ -4935,9 +4934,7 @@ msgstr "Complete"
 
 #: .\templates\base_component.html:594
 msgid "連線發生錯誤，請檢查網路連線是否正常，或與系統管理員聯絡"
-msgstr ""
-"A connection error occurred, please check whether the network connection is "
-"normal, or contact the system administrator"
+msgstr "A connection error occurred, please check whether the network connection is normal, or contact the system administrator"
 
 #: .\templates\base_component.html:612
 msgid "資訊"
@@ -5319,9 +5316,7 @@ msgstr "Please enter the folder name"
 
 #: .\templates\sidebar_design.html:262
 msgid "資料夾中尚有表單/流程，請移出流程後再刪除資料夾"
-msgstr ""
-"There are still forms/flowes in the folder, please remove the flow and then "
-"delete the folder"
+msgstr "There are still forms/flowes in the folder, please remove the flow and then delete the folder"
 
 #: .\templates\system_config.html:12
 msgid " 系統設定"

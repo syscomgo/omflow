@@ -1,0 +1,4167 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <esmallah1@gmail.com>, YEAR.
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-01-23 14:12+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+#: .\omdashboard\models.py:17
+msgid "儀錶板設計"
+msgstr "تصميم اللوحة الرئيسية"
+
+#: .\omdashboard\views.py:44
+msgid "儲存成功"
+msgstr "تم الحفظ بنجاح"
+
+#: .\omdashboard\views.py:50 .\omdashboard\views.py:75
+#: .\omdashboard\views.py:419 .\omdashboard\views.py:483
+#: .\omdashboard\views.py:551 .\omdashboard\views.py:557 .\omflow\views.py:191
+#: .\omflow\views.py:310 .\omflow\views.py:354 .\omflow\views.py:396
+#: .\omflow\views.py:475 .\omflow\views.py:564 .\omflow\views.py:858
+#: .\omformflow\views.py:2312 .\omformflow\views.py:2504
+#: .\omformflow\views.py:3031 .\omformflow\views.py:3114
+#: .\omformflow\views.py:3303 .\omformflow\views.py:3349
+#: .\omformflow\views.py:3425 .\omformflow\views.py:3501
+#: .\omformflow\views.py:3605 .\omformflow\views.py:3748
+#: .\omformflow\views.py:3912 .\omformflow\views.py:4028
+#: .\omformflow\views.py:4060 .\omformflow\views.py:4220
+#: .\omformflow\views.py:4271 .\omformflow\views.py:5315
+#: .\omformflow\views.py:5380 .\ommessage\views.py:192 .\omservice\views.py:75
+#: .\omservice\views.py:169 .\omservice\views.py:200 .\omservice\views.py:230
+#: .\omservice\views.py:276 .\omservice\views.py:482 .\omservice\views.py:542
+#: .\omuser\views.py:292 .\omuser\views.py:381
+msgid "您沒有權限進行此操作。"
+msgstr "انت لا تمتلك الصلاحيات اللازمة لتنفيذ تلك العملية"
+
+#: .\omdashboard\views.py:72 .\omdashboard\views.py:480
+msgid "讀取成功"
+msgstr "القراءة بنجاح"
+
+#: .\omdashboard\views.py:241 .\templates\home.html:90
+msgid "所有時間"
+msgstr "كل الوقت"
+
+#: .\omdashboard\views.py:413 .\omformflow\templates\workflow_manage.html:676
+msgid "查詢成功"
+msgstr "الاستعلام تم"
+
+#: .\omdashboard\views.py:415 .\omformflow\templates\workflow_manage.html:688
+msgid "查詢失敗"
+msgstr " فشل الاستعلام"
+
+#: .\omdashboard\views.py:473 .\templates\base_l_aside.html:44
+msgid "收集器流程"
+msgstr "تجميع التدفق"
+
+#: .\omdashboard\views.py:474 .\templates\base_l_aside.html:45
+msgid "收集器API"
+msgstr "تجميع الواجهة"
+
+#: .\omdashboard\views.py:548 .\omflow\views.py:188 .\omflow\views.py:472
+#: .\omflow\views.py:647 .\omflow\views.py:696 .\omformflow\views.py:182
+#: .\omformflow\views.py:533 .\omformflow\views.py:594
+#: .\omformflow\views.py:714 .\omformflow\views.py:808
+#: .\omformflow\views.py:1619 .\omformflow\views.py:2302
+#: .\omformflow\views.py:2365 .\omformflow\views.py:3111
+#: .\omformflow\views.py:3142 .\omformflow\views.py:3227
+#: .\omformflow\views.py:3739 .\omformflow\views.py:3778
+#: .\omformflow\views.py:4918 .\omformflow\views.py:5236
+#: .\omformflow\views.py:5374 .\omformflow\views.py:5401
+#: .\omservice\views.py:166 .\omservice\views.py:197 .\omservice\views.py:227
+#: .\omservice\views.py:536 .\omuser\views.py:286 .\omuser\views.py:386
+#: .\omuser\views.py:692 .\omuser\views.py:749
+msgid "讀取成功。"
+msgstr "القراءة بنجاح"
+
+#: .\omdashboard\views.py:575
+msgid "一月"
+msgstr "يناير"
+
+#: .\omdashboard\views.py:577
+msgid "二月"
+msgstr "فبراير"
+
+#: .\omdashboard\views.py:579
+msgid "三月"
+msgstr "مارس"
+
+#: .\omdashboard\views.py:581
+msgid "四月"
+msgstr "ابريل"
+
+#: .\omdashboard\views.py:583
+msgid "五月"
+msgstr "مايو"
+
+#: .\omdashboard\views.py:585
+msgid "六月"
+msgstr "يونيو"
+
+#: .\omdashboard\views.py:587
+msgid "七月"
+msgstr "يوليو"
+
+#: .\omdashboard\views.py:589
+msgid "八月"
+msgstr "اغسطس"
+
+#: .\omdashboard\views.py:591
+msgid "九月"
+msgstr "سبتمبر"
+
+#: .\omdashboard\views.py:593
+msgid "十月"
+msgstr "اكتوبر"
+
+#: .\omdashboard\views.py:595
+msgid "十一月"
+msgstr "نوفمبر"
+
+#: .\omdashboard\views.py:597
+msgid "十二月"
+msgstr "ديسمبر"
+
+#: .\omdashboard\views.py:599
+msgid "無法辨識"
+msgstr "غير قابل للتنظيم"
+
+#: .\omdashboard\views.py:603
+msgid "星期一"
+msgstr "الاثين"
+
+#: .\omdashboard\views.py:605
+msgid "星期二"
+msgstr "الثلاثاء"
+
+#: .\omdashboard\views.py:607
+msgid "星期三"
+msgstr "الاربعاء"
+
+#: .\omdashboard\views.py:609
+msgid "星期四"
+msgstr "الخميس"
+
+#: .\omdashboard\views.py:611
+msgid "星期五"
+msgstr "الجمعة"
+
+#: .\omdashboard\views.py:613
+msgid "星期六"
+msgstr "السبت"
+
+#: .\omdashboard\views.py:615
+msgid "星期日"
+msgstr "الاحد"
+
+#: .\omflow\models.py:18 .\omflow\models.py:69 .\omformflow\models.py:39
+#: .\omformflow\models.py:86 .\omformflow\templates\flow_app_manage.html:47
+#: .\omformflow\templates\flow_app_manage.html:708
+#: .\omformflow\templates\parameter_manage.html:80
+#: .\omuser\templates\profile.html:63 .\omuser\templates\profile.html:66
+#: .\templates\base_component.html:104 .\templates\base_component.html:123
+msgid "名稱"
+msgstr "الاسم"
+
+#: .\omflow\models.py:19
+msgid "值"
+msgstr "القيمة"
+
+#: .\omflow\models.py:20 .\omformflow\models.py:40 .\omformflow\models.py:87
+#: .\omformflow\models.py:188 .\omformflow\models.py:203
+#: .\omformflow\templates\SLA_manage.html:125
+#: .\omformflow\templates\SLA_manage.html:126
+#: .\omformflow\templates\flow_app_manage.html:709
+#: .\omformflow\templates\flow_design.html:58
+#: .\omformflow\templates\flow_design.html:192
+#: .\omformflow\templates\flow_design.html:833
+#: .\omformflow\templates\flow_design.html:904
+#: .\omformflow\templates\flow_manage.html:47
+#: .\omformflow\templates\parameter_manage.html:48
+#: .\omformflow\templates\parameter_manage.html:84
+#: .\omformflow\templates\workflow_manage.html:41
+#: .\omservice\templates\list.html:171 .\omuser\models.py:64
+#: .\omuser\templates\profile.html:239 .\omuser\templates\role_manage.html:42
+#: .\omuser\templates\role_manage.html:74
+#: .\omuser\templates\role_manage.html:75 .\templates\home.html:72
+msgid "說明"
+msgstr "وصف التدفق"
+
+#: .\omflow\models.py:21 .\omformflow\models.py:20 .\omformflow\models.py:43
+#: .\omformflow\models.py:62 .\omformflow\models.py:217
+#: .\omformflow\models.py:238 .\omformmodel\models.py:31
+#: .\omformmodel\models.py:66 .\omformmodel\views.py:215
+#: .\omformmodel\views.py:239 .\ommessage\models.py:20
+#: .\ommission\models.py:27
+ .\omuser\models.py:32 .\omuser\models.py:66
+msgid "更新時間"
+msgstr "تحديث الوقت"
+
+#: .\omflow\models.py:35
+msgid "執行一次"
+msgstr "التنفيذ لمرة"
+
+#: .\omflow\models.py:36
+msgid "每秒鐘"
+msgstr "كل ثانية"
+
+#: .\omflow\models.py:37
+msgid "每分鐘"
+msgstr "كل دقيقة"
+
+#: .\omflow\models.py:38
+msgid "每小時"
+msgstr "كل ساعة"
+
+#: .\omflow\models.py:39
+msgid "每天"
+msgstr "يوميا"
+
+#: .\omflow\models.py:40 .\omformflow\templates\scheduleflow_manage.html:142
+msgid "每週"
+msgstr "اسبوعيا"
+
+#: .\omflow\models.py:41
+msgid "每月"
+msgstr "شهريا"
+
+#: .\omflow\models.py:43 .\omformflow\models.py:42 .\omformflow\models.py:133
+#: .\omformflow\models.py:156 .\omformflow\models.py:172
+#: .\omformflow\models.py:216 .\omformflow\models.py:237
+#: .\omformmodel\models.py:30 .\omformmodel\models.py:65
+#: .\omformmodel\models.py:73 .\omformmodel\views.py:214
+#: .\omformmodel\views.py:238 .\omformmodel\views.py:245
+#: .\ommessage\models.py:19 .\ommessage\models.py:70 .\ommessage\models.py:106
+#: .\ommission\models.py:26
+msgid "建立時間"
+msgstr "انشاء الوقت"
+
+#: .\omflow\models.py:44
+msgid "執行時間"
+msgstr "تنفيذ الوقت"
+
+#: .\omflow\models.py:45
+msgid "每次"
+msgstr "كل وقت"
+
+#: .\omflow\models.py:46 .\omformflow\templates\scheduleflow_manage.html:116
+msgid "週期"
+msgstr "المدة"
+
+#: .\omflow\models.py:47
+msgid "週期執行日期"
+msgstr "مدة التنفيذ بالتاريخ"
+
+#: .\omflow\models.py:48
+msgid "執行功能"
+msgstr "تنفيذ الطريقة"
+
+#: .\omflow\models.py:49 .\omflow\models.py:72 .\omformmodel\models.py:63
+#: .\omformmodel\views.py:235
+msgid "輸入參數"
+msgstr "ادخال المعاملات"
+
+#: .\omflow\models.py:50 .\omformflow\models.py:84 .\ommission\models.py:33
+msgid "啟用/停用"
+msgstr "التمكين/عدم التمكين"
+
+#: .\omflow\models.py:51 .\omformflow\templates\scheduleflow_manage.html:44
+msgid "上次執行時間"
+msgstr "آخر الوقت المنفذ"
+
+#: .\omflow\models.py:52 .\omformflow\templates\scheduleflow_manage.html:42
+msgid "下次執行時間"
+msgstr "الوقت المنفذ التالي"
+
+#: .\omflow\models.py:54 .\omformflow\models.py:112 .\templates\home.html:78
+msgid "分類"
+msgstr "التصنيف"
+
+#: .\omflow\models.py:68
+msgid "佇列編號"
+msgstr "ارقام الانتظار"
+
+#: .\omflow\models.py:70
+msgid "模組名稱"
+msgstr "رقم التطبيق"
+
+#: .\omflow\models.py:71
+msgid "方法名稱"
+msgstr "رقم الطريقة"
+
+#: .\omflow\models.py:89 .\omformflow\models.py:132 .\ommessage\models.py:105
+#: .\ommission\templates\mission.html:534 .\templates\file_manage.html:117
+#: .\templates\myform.html:857 .\templates\myform.html:1416
+#: .\templates\myform.html:1464
+msgid "大小"
+msgstr "المقاس"
+
+#: .\omflow\models.py:90 .\omformflow\models.py:135
+#: .\templates\file_manage.html:116
+msgid "檔案名稱"
+msgstr "اسم الملف"
+
+#: .\omflow\models.py:91
+msgid "對照編號"
+msgstr "رقم المقارنة"
+
+#: .\omflow\models.py:110 .\omformflow\templates\flow_manage.html:36
+#: .\omservice\templates\list.html:34
+msgid "語言"
+msgstr "اللغة"
+
+#: .\omflow\models.py:111
+msgid "翻譯表"
+msgstr "جدول الترجمة"
+
+#: .\omflow\syscom\common.py:174
+msgid "欄位格式錯誤，請修正後重新發送請求。"
+msgstr "الحقل خاطئ برجاء التصحيح وإعادة الطلب"
+
+#: .\omflow\syscom\common.py:178
+msgid "必要參數為空，請確認後重新發送請求。"
+msgstr "المعاملات الضرورية فارغة برجاء تأكيد الطلب وإعادة ارساله"
+
+#: .\omflow\syscom\common.py:182
+msgid "缺少必要參數，請確認後重新發送請求。"
+msgstr "تم فقد المعاملات المطلوبة ، برجاء تأكيد الطلب وإعادة ارساله"
+
+#: .\omflow\syscom\common.py:762 .\omflow\views.py:375
+#: .\omformflow\views.py:691 .\omformflow\views.py:1433
+#: .\omformflow\views.py:2019 .\omformflow\views.py:2052
+#: .\omformflow\views.py:2063 .\omformflow\views.py:2999
+#: .\omformflow\views.py:4268 .\omformflow\views.py:4876
+msgid "查詢成功。"
+msgstr "الاستعلام ناجح"
+
+#: .\omflow\syscom\common.py:799
+msgid "查詢失敗，錯誤訊息如下："
+msgstr "الاستعلام فشل ، رسالة الخطأ كالتالي"
+
+#: .\omflow\syscom\omengine.py:81 .\omformflow\views.py:2703
+#: .\omformflow\views.py:2866
+msgid "該流程目前為停用狀態。"
+msgstr "التدفق تم تجاهله"
+
+#: .\omflow\syscom\omengine.py:86
+msgid "該流程沒有已部署的版本"
+msgstr "التدفق لا يحتوي رقم النسخة"
+
+#: .\omflow\syscom\omengine.py:340 .\omflow\syscom\omengine.py:363
+#: .\omflow\syscom\omengine.py:739 .\omflow\syscom\omengine.py:776
+#: .\omflow\syscom\omengine.py:1085 .\omflow\syscom\omengine.py:1216
+#: .\omflow\syscom\omengine.py:1348 .\omflow\syscom\omengine.py:1522
+#: .\omflow\syscom\omengine.py:1612 .\omflow\syscom\omengine.py:1704
+#: .\omflow\syscom\omengine.py:2221
+msgid "缺少必填變數："
+msgstr "المتغير المطلوب مفقود"
+
+#: .\omflow\syscom\omengine.py:365
+msgid "OME系統錯誤(開始點)，請通知系統管理員。"
+msgstr "خطأ في نقطة بدايةOME  ، يرجي ابلاغ الادمن"
+
+#: .\omflow\syscom\omengine.py:504
+msgid "OME系統錯誤(結束點)，請通知系統管理員。"
+msgstr "خطأ في نقطة نهاية أوإم إي ، يرجي ابلاغ الادمن"
+
+#: .\omflow\syscom\omengine.py:552
+msgid "OME系統錯誤(程式碼點)，請通知系統管理員。"
+msgstr "خطأ في نظام ن ش ب في نهاية النقطة ، برجاء ابلاغ مدير النظام "
+
+#: .\omflow\syscom\omengine.py:793
+msgid "OME系統錯誤(人工點)，請通知系統管理員。"
+msgstr "خطأ في نظام بيئة الادارة الشيئية  (النقطة اليدوية )، برجاء ابلاغ مدير النظام "
+
+#: .\omflow\syscom\omengine.py:841
+msgid "OME系統錯誤(並行點)，請通知系統管理員。"
+msgstr "خطأ في نظام بيئة الادارة الشيئية  (النقطة اليدوية )، برجاء ابلاغ مدير النظام "
+
+#: .\omflow\syscom\omengine.py:927
+msgid "OME系統錯誤(集合點)，請通知系統管理員。"
+msgstr "خطأ في نظامبيئة الادارة الشيئية (في نقطة التوازي )، برجاء ابلاغ مدير النظام "
+
+#: .\omflow\syscom\omengine.py:1013
+msgid "OME系統錯誤(判斷點)，請通知系統管理員。"
+msgstr "خطأ في نظامبيئة الادارة الشيئية (في نطقة التحكيم )، برجاء ابلاغ مدير النظام "
+
+#: .\omflow\syscom\omengine.py:1087
+msgid "OME系統錯誤(子流程點)，請通知系統管理員。"
+msgstr "خطأ في نظامبيئة الادارة الشيئية (في نقطة تحت الدفق )، برجاء ابلاغ مدير النظام "
+
+#: .\omflow\syscom\omengine.py:1214 .\omformflow\views.py:3306
+#: .\omformflow\views.py:3906
+msgid "找不到流程。"
+msgstr "لا يمكن العثور علي التدفق"
+
+#: .\omflow\syscom\omengine.py:1220
+msgid "OME系統錯誤(外部流程點)，請通知系統管理員。"
+msgstr "خطأ في نظامبيئة الادارة الشيئية (في خارج نقطة التدفق)، برجاء ابلاغ مدير النظام "
+
+#: .\omflow\syscom\omengine.py:1335
+msgid "應用內找不到此流程："
+msgstr "هذا التدفق لا يمكن العثور عليه في التطبيق"
+
+#: .\omflow\syscom\omengine.py:1350
+msgid "OME系統錯誤(呼叫流程點)，請通知系統管理員。"
+msgstr "خطأ في نظامبيئة الادارة الشيئية (استدعاء نقطة التدفق)، برجاء ابلاغ مدير النظام "
+
+#: .\omflow\syscom\omengine.py:1398
+msgid "OME系統錯誤(暫停點)，請通知系統管理員。"
+msgstr "خطأ في نظامبيئة الادارة الشيئية ( نقطة التوقف)، برجاء ابلاغ مدير النظام "
+
+#: .\omflow\syscom\omengine.py:1524
+msgid "OME系統錯誤(自動輸入點)，請通知系統管理員。"
+msgstr "خطأ في نظامبيئة الادارة الشيئية (نقطة الادخال التلقائي)، برجاء ابلاغ مدير النظام "
+
+#: .\omflow\syscom\omengine.py:1610 .\omflow\syscom\omengine.py:1702
+msgid "取得組織圖錯誤。"
+msgstr "خطأ في مجموعة الحصول علي تفرع الشكل البياني"
+
+#: .\omflow\syscom\omengine.py:1617
+msgid "OME系統錯誤(同系角色點)，請通知系統管理員。"
+msgstr "خطأ في نظامبيئة الادارة الشيئية (نفس نقطة القواعد)، برجاء ابلاغ مدير النظام "
+
+#: .\omflow\syscom\omengine.py:1709
+msgid "OME系統錯誤(部門角色點)，請通知系統管理員。"
+msgstr "خطأ في نظامبيئة الادارة الشيئية (ادارة نقطة القواعد)، برجاء ابلاغ مدير النظام "
+
+#: .\omflow\syscom\omengine.py:1735
+msgid "驗證失敗。"
+msgstr "خطأ التحقق"
+
+#: .\omflow\syscom\omengine.py:1738
+msgid "找不到驗證流程。"
+msgstr "التحقق من التدفق ليس موجود"
+
+#: .\omflow\syscom\omengine.py:2046
+msgid "更新流程變數失敗。"
+msgstr "خطأ في تحديث متغيرات التدفق"
+
+#: .\omflow\syscom\q_monitor.py:64
+msgid "找不到main.py"
+msgstr "لا يمكن العثور علي ملف main.py"
+
+#: .\omflow\syscom\q_monitor.py:66
+msgid "找不到流程"
+msgstr "لا يمكن العثور علي التدفق"
+
+#: .\omflow\views.py:96
+msgid "URL錯誤，請確認後重新發送請求。"
+msgstr "خطأ في ارابط ، برجاء التأكيد وإعادة ارسال الطلب"
+
+#: .\omflow\views.py:127
+msgid "安全碼過期，請重新取得新的安全碼。"
+msgstr " كلمة السر  قد انتهت صلاحيتها برجاء علي كلمة السر الجديدة"
+
+#: .\omflow\views.py:129
+msgid "安全碼錯誤，請確認安全碼或重新取得新的安全碼。"
+msgstr "كلمة السر خطأ برجاء التأكد من كلمة السر وإعادة المحاولة"
+
+#: .\omflow\views.py:131
+msgid "缺少安全碼。"
+msgstr "كلمة السر خطأ"
+
+#: .\omflow\views.py:133
+msgid "缺少參數："
+msgstr "خطأ معاملات"
+
+#: .\omflow\views.py:265 .\omflow\views.py:444 .\omflow\views.py:554
+#: .\omformflow\views.py:648 .\omformflow\views.py:2859
+#: .\omformflow\views.py:3833 .\omformflow\views.py:3903
+#: .\omformflow\views.py:4151 .\omformflow\views.py:4821 .\omuser\views.py:338
+#: .\omuser\views.py:647 .\omuser\views.py:786 .\omuser\views.py:829
+#: .\omuser\views.py:869
+msgid "更新成功。"
+msgstr "تم التحديث بنجاح"
+
+#: .\omflow\views.py:268
+msgid "LDAP更新正在執行。"
+msgstr " LADP جاري تحديث"
+
+#: .\omflow\views.py:304
+msgid "請提供正確的APP名稱。"
+msgstr "برجاء كتابة اسم التطبيق بشكل صحيح"
+
+#: .\omflow\views.py:348 .\omformflow\views.py:143 .\omformflow\views.py:740
+#: .\omformflow\views.py:2962 .\omformflow\views.py:4217 .\omuser\views.py:594
+msgid "刪除成功。"
+msgstr "تم الحذف"
+
+#: .\omflow\views.py:492
+msgid "參數錯誤："
+msgstr "المعامل خطأ"
+
+#: .\omflow\views.py:507
+msgid "重複名稱 -- "
+msgstr "اسم مكرر"
+
+#: .\omflow\views.py:516
+msgid "無法移動預設選單至選單第二層。"
+msgstr "لا يمكن التحرك من القائمة الافتراضية للمستوي الثاني من القائمة"
+
+#: .\omflow\views.py:520
+msgid "無法新增預設類型選單。"
+msgstr "لا يمكن اضافة نوع قائمة افتراضي"
+
+#: .\omflow\views.py:526
+msgid "無法在預設選單內新增選項。"
+msgstr "لا يمكن اضافة اختيارات للقائمة الافتراضية"
+
+#: .\omflow\views.py:557
+msgid "無法刪除預設項目。"
+msgstr "لا يمكن الغاء الاصناف الحالية"
+
+#: .\omflow\views.py:719 .\omflow\views.py:745
+msgid "您尚未安裝omldap APP,請聯絡原廠。"
+msgstr "لم يتم تثبيت التطبيق الرئيسي برجاء الاتصال بالمسئول"
+
+#: .\omflow\views.py:852 .\omformflow\views.py:3028
+msgid "上傳成功。"
+msgstr "تم الرفع بكفاءة"
+
+#: .\omflow\views.py:855
+msgid "請選擇檔案。"
+msgstr "برجاء اختيار الملف"
+
+#: .\omformflow\models.py:21
+msgid "對應名稱"
+msgstr "الاسم متقاطع"
+
+#: .\omformflow\models.py:22 .\omformflow\models.py:64
+#: .\omformflow\models.py:83 .\omformflow\templates\flow_app_manage.html:48
+#: .\omformflow\templates\flow_app_manage.html:81
+#: .\omformflow\templates\flow_app_manage.html:82
+#: .\omformflow\templates\workflow_app_manage.html:45
+msgid "屬性"
+msgstr "اعدادات"
+
+#: .\omformflow\models.py:23 .\omformflow\models.py:66
+#: .\omservice\models.py:30
+msgid "語言包"
+msgstr "اللغة"
+
+#: .\omformflow\models.py:30
+msgid "自訂流程管理"
+msgstr "تخصيص ادارة التدفق"
+
+#: .\omformflow\models.py:44 .\omformflow\models.py:91
+msgid "流程表單設計"
+msgstr "تصميم تدفق النموذح"
+
+#: .\omformflow\models.py:45 .\omformflow\models.py:93
+#: .\omformflow\templates\flow_design.html:33
+#: .\omformflow\templates\flow_design.html:811
+#: .\omformflow\templates\flow_design.html:882
+msgid "流程設計"
+msgstr "تصميم النموذج"
+
+#: .\omformflow\models.py:46
+msgid "流程設定"
+msgstr "خصائص التدفق"
+
+#: .\omformflow\models.py:47 .\omformflow\templates\flow_design.html:34
+msgid "子流程"
+msgstr "التدفق الفرعي"
+
+#: .\omformflow\models.py:63 .\omformflow\models.py:81
+msgid "流程版本"
+msgstr "اصدار التدفق"
+
+#: .\omformflow\models.py:65 .\omformflow\models.py:89
+msgid "下線"
+msgstr "غير متصل"
+
+#: .\omformflow\models.py:79 .\omformflow\models.py:136
+#: .\omformflow\models.py:169 .\omformflow\models.py:206
+#: .\omformmodel\models.py:16 .\omformmodel\models.py:57
+#: .\omformmodel\views.py:200 .\omformmodel\views.py:229
+#: .\ommission\models.py:13 .\omservice\models.py:17
+msgid "流程編號"
+msgstr "رقم التدفق"
+
+#: .\omformflow\models.py:80
+msgid "uid"
+msgstr "رقم واجهة المستخدم"
+
+#: .\omformflow\models.py:82
+msgid "主流程編號"
+msgstr "رقم التدفق الرئيسي"
+
+#: .\omformflow\models.py:88
+msgid "部署時間"
+msgstr "وقت النشر"
+
+#: .\omformflow\models.py:90
+msgid "下線時間"
+msgstr "وقت عدم الاتصال"
+
+#: .\omformflow\models.py:92
+msgid "整合表單設計"
+msgstr "التصميم المدمج للنموذج"
+
+#: .\omformflow\models.py:94
+msgid "表單計數"
+msgstr "عدد النماذج"
+
+#: .\omformflow\models.py:95
+msgid "流程計數"
+msgstr "عدد التدفقات"
+
+#: .\omformflow\models.py:96
+msgid "標題欄位"
+msgstr "اسم الحقل"
+
+#: .\omformflow\models.py:97
+msgid "狀態欄位"
+msgstr "اسم الحالة"
+
+#: .\omformflow\models.py:98
+msgid "共用"
+msgstr "المشاركة"
+
+#: .\omformflow\models.py:99
+msgid "執行過程紀錄"
+msgstr "السجل"
+
+#: .\omformflow\models.py:100
+msgid "應用程式介面"
+msgstr "الواجهة"
+
+#: .\omformflow\models.py:101 .\omformflow\templates\flow_design.html:80
+msgid "查看目前流程及進度"
+msgstr "عرض حالة التدفق"
+
+#: .\omformflow\models.py:102 .\omformflow\templates\flow_design.html:88
+msgid "附加檔案功能"
+msgstr "المرفق"
+
+#: .\omformflow\models.py:103
+msgid "顯示關聯資料"
+msgstr "عرض المعلومات المتصلة"
+
+#: .\omformflow\models.py:104 .\omformflow\templates\flow_design.html:96
+msgid "填寫及顯示工作日誌"
+msgstr "اليومية"
+
+#: .\omformflow\models.py:105
+msgid "操作歷程"
+msgstr تاريخ العمليات""
+
+#: .\omformflow\models.py:106
+msgid "建立任務"
+msgstr "انشاء المهمة"
+
+#: .\omformflow\models.py:107
+msgid "要顯示的欄位"
+msgstr "العمود الذي سيتم عرضه"
+
+#: .\omformflow\models.py:108
+msgid "要查詢的欄位"
+msgstr "الحقل المستعلم عنه"
+
+#: .\omformflow\models.py:110
+msgid "快速操作1"
+msgstr "عملية سريعة1"
+
+#: .\omformflow\models.py:111
+msgid "快速操作2"
+msgstr "عملية سريعة2"
+
+#: .\omformflow\models.py:113 .\omformflow\templates\flow_design.html:238
+#: .\omuser\templates\role_detail.html:30
+msgid "權限"
+msgstr "الاذن"
+
+#: .\omformflow\models.py:114
+msgid "api路徑"
+msgstr "عنوان الواجهة"
+
+#: .\omformflow\models.py:134 .\ommessage\models.py:87
+#: .\ommessage\models.py:107
+msgid "是否刪除"
+msgstr "حذف ام عدم حذف"
+
+#: .\omformflow\models.py:137 .\omformflow\models.py:170
+#: .\ommission\models.py:19
+msgid "資料流水號"
+msgstr "الرقم المسلسل للبيانات"
+
+#: .\omformflow\models.py:138 .\omformflow\models.py:236
+#: .\omformflow\templates\workflow.html:116
+#: .\omformflow\templates\workflow.html:226 .\omformmodel\models.py:18
+#: .\omformmodel\models.py:58 .\omformmodel\views.py:202
+#: .\omformmodel\views.py:230 .\ommessage\models.py:18
+#: .\ommission\models.py:18
+ .\templates\myform.html:522
+msgid "資料編號"
+msgstr "رقم البيانات"
+
+#: .\omformflow\models.py:139
+msgid "上傳人員"
+msgstr "تحميل الشخص"
+
+#: .\omformflow\models.py:150
+msgid "主表單流程"
+msgstr "النموذج الرئيسي لتدفق النموذج"
+
+#: .\omformflow\models.py:151
+msgid "主資料編號"
+msgstr "رقم المعلومات الرئيسية"
+
+#: .\omformflow\models.py:152 .\templates\myform.html:264
+#: .\templates\myform.html:340 .\templates\myform.html:345
+#: .\templates\myform.html:346 .\templates\myform.html:347
+#: .\templates\myform.html:348
+msgid "關聯類型"
+msgstr "نوع الرابطة"
+
+#: .\omformflow\models.py:153
+msgid "被影響百分比"
+msgstr "نسبة التأثير"
+
+#: .\omformflow\models.py:154
+msgid "副表單流程"
+msgstr "التدفق الثاني للفورمة"
+
+#: .\omformflow\models.py:155
+msgid "副資料編號"
+msgstr "رقم البيانات الفرعية"
+
+#: .\omformflow\models.py:157
+msgid "建立人員"
+msgstr "التوظيف"
+
+#: .\omformflow\models.py:171 .\omformflow\models.py:215
+#: .\omuser\templates\role_detail.html:118 .\templates\myform.html:220
+msgid "內容"
+msgstr "محتوي"
+
+#: .\omformflow\models.py:173
+msgid "建立人"
+msgstr "انشاء"
+
+#: .\omformflow\models.py:185 .\omformflow\templates\parameter_manage.html:46
+msgid "參數名稱"
+msgstr "اسم المعامل"
+
+#: .\omformflow\models.py:186 .\omformflow\templates\parameter_manage.html:47
+#: .\omformflow\templates\parameter_manage.html:94
+msgid "參數值"
+msgstr "قيمة المعامل"
+
+#: .\omformflow\models.py:187 .\omformflow\models.py:207
+#: .\omformflow\models.py:233 .\templates\home.html:77
+msgid "類型"
+msgstr "النوع"
+
+#: .\omformflow\models.py:189
+msgid "是否遮蔽"
+msgstr "هل هناك تغطية"
+
+#: .\omformflow\models.py:190
+msgid "群組id"
+msgstr "رقم المجموعة"
+
+#: .\omformflow\models.py:202 .\omformflow\templates\SLA_manage.html:45
+#: .\omformflow\templates\SLA_manage.html:74
+#: .\omformflow\templates\SLA_manage.html:121
+#: .\omformflow\templates\SLA_manage.html:122
+msgid "服務水準名稱"
+msgstr "إسم SLA"
+
+#: .\omformflow\models.py:204 .\omformflow\models.py:234
+#: .\omformflow\templates\SLA_manage.html:46
+#: .\omformflow\templates\SLA_manage.html:75
+#: .\omformflow\templates\SLA_manage.html:169
+#: .\omformflow\templates\flow_app_manage.html:76
+#: .\omformflow\templates\flow_app_manage.html:77
+#: .\omformflow\templates\flow_app_manage.html:144
+#: .\omformflow\templates\flow_app_manage.html:156
+msgid "應用名稱"
+msgstr "اسم التطبيق"
+
+#: .\omformflow\models.py:205 .\omformflow\models.py:235
+#: .\omformflow\templates\SLA_manage.html:47
+#: .\omformflow\templates\SLA_manage.html:76
+#: .\omformflow\templates\SLA_manage.html:176
+#: .\omformflow\templates\flow_design.html:50
+#: .\omformflow\templates\flow_design.html:191
+#: .\omformflow\templates\flow_design.html:829
+#: .\omformflow\templates\flow_design.html:900
+#: .\omformflow\templates\flow_manage.html:45
+#: .\omformflow\templates\scheduleflow_manage.html:40
+#: .\omformflow\templates\scheduleflow_manage.html:73
+#: .\omformflow\templates\workflow_app_manage.html:44
+#: .\omformflow\templates\workflow_manage.html:40 .\ommission\models.py:14
+#: .\templates\myform.html:266
+msgid "流程名稱"
+msgstr "اسم التدفق"
+
+#: .\omformflow\models.py:208
+msgid "時間測量開始"
+msgstr "بداية وقت القياس"
+
+#: .\omformflow\models.py:209
+msgid "時間測量終止"
+msgstr "وقت انتهاء القياس"
+
+#: .\omformflow\models.py:210
+msgid "進階條件"
+msgstr "حالات متقدمة"
+
+#: .\omformflow\models.py:211
+msgid "數值測量欄位"
+msgstr "حقل قياس رقمي"
+
+#: .\omformflow\models.py:212 .\omformflow\models.py:239
+msgid "提醒"
+msgstr "تذكير"
+
+#: .\omformflow\models.py:213 .\omformflow\models.py:240
+msgid "違反"
+msgstr "انتهاك"
+
+#: .\omformflow\models.py:214 .\omformmodel\models.py:21
+#: .\omformmodel\views.py:205 .\ommessage\templates\compose.html:34
+#: .\ommission\models.py:17 .\ommission\templates\mission.html:44
+#: .\ommission\templates\mission.html:83
+#: .\ommission\templates\mission.html:119
+ .\omservice\templates\list.html:170
+#: .\templates\home.html:71
+ .\templates\myform.html:267
+#: .\templates\myform.html:425
+msgid "標題"
+msgstr "مسمي"
+
+#: .\omformflow\models.py:218 .\omformflow\templates\SLA_manage.html:152
+msgid "通知開單人"
+msgstr "اعلام المنشيء"
+
+#: .\omformflow\models.py:219 .\omformflow\templates\SLA_manage.html:142
+#: .\omformflow\templates\SLA_manage.html:737
+msgid "通知角色"
+msgstr "اعلام القواعد"
+
+#: .\omformflow\models.py:220 .\omformflow\templates\SLA_manage.html:147
+#: .\omformflow\templates\SLA_manage.html:772
+msgid "通知人"
+msgstr "إعلام المنستخدم "
+
+#: .\omformflow\models.py:241 .\omformmodel\models.py:22
+#: .\omformmodel\views.py:206 .\ommission\models.py:16
+#: .\ommission\templates\mission.html:43 .\ommission\templates\mission.html:82
+#: .\templates\myform.html:428
+msgid "燈號"
+msgstr "مستوي"
+
+#: .\omformflow\models.py:242 .\omformmodel\models.py:24
+#: .\omformmodel\views.py:208
+msgid "關閉標記"
+msgstr "اغلاق العلامة"
+
+#: .\omformflow\templates\SLA_manage.html:13
+#: .\omformflow\templates\SLA_manage.html:19 .\templates\base_l_aside.html:64
+msgid "服務水準管理"
+msgstr "إدارة SLA"
+
+#: .\omformflow\templates\SLA_manage.html:14
+#: .\omformflow\templates\SLA_manage.html:18
+#: .\omformflow\templates\flow_app_manage.html:18
+#: .\omformflow\templates\flow_design.html:17
+#: .\omformflow\templates\flow_manage.html:18
+#: .\omformflow\templates\flowvalue.html:20
+#: .\omformflow\templates\parameter_manage.html:17
+#: .\omformflow\templates\scheduleflow_manage.html:20
+#: .\omformflow\templates\workflow_app_manage.html:18
+#: .\templates\base_l_aside.html:55 .\templates\file_manage.html:99
+msgid "應用管理"
+msgstr "ادارةالتطبيق"
+
+#: .\omformflow\templates\SLA_manage.html:17
+#: .\omformflow\templates\flow_app_manage.html:17
+#: .\omformflow\templates\flow_design.html:16
+#: .\omformflow\templates\flow_manage.html:17
+#: .\omformflow\templates\flowvalue.html:19
+#: .\omformflow\templates\parameter_manage.html:16
+#: .\omformflow\templates\scheduleflow_manage.html:19
+#: .\omformflow\templates\workflow.html:16
+#: .\omformflow\templates\workflow_app_manage.html:17
+#: .\omformflow\templates\workflow_manage.html:17
+#: .\ommessage\templates\compose.html:16 .\ommessage\templates\message.html:16
+#: .\ommessage\templates\messageManage.html:16
+#: .\ommission\templates\mission.html:14 .\omservice\templates\list.html:11
+#: .\omservice\templates\list.html:164
+#: .\omuser\templates\change_password.html:15
+#: .\omuser\templates\group_detail.html:16
+#: .\omuser\templates\group_manage.html:16 .\omuser\templates\profile.html:16
+#: .\omuser\templates\role_detail.html:16
+#: .\omuser\templates\role_manage.html:16
+#: .\omuser\templates\user_manage.html:16 .\templates\file_manage.html:17
+#: .\templates\home.html:13 .\templates\home.html:15 .\templates\home.html:17
+#: .\templates\home.html:63 .\templates\myform.html:18
+#: .\templates\sidebar_design.html:16 .\templates\system_config.html:16
+msgid "首頁"
+msgstr "الرئيسية"
+
+#: .\omformflow\templates\SLA_manage.html:29
+msgid "數值量測"
+msgstr "مقاييس رقمية"
+
+#: .\omformflow\templates\SLA_manage.html:30
+msgid "時間量測"
+msgstr "زمن القياس"
+
+#: .\omformflow\templates\SLA_manage.html:36
+#: .\omformflow\templates\SLA_manage.html:65
+#: .\omformflow\templates\SLA_manage.html:234
+#: .\omformflow\templates\SLA_manage.html:246
+#: .\omformflow\templates\flow_app_manage.html:28
+#: .\omformflow\templates\flow_design.html:110
+#: .\omformflow\templates\flow_design.html:120
+#: .\omformflow\templates\flow_design.html:163
+#: .\omformflow\templates\flow_design.html:182
+#: .\omformflow\templates\flow_design.html:848
+#: .\omformflow\templates\flow_manage.html:29
+#: .\omformflow\templates\scheduleflow_manage.html:28
+#: .\omformflow\templates\workflow.html:23 .\omformmodel\views.py:190
+#: .\templates\base_component.html:464 .\templates\base_component.html:489
+#: .\templates\base_component.html:490 .\templates\myform.html:201
+#: .\templates\sidebar_design.html:27
+msgid "新增"
+msgstr "جديد"
+
+#: .\omformflow\templates\SLA_manage.html:37
+#: .\omformflow\templates\SLA_manage.html:66
+#: .\omformflow\templates\flow_app_manage.html:29
+#: .\omformflow\templates\flow_design.html:111
+#: .\omformflow\templates\flow_design.html:122
+#: .\omformflow\templates\flow_design.html:183
+#: .\omformflow\templates\flow_design.html:246
+#: .\omformflow\templates\flow_manage.html:31
+#: .\omformflow\templates\scheduleflow_manage.html:29
+#: .\omformflow\templates\workflow.html:26
+#: .\omformflow\templates\workflow_app_manage.html:29
+#: .\omformmodel\views.py:193 .\ommessage\templates\messageManage.html:340
+#: .\ommessage\templates\messageManage.html:341 .\omuser\models.py:34
+#: .\omuser\templates\group_manage.html:28
+#: .\omuser\templates\role_manage.html:30 .\templates\file_manage.html:40
+msgid "刪除"
+msgstr "حذف"
+
+#: .\omformflow\templates\SLA_manage.html:48
+#: .\omformflow\templates\SLA_manage.html:77
+#: .\omformflow\templates\SLA_manage.html:190
+#: .\omformflow\templates\SLA_manage.html:442
+#: .\omformflow\templates\SLA_manage.html:473
+msgid "提醒規則"
+msgstr "تذكير بالقواعد"
+
+#: .\omformflow\templates\SLA_manage.html:49
+#: .\omformflow\templates\SLA_manage.html:78
+#: .\omformflow\templates\SLA_manage.html:209
+#: .\omformflow\templates\SLA_manage.html:443
+#: .\omformflow\templates\SLA_manage.html:474
+msgid "違反規則"
+msgstr "مخالفة القواعد"
+
+#: .\omformflow\templates\SLA_manage.html:131
+#: .\omformflow\templates\SLA_manage.html:132
+msgid "通知主旨"
+msgstr "تنبيه الفاعل"
+
+#: .\omformflow\templates\SLA_manage.html:135
+#: .\omformflow\templates\SLA_manage.html:136
+msgid "通知內容"
+msgstr "تنبيه المحتوي"
+
+#: .\omformflow\templates\SLA_manage.html:183
+msgid "欄位"
+msgstr "عمود"
+
+#: .\omformflow\templates\SLA_manage.html:202
+#: .\omformflow\templates\SLA_manage.html:221
+msgid "數字"
+msgstr "رقم"
+
+#: .\omformflow\templates\SLA_manage.html:202
+#: .\omformflow\templates\SLA_manage.html:221
+msgid "字串"
+msgstr "نص"
+
+#: .\omformflow\templates\SLA_manage.html:233
+#: .\omformflow\templates\SLA_manage.html:456
+#: .\omformflow\templates\SLA_manage.html:488
+msgid "觸發條件"
+msgstr "حالة الزناد"
+
+#: .\omformflow\templates\SLA_manage.html:245
+msgid "終止條件"
+msgstr "حالة الانتهاء"
+
+#: .\omformflow\templates\SLA_manage.html:269
+#: .\omformflow\templates\flow_app_manage.html:93
+#: .\omformflow\templates\flow_app_manage.html:114
+#: .\omformflow\templates\flow_app_manage.html:170
+#: .\omformflow\templates\flow_design.html:250
+#: .\omformflow\templates\flow_design.html:814
+#: .\omformflow\templates\flow_design.html:885
+#: .\omformflow\templates\flow_manage.html:76
+#: .\omformflow\templates\flow_manage.html:101
+#: .\omformflow\templates\flowvalue.html:62
+#: .\omformflow\templates\parameter_manage.html:111
+#: .\omformflow\templates\parameter_manage.html:131
+#: .\omformflow\templates\scheduleflow_manage.html:236
+#: .\omformflow\templates\workflow.html:57
+#: .\omformflow\templates\workflow_manage.html:211
+#: .\omservice\templates\list.html:27 .\omservice\templates\list.html:104
+#: .\omservice\templates\list.html:128 .\omservice\templates\list.html:150
+#: .\omuser\templates\group_manage.html:86 .\omuser\templates\profile.html:294
+#: .\omuser\templates\role_manage.html:84 .\templates\base_component.html:16
+#: .\templates\base_component.html:40 .\templates\base_component.html:59
+#: .\templates\base_component.html:81 .\templates\base_component.html:131
+#: .\templates\base_component.html:185 .\templates\base_component.html:210
+#: .\templates\base_component.html:244 .\templates\base_component.html:301
+#: .\templates\base_component.html:333 .\templates\base_component.html:357
+#: .\templates\base_component.html:413 .\templates\base_component.html:438
+#: .\templates\base_component.html:463 .\templates\base_component.html:488
+#: .\templates\home.html:29 .\templates\myform.html:203
+#: .\templates\myform.html:358 .\templates\system_config.html:213
+msgid "取消"
+msgstr "الغاء"
+
+#: .\omformflow\templates\SLA_manage.html:270
+#: .\omformflow\templates\flow_app_manage.html:94
+#: .\omformflow\templates\flow_app_manage.html:115
+#: .\omformflow\templates\flow_app_manage.html:171
+#: .\omformflow\templates\flow_design.html:251
+#: .\omformflow\templates\flow_design.html:817
+#: .\omformflow\templates\flow_design.html:888
+#: .\omformflow\templates\flow_manage.html:77
+#: .\omformflow\templates\flow_manage.html:102
+#: .\omformflow\templates\flowvalue.html:63
+#: .\omformflow\templates\parameter_manage.html:112
+#: .\omformflow\templates\parameter_manage.html:132
+#: .\omformflow\templates\scheduleflow_manage.html:237
+#: .\omformflow\templates\workflow.html:58
+#: .\omformflow\templates\workflow_manage.html:212
+#: .\omservice\templates\list.html:105 .\omservice\templates\list.html:129
+#: .\omservice\templates\list.html:151 .\omuser\templates\group_manage.html:87
+#: .\omuser\templates\profile.html:295 .\omuser\templates\role_manage.html:85
+#: .\templates\base_component.html:41 .\templates\base_component.html:82
+#: .\templates\base_component.html:132 .\templates\base_component.html:186
+#: .\templates\base_component.html:211 .\templates\base_component.html:245
+#: .\templates\base_component.html:302 .\templates\base_component.html:334
+#: .\templates\base_component.html:358 .\templates\system_config.html:214
+msgid "確定"
+msgstr "تأكيد"
+
+#: .\omformflow\templates\SLA_manage.html:345
+#: .\omformflow\templates\SLA_manage.html:407
+#: .\omformflow\templates\flow_design.html:525
+#: .\omformflow\templates\flow_design.html:1050
+#: .\omformflow\templates\flow_design.html:1065
+#: .\omformflow\templates\flowvalue.html:151
+#: .\omformflow\templates\scheduleflow_manage.html:323
+#: .\omservice\templates\list.html:28 .\omuser\templates\group_manage.html:115
+#: .\omuser\templates\group_manage.html:123 .\templates\home.html:27
+#: .\templates\myform.html:270 .\templates\myform.html:941
+msgid "編輯"
+msgstr "تحرير"
+
+#: .\omformflow\templates\SLA_manage.html:398
+#: .\omformflow\templates\SLA_manage.html:403
+msgid "超過"
+msgstr "زيادة"
+
+#: .\omformflow\templates\SLA_manage.html:433
+msgid "新增服務水準"
+msgstr "SLA جديد"
+
+#: .\omformflow\templates\SLA_manage.html:444
+#: .\omformflow\templates\SLA_manage.html:475
+#: .\omformflow\templates\SLA_manage.html:689
+msgid "數字、字串..."
+msgstr "رقم ، نص"
+
+#: .\omformflow\templates\SLA_manage.html:446
+#: .\omformflow\templates\SLA_manage.html:477
+msgid "進階觸發條件"
+msgstr "حالة زناد تقدمة"
+
+#: .\omformflow\templates\SLA_manage.html:452
+#: .\omformflow\templates\SLA_manage.html:484
+msgid "提醒時間(分)"
+msgstr "تذكير بالوقت بالدقائق"
+
+#: .\omformflow\templates\SLA_manage.html:453
+#: .\omformflow\templates\SLA_manage.html:485
+msgid "違反時間(分)"
+msgstr "مخالفة الوقت بالدقائق"
+
+#: .\omformflow\templates\SLA_manage.html:454
+#: .\omformflow\templates\SLA_manage.html:486
+#: .\omformflow\templates\scheduleflow_manage.html:119
+#: .\omformflow\templates\scheduleflow_manage.html:310
+msgid "分"
+msgstr "دقائق"
+
+#: .\omformflow\templates\SLA_manage.html:465
+msgid "編輯服務水準"
+msgstr "تحرير SLA"
+
+#: .\omformflow\templates\SLA_manage.html:543
+msgid "刪除下列服務水準"
+msgstr " التاليةSLA الغاء
+
+#: .\omformflow\templates\SLA_manage.html:696
+#: .\omformflow\templates\SLA_manage.html:819
+#: .\omformflow\templates\SLA_manage.html:919
+#: .\omformflow\templates\SLA_manage.html:923
+#: .\omformflow\templates\SLA_manage.html:936
+#: .\omservice\templates\list.html:176 .\templates\home.html:92
+msgid "選擇欄位"
+msgstr "تحديد الحقل"
+
+#: .\omformflow\templates\SLA_manage.html:814
+msgid "選擇應用"
+msgstr ""
+
+#: .\omformflow\templates\SLA_manage.html:815
+#: .\omformflow\templates\SLA_manage.html:862
+#: .\omformflow\templates\SLA_manage.html:875
+msgid "選擇流程"
+msgstr "تدفق التحديد"
+
+#: .\omformflow\templates\SLA_manage.html:975
+#: .\omformflow\templates\flow_app_manage.html:321
+#: .\omformflow\templates\flow_app_manage.html:600
+#: .\omformflow\templates\flow_design.html:1091
+#: .\omformflow\templates\flow_manage.html:437
+#: .\omformflow\templates\flowvalue.html:266
+#: .\omformflow\templates\parameter_manage.html:429
+#: .\omformflow\templates\scheduleflow_manage.html:450
+#: .\omformflow\templates\workflow_app_manage.html:268
+#: .\omformflow\templates\workflow_manage.html:731
+#: .\omservice\templates\list.html:427 .\omservice\templates\list.html:2044
+#: .\omservice\templates\list.html:2193
+#: .\omuser\templates\group_manage.html:266 .\templates\myform.html:1987
+#: .\templates\myform.html:2031
+msgid "成功"
+msgstr "نجاح"
+
+#: .\omformflow\templates\flow_app_manage.html:13
+#: .\omformflow\templates\flow_app_manage.html:19
+#: .\omformflow\templates\flow_design.html:18
+#: .\omformflow\templates\flow_manage.html:19 .\templates\base_l_aside.html:59
+msgid "應用設計"
+msgstr "تصميم النموذج"
+
+#: .\omformflow\templates\flow_app_manage.html:14
+#: .\omformflow\templates\workflow_app_manage.html:14
+msgid "應用列表"
+msgstr "قائمة التطبيق"
+
+#: .\omformflow\templates\flow_app_manage.html:29
+msgid "刪除下列應用"
+msgstr "حذف التطبيق التالي"
+
+#: .\omformflow\templates\flow_app_manage.html:30 .\ommission\models.py:34
+msgid "上架"
+msgstr "نشر"
+
+#: .\omformflow\templates\flow_app_manage.html:31
+#: .\omformflow\templates\flow_manage.html:32
+#: .\omformflow\templates\flowvalue.html:27
+#: .\omformflow\templates\scheduleflow_manage.html:30
+#: .\omformflow\templates\workflow.html:28
+#: .\omformflow\templates\workflow_app_manage.html:30
+#: .\templates\myform.html:255 .\templates\myform.html:306
+msgid "篩選"
+msgstr "فرز"
+
+#: .\omformflow\templates\flow_app_manage.html:32
+#: .\omformflow\templates\flow_manage.html:33
+#: .\omformflow\templates\flowvalue.html:28
+#: .\omformflow\templates\parameter_manage.html:31
+#: .\omformflow\templates\scheduleflow_manage.html:31
+#: .\omformflow\templates\workflow.html:29
+#: .\omformflow\templates\workflow_app_manage.html:31
+#: .\omformflow\templates\workflow_manage.html:31
+#: .\ommission\templates\mission.html:35 .\ommission\templates\mission.html:68
+#: .\ommission\templates\mission.html:105
+#: .\omuser\templates\group_detail.html:59
+#: .\omuser\templates\group_manage.html:32 .\omuser\templates\profile.html:189
+#: .\omuser\templates\profile.html:226 .\omuser\templates\role_detail.html:66
+#: .\omuser\templates\role_detail.html:105
+#: .\omuser\templates\role_manage.html:32
+#: .\omuser\templates\user_manage.html:33 .\templates\file_manage.html:42
+msgid "清除篩選條件"
+msgstr "ازالة الفرز"
+
+#: .\omformflow\templates\flow_app_manage.html:32
+#: .\omformflow\templates\flow_manage.html:33
+#: .\omformflow\templates\flowvalue.html:28
+#: .\omformflow\templates\parameter_manage.html:31
+#: .\omformflow\templates\scheduleflow_manage.html:31
+#: .\omformflow\templates\workflow.html:29
+#: .\omformflow\templates\workflow_app_manage.html:31
+#: .\omformflow\templates\workflow_manage.html:31
+#: .\ommission\templates\mission.html:35 .\ommission\templates\mission.html:68
+#: .\ommission\templates\mission.html:105
+#: .\omuser\templates\group_detail.html:59
+#: .\omuser\templates\group_manage.html:32 .\omuser\templates\profile.html:189
+#: .\omuser\templates\profile.html:226 .\omuser\templates\role_detail.html:66
+#: .\omuser\templates\role_detail.html:105
+#: .\omuser\templates\role_manage.html:32
+#: .\omuser\templates\user_manage.html:33 .\templates\file_manage.html:42
+msgid " 還原"
+msgstr "استعادة"
+
+#: .\omformflow\templates\flow_app_manage.html:35
+#: .\omformflow\templates\flow_app_manage.html:656
+#: .\omformflow\templates\flow_manage.html:124
+#: .\omformflow\templates\parameter_manage.html:34
+#: .\omservice\templates\list.html:35 .\omservice\templates\list.html:78
+#: .\templates\home.html:39
+msgid "匯入"
+msgstr "ادخال"
+
+#: .\omformflow\templates\flow_app_manage.html:37
+#: .\omformflow\templates\flow_manage.html:126
+#: .\omformflow\templates\parameter_manage.html:36
+#: .\omformflow\templates\workflow_app_manage.html:34
+#: .\omservice\templates\list.html:37 .\omservice\templates\list.html:80
+#: .\templates\home.html:40
+msgid "匯出"
+msgstr "اخراج"
+
+#: .\omformflow\templates\flow_app_manage.html:38
+#: .\omservice\templates\list.html:339 .\templates\home.html:247
+msgid "下載"
+msgstr "السحابة المعلوماتية"
+
+#: .\omformflow\templates\flow_app_manage.html:49
+#: .\omformflow\templates\workflow_app_manage.html:47
+#: .\omservice\templates\list.html:320 .\omuser\models.py:21
+#: .\omuser\templates\group_detail.html:29
+#: .\omuser\templates\role_detail.html:29
+#: .\omuser\templates\user_manage.html:139 .\templates\home.html:228
+#: .\templates\myform.html:221
+msgid "使用者"
+msgstr "مستخدم"
+
+#: .\omformflow\templates\flow_app_manage.html:50
+#: .\omformflow\templates\flow_manage.html:46
+#: .\omformflow\templates\workflow_app_manage.html:46
+msgid "最後修改時間"
+msgstr "وقت آخر تعديل"
+
+#: .\omformflow\templates\flow_app_manage.html:72
+msgid "建立應用"
+msgstr "انشاء التطبيق"
+
+#: .\omformflow\templates\flow_app_manage.html:107
+#: .\omformflow\templates\flow_manage.html:69
+msgid "流程匯入"
+msgstr "ادخال التدفق"
+
+#: .\omformflow\templates\flow_app_manage.html:128
+msgid "上架設定"
+msgstr "خصائص النشر"
+
+#: .\omformflow\templates\flow_app_manage.html:136
+msgid "上架新應用"
+msgstr "نشر تطبيق جديد"
+
+#: .\omformflow\templates\flow_app_manage.html:137
+msgid "取代上架應用"
+msgstr "استدال التطبيق"
+
+#: .\omformflow\templates\flow_app_manage.html:149
+msgid "上架位置"
+msgstr "نشر الوضع"
+
+#: .\omformflow\templates\flow_app_manage.html:161
+msgid "應用選擇"
+msgstr "تحديد التطبيق"
+
+#: .\omformflow\templates\flow_app_manage.html:305
+#: .\omformflow\templates\flow_app_manage.html:465
+#: .\omformflow\templates\flow_app_manage.html:551 .\templates\myform.html:524
+msgid "處理中..."
+msgstr "العمليات"
+
+#: .\omformflow\templates\flow_app_manage.html:425
+msgid "無應用可取代"
+msgstr "لا تطبيق للاستبدال"
+
+#: .\omformflow\templates\flow_app_manage.html:478
+#: .\omformflow\templates\workflow_app_manage.html:333
+msgid "匯出下列應用"
+msgstr "استبدال التطبيق التالي"
+
+#: .\omformflow\templates\flow_app_manage.html:627 .\templates\home.html:674
+msgid "讀取中"
+msgstr "القراءة"
+
+#: .\omformflow\templates\flow_app_manage.html:645
+msgid "回上一層"
+msgstr "العودة لنفس المستوي"
+
+#: .\omformflow\templates\flow_app_manage.html:652
+#: .\omformflow\templates\flow_design.html:119
+#: .\omformflow\templates\flow_design.html:240 .\omformmodel\views.py:192
+#: .\templates\myform.html:269 .\templates\myform.html:607
+#: .\templates\myform.html:685 .\templates\myform.html:689
+#: .\templates\myform.html:936
+msgid "檢視"
+msgstr "المظهر"
+
+#: .\omformflow\templates\flow_app_manage.html:671
+msgid "流程匯入中"
+msgstr "ادخال التدفق"
+
+#: .\omformflow\templates\flow_app_manage.html:701
+msgid "雲端流程"
+msgstr "التدفق السحابي"
+
+#: .\omformflow\templates\flow_app_manage.html:710
+#: .\omformflow\templates\workflow_app_manage.html:48
+#: .\omformflow\templates\workflow_manage.html:43
+#: .\templates\base_component.html:231
+msgid "版本"
+msgstr "الاصدار"
+
+#: .\omformflow\templates\flow_app_manage.html:711
+#: .\ommission\templates\mission.html:535 .\templates\myform.html:858
+#: .\templates\myform.html:1417
+msgid "修改日期"
+msgstr " تاريخ التعديل"
+
+#: .\omformflow\templates\flow_app_manage.html:719
+#: .\omformflow\templates\flow_manage.html:129
+#: .\ommission\templates\mission.html:160
+#: .\ommission\templates\mission.html:188 .\omservice\templates\list.html:83
+#: .\templates\base_component.html:510 .\templates\base_component.html:535
+#: .\templates\base_component.html:556 .\templates\base_component.html:577
+#: .\templates\base_component.html:597 .\templates\base_component.html:618
+#: .\templates\myform.html:98 .\templates\myform.html:128
+#: .\templates\myform.html:177 .\templates\myform.html:233
+#: .\templates\myform.html:282 .\templates\myform.html:319
+#: .\templates\myform.html:399 .\templates\myform.html:436
+msgid "關閉"
+msgstr "اغلاق"
+
+#: .\omformflow\templates\flow_design.html:30
+#: .\omformflow\templates\flow_design.html:810
+#: .\omformflow\templates\flow_design.html:881
+msgid "參數設定"
+msgstr "خصائص"
+
+#: .\omformflow\templates\flow_design.html:31
+msgid "權限設定"
+msgstr "صلاحية الوصول"
+
+#: .\omformflow\templates\flow_design.html:32
+msgid "表單設計"
+msgstr "تصميم النموذج"
+
+#: .\omformflow\templates\flow_design.html:37
+#: .\omservice\templates\list.html:26 .\omuser\templates\group_detail.html:35
+#: .\omuser\templates\group_detail.html:57 .\omuser\templates\profile.html:41
+#: .\omuser\templates\profile.html:185 .\omuser\templates\profile.html:224
+#: .\omuser\templates\role_detail.html:36
+#: .\omuser\templates\role_detail.html:64
+#: .\omuser\templates\role_detail.html:103 .\templates\base_component.html:417
+#: .\templates\home.html:28 .\templates\myform.html:202
+#: .\templates\system_config.html:28
+msgid "儲存"
+msgstr "حفظ"
+
+#: .\omformflow\templates\flow_design.html:51
+#: .\omformflow\templates\flow_design.html:830
+#: .\omformflow\templates\flow_design.html:901
+msgid "請輸入流程名稱"
+msgstr "برجاء ادخال اسم التدفق"
+
+#: .\omformflow\templates\flow_design.html:54
+#: .\omformflow\templates\flow_design.html:55
+msgid "API 路徑"
+msgstr "عنوان التطبيق"
+
+#: .\omformflow\templates\flow_design.html:55
+msgid "小寫英文、數字及 -"
+msgstr "أ-ي,0-9,-"
+
+#: .\omformflow\templates\flow_design.html:59
+#: .\omformflow\templates\flow_design.html:834
+#: .\omformflow\templates\flow_design.html:905
+msgid "流程說明"
+msgstr "تفاصيل التدفق"
+
+#: .\omformflow\templates\flow_design.html:63
+msgid "執行過程紀錄(LOG)"
+msgstr "السجل"
+
+#: .\omformflow\templates\flow_design.html:67
+msgid "應用程式介面(API)"
+msgstr "التطبيق"
+
+#: .\omformflow\templates\flow_design.html:72
+msgid "表單工作區設定"
+msgstr "خصائص ورشة العمل"
+
+#: .\omformflow\templates\flow_design.html:76
+msgid "是否建立任務"
+msgstr "انشاء مهمة"
+
+#: .\omformflow\templates\flow_design.html:84
+msgid "檢視表單資料操作歷程"
+msgstr "عرض تاريخ "
+
+#: .\omformflow\templates\flow_design.html:92
+msgid "顯示資料關聯"
+msgstr "عرض علاقة البيانات"
+
+#: .\omformflow\templates\flow_design.html:118
+#: .\omformflow\templates\flow_design.html:233
+#: .\omuser\templates\role_detail.html:42
+#: .\omuser\templates\role_detail.html:43
+#: .\omuser\templates\role_manage.html:70
+#: .\omuser\templates\role_manage.html:71
+msgid "角色名稱"
+msgstr "اسم القاعدة"
+
+#: .\omformflow\templates\flow_design.html:121
+#: .\omformflow\templates\flow_design.html:244 .\omformmodel\views.py:191
+#: .\templates\base_component.html:439
+msgid "修改"
+msgstr "تعديل"
+
+#: .\omformflow\templates\flow_design.html:143
+msgid "區塊"
+msgstr "تكتل"
+
+#: .\omformflow\templates\flow_design.html:144
+msgid "半區塊"
+msgstr "نصف تكتل"
+
+#: .\omformflow\templates\flow_design.html:229
+msgid "新增權限角色"
+msgstr "اضافة صلاحية الوصول للقواعد"
+
+#: .\omformflow\templates\flow_design.html:242
+#: .\omformflow\templates\parameter_manage.html:28
+#: .\omuser\templates\user_manage.html:28 .\templates\sidebar_design.html:27
+msgid " 新增"
+msgstr "اضافة"
+
+#: .\omformflow\templates\flow_design.html:317
+#: .\omformflow\templates\flow_design.html:866
+msgid "開始"
+msgstr "بدء"
+
+#: .\omformflow\templates\flow_design.html:317
+#: .\omformflow\templates\flow_design.html:866
+msgid "人工輸入"
+msgstr "ادخال يدوي"
+
+#: .\omformflow\templates\flow_design.html:317
+#: .\omformflow\templates\flow_design.html:866
+msgid "判斷"
+msgstr "تبديل"
+
+#: .\omformflow\templates\flow_design.html:317
+#: .\omformflow\templates\flow_design.html:866
+msgid "結束"
+msgstr "نهاية"
+
+#: .\omformflow\templates\flow_design.html:341
+#: .\omformflow\templates\flow_design.html:343
+msgid "建立新流程"
+msgstr "تدفق جديد"
+
+#: .\omformflow\templates\flow_design.html:366
+#: .\omformflow\templates\flow_design.html:367
+#: .\omformflow\templates\flow_design.html:368
+#: .\omformflow\templates\flow_design.html:369
+#: .\omformflow\templates\flow_design.html:394
+#: .\omformflow\templates\flow_design.html:395
+#: .\omformflow\templates\flow_design.html:396
+#: .\omformflow\templates\flow_design.html:397
+msgid "允許"
+msgstr "السماح"
+
+#: .\omformflow\templates\flow_design.html:745
+#: .\omformflow\templates\parameter_manage.html:386
+#: .\omformflow\templates\scheduleflow_manage.html:540
+#: .\omformflow\templates\workflow.html:337
+#: .\omformflow\templates\workflow.html:621
+#: .\omformflow\templates\workflow_app_manage.html:222
+#: .\omformflow\templates\workflow_manage.html:491
+#: .\omformflow\templates\workflow_manage.html:518
+#: .\omformflow\templates\workflow_manage.html:602
+#: .\omuser\templates\group_detail.html:163
+#: .\omuser\templates\group_detail.html:180
+#: .\omuser\templates\group_manage.html:225
+#: .\omuser\templates\group_manage.html:247
+#: .\omuser\templates\profile.html:585
+#: .\omuser\templates\role_detail.html:232
+#: .\omuser\templates\role_detail.html:249
+#: .\omuser\templates\role_detail.html:266
+#: .\omuser\templates\role_manage.html:209
+#: .\omuser\templates\role_manage.html:232
+#: .\omuser\templates\user_manage.html:219
+#: .\omuser\templates\user_manage.html:262 .\templates\file_manage.html:261
+#: .\templates\sidebar_design.html:272 .\templates\system_config.html:260
+#: .\templates\system_config.html:291
+msgid "處理中"
+msgstr "العمليات"
+
+#: .\omformflow\templates\flow_design.html:796
+msgid "請檢查流程名稱或API路徑"
+msgstr "برجاء فحص اسم التدفق وعنوان التطبيق"
+
+#: .\omformflow\templates\flow_design.html:1002
+msgid "請輸入子流程名稱"
+msgstr "برجاء ادخال اسم التدفق الفرعي"
+
+#: .\omformflow\templates\flow_design.html:1016
+msgid "子流程名稱重複，請重新輸入"
+msgstr "اسم التدفق الفرعي مكرر ، برجاء إعادة ادخال اسم مختلف"
+
+#: .\omformflow\templates\flow_manage.html:30
+msgid "複製"
+msgstr "نسخ"
+
+#: .\omformflow\templates\flow_manage.html:90
+msgid "流程複製"
+msgstr "نسخ التدفق"
+
+#: .\omformflow\templates\flow_manage.html:94
+msgid "將流程複製到"
+msgstr "نسخ التدفق إلي"
+
+#: .\omformflow\templates\flow_manage.html:117
+#: .\omservice\templates\list.html:71
+msgid "語言翻譯"
+msgstr "لغة الترجمة"
+
+#: .\omformflow\templates\flow_manage.html:121
+#: .\omservice\templates\list.html:75
+msgid "選擇語系"
+msgstr "اختيار اللغة"
+
+#: .\omformflow\templates\flow_manage.html:230
+#: .\omformflow\templates\workflow_manage.html:332
+msgid "流程列表"
+msgstr "قائمة التدفق"
+
+#: .\omformflow\templates\flow_manage.html:277
+msgid "下列流程將被刪除"
+msgstr "التدفق التالي سيتم حذفه"
+
+#: .\omformflow\templates\flow_manage.html:355
+#: .\omservice\templates\list.html:2079
+msgid "匯出翻譯包"
+msgstr "استخراج الترجمة"
+
+#: .\omformflow\templates\flow_manage.html:400
+#: .\omservice\templates\list.html:2132
+msgid "匯入翻譯包"
+msgstr "ادخال الترجمة"
+
+#: .\omformflow\templates\flowvalue.html:21
+#: .\omformflow\templates\workflow_app_manage.html:13
+#: .\omformflow\templates\workflow_app_manage.html:19
+#: .\omformflow\templates\workflow_manage.html:19
+#: .\templates\base_l_aside.html:60
+msgid "已上架應用"
+msgstr "التطبيقات المنشورة"
+
+#: .\omformflow\templates\flowvalue.html:34 .\ommessage\models.py:17
+#: .\ommission\templates\mission.html:42 .\ommission\templates\mission.html:81
+#: .\ommission\templates\mission.html:118 .\templates\myform.html:265
+msgid "表單編號"
+msgstr "رقم البيانات"
+
+#: .\omformflow\templates\flowvalue.html:35 .\omformmodel\models.py:25
+#: .\omformmodel\views.py:209 .\ommission\models.py:21
+msgid "關卡"
+msgstr "مرحلة"
+
+#: .\omformflow\templates\flowvalue.html:36 .\omformmodel\models.py:29
+#: .\omformmodel\views.py:213 .\templates\myform.html:386
+msgid "是否異常"
+msgstr "خطأ"
+
+#: .\omformflow\templates\flowvalue.html:37
+msgid "異常訊息"
+msgstr "رسالة خطأ"
+
+#: .\omformflow\templates\flowvalue.html:38
+#: .\ommission\templates\mission.html:45
+#: .\ommission\templates\mission.html:120
+msgid "開單人"
+msgstr "المنشئ"
+
+#: .\omformflow\templates\flowvalue.html:39 .\ommission\models.py:25
+msgid "開單時間"
+msgstr "وقت الانشاء"
+
+#: .\omformflow\templates\flowvalue.html:56
+msgid "資料修改"
+msgstr "بيانات الاختلاف"
+
+#: .\omformflow\templates\flowvalue.html:128
+#: .\omformflow\templates\workflow.html:133 .\templates\myform.html:794
+#: .\templates\myform.html:1077
+msgid "異常"
+msgstr "خطأ"
+
+#: .\omformflow\templates\flowvalue.html:130
+#: .\omformflow\templates\workflow.html:135 .\templates\myform.html:796
+#: .\templates\myform.html:1079
+msgid "正常"
+msgstr "طبيعي"
+
+#: .\omformflow\templates\flowvalue.html:186
+msgid "流程資料"
+msgstr "معلومات التدفق"
+
+#: .\omformflow\templates\parameter_manage.html:12
+#: .\omformflow\templates\parameter_manage.html:18
+#: .\templates\base_l_aside.html:62
+msgid "參數管理"
+msgstr "ادارةالمعاملات"
+
+#: .\omformflow\templates\parameter_manage.html:13
+msgid "參數列表"
+msgstr "قائمة المعاملات"
+
+#: .\omformflow\templates\parameter_manage.html:29
+#: .\omuser\templates\user_manage.html:29
+msgid " 刪除"
+msgstr "محو"
+
+#: .\omformflow\templates\parameter_manage.html:30
+#: .\ommission\templates\mission.html:34 .\ommission\templates\mission.html:67
+#: .\ommission\templates\mission.html:104
+#: .\omuser\templates\group_detail.html:58
+#: .\omuser\templates\group_manage.html:31 .\omuser\templates\profile.html:188
+#: .\omuser\templates\profile.html:225 .\omuser\templates\role_detail.html:65
+#: .\omuser\templates\role_detail.html:104
+#: .\omuser\templates\role_manage.html:31
+#: .\omuser\templates\user_manage.html:32 .\templates\file_manage.html:41
+msgid " 篩選"
+msgstr "فرز"
+
+#: .\omformflow\templates\parameter_manage.html:45
+#: .\omuser\templates\group_manage.html:44
+#: .\omuser\templates\role_manage.html:40
+#: .\omuser\templates\user_manage.html:41
+msgid "編號"
+msgstr "رقم"
+
+#: .\omformflow\templates\parameter_manage.html:98
+msgid "遮罩"
+msgstr "غطاء"
+
+#: .\omformflow\templates\parameter_manage.html:100
+#: .\templates\myform.html:934
+msgid "否"
+msgstr "رقم"
+
+#: .\omformflow\templates\parameter_manage.html:101
+#: .\templates\myform.html:934
+msgid "是"
+msgstr "نعم"
+
+#: .\omformflow\templates\parameter_manage.html:124
+msgid "參數匯入"
+msgstr "مدخلات المعامل"
+
+#: .\omformflow\templates\parameter_manage.html:194
+#: .\omformflow\templates\workflow_manage.html:69
+#: .\omformflow\templates\workflow_manage.html:406
+#: .\omuser\templates\group_detail.html:28
+#: .\omuser\templates\role_detail.html:28
+msgid "設定"
+msgstr "خصائص"
+
+#: .\omformflow\templates\parameter_manage.html:243
+msgid "新增參數"
+msgstr "المعامل الجديد"
+
+#: .\omformflow\templates\parameter_manage.html:262
+msgid "設定參數"
+msgstr "خصائص المعامل"
+
+#: .\omformflow\templates\parameter_manage.html:267
+msgid "刪除下列參數"
+msgstr "حذف المعاملات التالية"
+
+#: .\omformflow\templates\parameter_manage.html:313
+msgid "匯出下列參數"
+msgstr "استخراج المعاملات التالية"
+
+#: .\omformflow\templates\scheduleflow_manage.html:15
+#: .\omformflow\templates\scheduleflow_manage.html:21
+#: .\omformflow\templates\scheduleflow_manage.html:43
+#: .\omformflow\templates\scheduleflow_manage.html:64
+#: .\templates\base_l_aside.html:61
+msgid "排程設定"
+msgstr "خصائص الجدولة"
+
+#: .\omformflow\templates\scheduleflow_manage.html:41
+#: .\omformflow\templates\workflow_manage.html:42 .\omformmodel\models.py:20
+#: .\omformmodel\views.py:204 .\ommission\models.py:15
+#: .\ommission\templates\mission.html:48 .\ommission\templates\mission.html:86
+#: .\omuser\templates\group_detail.html:76
+#: .\omuser\templates\role_detail.html:83
+msgid "狀態"
+msgstr "خصائص"
+
+#: .\omformflow\templates\scheduleflow_manage.html:79
+msgid "表單內容"
+msgstr "نموذج"
+
+#: .\omformflow\templates\scheduleflow_manage.html:80
+#: .\omformflow\templates\scheduleflow_manage.html:90
+msgid "排程時間"
+msgstr "جول"
+
+#: .\omformflow\templates\scheduleflow_manage.html:117
+#: .\omformflow\templates\scheduleflow_manage.html:306
+msgid "單次"
+msgstr "مرة"
+
+#: .\omformflow\templates\scheduleflow_manage.html:118
+#: .\omformflow\templates\scheduleflow_manage.html:308
+#: .\omuser\templates\profile.html:311 .\omuser\templates\profile.html:451
+msgid "秒"
+msgstr "ثانية"
+
+#: .\omformflow\templates\scheduleflow_manage.html:120
+#: .\omformflow\templates\scheduleflow_manage.html:312
+msgid "小時"
+msgstr "ساعة"
+
+#: .\omformflow\templates\scheduleflow_manage.html:121
+#: .\omformflow\templates\scheduleflow_manage.html:149
+msgid "日"
+msgstr "يوم"
+
+#: .\omformflow\templates\scheduleflow_manage.html:122
+#: .\omformflow\templates\scheduleflow_manage.html:316
+msgid "週"
+msgstr "اسبوع"
+
+#: .\omformflow\templates\scheduleflow_manage.html:123
+#: .\omformflow\templates\scheduleflow_manage.html:167
+#: .\omformflow\templates\scheduleflow_manage.html:318
+msgid "月"
+msgstr "شهر"
+
+#: .\omformflow\templates\scheduleflow_manage.html:132
+#: .\omformflow\templates\scheduleflow_manage.html:165
+#: .\omformflow\templates\scheduleflow_manage.html:308
+#: .\omformflow\templates\scheduleflow_manage.html:310
+#: .\omformflow\templates\scheduleflow_manage.html:312
+#: .\omformflow\templates\scheduleflow_manage.html:314
+#: .\omformflow\templates\scheduleflow_manage.html:316
+#: .\omformflow\templates\scheduleflow_manage.html:318
+msgid "每隔"
+msgstr "كل"
+
+#: .\omformflow\templates\scheduleflow_manage.html:134
+msgid "秒執行"
+msgstr "سيتم التنفيذ في خلال ثواني"
+
+#: .\omformflow\templates\scheduleflow_manage.html:143
+msgid "一"
+msgstr "الاثنين"
+
+#: .\omformflow\templates\scheduleflow_manage.html:144
+msgid "二"
+msgstr "الثلاثاء"
+
+#: .\omformflow\templates\scheduleflow_manage.html:145
+msgid "三"
+msgstr "الاربعاء"
+
+#: .\omformflow\templates\scheduleflow_manage.html:146
+msgid "四"
+msgstr "الخميس"
+
+#: .\omformflow\templates\scheduleflow_manage.html:147
+msgid "五"
+msgstr "الجمعة"
+
+#: .\omformflow\templates\scheduleflow_manage.html:148
+msgid "六"
+msgstr "السبت"
+
+#: .\omformflow\templates\scheduleflow_manage.html:150
+#: .\omformflow\templates\scheduleflow_manage.html:169
+msgid "執行"
+msgstr "التنفذ"
+
+#: .\omformflow\templates\scheduleflow_manage.html:297
+#: .\omformflow\templates\workflow_manage.html:28
+#: .\omformflow\templates\workflow_manage.html:382
+#: .\omformflow\templates\workflow_manage.html:391
+#: .\omformflow\templates\workflow_manage.html:400
+#: .\omuser\templates\group_detail.html:125
+#: .\omuser\templates\role_detail.html:169
+#: .\omuser\templates\user_manage.html:123
+msgid "啟用"
+msgstr "التمكين"
+
+#: .\omformflow\templates\scheduleflow_manage.html:299
+#: .\omformflow\templates\workflow_manage.html:29
+#: .\omformflow\templates\workflow_manage.html:384
+#: .\omformflow\templates\workflow_manage.html:393
+#: .\omformflow\templates\workflow_manage.html:402
+#: .\omuser\templates\group_detail.html:130
+#: .\omuser\templates\role_detail.html:174
+#: .\omuser\templates\user_manage.html:125
+msgid "停用"
+msgstr "التجاهل"
+
+#: .\omformflow\templates\scheduleflow_manage.html:314
+msgid "天"
+msgstr "يومال"
+
+#: .\omformflow\templates\scheduleflow_manage.html:316
+#: .\templates\home.html:850 .\templates\home.html:913
+msgid "周一"
+msgstr "الاثنين"
+
+#: .\omformflow\templates\scheduleflow_manage.html:316
+msgid "週二"
+msgstr "يوم الثلاثاء"
+
+#: .\omformflow\templates\scheduleflow_manage.html:316
+msgid "週三"
+msgstr " يوم الاربعاء"
+
+#: .\omformflow\templates\scheduleflow_manage.html:316
+msgid "週四"
+msgstr "يوم الخميس"
+
+#: .\omformflow\templates\scheduleflow_manage.html:316
+msgid "週五"
+msgstr "يوم الجمعة"
+
+#: .\omformflow\templates\scheduleflow_manage.html:316
+msgid "週六"
+msgstr "يوم السبت"
+
+#: .\omformflow\templates\scheduleflow_manage.html:316
+msgid "週日"
+msgstr "يوم الأحد"
+
+#: .\omformflow\templates\scheduleflow_manage.html:410
+msgid "下列排程將被刪除"
+msgstr "الجدول التي سيتم محوله"
+
+#: .\omformflow\templates\scheduleflow_manage.html:610
+#: .\templates\myform.html:1964
+msgid "缺少必填欄位"
+msgstr "بيانات غير صحيحة ولكنها مطلوبة"
+
+#: .\omformflow\templates\scheduleflow_manage.html:633
+msgid "秒鐘執行"
+msgstr "ثواني حتي تنفيذ"
+
+#: .\omformflow\templates\scheduleflow_manage.html:641
+msgid "分鐘執行"
+msgstr "دقائق للتنفيذ"
+
+#: .\omformflow\templates\scheduleflow_manage.html:649
+msgid "小時執行"
+msgstr "التنفيذ خلال ساعات"
+
+#: .\omformflow\templates\scheduleflow_manage.html:657
+msgid "天執行"
+msgstr "التنفيذ خلال يوم"
+
+#: .\omformflow\templates\workflow.html:144
+#: .\ommission\templates\mission.html:269
+#: .\ommission\templates\mission.html:362 .\templates\myform.html:1088
+#: .\templates\myform.html:2101
+msgid "黃燈"
+msgstr "اصفر"
+
+#: .\omformflow\templates\workflow.html:146
+#: .\ommission\templates\mission.html:271
+#: .\ommission\templates\mission.html:364 .\templates\myform.html:1090
+#: .\templates\myform.html:2103
+msgid "紅燈"
+msgstr "احمر"
+
+#: .\omformflow\templates\workflow.html:148
+#: .\ommission\templates\mission.html:267
+#: .\ommission\templates\mission.html:273
+#: .\ommission\templates\mission.html:360
+#: .\ommission\templates\mission.html:366 .\templates\myform.html:1092
+#: .\templates\myform.html:2099
+msgid "綠燈"
+msgstr "اخضر"
+
+#: .\omformflow\templates\workflow.html:262
+msgid "表單列表"
+msgstr "قائمة النموذج"
+
+#: .\omformflow\templates\workflow.html:315
+#: .\omformflow\templates\workflow_manage.html:75
+msgid "開單"
+msgstr "انشاء البيانات"
+
+#: .\omformflow\templates\workflow.html:407 .\templates\myform.html:1621
+msgid "檔案上傳成功"
+msgstr "برجاء فحص البيانات المطلوبة"
+
+#: .\omformflow\templates\workflow.html:435
+msgid "請檢查必填欄位"
+msgstr "برجاء فحص الحقول المطلوبة"
+
+#: .\omformflow\templates\workflow.html:519 .\templates\myform.html:154
+msgid "新增檔案"
+msgstr "اضافة"
+
+#: .\omformflow\templates\workflow.html:522
+#: .\omservice\templates\list.html:1204 .\templates\myform.html:158
+msgid "硬碟容量不足，請移除部分檔案再上傳或聯絡系統管理員"
+msgstr "سعة القرص الصلب غير كافية ، برجاء حذف ملفات او الاتصال بمسئول النظام"
+
+#: .\omformflow\templates\workflow.html:618
+msgid "下列表單將被刪除"
+msgstr "النماذج التالية سيتم محوها"
+
+#: .\omformflow\templates\workflow_app_manage.html:28
+#: .\omservice\templates\list.html:192
+msgid "下架"
+msgstr "غير قابل للنشر"
+
+#: .\omformflow\templates\workflow_app_manage.html:35
+msgid "顯示上架紀錄"
+msgstr "استعراض سجل النشر"
+
+#: .\omformflow\templates\workflow_app_manage.html:35
+msgid "紀錄"
+msgstr "تسجيل"
+
+#: .\omformflow\templates\workflow_app_manage.html:130
+msgid "切換"
+msgstr "تحويل"
+
+#: .\omformflow\templates\workflow_app_manage.html:212
+msgid "下列應用將被下架"
+msgstr "التطبيق التالي لن يتم نشره"
+
+#: .\omformflow\templates\workflow_manage.html:18
+msgid "流程管理"
+msgstr "ادارة تدفق"
+
+#: .\omformflow\templates\workflow_manage.html:74
+msgid "欄位設定"
+msgstr "خاصئص العمود"
+
+#: .\omformflow\templates\workflow_manage.html:76
+msgid "查詢"
+msgstr "استعلام"
+
+#: .\omformflow\templates\workflow_manage.html:77
+msgid "推單"
+msgstr "دفع البيانات"
+
+#: .\omformflow\templates\workflow_manage.html:103
+#: .\omformflow\templates\workflow_manage.html:145
+#: .\omformflow\templates\workflow_manage.html:183
+msgid "參數"
+msgstr "معامل"
+
+#: .\omformflow\templates\workflow_manage.html:104
+#: .\omformflow\templates\workflow_manage.html:146
+#: .\omformflow\templates\workflow_manage.html:184
+msgid "回傳"
+msgstr "استرجاع"
+
+#: .\omformflow\templates\workflow_manage.html:106
+#: .\omformflow\templates\workflow_manage.html:147
+#: .\omformflow\templates\workflow_manage.html:185
+#: .\templates\base_component.html:571 .\templates\base_component.html:591
+msgid "錯誤"
+msgstr "خطأ"
+
+#: .\omformflow\templates\workflow_manage.html:477
+msgid "下列流程將被啟用"
+msgstr "التدفق التالي لن يمكن"
+
+#: .\omformflow\templates\workflow_manage.html:504
+msgid "下列流程將被停用"
+msgstr "التدفق التالي لن يعرض"
+
+#: .\omformflow\templates\workflow_manage.html:670
+msgid "單號"
+msgstr "الرقم الخاص بالبيانات"
+
+#: .\omformflow\templates\workflow_manage.html:678
+#: .\omformflow\templates\workflow_manage.html:681
+msgid "資料的唯一編號，推單時使用"
+msgstr "البيانات الغير مكررة ، مستخدمة عندما يتم ارسال البيانات
+#: .\omformflow\templates\workflow_manage.html:679
+#: .\omformflow\templates\workflow_manage.html:682
+msgid "停留的關卡名稱(人工處理點名稱"
+msgstr "اسم المرحلة متبقية حتي(اسم نقطة المعالجة اليدوية)"
+
+#: .\omformflow\views.py:128 .\omformflow\views.py:418
+#: .\omformflow\views.py:4022 .\omformflow\views.py:4086
+#: .\omformflow\views.py:4780 .\omformflow\views.py:4850 .\omuser\views.py:567
+msgid "建立成功。"
+msgstr "نجاح الانشاء"
+
+#: .\omformflow\views.py:131
+msgid "名稱重複。"
+msgstr "اسم مكرر"
+
+#: .\omformflow\views.py:134
+msgid "名稱不得為空值。"
+msgstr "الاسم لا يمكن ان يكون فارغا"
+
+#: .\omformflow\views.py:146
+msgid "找不到該應用程式。"
+msgstr "التطبيق لا يمكن العثور عليه"
+
+#: .\omformflow\views.py:230 .\omformflow\views.py:311
+#: .\omformflow\views.py:2429 .\omformflow\views.py:4302
+#: .\omservice\views.py:369 .\omservice\views.py:388
+msgid "匯出成功。"
+msgstr "نجاح الاستخراج"
+
+#: .\omformflow\views.py:273 .\omformflow\views.py:337
+#: .\omformflow\views.py:4325 .\omservice\views.py:318
+msgid "匯入成功。"
+msgstr "نجاح الادخال"
+
+#: .\omformflow\views.py:380
+msgid "流程建立失敗。"
+msgstr "انشاء تدفق فشل"
+
+#: .\omformflow\views.py:384
+msgid "同應用內不可有重複的流程名稱。"
+msgstr "لا يمكن تكرار اسم التدفق في نفس التطبيق"
+
+#: .\omformflow\views.py:421
+msgid "建立失敗。"
+msgstr "فشل الانشاء"
+
+#: .\omformflow\views.py:424 .\omformflow\views.py:4113
+#: .\omformflow\views.py:4120 .\omformflow\views.py:4179
+#: .\omformflow\views.py:4186 .\omformflow\views.py:4320
+#: .\omformflow\views.py:4783 .\omformflow\views.py:4824
+msgid "重複名稱。"
+msgstr "اسم مكرر"
+
+#: .\omformflow\views.py:651
+msgid "重複流程名稱。"
+msgstr "اسم تدفق مكرر"
+
+#: .\omformflow\views.py:778
+msgid "複製失敗，該應用內含有同樣名稱之流程。"
+msgstr "نسخ فاشل ، التطبيق يحتوي علي تكرار تدفق مع نفس الاسم"
+
+#: .\omformflow\views.py:782
+msgid "複製成功。"
+msgstr " تم النسخ"
+
+#: .\omformflow\views.py:849 .\omformflow\views.py:963
+msgid "上架成功。"
+msgstr "تم النشر بنجاح"
+
+#: .\omformflow\views.py:858 .\omformflow\views.py:1977
+msgid "應用流程數量已達上限。"
+msgstr "اقصي عدد من التطبيقات تم التوصل إليه"
+
+#: .\omformflow\views.py:910
+msgid "api路徑重複："
+msgstr "تكرار عنوان التطبيق"
+
+#: .\omformflow\views.py:995
+msgid "上架流程時失敗。"
+msgstr "فشل خلال نشر التطبيق"
+
+#: .\omformflow\views.py:997
+msgid "上架應用時失敗。"
+msgstr "فشل نشر التطبيق"
+
+#: .\omformflow\views.py:1032
+msgid "流程名稱重複，同一個應用程式不可有重複的流程名稱。"
+msgstr "تكرار تدفق اسم التطبيق ، لا يمكن تكرار نفس اسم التطبيق  "
+
+#: .\omformflow\views.py:1043
+msgid "無法覆蓋預設流程。"
+msgstr "لا يمكن اعادة الكتابة علي التدفق الحالي"
+
+#: .\omformflow\views.py:1064
+msgid "重複的應用程式名稱。"
+msgstr "تكرار اسم التطبيق"
+
+#: .\omformflow\views.py:1482 .\omformflow\views.py:1529
+#: .\omformflow\views.py:1661 .\omformflow\views.py:1783
+msgid "設定成功。"
+msgstr "نجح التخصيص"
+
+#: .\omformflow\views.py:1485 .\omformflow\views.py:2306
+#: .\omformflow\views.py:3742
+msgid "找不到該流程。"
+msgstr "التدفق قد لا يكون موجود"
+
+#: .\omformflow\views.py:1593
+msgid "推單成功"
+msgstr "تم ارسال البيانات بنجاح"
+
+#: .\omformflow\views.py:1594
+msgid "推單失敗"
+msgstr "فشل ارسال البيانات"
+
+#: .\omformflow\views.py:1598 .\omformflow\views.py:1599
+msgid "開單成功"
+msgstr "تم انشاء البيانات بنجاح"
+
+#: .\omformflow\views.py:1600
+msgid "開單失敗"
+msgstr "انشاء البيانات فشل"
+
+#: .\omformflow\views.py:1622
+msgid "讀取失敗。"
+msgstr "فشلت القراءة"
+
+#: .\omformflow\views.py:1690
+msgid "缺少schedule_id。\n"
+msgstr "الجدولة فشلت"
+
+#: .\omformflow\views.py:1738
+msgid "請選擇日期或星期。\n"
+msgstr "برجاء تحديد بيانات الاسبوع"
+
+#: .\omformflow\views.py:1745
+msgid "請選擇流程。\n"
+msgstr "برجاء تحديد التدفق"
+
+#: .\omformflow\views.py:1786
+msgid "找不到該排程。"
+msgstr "الجدول ليس موجود"
+
+#: .\omformflow\views.py:1890
+msgid "下架成功。"
+msgstr "تم عدم النشر"
+
+#: .\omformflow\views.py:1893
+msgid "請提供必要參數：app_id或是app_name。"
+msgstr " برجاء تقديم اسم المعامل الصحيح :رقم التطبيق او اسم التطبيق"
+
+#: .\omformflow\views.py:1965
+msgid "重新上架成功。"
+msgstr "تم إعادة النشر بنجاح"
+
+#: .\omformflow\views.py:1968
+msgid "重新上架失敗。"
+msgstr "فشل إعادة النشر"
+
+#: .\omformflow\views.py:1971
+msgid "找不到該應用流程。"
+msgstr "تدفق التطبيق قد لا يكون موجود"
+
+#: .\omformflow\views.py:2065 .\omformflow\views.py:2067
+#: .\omformflow\views.py:3002 .\omformflow\views.py:4879
+msgid "查詢失敗。"
+msgstr "فشل الاستعلام"
+
+#: .\omformflow\views.py:2433
+msgid "匯出失敗。"
+msgstr "فشل الاستخراج"
+
+#: .\omformflow\views.py:2493
+msgid "請提供正確的動作，新增、編輯或刪除。"
+msgstr "برجاء تقيدم الاجراء الصحيح للاضافة ، والتحرير او الحذف"
+
+#: .\omformflow\views.py:2510
+msgid "該流程未啟用API呼叫。"
+msgstr "استدعاء التطبيق ليس ممكن في ذلك التدفق"
+
+#: .\omformflow\views.py:2662 .\omformflow\views.py:2862
+#: .\omservice\templates\list.html:189 .\omservice\views.py:273
+msgid "缺少必填欄位。"
+msgstr "فشل الحقول المطلوبة"
+
+#: .\omformflow\views.py:2694
+msgid "開單失敗："
+msgstr "فشل ارسال البيانات"
+
+#: .\omformflow\views.py:2698 .\omformflow\views.py:2700
+msgid "開單成功。"
+msgstr "تم انشاء البيانات بنجاح"
+
+#: .\omformflow\views.py:2705
+msgid "該流程沒有已上架的版本。"
+msgstr "لا يوجد رقم اصدار لهذا التطبيق"
+
+#: .\omformflow\views.py:2853
+msgid "推單失敗："
+msgstr "فشل ارسال البيانات"
+
+#: .\omformflow\views.py:2857
+msgid "推單成功。"
+msgstr "تم ارسال البيانات بنجاح"
+
+#: .\omformflow\views.py:2864
+msgid "該流程目前並未處於人工處理點，無法人工推進流程。"
+msgstr " ضبط يدوي متقدم"
+
+#: .\omformflow\views.py:2868
+msgid "該流程有多個已上架的版本，請聯絡系統管理員協助處理。"
+msgstr " توجد اصدارات متعددلة لهذا التدفق الذي تم اصداره برجاء الاتصال بمدير النظام والمساعده"
+
+#: .\omformflow\views.py:2870
+msgid "該流程沒有已上架的版本"
+msgstr "التدفق ليس له اصدار له نسخة"
+
+#: .\omformflow\views.py:2872
+msgid "該單目前為執行狀態，無法進行更新/刪除。"
+msgstr " البيانات الموجودة في التنفيذ وليست للتحديث او الحذف"
+
+#: .\omformflow\views.py:2874 .\omformflow\views.py:2965
+msgid "找不到該資料庫：Omdata_"
+msgstr "البيانات غير مستطاع العثور عليها"
+
+#: .\omformflow\views.py:2968
+msgid "找不到該筆資料。"
+msgstr "البيانات غير موجودة"
+
+#: .\omformflow\views.py:3456
+msgid "關聯對象不可為同一資料。"
+msgstr "الموضوعات المرتبطة ليست علي نفس البيانات"
+
+#: .\omformflow\views.py:3460
+msgid "不同表單資料不可建立母子關聯。"
+msgstr "علاقة التفرع الاساسية لم يتم انشاؤها"
+
+#: .\omformflow\views.py:3486
+msgid "建立關聯成功。"
+msgstr ""
+
+#: .\omformflow\views.py:3490
+msgid "更改關聯成功。"
+msgstr "الانشاء المتتابع تم بنجاح"
+
+#: .\omformflow\views.py:3497
+msgid "刪除關聯成功。"
+msgstr "تم تغيير التتابع بنجاح"
+
+#: .\omformflow\views.py:3830
+msgid "更新失敗："
+msgstr "التحميل فشل"
+
+#: .\omformflow\views.py:3836
+msgid "此筆資料並無錯誤，無法進行修改。"
+msgstr "لا يوجد خطأ في هذه المعلومات ولا يمكن  تعديلها"
+
+#: .\omformflow\views.py:3839
+msgid "此筆資料正在執行中，無法進行修改。"
+msgstr "هذه البيانات يمكن تنفيذها ولا يمكن تعديلها"
+
+#: .\omformflow\views.py:3842
+msgid "此筆資料已經關閉，無法進行修改。"
+msgstr "هذا الملف التعريفي مغلق ولا يمكن تعديله"
+
+#: .\omformflow\views.py:3845
+msgid "無法修改歷史資料。"
+msgstr "لا يمكن تعديل بيانات السجلات"
+
+#: .\omformflow\views.py:4054
+msgid "搜尋成功。"
+msgstr "تم البحث بنجاح"
+
+#: .\omformflow\views.py:4092 .\omformflow\views.py:4157
+msgid "您沒有權限進行此操作"
+msgstr "انت لا تلك الصلاحيات تنفيذ هذه العملية"
+
+#: .\omformflow\views.py:4388
+msgid "派送成功。"
+msgstr "تم التسليم بنجاح"
+
+#: .\omformflow\views.py:4417 .\omformflow\views.py:4418
+msgid "找不到符合的條件。"
+msgstr "لا يوجد حالة مطابقة تم العثور عليها"
+
+#: .\omformflow\views.py:4961 .\omformflow\views.py:5119
+msgid "[違反] "
+msgstr "مخالفة "
+
+#: .\omformflow\views.py:4970 .\omformflow\views.py:5128
+msgid "[提醒] "
+msgstr "تذكير"
+
+#: .\omformmodel\models.py:15
+msgid "任務單"
+msgstr "قائمة المهام"
+
+#: .\omformmodel\models.py:17 .\omformmodel\views.py:201
+msgid "資料代碼"
+msgstr "الرقم المسلسل للبيانات"
+
+#: .\omformmodel\models.py:19 .\omformmodel\views.py:203
+#: .\ommission\models.py:20
+msgid "歷史資料"
+msgstr "معلومات السجلات"
+
+#: .\omformmodel\models.py:23 .\omformmodel\views.py:207
+#: .\ommission\models.py:29
+msgid "受派群組"
+msgstr "ارسال المجموعة"
+
+#: .\omformmodel\models.py:26 .\omformmodel\models.py:61
+#: .\omformmodel\views.py:210 .\omformmodel\views.py:233
+msgid "關卡類型"
+msgstr "نوع المرحلة"
+
+#: .\omformmodel\models.py:27 .\omformmodel\models.py:62
+#: .\omformmodel\views.py:211 .\omformmodel\views.py:234
+#: .\ommission\models.py:22 .\templates\myform.html:86
+msgid "關卡名稱"
+msgstr " "اسم المرحلة"
+
+#: .\omformmodel\models.py:28 .\omformmodel\views.py:212
+msgid "執行標記"
+msgstr "تنفيذ العلامة"
+
+#: .\omformmodel\models.py:32 .\omformmodel\views.py:216
+msgid "停止時間"
+msgstr "وقت التوقف"
+
+#: .\omformmodel\models.py:33 .\omformmodel\views.py:217
+#: .\ommission\models.py:23
+msgid "開單人員"
+msgstr "انشاء مستخدم"
+
+#: .\omformmodel\models.py:34 .\omformmodel\views.py:218
+#: .\ommission\models.py:24
+msgid "更新人員"
+msgstr "تحديث مستخدم"
+
+#: .\omformmodel\models.py:35 .\omformmodel\views.py:219
+msgid "流程參數"
+msgstr "تدفق المعاملات"
+
+#: .\omformmodel\models.py:36 .\omformmodel\views.py:220
+msgid "錯誤訊息"
+msgstr "رسالة الخطأ"
+
+#: .\omformmodel\models.py:37 .\omformmodel\views.py:221
+msgid "初始資料"
+msgstr "معلومات مبديئة"
+
+#: .\omformmodel\models.py:38 .\omformmodel\views.py:222
+msgid "子單"
+msgstr "النموذج المتفرع"
+
+#: .\omformmodel\models.py:50
+msgid "新增任務單"
+msgstr "قامة مهام جديدة"
+
+#: .\omformmodel\models.py:51
+msgid "修改任務單"
+msgstr "تعديل الترتيب"
+
+#: .\omformmodel\models.py:52
+msgid "檢視任務單"
+msgstr "عرض قائمة المهام"
+
+#: .\omformmodel\models.py:53
+msgid "刪除任務單"
+msgstr "حذف الترتيب"
+
+#: .\omformmodel\models.py:59 .\omformmodel\views.py:231
+msgid "多重資料編號"
+msgstr "رقم بيانات متعددة"
+
+#: .\omformmodel\models.py:60 .\omformmodel\views.py:232
+msgid "功能點"
+msgstr "نقطة وظيفية"
+
+#: .\omformmodel\models.py:64 .\omformmodel\views.py:236
+msgid "輸出參數"
+msgstr "معامل الاستخراج"
+
+#: .\omformmodel\models.py:67 .\omformmodel\views.py:237
+msgid "異常標記"
+msgstr "علامة الخطأ"
+
+#: .\ommessage\models.py:16
+msgid "主旨"
+msgstr ""
+
+#: .\ommessage\models.py:21
+msgid "標記"
+msgstr "علامة"
+
+#: .\ommessage\models.py:65
+msgid "發送者名稱"
+msgstr "اسم المرسل"
+
+#: .\ommessage\models.py:67
+msgid "發送群組名稱"
+msgstr "ارسال اسم المجموعة"
+
+#: .\ommessage\models.py:68
+msgid "已刪除的接收者名稱"
+msgstr "حذف الاسم المخصص"
+
+#: .\ommessage\models.py:69
+msgid "接收群組名稱"
+msgstr "استقبال اسمالمجموة"
+
+#: .\ommessage\models.py:71
+msgid "內文"
+msgstr "المحتوي"
+
+#: .\ommessage\models.py:84
+msgid "是否讀取"
+msgstr "معرفة حالة القراءة"
+
+#: .\ommessage\templates\compose.html:12
+#: .\ommessage\templates\messageManage.html:24
+msgid "新訊息"
+msgstr "رسالة جديدة"
+
+#: .\ommessage\templates\compose.html:17 .\ommessage\templates\message.html:12
+#: .\ommessage\templates\message.html:17
+#: .\ommessage\templates\messageManage.html:12
+#: .\ommessage\templates\messageManage.html:17 .\templates\file_manage.html:96
+msgid "訊息管理"
+msgstr "ادارة الرسالة"
+
+#: .\ommessage\templates\compose.html:26
+msgid " 回到訊息管理"
+msgstr "العودة لادارة الرسالة"
+
+#: .\ommessage\templates\compose.html:41
+msgid "發送身分"
+msgstr "ارسال الرقم المعرف"
+
+#: .\ommessage\templates\compose.html:42
+msgid "訊息發送身分"
+msgstr تعريف ارسال الرسالة""
+
+#: .\ommessage\templates\compose.html:48
+msgid "訊息成員"
+msgstr "رقم الرسالة"
+
+#: .\ommessage\templates\compose.html:62
+msgid "新增附件"
+msgstr "اضافة المرفق"
+
+#: .\ommessage\templates\compose.html:72
+msgid "傳送"
+msgstr "النقل"
+
+#: .\ommessage\templates\message.html:25
+#: .\ommessage\templates\messageManage.html:292
+msgid "回覆"
+msgstr "الرد"
+
+#: .\ommessage\templates\message.html:26
+#: .\ommessage\templates\messageManage.html:293
+msgid " 回覆"
+msgstr "الرد "
+
+#: .\ommessage\templates\messageManage.html:27
+#: .\omservice\templates\list.html:167
+msgid "資料夾"
+msgstr "مجلد"
+
+#: .\ommessage\templates\messageManage.html:32
+#: .\ommessage\templates\messageManage.html:44
+msgid "我的訊息"
+msgstr "رسالتي"
+
+#: .\ommessage\templates\messageManage.html:34
+msgid "發送紀錄"
+msgstr "ارسال سجل"
+
+#: .\ommessage\templates\messageManage.html:35
+#: .\ommessage\templates\messageManage.html:44
+msgid "垃圾桶"
+msgstr "المحذوفات"
+
+#: .\ommessage\templates\messageManage.html:44
+msgid "寄件備份"
+msgstr "ارسال نسخة احتياطية للبريد الالكتروني"
+
+#: .\ommessage\templates\messageManage.html:175
+msgid "周日 "
+msgstr "الأحد"
+
+#: .\ommessage\templates\messageManage.html:176
+msgid "周一 "
+msgstr "الاثنين"
+
+#: .\ommessage\templates\messageManage.html:177
+msgid "周二 "
+msgstr "الثلاثاء"
+
+#: .\ommessage\templates\messageManage.html:178
+msgid "周三 "
+msgstr "الاربعاء"
+
+#: .\ommessage\templates\messageManage.html:179
+msgid "周四 "
+msgstr "الخميس"
+
+#: .\ommessage\templates\messageManage.html:180
+msgid "周五 "
+msgstr "الجمعة"
+
+#: .\ommessage\templates\messageManage.html:181
+msgid "周六 "
+msgstr "الثلاثاء"
+
+#: .\ommessage\templates\messageManage.html:275
+#: .\ommission\templates\mission.html:528 .\templates\myform.html:851
+#: .\templates\myform.html:1410 .\templates\myform.html:1459
+msgid "此附件已刪除"
+msgstr "هذا المرفق تم حذفه"
+
+#: .\ommessage\templates\messageManage.html:340
+#: .\ommessage\templates\messageManage.html:341
+msgid "筆訊息"
+msgstr "قلم الرسالة"
+
+#: .\ommessage\views.py:98 .\ommessage\views.py:324 .\ommessage\views.py:343
+#: .\ommessage\views.py:361
+msgid "請求處理成功"
+msgstr "تم معالجة الطلب بنجاح"
+
+#: .\ommessage\views.py:121 .\ommessage\views.py:281
+msgid "提供資料格式有誤"
+msgstr "تهئة البيانات المقدمة غير صحيحية"
+
+#: .\ommessage\views.py:139 .\ommessage\views.py:190
+msgid "搜尋成功"
+msgstr "تم البحث بنجاح"
+
+#: .\ommessage\views.py:142 .\ommessage\views.py:195
+msgid "請提供訊息編號"
+msgstr "برجاء تقديم رقم الرسالة"
+
+#: .\ommessage\views.py:278
+msgid "發送成功"
+msgstr "تم الارسال الناجح"
+
+#: .\ommessage\views.py:300
+msgid "刪除訊息成功"
+msgstr "تم حذف الرسالة بنجاح"
+
+#: .\ommessage\views.py:303
+msgid "訊息還原成功"
+msgstr "تم استعادة الرسالة بنجاح"
+
+#: .\ommessage\views.py:306
+msgid "找不到訊息資料"
+msgstr "لا يمكن العثور علي البيانات"
+
+#: .\ommission\models.py:12 .\ommission\templates\mission.html:10
+#: .\ommission\templates\mission.html:15 .\templates\base_l_aside.html:17
+#: .\templates\myform.html:1875
+msgid "我的任務"
+msgstr "مهمتي"
+
+#: .\ommission\models.py:28 .\ommission\templates\mission.html:47
+#: .\ommission\templates\mission.html:85
+#: .\ommission\templates\mission.html:122
+msgid "受派人"
+msgstr "الوكيل"
+
+#: .\ommission\models.py:30 .\ommission\templates\mission.html:50
+msgid "快速操作"
+msgstr "فعل سريع"
+
+#: .\ommission\models.py:31 .\templates\myform.html:36
+#: .\templates\myform.html:140 .\templates\myform.html:843
+#: .\templates\myform.html:1402
+msgid "附加檔案"
+msgstr "ارفاق"
+
+#: .\ommission\models.py:32
+msgid "關單"
+msgstr "وقت الاغلاق"
+
+#: .\ommission\templates\mission.html:25
+msgid "任務列表"
+msgstr "قائمة المهام"
+
+#: .\ommission\templates\mission.html:26
+msgid "進行中任務"
+msgstr "المهام المستخرجة"
+
+#: .\ommission\templates\mission.html:27
+msgid "處理紀錄"
+msgstr "سجل المهام"
+
+#: .\ommission\templates\mission.html:41 .\ommission\templates\mission.html:80
+#: .\ommission\templates\mission.html:117
+msgid "功能名稱"
+msgstr "الاسم"
+
+#: .\ommission\templates\mission.html:46 .\ommission\templates\mission.html:84
+#: .\ommission\templates\mission.html:121
+msgid "受派組織"
+msgstr "مجموعة التخصص"
+
+#: .\ommission\templates\mission.html:49
+#: .\ommission\templates\mission.html:123
+ .\templates\myform.html:388
+msgid "更新日期"
+msgstr "تحديث الوقت"
+
+#: .\ommission\templates\mission.html:71
+#: .\ommission\templates\mission.html:108
+msgid "所有組織"
+msgstr "كل المجاميع"
+
+#: .\ommission\templates\mission.html:87
+msgid "開單日期"
+msgstr "الوقت المستغرق"
+
+#: .\ommission\templates\mission.html:533 .\templates\myform.html:856
+#: .\templates\myform.html:1415
+msgid "上傳者"
+msgstr "تحديث"
+
+#: .\omservice\models.py:16
+msgid "服務編號"
+msgstr "رقم الخدمة"
+
+#: .\omservice\models.py:18
+msgid "允許角色"
+msgstr "اجازة الادوار"
+
+#: .\omservice\models.py:20 .\templates\base_component.html:379
+msgid "預設值"
+msgstr "افتراضي"
+
+#: .\omservice\models.py:29
+msgid "服務設計"
+msgstr "تصميم الخدمة"
+
+#: .\omservice\models.py:34
+msgid "服務請求管理"
+msgstr "ادارة طلب الخدمة"
+
+#: .\omservice\templates\list.html:8 .\omservice\templates\list.html:12
+#: .\omservice\templates\list.html:166 .\templates\base_l_aside.html:30
+msgid "服務請求"
+msgstr "طلب الخدمة"
+
+#: .\omservice\templates\list.html:31
+msgid "建立服務"
+msgstr "انشاء الخدمة"
+
+#: .\omservice\templates\list.html:32
+msgid "建立資料夾"
+msgstr "إنشاء مجلد"
+
+#: .\omservice\templates\list.html:46 .\templates\base_component.html:112
+msgid "搜尋"
+msgstr "بحث"
+
+#: .\omservice\templates\list.html:97
+msgid "重新匯入服務"
+msgstr "إعادة ادخال الخدمة"
+
+#: .\omservice\templates\list.html:144 .\templates\base_component.html:316
+#: .\templates\base_component.html:348
+msgid "內容設定"
+msgstr "تخصيص المحتوي"
+
+#: .\omservice\templates\list.html:165
+msgid "全部"
+msgstr "كل"
+
+#: .\omservice\templates\list.html:168
+msgid "分隔線"
+msgstr "الخط الفاصل"
+
+#: .\omservice\templates\list.html:169 .\templates\home.html:70
+msgid "顏色"
+msgstr "اللون"
+
+#: .\omservice\templates\list.html:172 .\templates\home.html:76
+msgid "圖示"
+msgstr "الايقونة"
+
+#: .\omservice\templates\list.html:173 .\templates\home.html:91
+msgid "選擇表單"
+msgstr "النموذج المحدد"
+
+#: .\omservice\templates\list.html:174
+msgid "第一步驟"
+msgstr "خطوة مبدئية"
+
+#: .\omservice\templates\list.html:175
+msgid "新步驟"
+msgstr "خطوة جديدة"
+
+#: .\omservice\templates\list.html:177
+msgid "服務對象"
+msgstr "الخدمة المستهدفة"
+
+#: .\omservice\templates\list.html:178 .\templates\base_component.html:178
+#: .\templates\home.html:102
+msgid "藍"
+msgstr "ازرق"
+
+#: .\omservice\templates\list.html:179 .\templates\home.html:103
+msgid "青"
+msgstr "فيروزي"
+
+#: .\omservice\templates\list.html:180 .\templates\base_component.html:180
+#: .\templates\home.html:104
+msgid "綠"
+msgstr "اخضر"
+
+#: .\omservice\templates\list.html:181 .\templates\base_component.html:177
+#: .\templates\home.html:105
+msgid "黃"
+msgstr "اصفر"
+
+#: .\omservice\templates\list.html:182 .\templates\base_component.html:176
+#: .\templates\home.html:106
+msgid "紅"
+msgstr "احمر"
+
+#: .\omservice\templates\list.html:183 .\templates\home.html:107
+msgid "紫"
+msgstr "بنفسجي"
+
+#: .\omservice\templates\list.html:184 .\templates\base_component.html:175
+#: .\templates\home.html:108
+msgid "灰"
+msgstr "رمادي"
+
+#: .\omservice\templates\list.html:185 .\templates\home.html:109
+msgid "深灰"
+msgstr "رمادي داكن"
+
+#: .\omservice\templates\list.html:186
+msgid "米黃"
+msgstr "كريمي"
+
+#: .\omservice\templates\list.html:187
+msgid "填寫表單"
+msgstr "ملأ النموذج"
+
+#: .\omservice\templates\list.html:188
+msgid "所有人"
+msgstr "كل شخص"
+
+#: .\omservice\templates\list.html:190
+msgid "上傳檔案"
+msgstr "رفع الملف"
+
+#: .\omservice\templates\list.html:191
+msgid "必填"
+msgstr "متطلب"
+
+#: .\omservice\templates\list.html:193
+msgid "選擇檔案"
+msgstr "تحديد الملف"
+
+#: .\omservice\templates\list.html:194
+msgid "輸入提示說明"
+msgstr "الدخل الوصف الحالي"
+
+#: .\omservice\templates\list.html:195
+msgid "不預選受派人"
+msgstr "لم يتم تحديد الوكيل المبدئي"
+
+#: .\omservice\templates\list.html:196
+msgid "已新增所有欄位"
+msgstr "كل الحقول تم اضافتها"
+
+#: .\omservice\templates\list.html:197
+msgid "移除服務"
+msgstr "حذف الخدمة"
+
+#: .\omservice\templates\list.html:198
+msgid "即將移除「 "
+msgstr "للحذف"
+
+#: .\omservice\templates\list.html:199
+msgid " 」，是否繼續？ "
+msgstr "هل يتم الاستمرار؟"
+
+#: .\omservice\templates\list.html:294 .\templates\home.html:197
+msgid "輸入標題，空白時會自動隱藏"
+msgstr " ادرج العنوان، وسيتم اخفائه اوتوماتيكيا عندما يكون اسود"
+
+#: .\omservice\templates\list.html:299 .\templates\home.html:202
+msgid "輸入說明"
+msgstr "ادرج الوصف"
+
+#: .\omservice\templates\list.html:307 .\templates\home.html:215
+msgid "齒輪"
+msgstr "ناقل الحركة"
+
+#: .\omservice\templates\list.html:308 .\templates\home.html:216
+msgid "餐具"
+msgstr "ادوات المائدة"
+
+#: .\omservice\templates\list.html:309 .\templates\home.html:217
+msgid "咖啡"
+msgstr "قهوة"
+
+#: .\omservice\templates\list.html:310 .\templates\home.html:218
+msgid "心跳"
+msgstr "قلب"
+
+#: .\omservice\templates\list.html:311 .\templates\home.html:219
+msgid "分享"
+msgstr "مشاركة"
+
+#: .\omservice\templates\list.html:312 .\templates\home.html:220
+msgid "雪花"
+msgstr "تساقط الجليدي"
+
+#: .\omservice\templates\list.html:313 .\templates\home.html:221
+msgid "溫度"
+msgstr "درجة حرارة"
+
+#: .\omservice\templates\list.html:314 .\templates\home.html:222
+msgid "點讚"
+msgstr "مثل"
+
+#: .\omservice\templates\list.html:315 .\templates\home.html:223
+msgid "倒讚"
+msgstr "عاكس التطرية"
+
+#: .\omservice\templates\list.html:316 .\templates\home.html:67
+#: .\templates\home.html:224 .\templates\home.html:498
+msgid "折線圖"
+msgstr "الخط البياني"
+
+#: .\omservice\templates\list.html:317 .\templates\home.html:225
+msgid "地球"
+msgstr "ارض"
+
+#: .\omservice\templates\list.html:318 .\templates\home.html:226
+msgid "沙漏"
+msgstr "ساعة الزجاج"
+
+#: .\omservice\templates\list.html:319 .\templates\home.html:227
+msgid "電力"
+msgstr "كهرباء"
+
+#: .\omservice\templates\list.html:321 .\templates\home.html:229
+msgid "群組"
+msgstr "مجموعة"
+
+#: .\omservice\templates\list.html:322 .\templates\home.html:230
+msgid "對話"
+msgstr "حواري"
+
+#: .\omservice\templates\list.html:323 .\templates\home.html:231
+msgid "路標"
+msgstr "علامة طريق"
+
+#: .\omservice\templates\list.html:324 .\templates\home.html:232
+msgid "鑰匙"
+msgstr "مفتاح"
+
+#: .\omservice\templates\list.html:325 .\templates\base_component.html:529
+#: .\templates\home.html:233
+msgid "警告"
+msgstr "تحذير"
+
+#: .\omservice\templates\list.html:326 .\templates\home.html:234
+msgid "汽車"
+msgstr "عربة"
+
+#: .\omservice\templates\list.html:327 .\templates\home.html:235
+msgid "公車"
+msgstr "اتوبيس"
+
+#: .\omservice\templates\list.html:328 .\templates\home.html:236
+msgid "地鐵"
+msgstr "ترام"
+
+#: .\omservice\templates\list.html:329 .\templates\home.html:237
+msgid "船隻"
+msgstr "سفينة"
+
+#: .\omservice\templates\list.html:330 .\templates\home.html:238
+msgid "飛機"
+msgstr "طائرة عمودية"
+
+#: .\omservice\templates\list.html:331 .\templates\home.html:239
+msgid "房屋"
+msgstr "منزل"
+
+#: .\omservice\templates\list.html:332 .\templates\home.html:240
+msgid "工廠"
+msgstr "مصنع"
+
+#: .\omservice\templates\list.html:333 .\templates\home.html:241
+#: .\templates\home.html:500
+msgid "圓餅圖"
+msgstr "الرسم البياني الدائري"
+
+#: .\omservice\templates\list.html:334 .\templates\home.html:242
+msgid "行事曆"
+msgstr "تقويم"
+
+#: .\omservice\templates\list.html:335 .\templates\home.html:243
+msgid "購物袋"
+msgstr "كيس التسوق"
+
+#: .\omservice\templates\list.html:336 .\templates\home.html:244
+msgid "購物車"
+msgstr "عربة التسوق"
+
+#: .\omservice\templates\list.html:337 .\templates\home.html:245
+msgid "鈴鐺"
+msgstr "اجراء"
+
+#: .\omservice\templates\list.html:338 .\templates\home.html:246
+msgid "資料庫"
+msgstr "قاعدة بيانات"
+
+#: .\omservice\templates\list.html:340 .\templates\home.html:248
+msgid "時鐘"
+msgstr "ساعة"
+
+#: .\omservice\templates\list.html:341 .\templates\home.html:249
+msgid "葉子"
+msgstr "ورقة شجر"
+
+#: .\omservice\templates\list.html:342 .\templates\home.html:250
+msgid "信封"
+msgstr "ظرف"
+
+#: .\omservice\templates\list.html:343 .\templates\home.html:251
+msgid "金錢"
+msgstr "نقود"
+
+#: .\omservice\templates\list.html:344 .\templates\home.html:252
+msgid "電腦"
+msgstr "حاسوب"
+
+#: .\omservice\templates\list.html:345 .\templates\home.html:253
+msgid "書籍"
+msgstr "كتب"
+
+#: .\omservice\templates\list.html:346 .\templates\home.html:254
+msgid "文件"
+msgstr "ملف"
+
+#: .\omservice\templates\list.html:347 .\templates\home.html:255
+msgid "剪貼板"
+msgstr "حافظة"
+
+#: .\omservice\templates\list.html:348 .\templates\home.html:256
+msgid "書寫"
+msgstr "كتابة"
+
+#: .\omservice\templates\list.html:1017
+msgid "強制上傳檔案"
+msgstr "دفع لرفع الملفات"
+
+#: .\omservice\templates\list.html:1636
+msgid "請求成功"
+msgstr "طلب ناجح"
+
+#: .\omservice\templates\list.html:1959
+msgid "匯出所有服務請求"
+msgstr "استخراج كل طلبات الخدمة"
+
+#: .\omservice\templates\list.html:2055 .\omservice\templates\list.html:2058
+msgid "資料格式不符"
+msgstr "تهيئة البيانات غير منتطابقة"
+
+#: .\omservice\views.py:69
+msgid "儲存成功。"
+msgstr "تم الحفظ بنجاح"
+
+#: .\omservice\views.py:265
+msgid "查無此服務。"
+msgstr "فحص هل الخدمة ليست مناسبة"
+
+#: .\omuser\models.py:18 .\omuser\templates\register.html:12
+msgid "電子郵件"
+msgstr "ايميل"
+
+#: .\omuser\models.py:22
+msgid "暱稱"
+msgstr "اسم مستعار"
+
+#: .\omuser\models.py:23 .\omuser\templates\profile.html:118
+msgid "生日"
+msgstr "يوم ميلا"
+
+#: .\omuser\models.py:24 .\omuser\templates\profile.html:106
+msgid "性別"
+msgstr "النوع"
+
+#: .\omuser\models.py:24 .\omuser\templates\profile.html:111
+msgid "男"
+msgstr "ذكر"
+
+#: .\omuser\models.py:24 .\omuser\templates\profile.html:112
+msgid "女"
+msgstr "انثي"
+
+#: .\omuser\models.py:25 .\omuser\templates\profile.html:90
+#: .\omuser\templates\profile.html:93
+msgid "電話"
+msgstr "تليفون"
+
+#: .\omuser\models.py:26 .\omuser\templates\profile.html:98
+#: .\omuser\templates\profile.html:101
+msgid "手機"
+msgstr "محمول"
+
+#: .\omuser\models.py:27
+msgid "部門名稱"
+msgstr "اسم الادارة"
+
+#: .\omuser\models.py:28
+msgid "公司名稱"
+msgstr "اسم الشركة"
+
+#: .\omuser\models.py:29 .\omuser\models.py:63
+msgid "AD標記"
+msgstr "اضف علامة"
+
+#: .\omuser\models.py:30
+msgid "AD_SID"
+msgstr "جانب اعلانات"
+
+#: .\omuser\models.py:31
+msgid "更新頻率"
+msgstr "تحديث التتابع"
+
+#: .\omuser\models.py:33 .\omuser\models.py:67
+msgid "uuid"
+msgstr ""
+
+#: .\omuser\models.py:35
+msgid "預設群組"
+msgstr "المجموعة الافتراضية"
+
+#: .\omuser\models.py:36 .\omuser\templates\profile.html:126
+msgid "職代人"
+msgstr "عمل جيل شخيات"
+
+#: .\omuser\models.py:43 .\omuser\templates\user_manage.html:28
+msgid "新增使用者"
+msgstr "اضافة مستخدم"
+
+#: .\omuser\models.py:44
+msgid "修改使用者"
+msgstr "تعديل المستخدم"
+
+#: .\omuser\models.py:45
+msgid "檢視使用者"
+msgstr "مشاهدة المستخدم"
+
+#: .\omuser\models.py:46 .\omuser\templates\user_manage.html:29
+msgid "刪除使用者"
+msgstr "حذف مستخدم"
+
+#: .\omuser\models.py:60
+msgid "組織與角色"
+msgstr "المجموعات والادوار"
+
+#: .\omuser\models.py:61
+msgid "上層群組"
+msgstr "جروب الادمن"
+
+#: .\omuser\models.py:62
+msgid "功能群組標記"
+msgstr "علامة المجموعة الوظيفية"
+
+#: .\omuser\models.py:65
+msgid "顯示名稱"
+msgstr "عرض الاسم"
+
+#: .\omuser\models.py:71
+msgid "新增組織/角色"
+msgstr "اضافة المجموعة/الدور"
+
+#: .\omuser\models.py:72
+msgid "修改組織/角色"
+msgstr "تعديل مجموعة/دور"
+
+#: .\omuser\models.py:73
+msgid "檢視組織/角色"
+msgstr "الاطلاع علي مجموعة/دور"
+
+#: .\omuser\models.py:74
+msgid "刪除組織/角色"
+msgstr "حذف مجموعة/دور"
+
+#: .\omuser\templates\change_password.html:11
+msgid "更改密碼"
+msgstr "تعديل كلمة السر"
+
+#: .\omuser\templates\change_password.html:16
+#: .\omuser\templates\group_detail.html:17
+#: .\omuser\templates\group_manage.html:17 .\omuser\templates\profile.html:17
+#: .\omuser\templates\role_detail.html:17
+#: .\omuser\templates\role_manage.html:17
+#: .\omuser\templates\user_manage.html:17 .\templates\base_l_aside.html:73
+msgid "人員管理"
+msgstr "ادارة الادمن"
+
+#: .\omuser\templates\change_password.html:17
+#: .\omuser\templates\profile.html:12 .\omuser\templates\profile.html:18
+#: .\omuser\templates\user_manage.html:12
+#: .\omuser\templates\user_manage.html:18 .\templates\base_l_aside.html:78
+msgid "使用者管理"
+msgstr "ادارة المستخدمين"
+
+#: .\omuser\templates\change_password.html:24
+msgid "密碼更改後使用者將被登出"
+msgstr "سيتم اخراج المستخدم بعد تعديل كلمة السر"
+
+#: .\omuser\templates\change_password.html:31
+msgid "舊密碼"
+msgstr "كلمة سر قديمة"
+
+#: .\omuser\templates\change_password.html:37
+#: .\omuser\templates\change_password.html:43
+#: .\omuser\templates\profile.html:58 .\omuser\templates\register.html:10
+#: .\omuser\templates\register.html:11
+msgid "至少一個大寫字母及小寫字母，至少8個字。"
+msgstr "لا تقل عن 8 احرف ،لا تقل عن حرف كبير وحرف صغير "
+
+#: .\omuser\templates\change_password.html:37
+#: .\omuser\templates\change_password.html:43
+msgid "新密碼"
+msgstr "كلمة سر جديدة"
+
+#: .\omuser\templates\change_password.html:47
+msgid "確認修改"
+msgstr "اعتما التعديلات"
+
+#: .\omuser\templates\group_detail.html:12
+#: .\omuser\templates\group_detail.html:18
+#: .\omuser\templates\group_manage.html:12
+#: .\omuser\templates\group_manage.html:18 .\templates\base_l_aside.html:84
+msgid "組織管理"
+msgstr "ادارة المجموعات"
+
+#: .\omuser\templates\group_detail.html:41
+#: .\omuser\templates\group_detail.html:42
+#: .\omuser\templates\group_manage.html:81
+msgid "組織名稱"
+msgstr "اسم الجروب"
+
+#: .\omuser\templates\group_detail.html:58
+#: .\omuser\templates\role_detail.html:65
+#: .\omuser\templates\user_manage.html:32
+msgid "篩選使用者"
+msgstr "تصفية المستخدمين"
+
+#: .\omuser\templates\group_detail.html:73
+#: .\omuser\templates\role_detail.html:80
+#: .\omuser\templates\user_manage.html:42
+msgid "使用者帳號"
+msgstr "اسم المستخدم"
+
+#: .\omuser\templates\group_detail.html:74
+#: .\omuser\templates\role_detail.html:81
+#: .\omuser\templates\user_manage.html:45
+msgid "使用者名稱"
+msgstr "اسم مستعار"
+
+#: .\omuser\templates\group_detail.html:75 .\omuser\templates\profile.html:79
+#: .\omuser\templates\profile.html:82 .\omuser\templates\role_detail.html:82
+#: .\omuser\templates\user_manage.html:47
+msgid "公司"
+msgstr "اسم الشركة"
+
+#: .\omuser\templates\group_manage.html:27
+msgid "創建"
+msgstr "اناء"
+
+#: .\omuser\templates\group_manage.html:29 .\omuser\templates\profile.html:186
+msgid "展開 "
+msgstr "توسيع"
+
+#: .\omuser\templates\group_manage.html:30 .\omuser\templates\profile.html:187
+msgid "收合 "
+msgstr "تضييق"
+
+#: .\omuser\templates\group_manage.html:31 .\omuser\templates\profile.html:188
+msgid "篩選組織"
+msgstr "تصفية المجموعة"
+
+#: .\omuser\templates\group_manage.html:45 .\omuser\templates\profile.html:200
+msgid "所有組織列表"
+msgstr "قائمة كل المجموعات"
+
+#: .\omuser\templates\group_manage.html:70
+msgid "新增組織"
+msgstr "مجموعة جديدة"
+
+#: .\omuser\templates\group_manage.html:74
+msgid "選擇所屬組織"
+msgstr "تحديد المجموعة الام"
+
+#: .\omuser\templates\group_manage.html:80
+msgid "新建組織名稱"
+msgstr "اسم مجموعة جديدة"
+
+#: .\omuser\templates\group_manage.html:236
+msgid "下列組織將被刪除"
+msgstr "المجموة التالية سيتم محوها"
+
+#: .\omuser\templates\login.html:8
+msgid "帳號或是電子郵件"
+msgstr "اسم مستخدم او كلمة السر"
+
+#: .\omuser\templates\login.html:9 .\omuser\templates\profile.html:55
+#: .\omuser\templates\profile.html:58 .\omuser\templates\register.html:10
+#: .\omuser\templates\register.html:11
+msgid "密碼"
+msgstr "كلمة السر"
+
+#: .\omuser\templates\login.html:19
+msgid "登入"
+msgstr "دخول"
+
+#: .\omuser\templates\login.html:21 .\omuser\templates\register.html:26
+msgid "註冊"
+msgstr "تسجيل"
+
+#: .\omuser\templates\profile.html:19 .\templates\base_l_aside.html:80
+msgid "使用者設定"
+msgstr "خصائص المستخدم"
+
+#: .\omuser\templates\profile.html:30 .\templates\base_component.html:322
+msgid "資料設定"
+msgstr "خصائص البيانات"
+
+#: .\omuser\templates\profile.html:31
+msgid "組織設定"
+msgstr "خصائص المجموعة"
+
+#: .\omuser\templates\profile.html:32
+msgid "角色設定"
+msgstr "خصائص الدور"
+
+#: .\omuser\templates\profile.html:47 .\omuser\templates\profile.html:50
+#: .\omuser\templates\register.html:9
+msgid "帳號"
+msgstr "اسم مستخدم"
+
+#: .\omuser\templates\profile.html:50
+msgid "大小寫英文、數字及底線"
+msgstr "حروف وصغيرة وارقام وتحت السطر"
+
+#: .\omuser\templates\profile.html:71 .\omuser\templates\profile.html:74
+msgid "電子郵件地址"
+msgstr "عنوان بريد الكتروني"
+
+#: .\omuser\templates\profile.html:138
+msgid "預設組織"
+msgstr "مجموعة افتراضية"
+
+#: .\omuser\templates\profile.html:146 .\templates\base_component.html:105
+msgid "組織"
+msgstr "مجموعة"
+
+#: .\omuser\templates\profile.html:154
+msgid "角色"
+msgstr "دور"
+
+#: .\omuser\templates\profile.html:162
+msgid "通知更新頻率"
+msgstr "تحديث معدل التنبيهات"
+
+#: .\omuser\templates\profile.html:225
+msgid "篩選權限角色"
+msgstr "تصفية ادوار الصلاحيات"
+
+#: .\omuser\templates\profile.html:238
+msgid "所有角色列表"
+msgstr "قائمة بكل الادوار"
+
+#: .\omuser\templates\profile.html:277
+msgid "職代人設定"
+msgstr "خصائص ممثل العاملين"
+
+#: .\omuser\templates\register.html:17 .\templates\system_config.html:120
+#: .\templates\system_config.html:121
+msgid "個資使用同意"
+msgstr "اتفاقية المعلومات الشخصية"
+
+#: .\omuser\templates\register.html:20 .\templates\system_config.html:128
+#: .\templates\system_config.html:129
+msgid "軟體使用同意"
+msgstr "اتفاقية استخدام البرمجيات"
+
+#: .\omuser\templates\register.html:24
+msgid "請確認使用同意"
+msgstr "برجاء الموفقة علي الاتفاقية"
+
+#: .\omuser\templates\register.html:74
+msgid "使用同意書"
+msgstr "اتفاقية"
+
+#: .\omuser\templates\role_detail.html:12
+#: .\omuser\templates\role_detail.html:18
+#: .\omuser\templates\role_manage.html:12
+#: .\omuser\templates\role_manage.html:18
+msgid "權限角色管理"
+msgstr "ادارة صلاحية الادوار"
+
+#: .\omuser\templates\role_detail.html:48
+#: .\omuser\templates\role_detail.html:49
+msgid "角色說明"
+msgstr "وصف الادوار"
+
+#: .\omuser\templates\role_detail.html:104
+msgid "篩選權限名稱"
+msgstr "تصفية صلاحية الاسم"
+
+#: .\omuser\templates\role_detail.html:117
+msgid "權限名稱"
+msgstr "صلاحية الاسم"
+
+#: .\omuser\templates\role_manage.html:29 .\templates\myform.html:523
+msgid "建立"
+msgstr "انشاء"
+
+#: .\omuser\templates\role_manage.html:31
+msgid "篩選腳色"
+msgstr "تصفية الادوار"
+
+#: .\omuser\templates\role_manage.html:41
+msgid "權限角色"
+msgstr "صلاحية الدور"
+
+#: .\omuser\templates\role_manage.html:64
+msgid "建立權限角色"
+msgstr "انشاء صلاحية دور"
+
+#: .\omuser\templates\role_manage.html:221
+msgid "下列角色將被刪除"
+msgstr "الصلاحيات التالية سيتم محوها"
+
+#: .\omuser\templates\user_manage.html:13
+msgid "使用者列表"
+msgstr "قائمة المستخدمين"
+
+#: .\omuser\templates\user_manage.html:30
+msgid "啟用使用者"
+msgstr "تمكين المستخدم"
+
+#: .\omuser\templates\user_manage.html:30
+msgid " 啟用"
+msgstr "تمكين"
+
+#: .\omuser\templates\user_manage.html:31
+msgid "停用使用者"
+msgstr "عدم تمكين المستخدم"
+
+#: .\omuser\templates\user_manage.html:31
+msgid " 停用"
+msgstr "عدم تمكين"
+
+#: .\omuser\templates\user_manage.html:43
+msgid "狀態 "
+msgstr "الحالة"
+
+#: .\omuser\templates\user_manage.html:44
+msgid "類別"
+msgstr "التصنيف"
+
+#: .\omuser\templates\user_manage.html:46
+msgid "信箱"
+msgstr "صندوق البريد"
+
+#: .\omuser\templates\user_manage.html:48
+msgid "上次登入時間"
+msgstr "آخر وقت دخول"
+
+#: .\omuser\templates\user_manage.html:132
+msgid "管理員"
+msgstr "مدير"
+
+#: .\omuser\templates\user_manage.html:206
+msgid "下列使用者將被刪除"
+msgstr "المستخدين التالين سيتم محوهم"
+
+#: .\omuser\templates\user_manage.html:248
+msgid "下列使用者將被啟用"
+msgstr "المستخدمين التاليين سيتم تمكينهم"
+
+#: .\omuser\templates\user_manage.html:252
+msgid "下列使用者將被停用"
+msgstr "المستخدمين التاليين سيتم عدم تمكينهم"
+
+#: .\omuser\views.py:69 .\omuser\views.py:88 .\omuser\views.py:120
+#: .\omuser\views.py:148
+msgid "登入失敗。"
+msgstr "فشل الدخول"
+
+#: .\omuser\views.py:85
+msgid "登入成功。"
+msgstr "دخول ناجح"
+
+#: .\omuser\views.py:91 .\omuser\views.py:151
+msgid "登入失敗，查無此使用者帳號。"
+msgstr "فشل الدخول ، لم يتم العثور علي اسم مستخدم"
+
+#: .\omuser\views.py:132
+msgid "帳號已登入，是否取代線上使用者？"
+msgstr "هذا الحساب تم الدخول له ، هل ترغب في استبدال الحساب علي الانرتنت"
+
+#: .\omuser\views.py:139
+msgid "重複登入。"
+msgstr "دخول متكرر"
+
+#: .\omuser\views.py:187
+msgid "註冊失敗："
+msgstr "تسجيل فاشل"
+
+#: .\omuser\views.py:212
+msgid "使用者名稱已被註冊。"
+msgstr "اسم المستخدم تم تسجيله"
+
+#: .\omuser\views.py:218
+msgid "電子郵件已被註冊。"
+msgstr "البريد الالكتروني تم تسجيله"
+
+#: .\omuser\views.py:221
+msgid "註冊成功。"
+msgstr "تم التسجيل بنجاح"
+
+#: .\omuser\views.py:225
+msgid "兩次輸入的密碼不相同。"
+msgstr "اسم المستخدم الذي تم ادخاله متكرر مرتين"
+
+#: .\omuser\views.py:230 .\omuser\views.py:444 .\omuser\views.py:523
+msgid "使用者數量已達上限。"
+msgstr "قائمة المستخدمين وصلوا للحد الاقصي"
+
+#: .\omuser\views.py:341 .\omuser\views.py:789
+msgid "更新失敗。"
+msgstr "فشل التحديث"
+
+#: .\omuser\views.py:433
+msgid "新增使用者失敗: "
+msgstr "فشل اضافة المستخدمين"
+
+#: .\omuser\views.py:436
+msgid "該使用者名稱已經被使用。"
+msgstr "اسم المستخدم بالفعل مستخدم من قبل"
+
+#: .\omuser\views.py:438
+msgid "新增使用者成功。"
+msgstr "تم اضافة المستخدم بنجاح"
+
+#: .\omuser\views.py:467
+msgid "無法刪除系統管理員。"
+msgstr "لا يمكن حذف مدير النظام"
+
+#: .\omuser\views.py:484
+msgid "刪除使用者成功。"
+msgstr "هذا المستخدم تم حذفه بنجاح"
+
+#: .\omuser\views.py:514
+msgid "無法停用系統管理員。"
+msgstr "لا يمكن تمكين مدير النظام"
+
+#: .\omuser\views.py:520
+msgid "啟用使用者成功。"
+msgstr "تم تمكين المستخدم بنجاح"
+
+#: .\omuser\views.py:527
+msgid "停用使用者成功。"
+msgstr "تم استبعاد المستخدم بنجاح"
+
+#: .\omuser\views.py:530
+msgid "請選擇停用或啟用。"
+msgstr "برجاء اختيار التمكين او عدم التمكين"
+
+#: .\omuser\views.py:563
+msgid "父群組錯誤"
+msgstr "خطأ في ام المجوعات"
+
+#: .\omuser\views.py:570
+msgid "名稱不得為空。"
+msgstr "الاسم لا يمكن ان يكون فارغ"
+
+#: .\omuser\views.py:624
+msgid "使用者錯誤。"
+msgstr "خطأ في مستخدم"
+
+#: .\omuser\views.py:811
+msgid "組織錯誤。"
+msgstr "خطأ في المجموعة"
+
+#: .\omuser\views.py:855
+msgid "角色錯誤。"
+msgstr "خطأ في الدور"
+
+#: .\omuser\views.py:940
+msgid "密碼修改成功。"
+msgstr "تم استبدال كلمة السر بنجاح"
+
+#: .\omuser\views.py:943
+msgid "請輸入相同密碼。"
+msgstr "برجاء ادخال نفس كلمة السر"
+
+#: .\omuser\views.py:946
+msgid "舊密碼輸入錯誤。"
+msgstr " كلمة السر التي تم ادخالها غير صحيحة"
+
+#: .\omuser\views.py:1003 .\omuser\views.py:1073
+msgid "取得成功。"
+msgstr "نجاح"
+
+#: .\omuser\views.py:1006
+msgid "使用者不存在或未啟用。"
+msgstr "المستخدم لم يخرج او لم يتم تمكينه"
+
+#: .\templates\base.html:62
+msgid "版權所有."
+msgstr "كل الحقوق محفوظة"
+
+#: .\templates\base_component.html:10
+msgid "提示"
+msgstr "تنويه"
+
+#: .\templates\base_component.html:13
+msgid "帳號已登入，是否登出其他使用者後登入"
+msgstr "الحساب ت الدخول إليه سواء تم الخروج للمستخديمن الآخرين والدخول إليه"
+
+#: .\templates\base_component.html:17 .\templates\base_component.html:60
+#: .\templates\myform.html:320 .\templates\myform.html:359
+msgid "確認"
+msgstr "تأكيد"
+
+#: .\templates\base_component.html:74
+msgid "篩選設定"
+msgstr "تصفية الخصائص"
+
+#: .\templates\base_component.html:96
+msgid "選擇"
+msgstr "تحديد"
+
+#: .\templates\base_component.html:103
+msgid "搜尋類型"
+msgstr "نوع البحث"
+
+#: .\templates\base_component.html:146
+msgid "上傳中"
+msgstr "تحميل"
+
+#: .\templates\base_component.html:165
+msgid "區塊設定"
+msgstr "خصائص المكعب"
+
+#: .\templates\base_component.html:169
+msgid "標題文字"
+msgstr "نصف اللقب"
+
+#: .\templates\base_component.html:170
+msgid "請輸入標題文字"
+msgstr "برجاء ادخال نص اللقب"
+
+#: .\templates\base_component.html:173
+msgid "標示顏色"
+msgstr "لون الاشارة"
+
+#: .\templates\base_component.html:179
+msgid "水藍"
+msgstr "العلامة المائية"
+
+#: .\templates\base_component.html:200
+msgid "新增項目"
+msgstr "صنف جديد"
+
+#: .\templates\base_component.html:204
+msgid "選擇新增項目"
+msgstr "تحديد صنف جديد"
+
+#: .\templates\base_component.html:236
+msgid "備註"
+msgstr "ملاحظة"
+
+#: .\templates\base_component.html:265 .\templates\base_component.html:267
+msgid "資料夾名稱"
+msgstr "اسم المجلد"
+
+#: .\templates\base_component.html:272
+msgid "資料夾圖示"
+msgstr "ايقونة المجلد"
+
+#: .\templates\base_component.html:321 .\templates\base_component.html:377
+#: .\templates\system_config.html:35
+msgid "一般設定"
+msgstr "خصائص عامة"
+
+#: .\templates\base_component.html:352
+msgid "輸入設計"
+msgstr "ادخال التصميم"
+
+#: .\templates\base_component.html:378
+msgid "步驟設計"
+msgstr "خطوة التصميم"
+
+#: .\templates\base_component.html:385 .\templates\base_component.html:399
+#: .\templates\base_component.html:478
+msgid "新增欄位"
+msgstr "اضافة حقل جديد"
+
+#: .\templates\base_component.html:386
+msgid "新增步驟"
+msgstr "اضافة خطوة"
+
+#: .\templates\base_component.html:387
+msgid "允許上傳"
+msgstr "سماح بالتحميل"
+
+#: .\templates\base_component.html:388
+msgid "設定預設值"
+msgstr "ادخال قيمة افتراضية"
+
+#: .\templates\base_component.html:414
+msgid "上一步"
+msgstr "السابق"
+
+#: .\templates\base_component.html:415
+msgid "下一步"
+msgstr "التالي"
+
+#: .\templates\base_component.html:416 .\templates\myform.html:31
+msgid "送出"
+msgstr "ارسال"
+
+#: .\templates\base_component.html:431
+msgid "服務修改"
+msgstr "تعديل الخدمة"
+
+#: .\templates\base_component.html:453
+msgid "新增服務"
+msgstr "خدمة جديدة"
+
+#: .\templates\base_component.html:457
+msgid "選擇開立的表單"
+msgstr "تحديد النموذج"
+
+#: .\templates\base_component.html:482
+msgid "選擇新增的欄位"
+msgstr "تحديد حقل جديد"
+
+#: .\templates\base_component.html:550
+msgid "完成"
+msgstr "تم"
+
+#: .\templates\base_component.html:594
+msgid "連線發生錯誤，請檢查網路連線是否正常，或與系統管理員聯絡"
+msgstr " حدوث خطأ في الاتصال ، برجاء فحص الاتصال بالشبكة او اتصل بمدير النظام"
+
+#: .\templates\base_component.html:612
+msgid "資訊"
+msgstr "معلومات"
+
+#: .\templates\base_header.html:75
+msgid "個人資料"
+msgstr "ملف تعريفي"
+
+#: .\templates\base_header.html:78
+msgid "更改密碼 "
+msgstr "كلمة السر"
+
+#: .\templates\base_header.html:81
+msgid "登出"
+msgstr "خروج"
+
+#: .\templates\base_header.html:115 .\templates\base_l_aside.html:146
+msgid "你已被登出"
+msgstr "لقد تم الخروج"
+
+#: .\templates\base_header.html:131 .\templates\base_l_aside.html:162
+msgid "主機連線不穩"
+msgstr "الاتصال بالخادم غير مستقر"
+
+#: .\templates\base_l_aside.html:39
+msgid "資料收集"
+msgstr "تجميع التدفق"
+
+#: .\templates\base_l_aside.html:43
+msgid "收集器管理"
+msgstr "تجميع واجهات المستخدمين"
+
+#: .\templates\base_l_aside.html:46
+msgid "事件管理"
+msgstr "ادارة الادوار"
+
+#: .\templates\base_l_aside.html:83
+msgid "角色管理"
+msgstr "ادارة ادوار"
+
+#: .\templates\base_l_aside.html:87
+msgid "AD檢視"
+msgstr "رؤية الاعلان"
+
+#: .\templates\base_l_aside.html:91
+msgid "職務管理"
+msgstr "ادارة الموقع"
+
+#: .\templates\base_l_aside.html:92
+msgid "組織圖管理"
+msgstr "صيانة المرفق"
+
+#: .\templates\base_l_aside.html:102 .\templates\base_l_aside.html:106
+#: .\templates\file_manage.html:18 .\templates\sidebar_design.html:17
+#: .\templates\system_config.html:17
+msgid "系統設定"
+msgstr "خصائص النظام"
+
+#: .\templates\base_l_aside.html:107 .\templates\file_manage.html:13
+#: .\templates\file_manage.html:19
+msgid "附加檔案維護"
+msgstr "صيانة المرفق"
+
+#: .\templates\base_l_aside.html:108 .\templates\sidebar_design.html:13
+#: .\templates\sidebar_design.html:18
+msgid "主選單管理"
+msgstr "ادارة القوائم"
+
+#: .\templates\file_manage.html:41
+msgid "篩選檔案"
+msgstr "تصفية الملفات"
+
+#: .\templates\file_manage.html:118
+msgid "上傳時間"
+msgstr "تحميل الوقت"
+
+#: .\templates\file_manage.html:246
+msgid "下列檔案將被刪除"
+msgstr "الملفات التالية تم حذفها"
+
+#: .\templates\home.html:31 .\templates\home.html:503
+msgid "1區塊"
+msgstr "الكتلة الاولي"
+
+#: .\templates\home.html:32 .\templates\home.html:504
+msgid "1/2區塊"
+msgstr "نصف كتلة"
+
+#: .\templates\home.html:33 .\templates\home.html:505
+msgid "2/3區塊"
+msgstr "ثلثين كتلة"
+
+#: .\templates\home.html:34 .\templates\home.html:506
+msgid "1/3區塊"
+msgstr "ثلث كتلة"
+
+#: .\templates\home.html:35 .\templates\home.html:507
+msgid "3/4區塊"
+msgstr "ثلاثة ارباع كتلة"
+
+#: .\templates\home.html:36 .\templates\home.html:508
+msgid "1/4區塊"
+msgstr "ربع كتلة"
+
+#: .\templates\home.html:64 .\templates\home.html:495
+msgid "顯示文字"
+msgstr "عرض النص"
+
+#: .\templates\home.html:65 .\templates\home.html:496
+msgid "計量條"
+msgstr "عمود القياس"
+
+#: .\templates\home.html:66 .\templates\home.html:497
+msgid "計量圖"
+msgstr "العرض البياني للقياس"
+
+#: .\templates\home.html:68 .\templates\home.html:499
+msgid "長條圖"
+msgstr "شريط الاشكال البيانية"
+
+#: .\templates\home.html:69 .\templates\home.html:501
+msgid "世界地圖"
+msgstr "خرية العالم"
+
+#: .\templates\home.html:73 .\templates\home.html:544
+#: .\templates\home.html:553
+ .\templates\home.html:564
+msgid "單位"
+msgstr "وحدة"
+
+#: .\templates\home.html:74
+msgid "數值上限"
+msgstr "اقصي قيمة"
+
+#: .\templates\home.html:75
+msgid "高度"
+msgstr "العلو"
+
+#: .\templates\home.html:79
+msgid "不分類"
+msgstr "غير مصنف"
+
+#: .\templates\home.html:80
+msgid "縱軸(Y軸)起點"
+msgstr "بداية النقطة العمودية "
+
+#: .\templates\home.html:81
+msgid "時間範圍"
+msgstr "يالنطاق الزمن"
+
+#: .\templates\home.html:82
+msgid "今天"
+msgstr "هذا اليوم"
+
+#: .\templates\home.html:83
+msgid "昨天"
+msgstr "امس"
+
+#: .\templates\home.html:84
+msgid "本周"
+msgstr "هذا الشهر"
+
+#: .\templates\home.html:85
+msgid "上周"
+msgstr "نموذج استعلام"
+
+#: .\templates\home.html:86
+msgid "本月"
+msgstr "حقل الاستعلام"
+
+#: .\templates\home.html:87
+msgid "上月"
+msgstr "الشهر الاخير"
+
+#: .\templates\home.html:88
+msgid "今年"
+msgstr "هذا العام"
+
+#: .\templates\home.html:89
+msgid "去年"
+msgstr "آخر عام"
+
+#: .\templates\home.html:93
+msgid "查詢表單"
+msgstr نموذج استعلام
+
+#: .\templates\home.html:94
+msgid "查詢欄位"
+msgstr ""
+
+#: .\templates\home.html:95
+msgid "最新值"
+msgstr "آخر قيمة"
+
+#: .\templates\home.html:96
+msgid "平均值"
+msgstr "المتوسط"
+
+#: .\templates\home.html:97
+msgid "最大值"
+msgstr "اقصي"
+
+#: .\templates\home.html:98
+msgid "最小值"
+msgstr "اقل"
+
+#: .\templates\home.html:99
+msgid "總和"
+msgstr "ملخص"
+
+#: .\templates\home.html:100
+msgid "數量"
+msgstr "الكمية"
+
+#: .\templates\home.html:101
+msgid "資料起始顏色"
+msgstr "لون بداية البيانات"
+
+#: .\templates\home.html:207
+msgid "輸入文字"
+msgstr "ادخال نص"
+
+#: .\templates\home.html:262 .\templates\home.html:267
+#: .\templates\home.html:320
+msgid "請輸入數字"
+msgstr "برجاء ادخل رقم"
+
+#: .\templates\home.html:502
+msgid "顯示台灣地圖"
+msgstr "عرض الخريطة في تايوان"
+
+#: .\templates\home.html:850 .\templates\home.html:913
+msgid "周日"
+msgstr "الاحد"
+
+#: .\templates\home.html:850 .\templates\home.html:913
+msgid "周二"
+msgstr "الثلاثاء"
+
+#: .\templates\home.html:850 .\templates\home.html:913
+msgid "周三"
+msgstr "الاربعاء"
+
+#: .\templates\home.html:850 .\templates\home.html:913
+msgid "周四"
+msgstr "الخميس"
+
+#: .\templates\home.html:850 .\templates\home.html:913
+msgid "周五"
+msgstr "الجمعة"
+
+#: .\templates\home.html:850 .\templates\home.html:913
+msgid "周六"
+msgstr "السبت"
+
+#: .\templates\myform.html:33 .\templates\myform.html:374
+msgid "歷程"
+msgstr "التاريخ"
+
+#: .\templates\myform.html:34 .\templates\myform.html:67
+msgid "流程檢視"
+msgstr "التدفق"
+
+#: .\templates\myform.html:35 .\templates\myform.html:248
+msgid "關聯操作"
+msgstr "العلاقة"
+
+#: .\templates\myform.html:37 .\templates\myform.html:192
+msgid "工作日誌"
+msgstr "ملاحظة"
+
+#: .\templates\myform.html:40
+msgid "服務水準"
+msgstr "مستوي الخدمة"
+
+#: .\templates\myform.html:85 .\templates\myform.html:222
+msgid "時間"
+msgstr "وقت"
+
+#: .\templates\myform.html:113
+msgid "輸入/輸出"
+msgstr "ادخال/اخراج"
+
+#: .\templates\myform.html:118
+msgid "輸入"
+msgstr "ادخال"
+
+#: .\templates\myform.html:122
+msgid "輸出"
+msgstr "مخرجات"
+
+#: .\templates\myform.html:145
+msgid "搜尋..."
+msgstr "بحث"
+
+#: .\templates\myform.html:157 .\templates\system_config.html:150
+msgid "上傳"
+msgstr "تحميل"
+
+#: .\templates\myform.html:159
+msgid "重複名稱的檔案上傳後將覆蓋現有檔案"
+msgstr "الملفات المكررة سيتم استبدالها بالجديدة بعد انتهاء التحميل"
+
+#: .\templates\myform.html:160
+msgid "檔案上傳中，請勿離開此頁面"
+msgstr "الملف جاري تحميله برجاء عدم مغادرة الصفحة"
+
+#: .\templates\myform.html:170
+msgid "已上傳檔案"
+msgstr "الملف تم تحميله"
+
+#: .\templates\myform.html:256 .\templates\myform.html:307
+msgid "還原"
+msgstr "استعادة"
+
+#: .\templates\myform.html:257 .\templates\myform.html:514
+msgid "刪除關聯"
+msgstr "حذف الارتباط"
+
+#: .\templates\myform.html:258
+msgid "建立關聯"
+msgstr "انشاء الارتباط"
+
+#: .\templates\myform.html:268
+msgid "已關單"
+msgstr "اغلاق البيانات"
+
+#: .\templates\myform.html:304
+msgid "選擇表單流程"
+msgstr "تحديد نموذج التدف"
+
+#: .\templates\myform.html:335
+msgid "選擇關聯"
+msgstr "تحديد الاقتران"
+
+#: .\templates\myform.html:342
+msgid "資料連結"
+msgstr "رابط البيانات"
+
+#: .\templates\myform.html:343
+msgid "建立子單"
+msgstr "انشاء نموذج فرعي"
+
+#: .\templates\myform.html:344
+msgid "成為子單"
+msgstr "سيتم تحويلها لنموذج فرعي"
+
+#: .\templates\myform.html:352
+msgid "影響百分比"
+msgstr "نسبة التأثير"
+
+#: .\templates\myform.html:387
+msgid "填表人"
+msgstr "مائي النموذج"
+
+#: .\templates\myform.html:415
+msgid "服務水準狀態"
+msgstr "حالة مستوي الخدمة"
+
+#: .\templates\myform.html:426
+msgid "描述"
+msgstr "وصف"
+
+#: .\templates\myform.html:427
+msgid "起算時間"
+msgstr "زمن البدء"
+
+#: .\templates\myform.html:512
+msgid "--請選擇--"
+msgstr "برجاء تحديد"
+
+#: .\templates\myform.html:513
+msgid "產生關聯"
+msgstr "انشاء اقتران"
+
+#: .\templates\myform.html:515
+msgid "一般關聯"
+msgstr "اقترن عام"
+
+#: .\templates\myform.html:516
+msgid "母關聯"
+msgstr "اصل الاقتران"
+
+#: .\templates\myform.html:517
+msgid "子關聯"
+msgstr "اقتران فرعي"
+
+#: .\templates\myform.html:518
+msgid "影響關聯"
+msgstr "اقتران التأثير"
+
+#: .\templates\myform.html:519
+msgid "被影響關聯"
+msgstr "الاقتران المتأثر"
+
+#: .\templates\myform.html:520
+msgid "包含關聯"
+msgstr "تضمن الاقتران"
+
+#: .\templates\myform.html:521
+msgid "所屬關聯"
+msgstr "جعل اقران"
+
+#: .\templates\myform.html:1595
+msgid "檔案上傳中..."
+msgstr "الملف جاري تحميله"
+
+#: .\templates\sidebar_design.html:26
+msgid "儲存設定"
+msgstr "حفظ الخصائص"
+
+#: .\templates\sidebar_design.html:26
+msgid " 儲存"
+msgstr "حفظ"
+
+#: .\templates\sidebar_design.html:194
+msgid "新增資料夾"
+msgstr "اضافة مجلد"
+
+#: .\templates\sidebar_design.html:236
+msgid "請輸入資料夾名稱"
+msgstr "برجاء ادخال اسم المجلد"
+
+#: .\templates\sidebar_design.html:262
+msgid "資料夾中尚有表單/流程，請移出流程後再刪除資料夾"
+msgstr "ما زال هناك نماذج وتدفقات في المجلد ، برجاء حذف النماذج والتدفقات ثم قم بحذف المجلد بعد ذلك"
+
+#: .\templates\system_config.html:12
+msgid " 系統設定"
+msgstr "خصائص النظام"
+
+#: .\templates\system_config.html:40 .\templates\system_config.html:41
+msgid "最大執行緒數量"
+msgstr "التهديدات بلغت ذروتها"
+
+#: .\templates\system_config.html:46
+msgid "LOG_等級"
+msgstr "مستوي التسجيل"
+
+#: .\templates\system_config.html:62
+msgid "LDAP 設定"
+msgstr "LDAP خصائص"
+
+#: .\templates\system_config.html:62
+msgid "(修改設定後即自動同步)"
+msgstr "سيتم المزامنة تلقئيا بعد تعديل الاعدادات"
+
+#: .\templates\system_config.html:62
+msgid "LDAP 連線檢查"
+msgstr "LDAP فحص الاتصال"
+
+#: .\templates\system_config.html:62
+msgid "連線檢查"
+msgstr "فحص الاتصال"
+
+#: .\templates\system_config.html:149
+msgid "授權資料"
+msgstr "معلومات اذونات الوصول"
+
+#: .\templates\system_config.html:206
+msgid "升級授權"
+msgstr "تحديث اذونات الوصول"
+
+#: .\templates\system_config.html:357
+msgid "授權檔案錯誤，請重新選擇檔案"
+msgstr "ملف الصلاحيات به عطل برجاء تحديد ملف آخر"
+
+#: .\templates\system_config.html:369
+msgid "升級中"
+msgstr "تحديث"
+
+#: .\templates\system_config.html:394
+msgid "授權資料上傳成功"
+msgstr "بيانات اذونات الوصول تم رفعها بنجاح"

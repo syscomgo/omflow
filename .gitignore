@@ -1,0 +1,10 @@
+settings/base.py
+plan.xlsx
+omdashboard/migrations
+omflow/migrations
+omflow/templates
+omformmodel/migrations
+ommessage/migrations
+ommission/migrations
+omservice/migrations
+omuser/migrations

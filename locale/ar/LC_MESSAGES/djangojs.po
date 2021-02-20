@@ -1,0 +1,1355 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-01-23 15:01+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#: .\staticfiles\components\jquery-ui\jquery-ui.min.js:8
+msgid "'"
+msgstr ""
+
+#: .\staticfiles\js\constant.js:1
+msgid "操作失敗"
+msgstr "فشلت العملية"
+
+#: .\staticfiles\js\constant.js:2
+msgid "系統錯誤"
+msgstr "خطأ في النظام"
+
+#: .\staticfiles\js\constant.js:3
+msgid "操作完成"
+msgstr "العملية نجحت"
+
+#: .\staticfiles\js\constant.js:4
+msgid "處理中，請稍候..."
+msgstr "برجاء الانتظار"
+
+#: .\staticfiles\js\constant.js:5
+msgid "未定義顯示訊息"
+msgstr "رسالة معروضة غير معرفة"
+
+#: .\staticfiles\js\constant.js:8
+msgid "處理中..."
+msgstr ".....معالجة"
+
+#: .\staticfiles\js\constant.js:9
+msgid "載入中..."
+msgstr "تحميل...."
+
+#: .\staticfiles\js\constant.js:10
+msgid "每頁顯示  _MENU_筆結果"
+msgstr ""عرض قائمة المدخلات
+
+#: .\staticfiles\js\constant.js:11
+msgid "沒有符合的結果"
+msgstr "لا يوجد سجل مطابق"
+
+#: .\staticfiles\js\constant.js:12
+msgid "顯示第 _START_至 _END_項結果，共_TOTAL_項"
+msgstr "عرض البداية والنهاية من اجمالي المدخلات"
+
+#: .\staticfiles\js\constant.js:13
+msgid "顯示第 0 至 0 項結果，共 0 項"
+msgstr "عرض 0 من 0 لـ 0 مدخل"
+
+#: .\staticfiles\js\constant.js:14
+msgid "(從_MAX_項結果中過濾)"
+msgstr "التصفية من اقصي عدد من المدخلات"
+
+#: .\staticfiles\js\constant.js:15
+msgid "搜尋:"
+msgstr "البحث"
+
+#: .\staticfiles\js\constant.js:18
+msgid "第一頁"
+msgstr "اولا"
+
+#: .\staticfiles\js\constant.js:19
+msgid "上一頁"
+msgstr "السابق"
+
+#: .\staticfiles\js\constant.js:20
+msgid "下一頁"
+msgstr "التالي"
+
+#: .\staticfiles\js\constant.js:21
+msgid "最後一頁"
+msgstr "الأخير"
+
+#: .\staticfiles\js\omflow.js:446
+msgid "搜尋"
+msgstr "البحث"
+
+#: .\staticfiles\js\omflow.js:452
+msgid "屬性"
+msgstr "خصائص"
+
+#: .\staticfiles\js\omflow.js:463
+msgid "類別"
+msgstr "تصنيف"
+
+#: .\staticfiles\js\omflow.js:465
+msgid "外部"
+msgstr "خارجي"
+
+#: .\staticfiles\js\omflow.js:466
+msgid "系統"
+msgstr "نظام"
+
+#: .\staticfiles\js\omflow.js:472 .\staticfiles\js\workflow.js:9386
+msgid "狀態"
+msgstr "حالة"
+
+#: .\staticfiles\js\omflow.js:474 .\staticfiles\js\workflow.js:1168
+#: .\staticfiles\js\workflow.js:1183
+msgid "啟用"
+msgstr "تميكن"
+
+#: .\staticfiles\js\omflow.js:475
+msgid "停用"
+msgstr "عدم تمكين"
+
+#: .\staticfiles\js\omflow.js:481 .\staticfiles\js\omflow.js:483
+msgid "已關單"
+msgstr "اغلاق"
+
+#: .\staticfiles\js\omflow.js:481 .\staticfiles\js\omflow.js:484
+msgid "未關單"
+msgstr "عدم اغلاق"
+
+#: .\staticfiles\js\omflow.js:490
+msgid "每頁顯示筆數 "
+msgstr "عرض المجموع بالصفحة"
+
+#: .\staticfiles\js\omflow.js:503
+msgid "選擇檔案日期範圍"
+msgstr "عرض ملف نطاق البيانات"
+
+#: .\staticfiles\js\omflow.js:507
+msgid "選擇日期"
+msgstr "تحديد التاريخ"
+
+#: .\staticfiles\js\omflow.js:516 .\staticfiles\js\omflow.js:519
+msgid "選擇日期範圍"
+msgstr "تحديد نطاق البيانات"
+
+#: .\staticfiles\js\omflow.js:528
+msgid "查詢特定流程"
+msgstr "استعلام عمليات محددة"
+
+#: .\staticfiles\js\omflow.js:556
+msgid "顯示所有檔案"
+msgstr "عرض الكل"
+
+#: .\staticfiles\js\omflow.js:557
+msgid "30  天"
+msgstr "30 يوم"
+
+#: .\staticfiles\js\omflow.js:557 .\staticfiles\js\omflow.js:558
+#: .\staticfiles\js\omflow.js:559 .\staticfiles\js\omflow.js:560
+#: .\staticfiles\js\omflow.js:561
+msgid "前所有檔案"
+msgstr "منذ"
+
+#: .\staticfiles\js\omflow.js:558
+msgid "60  天"
+msgstr "60 يوم"
+
+#: .\staticfiles\js\omflow.js:559
+msgid "120  天"
+msgstr "120 يوم"
+
+#: .\staticfiles\js\omflow.js:560
+msgid "6 個月"
+msgstr "6 اشهر"
+
+#: .\staticfiles\js\omflow.js:561
+msgid "一年"
+msgstr "1 عام"
+
+#: .\staticfiles\js\omflow.js:568
+msgid "前所有檔案 "
+msgstr "منذ"
+
+#: .\staticfiles\js\omflow.js:576
+msgid "今天"
+msgstr "اليوم"
+
+#: .\staticfiles\js\omflow.js:577
+msgid "昨天"
+msgstr "امسل"
+
+#: .\staticfiles\js\omflow.js:578
+msgid "最近一周"
+msgstr "لاسبوع الاخير"
+
+#: .\staticfiles\js\omflow.js:579
+msgid "最近30天"
+msgstr "آخر 30 يوم"
+
+#: .\staticfiles\js\omflow.js:580
+msgid "本月"
+msgstr "هذا الشهر"
+
+#: .\staticfiles\js\omflow.js:581
+msgid "上個月"
+msgstr "آخر شهر"
+
+#: .\staticfiles\js\organizer.js:125 .\staticfiles\js\workflow.js:6928
+msgid "新增項目"
+msgstr "قوائم جديدة"
+
+#: .\staticfiles\js\organizer.js:130 .\staticfiles\js\organizer.js:139
+msgid "項目"
+msgstr "قائمة"
+
+#: .\staticfiles\js\organizer.js:139 .\staticfiles\js\workflow.js:184
+#: .\staticfiles\js\workflow.js:225 .\staticfiles\js\workflow.js:250
+#: .\staticfiles\js\workflow.js:1912 .\staticfiles\js\workflow.js:1920
+#: .\staticfiles\js\workflow.js:2202 .\staticfiles\js\workflow.js:2210
+#: .\staticfiles\js\workflow.js:3840 .\staticfiles\js\workflow.js:3853
+#: .\staticfiles\js\workflow.js:3901 .\staticfiles\js\workflow.js:4248
+#: .\staticfiles\js\workflow.js:4260 .\staticfiles\js\workflow.js:4539
+#: .\staticfiles\js\workflow.js:4568 .\staticfiles\js\workflow.js:4576
+msgid "說明"
+msgstr "وصف"
+
+#: .\staticfiles\js\organizer.js:142 .\staticfiles\js\organizer.js:207
+msgid "部門組織"
+msgstr "تنظيم الادارة"
+
+#: .\staticfiles\js\organizer.js:143
+msgid "建立新的組織部門。"
+msgstr "انشاء تنظيم ادارة جددية"
+
+#: .\staticfiles\js\organizer.js:146 .\staticfiles\js\organizer.js:268
+msgid "職務"
+msgstr "موقع"
+
+#: .\staticfiles\js\organizer.js:147
+msgid "建立新的職務。"
+msgstr "انشاء موقع جديد"
+
+#: .\staticfiles\js\organizer.js:150 .\staticfiles\js\organizer.js:350
+msgid "人員"
+msgstr "اصطف"
+
+#: .\staticfiles\js\organizer.js:151
+msgid "新增人員。"
+msgstr "واصطف"
+
+#: .\staticfiles\js\organizer.js:161 .\staticfiles\js\organizer.js:215
+#: .\staticfiles\js\organizer.js:276 .\staticfiles\js\organizer.js:358
+#: .\staticfiles\js\workflow.js:269 .\staticfiles\js\workflow.js:356
+#: .\staticfiles\js\workflow.js:469 .\staticfiles\js\workflow.js:652
+#: .\staticfiles\js\workflow.js:889 .\staticfiles\js\workflow.js:976
+#: .\staticfiles\js\workflow.js:1198 .\staticfiles\js\workflow.js:1218
+#: .\staticfiles\js\workflow.js:1589 .\staticfiles\js\workflow.js:1675
+#: .\staticfiles\js\workflow.js:1745 .\staticfiles\js\workflow.js:1839
+#: .\staticfiles\js\workflow.js:2153 .\staticfiles\js\workflow.js:2440
+#: .\staticfiles\js\workflow.js:2617 .\staticfiles\js\workflow.js:2701
+#: .\staticfiles\js\workflow.js:6938 .\staticfiles\js\workflow.js:6997
+#: .\staticfiles\js\workflow.js:7081 .\staticfiles\js\workflow.js:7159
+#: .\staticfiles\js\workflow.js:7235 .\staticfiles\js\workflow.js:7320
+#: .\staticfiles\js\workflow.js:7412 .\staticfiles\js\workflow.js:7496
+#: .\staticfiles\js\workflow.js:7594 .\staticfiles\js\workflow.js:7700
+#: .\staticfiles\js\workflow.js:7778 .\staticfiles\js\workflow.js:7848
+#: .\staticfiles\js\workflow.js:7953 .\staticfiles\js\workflow.js:9052
+msgid "取消"
+msgstr "الغاء"
+
+#: .\staticfiles\js\organizer.js:162 .\staticfiles\js\organizer.js:216
+#: .\staticfiles\js\organizer.js:277 .\staticfiles\js\organizer.js:359
+#: .\staticfiles\js\workflow.js:270 .\staticfiles\js\workflow.js:357
+#: .\staticfiles\js\workflow.js:470 .\staticfiles\js\workflow.js:653
+#: .\staticfiles\js\workflow.js:890 .\staticfiles\js\workflow.js:977
+#: .\staticfiles\js\workflow.js:1219 .\staticfiles\js\workflow.js:1590
+#: .\staticfiles\js\workflow.js:1840 .\staticfiles\js\workflow.js:2154
+#: .\staticfiles\js\workflow.js:2441 .\staticfiles\js\workflow.js:2618
+#: .\staticfiles\js\workflow.js:2702 .\staticfiles\js\workflow.js:6939
+#: .\staticfiles\js\workflow.js:6998 .\staticfiles\js\workflow.js:7082
+#: .\staticfiles\js\workflow.js:7160 .\staticfiles\js\workflow.js:7236
+#: .\staticfiles\js\workflow.js:7321 .\staticfiles\js\workflow.js:7413
+#: .\staticfiles\js\workflow.js:7497 .\staticfiles\js\workflow.js:7595
+#: .\staticfiles\js\workflow.js:7701 .\staticfiles\js\workflow.js:7779
+#: .\staticfiles\js\workflow.js:7849 .\staticfiles\js\workflow.js:7954
+#: .\staticfiles\js\workflow.js:9053
+msgid "確定"
+msgstr "تأكيد"
+
+#: .\staticfiles\js\organizer.js:197
+msgid "部門組織-"
+msgstr "تنظيم الادارة"
+
+#: .\staticfiles\js\organizer.js:202 .\staticfiles\js\organizer.js:263
+#: .\staticfiles\js\organizer.js:345 .\staticfiles\js\workflow.js:311
+#: .\staticfiles\js\workflow.js:438 .\staticfiles\js\workflow.js:587
+#: .\staticfiles\js\workflow.js:846 .\staticfiles\js\workflow.js:942
+#: .\staticfiles\js\workflow.js:1112 .\staticfiles\js\workflow.js:1648
+#: .\staticfiles\js\workflow.js:1718 .\staticfiles\js\workflow.js:1790
+#: .\staticfiles\js\workflow.js:2105 .\staticfiles\js\workflow.js:2398
+#: .\staticfiles\js\workflow.js:2587 .\staticfiles\js\workflow.js:2671
+#: .\staticfiles\js\workflow.js:7271 .\staticfiles\js\workflow.js:7364
+#: .\staticfiles\js\workflow.js:7449 .\staticfiles\js\workflow.js:7540
+#: .\staticfiles\js\workflow.js:7639 .\staticfiles\js\workflow.js:7886
+msgid "設定"
+msgstr "اعدادات"
+
+#: .\staticfiles\js\organizer.js:208 .\staticfiles\js\organizer.js:269
+#: .\staticfiles\js\organizer.js:351 .\staticfiles\js\workflow.js:1570
+#: .\staticfiles\js\workflow.js:1910 .\staticfiles\js\workflow.js:2200
+#: .\staticfiles\js\workflow.js:3879 .\staticfiles\js\workflow.js:3932
+#: .\staticfiles\js\workflow.js:4294 .\staticfiles\js\workflow.js:4566
+msgid "輸入資料"
+msgstr "ادخال البيانات"
+
+#: .\staticfiles\js\organizer.js:258
+msgid "職務-"
+msgstr "الموقع"
+
+#: .\staticfiles\js\organizer.js:294
+msgid "預算主管"
+msgstr "مشرف الميزانية"
+
+#: .\staticfiles\js\organizer.js:295
+msgid "主管"
+msgstr "مشرف"
+
+#: .\staticfiles\js\organizer.js:296
+msgid "工程師"
+msgstr "مهندس"
+
+#: .\staticfiles\js\organizer.js:297
+msgid "一般員工"
+msgstr "موظفين عامين"
+
+#: .\staticfiles\js\organizer.js:298
+msgid "經理"
+msgstr "مدير"
+
+#: .\staticfiles\js\organizer.js:299
+msgid "處長"
+msgstr "موجه"
+
+#: .\staticfiles\js\organizer.js:340
+msgid "人員-"
+msgstr "شخصي"
+
+#: .\staticfiles\js\organizer.js:376
+msgid "林先生"
+msgstr "أ/لين"
+
+#: .\staticfiles\js\organizer.js:377
+msgid "李先生"
+msgstr "مدام ليي"
+
+#: .\staticfiles\js\organizer.js:378
+msgid "張小姐"
+msgstr "آنسة شانج"
+
+#: .\staticfiles\js\organizer.js:379
+msgid "王先生"
+msgstr "أ وانج"
+
+#: .\staticfiles\js\organizer.js:380
+msgid "徐先生"
+msgstr "أستاذ كسو"
+
+#: .\staticfiles\js\organizer.js:381
+msgid "池先生"
+msgstr "استاذ شي"
+
+#: .\staticfiles\js\organizer.js:484
+msgid "新組織"
+msgstr "منظمة جديدة"
+
+#: .\staticfiles\js\organizer.js:488
+msgid "新職務"
+msgstr "وظيفة جديدة"
+
+#: .\staticfiles\js\organizer.js:492
+msgid "新人員"
+msgstr "تعيين جددي"
+
+#: .\staticfiles\js\organizer.js:744
+msgid "選擇職務"
+msgstr "اختيار الوظيفة"
+
+#: .\staticfiles\js\organizer.js:750 .\staticfiles\js\organizer.js:756
+msgid "選擇人"
+msgstr "اختيار المستخدم"
+
+#: .\staticfiles\js\workflow.js:168
+msgid "新增元件"
+msgstr "مكون جديد"
+
+#: .\staticfiles\js\workflow.js:173 .\staticfiles\js\workflow.js:3143
+msgid "執行"
+msgstr "تنفيذ"
+
+#: .\staticfiles\js\workflow.js:174
+msgid "路線"
+msgstr "مسار"
+
+#: .\staticfiles\js\workflow.js:175
+msgid "組織圖"
+msgstr "مجموعة شجرة"
+
+#: .\staticfiles\js\workflow.js:184 .\staticfiles\js\workflow.js:225
+#: .\staticfiles\js\workflow.js:250
+msgid "元件"
+msgstr "مكون"
+
+#: .\staticfiles\js\workflow.js:195 .\staticfiles\js\workflow.js:3163
+msgid "人工輸入"
+msgstr "ادخال يدوي"
+
+#: .\staticfiles\js\workflow.js:196
+msgid "使用者填寫表單。"
+msgstr "المستخدم ادخل النموذج"
+
+#: .\staticfiles\js\workflow.js:199 .\staticfiles\js\workflow.js:1114
+#: .\staticfiles\js\workflow.js:2400 .\staticfiles\js\workflow.js:3167
+msgid "欄位設定"
+msgstr "فشل الخصائص"
+
+#: .\staticfiles\js\workflow.js:200
+msgid "直接設定表單欄位的值。"
+msgstr "ضبط قيمة حقل النوذج مبشارة"
+
+#: .\staticfiles\js\workflow.js:203 .\staticfiles\js\workflow.js:7904
+msgid "呼叫流程"
+msgstr "التدفق الداخلي"
+
+#: .\staticfiles\js\workflow.js:204
+msgid "呼叫此應用的其他流程。"
+msgstr "استدعاء التدفقات الاخري للتطبيق"
+
+#: .\staticfiles\js\workflow.js:207 .\staticfiles\js\workflow.js:847
+#: .\staticfiles\js\workflow.js:3147
+msgid "子流程"
+msgstr "التفق الفرعي"
+
+#: .\staticfiles\js\workflow.js:208
+msgid "呼叫自身的子流程。"
+msgstr "الرقم المسلسل"
+
+#: .\staticfiles\js\workflow.js:211
+msgid "程式碼"
+msgstr "تنفيذ كود مخصص لبايثون"
+
+#: .\staticfiles\js\workflow.js:212
+msgid "執行自定義的Python程式碼。"
+msgstr "تحديث كود البايثون الخاص ببايثون"
+
+#: .\staticfiles\js\workflow.js:215 .\staticfiles\js\workflow.js:1791
+#: .\staticfiles\js\workflow.js:3151 .\staticfiles\js\workflow.js:7904
+msgid "外部流程"
+msgstr "التدفق الخارجي"
+
+#: .\staticfiles\js\workflow.js:216
+msgid "呼叫系統中已上架的流程。"
+msgstr "استدعاء التدفق الذي تم عمل قائمة له علي النظام"
+
+#: .\staticfiles\js\workflow.js:228
+msgid "條件判斷"
+msgstr "حكم شرطي"
+
+#: .\staticfiles\js\workflow.js:229
+msgid "依據規則判斷，將流程導往指定的一條路線。"
+msgstr " بناء عيل القواعد، العملية تم تحويلها لطريق محدد "
+
+#: .\staticfiles\js\workflow.js:232 .\staticfiles\js\workflow.js:3171
+msgid "並行"
+msgstr "متزامن"
+
+#: .\staticfiles\js\workflow.js:233
+msgid "流程會同時往所有的路線前進，並在並行匯集的時候回歸到單一路線。"
+msgstr "التدفق سيتم تقدمه مع نفس الطرق في نفس الوقت وتم إعادتها للمحدد"
+
+#: .\staticfiles\js\workflow.js:236
+msgid "並行匯集"
+msgstr "جمع التزامن"
+
+#: .\staticfiles\js\workflow.js:237
+msgid "所有指向自己的路線都抵達時，流程會繼續前進。"
+msgstr " عندما يت الوصول لكل الطرق المتصلة ، التدفق سيعمل"
+
+#: .\staticfiles\js\workflow.js:240 .\staticfiles\js\workflow.js:3179
+msgid "暫停"
+msgstr "توقف مؤقت"
+
+#: .\staticfiles\js\workflow.js:241
+msgid "流程執行到暫停時，會暫時停止指定的毫秒後才繼續往前。"
+msgstr "عندما يتوقف التدفق مؤقتا سيتم التوقف المؤقت لاقل من الثانية قبل الاستمرار"
+
+#: .\staticfiles\js\workflow.js:253 .\staticfiles\js\workflow.js:3183
+msgid "同系職務"
+msgstr "موضع مباشر"
+
+#: .\staticfiles\js\workflow.js:254
+msgid "取得在組織圖上，指定使用者同組織最先碰到的職務使用者。"
+msgstr "تضمن عمل المستخدم يعني ان تصميم المستخدم والمنظمة اولا تم جمعه علي الرسم البياني للمنظمة"
+
+#: .\staticfiles\js\workflow.js:257 .\staticfiles\js\workflow.js:3187
+msgid "部門職務"
+msgstr "موقع الادارة"
+
+#: .\staticfiles\js\workflow.js:258
+msgid "搜尋組織圖上，指定部門以下的第一個職務。"
+msgstr " البحث عن اول موقع في اسفل تصميم الادارة علي شجرة المجموعة"
+
+#: .\staticfiles\js\workflow.js:306
+msgid "開始-"
+msgstr "البدء"
+
+#: .\staticfiles\js\workflow.js:312 .\staticfiles\js\workflow.js:589
+#: .\staticfiles\js\workflow.js:1558 .\staticfiles\js\workflow.js:2588
+#: .\staticfiles\js\workflow.js:2672 .\staticfiles\js\workflow.js:9337
+msgid "輸入"
+msgstr "ادخال"
+
+#: .\staticfiles\js\workflow.js:313 .\staticfiles\js\workflow.js:1116
+msgid "驗證"
+msgstr "تقق"
+
+#: .\staticfiles\js\workflow.js:314 .\staticfiles\js\workflow.js:1117
+msgid "驗證輸入"
+msgstr "التحقق من المدخلات"
+
+#: .\staticfiles\js\workflow.js:321 .\staticfiles\js\workflow.js:447
+#: .\staticfiles\js\workflow.js:598 .\staticfiles\js\workflow.js:856
+#: .\staticfiles\js\workflow.js:951 .\staticfiles\js\workflow.js:1127
+#: .\staticfiles\js\workflow.js:1656 .\staticfiles\js\workflow.js:1726
+#: .\staticfiles\js\workflow.js:1800 .\staticfiles\js\workflow.js:2115
+#: .\staticfiles\js\workflow.js:2408 .\staticfiles\js\workflow.js:2596
+#: .\staticfiles\js\workflow.js:2680
+msgid "顯示名稱"
+msgstr "عرض الاسم"
+
+#: .\staticfiles\js\workflow.js:322 .\staticfiles\js\workflow.js:448
+#: .\staticfiles\js\workflow.js:599 .\staticfiles\js\workflow.js:857
+#: .\staticfiles\js\workflow.js:952 .\staticfiles\js\workflow.js:1128
+#: .\staticfiles\js\workflow.js:1657 .\staticfiles\js\workflow.js:1727
+#: .\staticfiles\js\workflow.js:1801 .\staticfiles\js\workflow.js:2116
+#: .\staticfiles\js\workflow.js:2409 .\staticfiles\js\workflow.js:2597
+#: .\staticfiles\js\workflow.js:2681
+msgid "請輸入名稱..."
+msgstr "برجاء ادخال الاسم"
+
+#: .\staticfiles\js\workflow.js:326 .\staticfiles\js\workflow.js:615
+msgid "允許外部呼叫"
+msgstr "متابعة المستخدم"
+
+#: .\staticfiles\js\workflow.js:331 .\staticfiles\js\workflow.js:453
+#: .\staticfiles\js\workflow.js:459 .\staticfiles\js\workflow.js:624
+#: .\staticfiles\js\workflow.js:630 .\staticfiles\js\workflow.js:642
+#: .\staticfiles\js\workflow.js:961 .\staticfiles\js\workflow.js:1138
+#: .\staticfiles\js\workflow.js:1159 .\staticfiles\js\workflow.js:1174
+#: .\staticfiles\js\workflow.js:1189 .\staticfiles\js\workflow.js:1208
+#: .\staticfiles\js\workflow.js:2418 .\staticfiles\js\workflow.js:2424
+#: .\staticfiles\js\workflow.js:2430 .\staticfiles\js\workflow.js:7309
+#: .\staticfiles\js\workflow.js:7486 .\staticfiles\js\workflow.js:7583
+#: .\staticfiles\js\workflow.js:7689 .\staticfiles\js\workflow.js:7939
+#: .\staticfiles\js\workflow.js:7944
+msgid "新增"
+msgstr "جديد"
+
+#: .\staticfiles\js\workflow.js:393 .\staticfiles\js\workflow.js:508
+#: .\staticfiles\js\workflow.js:542 .\staticfiles\js\workflow.js:712
+#: .\staticfiles\js\workflow.js:736 .\staticfiles\js\workflow.js:760
+#: .\staticfiles\js\workflow.js:790 .\staticfiles\js\workflow.js:1012
+#: .\staticfiles\js\workflow.js:1025 .\staticfiles\js\workflow.js:1053
+#: .\staticfiles\js\workflow.js:1066 .\staticfiles\js\workflow.js:1270
+#: .\staticfiles\js\workflow.js:1297 .\staticfiles\js\workflow.js:1324
+#: .\staticfiles\js\workflow.js:1416 .\staticfiles\js\workflow.js:1443
+#: .\staticfiles\js\workflow.js:1470 .\staticfiles\js\workflow.js:1951
+#: .\staticfiles\js\workflow.js:2020 .\staticfiles\js\workflow.js:2027
+#: .\staticfiles\js\workflow.js:2037 .\staticfiles\js\workflow.js:2246
+#: .\staticfiles\js\workflow.js:2313 .\staticfiles\js\workflow.js:2320
+#: .\staticfiles\js\workflow.js:2331 .\staticfiles\js\workflow.js:2341
+#: .\staticfiles\js\workflow.js:2488 .\staticfiles\js\workflow.js:2542
+#: .\staticfiles\js\workflow.js:4038 .\staticfiles\js\workflow.js:4045
+#: .\staticfiles\js\workflow.js:4201 .\staticfiles\js\workflow.js:4205
+#: .\staticfiles\js\workflow.js:4209 .\staticfiles\js\workflow.js:4213
+#: .\staticfiles\js\workflow.js:4218 .\staticfiles\js\workflow.js:4222
+#: .\staticfiles\js\workflow.js:4227 .\staticfiles\js\workflow.js:4306
+#: .\staticfiles\js\workflow.js:4313 .\staticfiles\js\workflow.js:4444
+#: .\staticfiles\js\workflow.js:4470 .\staticfiles\js\workflow.js:4495
+#: .\staticfiles\js\workflow.js:4627 .\staticfiles\js\workflow.js:4651
+#: .\staticfiles\js\workflow.js:4658 .\staticfiles\js\workflow.js:4675
+#: .\staticfiles\js\workflow.js:6820
+msgid "變數:"
+msgstr "متغير"
+
+#: .\staticfiles\js\workflow.js:433
+msgid "結束-"
+msgstr "انتهاء"
+
+#: .\staticfiles\js\workflow.js:439 .\staticfiles\js\workflow.js:588
+#: .\staticfiles\js\workflow.js:943 .\staticfiles\js\workflow.js:1113
+#: .\staticfiles\js\workflow.js:2399
+msgid "篩選"
+msgstr "التصفية"
+
+#: .\staticfiles\js\workflow.js:440 .\staticfiles\js\workflow.js:591
+#: .\staticfiles\js\workflow.js:1118 .\staticfiles\js\workflow.js:2401
+#: .\staticfiles\js\workflow.js:2589 .\staticfiles\js\workflow.js:2673
+msgid "輸出"
+msgstr "الاخراج"
+
+#: .\staticfiles\js\workflow.js:582
+msgid "程式碼-"
+msgstr "الكود"
+
+#: .\staticfiles\js\workflow.js:603
+msgid "自動安裝缺少的套件"
+msgstr "تنزيل تلقائي للحزم الغير متواجدة"
+
+#: .\staticfiles\js\workflow.js:607 .\staticfiles\js\workflow.js:861
+#: .\staticfiles\js\workflow.js:1805 .\staticfiles\js\workflow.js:2120
+msgid "異常時通過/標示異常"
+msgstr "تمرير/علامة عند الخطأ"
+
+#: .\staticfiles\js\workflow.js:611
+msgid "分散運算"
+msgstr "حساب التوزيب"
+
+#: .\staticfiles\js\workflow.js:619 .\staticfiles\js\workflow.js:865
+#: .\staticfiles\js\workflow.js:956 .\staticfiles\js\workflow.js:1132
+#: .\staticfiles\js\workflow.js:1661 .\staticfiles\js\workflow.js:1731
+#: .\staticfiles\js\workflow.js:1809 .\staticfiles\js\workflow.js:2124
+#: .\staticfiles\js\workflow.js:2413
+msgid "紀錄Log"
+msgstr "سجل"
+
+#: .\staticfiles\js\workflow.js:637
+msgid "輸入您的程式碼..."
+msgstr "ادخل الكود"
+
+#: .\staticfiles\js\workflow.js:841
+msgid "子流程-"
+msgstr "التفرع التحتي"
+
+#: .\staticfiles\js\workflow.js:848
+msgid "子流程輸入"
+msgstr "تحت تفرع الادخال"
+
+#: .\staticfiles\js\workflow.js:849
+msgid "子流程輸出"
+msgstr "تحت تفرع الاخراج"
+
+#: .\staticfiles\js\workflow.js:937
+msgid "條件判斷-"
+msgstr "شرط تحكمي-"
+
+#: .\staticfiles\js\workflow.js:944 .\staticfiles\js\workflow.js:1649
+#: .\staticfiles\js\workflow.js:1719
+msgid "規則"
+msgstr "قاعدة"
+
+#: .\staticfiles\js\workflow.js:1107
+msgid "人工處理-"
+msgstr "عملية يدوية-"
+
+#: .\staticfiles\js\workflow.js:1115
+msgid "自訂表單"
+msgstr "نموذج مخصص"
+
+#: .\staticfiles\js\workflow.js:1119
+msgid "動作1"
+msgstr "فعل1"
+
+#: .\staticfiles\js\workflow.js:1120
+msgid "動作2"
+msgstr "فعل2"
+
+#: .\staticfiles\js\workflow.js:1169 .\staticfiles\js\workflow.js:1184
+msgid "名稱"
+msgstr "اسم"
+
+#: .\staticfiles\js\workflow.js:1198
+msgid "載入"
+msgstr "تحميل"
+
+#: .\staticfiles\js\workflow.js:1199
+msgid "新增半區塊"
+msgstr "ادخل نصف البلوك"
+
+#: .\staticfiles\js\workflow.js:1200
+msgid "新增全區塊"
+msgstr "اضف البلوكات"
+
+#: .\staticfiles\js\workflow.js:1348 .\staticfiles\js\workflow.js:1493
+#: .\staticfiles\js\workflow.js:1961 .\staticfiles\js\workflow.js:1967
+#: .\staticfiles\js\workflow.js:2255 .\staticfiles\js\workflow.js:2261
+#: .\staticfiles\js\workflow.js:2512 .\staticfiles\js\workflow.js:4412
+#: .\staticfiles\js\workflow.js:4413 .\staticfiles\js\workflow.js:4419
+#: .\staticfiles\js\workflow.js:6827 .\staticfiles\js\workflow.js:8232
+#: .\staticfiles\js\workflow.js:8233 .\staticfiles\js\workflow.js:8239
+msgid "欄位:"
+msgstr "حقل"
+
+#: .\staticfiles\js\workflow.js:1553
+msgid "暫停-"
+msgstr "توقف مؤقت"
+
+#: .\staticfiles\js\workflow.js:1559 .\staticfiles\js\workflow.js:7041
+#: .\staticfiles\js\workflow.js:7206 .\staticfiles\js\workflow.js:7285
+#: .\staticfiles\js\workflow.js:7378 .\staticfiles\js\workflow.js:7462
+#: .\staticfiles\js\workflow.js:7559 .\staticfiles\js\workflow.js:7661
+#: .\staticfiles\js\workflow.js:7753 .\staticfiles\js\workflow.js:7823
+msgid "預設值"
+msgstr "قيمة افتراضية"
+
+#: .\staticfiles\js\workflow.js:1572
+msgid "設定暫停的毫秒(ms)數"
+msgstr "ضبط التوقف التلقائي اقل من الثانية"
+
+#: .\staticfiles\js\workflow.js:1580
+msgid "暫停毫秒"
+msgstr "اوقفني"
+
+#: .\staticfiles\js\workflow.js:1606
+msgid " 毫秒"
+msgstr "اقل من ثانية"
+
+#: .\staticfiles\js\workflow.js:1643
+msgid "並行-"
+msgstr "غير متزامن"
+
+#: .\staticfiles\js\workflow.js:1676 .\staticfiles\js\workflow.js:1746
+msgid "關閉"
+msgstr "اغلاق"
+
+#: .\staticfiles\js\workflow.js:1713
+msgid "並行匯集-"
+msgstr "جمع عدم التزامن"
+
+#: .\staticfiles\js\workflow.js:1785
+msgid "外部流程-"
+msgstr "تدفق داخلي"
+
+#: .\staticfiles\js\workflow.js:1792 .\staticfiles\js\workflow.js:2107
+msgid "流程輸入"
+msgstr "تتبع التدفق"
+
+#: .\staticfiles\js\workflow.js:1793 .\staticfiles\js\workflow.js:2108
+msgid "流程輸出"
+msgstr "تتبع عدم التدفق"
+
+#: .\staticfiles\js\workflow.js:1909 .\staticfiles\js\workflow.js:2199
+#: .\staticfiles\js\workflow.js:3837 .\staticfiles\js\workflow.js:3906
+#: .\staticfiles\js\workflow.js:4565 .\staticfiles\js\workflow.js:7063
+#: .\staticfiles\js\workflow.js:7141 .\staticfiles\js\workflow.js:7217
+#: .\staticfiles\js\workflow.js:7291 .\staticfiles\js\workflow.js:7384
+#: .\staticfiles\js\workflow.js:7468 .\staticfiles\js\workflow.js:7565
+#: .\staticfiles\js\workflow.js:7760 .\staticfiles\js\workflow.js:7830
+#: .\staticfiles\js\workflow.js:7910
+msgid "必填"
+msgstr "متطلب"
+
+#: .\staticfiles\js\workflow.js:1911 .\staticfiles\js\workflow.js:2201
+#: .\staticfiles\js\workflow.js:3839 .\staticfiles\js\workflow.js:3852
+#: .\staticfiles\js\workflow.js:4296 .\staticfiles\js\workflow.js:4567
+msgid "變數名稱"
+msgstr "الاسم المتغير"
+
+#: .\staticfiles\js\workflow.js:1918 .\staticfiles\js\workflow.js:2208
+#: .\staticfiles\js\workflow.js:4574
+msgid "輸出值"
+msgstr "قيمة المخرجات"
+
+#: .\staticfiles\js\workflow.js:1919 .\staticfiles\js\workflow.js:2209
+#: .\staticfiles\js\workflow.js:4575
+msgid "輸出名稱"
+msgstr "قيمة المدخلات"
+
+#: .\staticfiles\js\workflow.js:1993 .\staticfiles\js\workflow.js:2286
+msgid "表單欄位"
+msgstr "من الحقل"
+
+#: .\staticfiles\js\workflow.js:2010 .\staticfiles\js\workflow.js:2303
+#: .\staticfiles\js\workflow.js:4641
+msgid "輸出變數"
+msgstr "استخراج متغير"
+
+#: .\staticfiles\js\workflow.js:2100
+msgid "呼叫流程-"
+msgstr "مناداة التجمع"
+
+#: .\staticfiles\js\workflow.js:2106 .\staticfiles\js\workflow.js:3155
+msgid "流程"
+msgstr "التدفق"
+
+#: .\staticfiles\js\workflow.js:2393
+msgid "欄位設定-"
+msgstr "خصائص الحقل"
+
+#: .\staticfiles\js\workflow.js:2582
+msgid "組織-同系職務-"
+msgstr "توجيه موقع المنظمة"
+
+#: .\staticfiles\js\workflow.js:2666
+msgid "組織-部門職務-"
+msgstr " موقع المنظمة الاداري"
+
+#: .\staticfiles\js\workflow.js:3135
+msgid "開始"
+msgstr "البدأ"
+
+#: .\staticfiles\js\workflow.js:3139
+msgid "結束"
+msgstr "النهاية"
+
+#: .\staticfiles\js\workflow.js:3159
+msgid "判斷"
+msgstr "التحويل"
+
+#: .\staticfiles\js\workflow.js:3175
+msgid "匯集"
+msgstr "الجمع"
+
+#: .\staticfiles\js\workflow.js:3934
+msgid "設定欄位"
+msgstr "تحيد الحقل"
+
+#: .\staticfiles\js\workflow.js:3957
+msgid "轉成大寫"
+msgstr "تحويل لحروف كبيرة"
+
+#: .\staticfiles\js\workflow.js:3958
+msgid "轉成小寫"
+msgstr "تحويل لحروف صغيرة"
+
+#: .\staticfiles\js\workflow.js:3959
+msgid "取代"
+msgstr "استبدال"
+
+#: .\staticfiles\js\workflow.js:3960
+msgid "取得長度"
+msgstr "الحصول علي الطول"
+
+#: .\staticfiles\js\workflow.js:3961
+msgid "去除前後空白"
+msgstr "ازالة الفراغ قبل وبعد"
+
+#: .\staticfiles\js\workflow.js:3962
+msgid "取開頭字元"
+msgstr "اخذ بداية الخصائص"
+
+#: .\staticfiles\js\workflow.js:3963
+msgid "取後面字元"
+msgstr "اخذ الخصائص التالية"
+
+#: .\staticfiles\js\workflow.js:3964
+msgid "擷取字元"
+msgstr "استخراج خصائص"
+
+#: .\staticfiles\js\workflow.js:3965
+msgid "轉成字串"
+msgstr "التحويل للنص"
+
+#: .\staticfiles\js\workflow.js:3966
+msgid "字串相加"
+msgstr "اضافة نص"
+
+#: .\staticfiles\js\workflow.js:3967
+msgid "數字相加"
+msgstr "اضافة رقم"
+
+#: .\staticfiles\js\workflow.js:3968
+msgid "數字相減"
+msgstr "طرح رقم"
+
+#: .\staticfiles\js\workflow.js:3969
+msgid "數字相乘"
+msgstr "ضرب رقم"
+
+#: .\staticfiles\js\workflow.js:3970
+msgid "數字相除"
+msgstr "قسمة رقم"
+
+#: .\staticfiles\js\workflow.js:3971
+msgid "數字取餘數"
+msgstr "تذكيرات"
+
+#: .\staticfiles\js\workflow.js:3972
+msgid "開單人"
+msgstr "اضافة مستخدم"
+
+#: .\staticfiles\js\workflow.js:3973
+msgid "開單人群組"
+msgstr "اضافة مجموعة مستخدم"
+
+#: .\staticfiles\js\workflow.js:3974
+msgid "使用者所屬群組"
+msgstr "مجموعة مستخدم"
+
+#: .\staticfiles\js\workflow.js:3975
+msgid "使用者名稱"
+msgstr "اسم مستعار"
+
+#: .\staticfiles\js\workflow.js:3976
+msgid "群組名稱"
+msgstr "اسم مجموعة"
+
+#: .\staticfiles\js\workflow.js:3977
+msgid "系統參數"
+msgstr "معاملات نظام "
+
+#: .\staticfiles\js\workflow.js:4027
+msgid "來源"
+msgstr "مصدر"
+
+#: .\staticfiles\js\workflow.js:4028
+msgid "結果"
+msgstr "نتيجة"
+
+#: .\staticfiles\js\workflow.js:4092
+msgid "參數名"
+msgstr "اسم معامل"
+
+#: .\staticfiles\js\workflow.js:4112
+msgid "尋找"
+msgstr "بحث"
+
+#: .\staticfiles\js\workflow.js:4113
+msgid "換成"
+msgstr "استبدال بـ"
+
+#: .\staticfiles\js\workflow.js:4121
+msgid "字數"
+msgstr "جمع قم"
+
+#: .\staticfiles\js\workflow.js:4130
+msgid "第幾個字"
+msgstr "بداية الكلمة"
+
+#: .\staticfiles\js\workflow.js:4131
+msgid "取幾個字"
+msgstr "نهاية الكلمة"
+
+#: .\staticfiles\js\workflow.js:4139
+msgid "加上"
+msgstr "اضافة"
+
+#: .\staticfiles\js\workflow.js:4148
+msgid "減去"
+msgstr "طرح"
+
+#: .\staticfiles\js\workflow.js:4157
+msgid "乘上"
+msgstr "ضرب"
+
+#: .\staticfiles\js\workflow.js:4166
+msgid "除以"
+msgstr "قسمة"
+
+#: .\staticfiles\js\workflow.js:4332 .\staticfiles\js\workflow.js:4365
+#: .\staticfiles\js\workflow.js:4375
+msgid "到"
+msgstr "إلي"
+
+#: .\staticfiles\js\workflow.js:4333 .\staticfiles\js\workflow.js:4335
+msgid "變數"
+msgstr "متغير"
+
+#: .\staticfiles\js\workflow.js:4334 .\staticfiles\js\workflow.js:7888
+msgid "條件"
+msgstr "شرط"
+
+#: .\staticfiles\js\workflow.js:4350
+msgid "相等"
+msgstr "يساوي"
+
+#: .\staticfiles\js\workflow.js:4350
+msgid "不相等"
+msgstr "غير مساوي"
+
+#: .\staticfiles\js\workflow.js:4350
+msgid "大於"
+msgstr "اكبر من"
+
+#: .\staticfiles\js\workflow.js:4350
+msgid "小於"
+msgstr "اقل من"
+
+#: .\staticfiles\js\workflow.js:4364
+msgid "前往:"
+msgstr "الذهاب إلي"
+
+#: .\staticfiles\js\workflow.js:4373
+msgid "主線"
+msgstr "خط رئيسي"
+
+#: .\staticfiles\js\workflow.js:4374
+msgid "來自:"
+msgstr "من"
+
+#: .\staticfiles\js\workflow.js:4538
+msgid "不執行"
+msgstr "غي منفذ"
+
+#: .\staticfiles\js\workflow.js:6932
+msgid "選擇新增項目"
+msgstr "تحديد صنف جديد"
+
+#: .\staticfiles\js\workflow.js:6970
+msgid "區塊設定"
+msgstr "اغلاق الخصائص"
+
+#: .\staticfiles\js\workflow.js:6974
+msgid "標題文字"
+msgstr "اسم نص"
+
+#: .\staticfiles\js\workflow.js:6975
+msgid "請輸入標題文字"
+msgstr "برجاء ادخال نص الاسم"
+
+#: .\staticfiles\js\workflow.js:6978
+msgid "標示顏色"
+msgstr "علامة لونية"
+
+#: .\staticfiles\js\workflow.js:6980
+msgid "灰"
+msgstr "رمادي"
+
+#: .\staticfiles\js\workflow.js:6981
+msgid "紅"
+msgstr "احمر"
+
+#: .\staticfiles\js\workflow.js:6982
+msgid "黃"
+msgstr "اصفر"
+
+#: .\staticfiles\js\workflow.js:6983
+msgid "藍"
+msgstr "ازرق"
+
+#: .\staticfiles\js\workflow.js:6984
+msgid "水藍"
+msgstr "علامة زرقاء"
+
+#: .\staticfiles\js\workflow.js:6985
+msgid "綠"
+msgstr "اخضر"
+
+#: .\staticfiles\js\workflow.js:6986
+msgid "無色區塊"
+msgstr "حظر عدم التلوين"
+
+#: .\staticfiles\js\workflow.js:6992 .\staticfiles\js\workflow.js:7075
+#: .\staticfiles\js\workflow.js:7153 .\staticfiles\js\workflow.js:7229
+#: .\staticfiles\js\workflow.js:7303 .\staticfiles\js\workflow.js:7396
+#: .\staticfiles\js\workflow.js:7480 .\staticfiles\js\workflow.js:7577
+#: .\staticfiles\js\workflow.js:7683 .\staticfiles\js\workflow.js:7772
+#: .\staticfiles\js\workflow.js:7842 .\staticfiles\js\workflow.js:7922
+msgid "隱藏"
+msgstr "اخفاء"
+
+#: .\staticfiles\js\workflow.js:7029
+msgid "輸入格設定"
+msgstr "ادخال خصائص الشبكة"
+
+#: .\staticfiles\js\workflow.js:7033 .\staticfiles\js\workflow.js:7117
+#: .\staticfiles\js\workflow.js:7197 .\staticfiles\js\workflow.js:7280
+#: .\staticfiles\js\workflow.js:7373 .\staticfiles\js\workflow.js:7458
+#: .\staticfiles\js\workflow.js:7549 .\staticfiles\js\workflow.js:7745
+#: .\staticfiles\js\workflow.js:7815 .\staticfiles\js\workflow.js:7895
+msgid "欄位名稱"
+msgstr "اسم الحقل"
+
+#: .\staticfiles\js\workflow.js:7034 .\staticfiles\js\workflow.js:7118
+#: .\staticfiles\js\workflow.js:7198 .\staticfiles\js\workflow.js:7281
+#: .\staticfiles\js\workflow.js:7374 .\staticfiles\js\workflow.js:7459
+#: .\staticfiles\js\workflow.js:7550 .\staticfiles\js\workflow.js:7649
+#: .\staticfiles\js\workflow.js:7658 .\staticfiles\js\workflow.js:7746
+#: .\staticfiles\js\workflow.js:7816 .\staticfiles\js\workflow.js:7896
+msgid "請輸入欄位名稱"
+msgstr "برجاء ادخال اسم الحقل"
+
+#: .\staticfiles\js\workflow.js:7037 .\staticfiles\js\workflow.js:7202
+#: .\staticfiles\js\workflow.js:7749 .\staticfiles\js\workflow.js:7819
+#: .\staticfiles\js\workflow.js:7899
+msgid "註解說明"
+msgstr "تعليق"
+
+#: .\staticfiles\js\workflow.js:7038 .\staticfiles\js\workflow.js:7203
+#: .\staticfiles\js\workflow.js:7750 .\staticfiles\js\workflow.js:7820
+#: .\staticfiles\js\workflow.js:7900
+msgid "請輸入註解文字"
+msgstr "برجاء ادخال التعليق النصي"
+
+#: .\staticfiles\js\workflow.js:7042 .\staticfiles\js\workflow.js:7207
+#: .\staticfiles\js\workflow.js:7286 .\staticfiles\js\workflow.js:7379
+#: .\staticfiles\js\workflow.js:7463 .\staticfiles\js\workflow.js:7754
+#: .\staticfiles\js\workflow.js:7824
+msgid "請輸入預設值"
+msgstr "برجاء ادخال القيمة الافتراضية"
+
+#: .\staticfiles\js\workflow.js:7045 .\staticfiles\js\workflow.js:7903
+msgid "類型"
+msgstr "النوع"
+
+#: .\staticfiles\js\workflow.js:7047
+msgid "文字"
+msgstr "النص"
+
+#: .\staticfiles\js\workflow.js:7048
+msgid "數字"
+msgstr "الرقم"
+
+#: .\staticfiles\js\workflow.js:7049
+msgid "密碼"
+msgstr "كلمة السر"
+
+#: .\staticfiles\js\workflow.js:7050
+msgid "電子郵件"
+msgstr "البريد الالكتروني"
+
+#: .\staticfiles\js\workflow.js:7051
+msgid "網址"
+msgstr "الرابط"
+
+#: .\staticfiles\js\workflow.js:7052
+msgid "唯一值"
+msgstr "قيمة فريدة"
+
+#: .\staticfiles\js\workflow.js:7057 .\staticfiles\js\workflow.js:7135
+#: .\staticfiles\js\workflow.js:7211
+msgid "格式檢查(REGEX)"
+msgstr "تهيئة الفحص"
+
+#: .\staticfiles\js\workflow.js:7058 .\staticfiles\js\workflow.js:7136
+#: .\staticfiles\js\workflow.js:7212
+msgid "請輸入regex語法"
+msgstr "برجاء ادخال بنيةالتعبير العادي"
+
+#: .\staticfiles\js\workflow.js:7069 .\staticfiles\js\workflow.js:7147
+#: .\staticfiles\js\workflow.js:7223 .\staticfiles\js\workflow.js:7297
+#: .\staticfiles\js\workflow.js:7390 .\staticfiles\js\workflow.js:7474
+#: .\staticfiles\js\workflow.js:7571 .\staticfiles\js\workflow.js:7677
+#: .\staticfiles\js\workflow.js:7766 .\staticfiles\js\workflow.js:7836
+#: .\staticfiles\js\workflow.js:7916
+msgid "唯讀"
+msgstr "قراءة قط"
+
+#: .\staticfiles\js\workflow.js:7113
+msgid "多行輸入設定"
+msgstr "ادخال خصائص تعدد نصي"
+
+#: .\staticfiles\js\workflow.js:7122
+msgid "行數"
+msgstr "صفوف"
+
+#: .\staticfiles\js\workflow.js:7192
+msgid "標題設定"
+msgstr "خصائص اسم"
+
+#: .\staticfiles\js\workflow.js:7266
+msgid "狀態欄位"
+msgstr "حالة الحقل"
+
+#: .\staticfiles\js\workflow.js:7272 .\staticfiles\js\workflow.js:7365
+#: .\staticfiles\js\workflow.js:7450 .\staticfiles\js\workflow.js:7541
+#: .\staticfiles\js\workflow.js:7640
+msgid "選項"
+msgstr "خيارات"
+
+#: .\staticfiles\js\workflow.js:7359
+msgid "燈號設定"
+msgstr "خصائص منيرة"
+
+#: .\staticfiles\js\workflow.js:7444 .\staticfiles\js\workflow.js:9462
+msgid "下拉選單"
+msgstr "قائمة الاختيار"
+
+#: .\staticfiles\js\workflow.js:7535
+msgid "勾選欄位"
+msgstr "حقل فحص"
+
+#: .\staticfiles\js\workflow.js:7555
+msgid "複選"
+msgstr "متعدد"
+
+#: .\staticfiles\js\workflow.js:7560
+msgid "預設值1,預設值2,預設值3"
+msgstr "قيمة افترضية1 ، قيمة افتراضية2 ، قيمة افتراضية3"
+
+#: .\staticfiles\js\workflow.js:7634
+msgid "受派人及組織"
+msgstr "التوقيعات والمجموعات"
+
+#: .\staticfiles\js\workflow.js:7648
+msgid "組織欄位名稱"
+msgstr "مجموعة حقل الاسم"
+
+#: .\staticfiles\js\workflow.js:7653
+msgid "包含受派人欄位"
+msgstr "تضمين حقل توقيع"
+
+#: .\staticfiles\js\workflow.js:7657
+msgid "受派人欄位名稱"
+msgstr "تضمين حقل توقيع"
+
+#: .\staticfiles\js\workflow.js:7662
+msgid "組織,受派人"
+msgstr "مجموعات وتوقيعات"
+
+#: .\staticfiles\js\workflow.js:7666
+msgid "組織必填"
+msgstr "المجموعة متطلب"
+
+#: .\staticfiles\js\workflow.js:7671
+msgid "受派人必填"
+msgstr "التوقيع متطلب"
+
+#: .\staticfiles\js\workflow.js:7741
+msgid "日期設定"
+msgstr "خصائ التاريخ"
+
+#: .\staticfiles\js\workflow.js:7811
+msgid "日期/時間設定"
+msgstr "خصائص الوقت والتاريخ"
+
+#: .\staticfiles\js\workflow.js:7881
+msgid "子查詢設定"
+msgstr "خصائص الاستعلام الفرعي"
+
+#: .\staticfiles\js\workflow.js:7887
+msgid "表單"
+msgstr "نموذج"
+
+#: .\staticfiles\js\workflow.js:7889
+msgid "回填"
+msgstr "ملأ"
+
+#: .\staticfiles\js\workflow.js:8114 .\staticfiles\js\workflow.js:8297
+#: .\staticfiles\js\workflow.js:8320
+msgid "顯示文字"
+msgstr "عرض نص"
+
+#: .\staticfiles\js\workflow.js:8153
+msgid "包含"
+msgstr "يتضمن"
+
+#: .\staticfiles\js\workflow.js:8153
+msgid "不包含"
+msgstr "استخراج"
+
+#: .\staticfiles\js\workflow.js:8154
+msgid "數字,字串"
+msgstr "رقم وخصائص"
+
+#: .\staticfiles\js\workflow.js:8296 .\staticfiles\js\workflow.js:8319
+msgid "值"
+msgstr "قيمة"
+
+#: .\staticfiles\js\workflow.js:9038 .\staticfiles\js\workflow.js:9441
+#: .\staticfiles\js\workflow.js:9466
+msgid "子查詢"
+msgstr "استعلام فرعي"
+
+#: .\staticfiles\js\workflow.js:9226
+msgid "異常"
+msgstr "خطأ"
+
+#: .\staticfiles\js\workflow.js:9228
+msgid "正常"
+msgstr "طبيعي"
+
+#: .\staticfiles\js\workflow.js:9237 .\staticfiles\js\workflow.js:9402
+msgid "黃燈"
+msgstr "اصفر"
+
+#: .\staticfiles\js\workflow.js:9239 .\staticfiles\js\workflow.js:9405
+msgid "紅燈"
+msgstr "احمر"
+
+#: .\staticfiles\js\workflow.js:9241 .\staticfiles\js\workflow.js:9399
+msgid "綠燈"
+msgstr "اخضر"
+
+#: .\staticfiles\js\workflow.js:9347 .\staticfiles\js\workflow.js:9461
+msgid "多行輸入"
+msgstr "ادخال متعدد النص"
+
+#: .\staticfiles\js\workflow.js:9355
+msgid "選單"
+msgstr "قائمة"
+
+#: .\staticfiles\js\workflow.js:9362
+msgid "勾選"
+msgstr "فحص"
+
+#: .\staticfiles\js\workflow.js:9371
+msgid "未命名"
+msgstr "اسم عديم "
+
+#: .\staticfiles\js\workflow.js:9377
+msgid "標題"
+msgstr "نص"
+
+#: .\staticfiles\js\workflow.js:9393
+msgid "燈號"
+msgstr "مستوي"
+
+#: .\staticfiles\js\workflow.js:9414
+msgid "組織"
+msgstr "مجموعة"
+
+#: .\staticfiles\js\workflow.js:9419
+msgid "受派人"
+msgstr "الوكيل"
+
+#: .\staticfiles\js\workflow.js:9425 .\staticfiles\js\workflow.js:9464
+msgid "日期"
+msgstr "تاريخ"
+
+#: .\staticfiles\js\workflow.js:9433 .\staticfiles\js\workflow.js:9465
+msgid "日期/時間"
+msgstr "التاريخ والوقت"
+
+#: .\staticfiles\js\workflow.js:9460
+msgid "輸入方塊"
+msgstr "ادخال نصي"
+
+#: .\staticfiles\js\workflow.js:9463
+msgid "單選/複選選單"
+msgstr "ادخال /استخراج قائمة الاختيار "
+
+#: .\staticfiles\js\workflow.js:9468
+msgid "半區塊"
+msgstr "نصف حظر"
+
+#: .\staticfiles\js\workflow.js:9472
+msgid "*標題"
+msgstr "لقب"
+
+#: .\staticfiles\js\workflow.js:9476
+msgid "*狀態"
+msgstr "حالة"
+
+#: .\staticfiles\js\workflow.js:9480
+msgid "*燈號"
+msgstr "مستوي"
+
+#: .\staticfiles\js\workflow.js:9484
+msgid "*受派人及組織"
+msgstr "الوكلاء والمجموعات"
