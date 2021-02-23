@@ -53,7 +53,7 @@ msgstr "تحميل...."
 
 #: .\staticfiles\js\constant.js:10
 msgid "每頁顯示  _MENU_筆結果"
-msgstr ""عرض قائمة المدخلات
+msgstr "عرض قائمة المدخلات"
 
 #: .\staticfiles\js\constant.js:11
 msgid "沒有符合的結果"

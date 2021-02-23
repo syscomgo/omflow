@@ -2,13 +2,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-13 11:05+0800\n"
+"POT-Creation-Date: 2021-02-20 14:05+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\staticfiles\components\jquery-ui\jquery-ui.min.js:8
+msgid "'"
+msgstr ""
 
 #: .\staticfiles\js\constant.js:1
 msgid "操作失敗"
@@ -106,12 +110,12 @@ msgstr "External"
 msgid "系統"
 msgstr "System"
 
-#: .\staticfiles\js\omflow.js:472 .\staticfiles\js\workflow.js:9383
+#: .\staticfiles\js\omflow.js:472 .\staticfiles\js\workflow.js:9386
 msgid "狀態"
 msgstr "Status"
 
-#: .\staticfiles\js\omflow.js:474 .\staticfiles\js\workflow.js:1167
-#: .\staticfiles\js\workflow.js:1182
+#: .\staticfiles\js\omflow.js:474 .\staticfiles\js\workflow.js:1168
+#: .\staticfiles\js\workflow.js:1183
 msgid "啟用"
 msgstr "Enable"
 
@@ -205,7 +209,7 @@ msgstr "This month"
 msgid "上個月"
 msgstr "Last month"
 
-#: .\staticfiles\js\organizer.js:125 .\staticfiles\js\workflow.js:6917
+#: .\staticfiles\js\organizer.js:125 .\staticfiles\js\workflow.js:6928
 msgid "新增項目"
 msgstr "New item"
 
@@ -213,14 +217,14 @@ msgstr "New item"
 msgid "項目"
 msgstr "Item"
 
-#: .\staticfiles\js\organizer.js:139 .\staticfiles\js\workflow.js:183
-#: .\staticfiles\js\workflow.js:224 .\staticfiles\js\workflow.js:249
-#: .\staticfiles\js\workflow.js:1908 .\staticfiles\js\workflow.js:1916
-#: .\staticfiles\js\workflow.js:2198 .\staticfiles\js\workflow.js:2206
-#: .\staticfiles\js\workflow.js:3832 .\staticfiles\js\workflow.js:3845
-#: .\staticfiles\js\workflow.js:3893 .\staticfiles\js\workflow.js:4240
-#: .\staticfiles\js\workflow.js:4252 .\staticfiles\js\workflow.js:4531
-#: .\staticfiles\js\workflow.js:4560 .\staticfiles\js\workflow.js:4568
+#: .\staticfiles\js\organizer.js:139 .\staticfiles\js\workflow.js:184
+#: .\staticfiles\js\workflow.js:225 .\staticfiles\js\workflow.js:250
+#: .\staticfiles\js\workflow.js:1912 .\staticfiles\js\workflow.js:1920
+#: .\staticfiles\js\workflow.js:2202 .\staticfiles\js\workflow.js:2210
+#: .\staticfiles\js\workflow.js:3840 .\staticfiles\js\workflow.js:3853
+#: .\staticfiles\js\workflow.js:3901 .\staticfiles\js\workflow.js:4248
+#: .\staticfiles\js\workflow.js:4260 .\staticfiles\js\workflow.js:4539
+#: .\staticfiles\js\workflow.js:4568 .\staticfiles\js\workflow.js:4576
 msgid "說明"
 msgstr "Description"
 
@@ -250,40 +254,40 @@ msgstr "Add staff."
 
 #: .\staticfiles\js\organizer.js:161 .\staticfiles\js\organizer.js:215
 #: .\staticfiles\js\organizer.js:276 .\staticfiles\js\organizer.js:358
-#: .\staticfiles\js\workflow.js:268 .\staticfiles\js\workflow.js:355
-#: .\staticfiles\js\workflow.js:468 .\staticfiles\js\workflow.js:651
-#: .\staticfiles\js\workflow.js:888 .\staticfiles\js\workflow.js:975
-#: .\staticfiles\js\workflow.js:1197 .\staticfiles\js\workflow.js:1217
-#: .\staticfiles\js\workflow.js:1585 .\staticfiles\js\workflow.js:1671
-#: .\staticfiles\js\workflow.js:1741 .\staticfiles\js\workflow.js:1835
-#: .\staticfiles\js\workflow.js:2149 .\staticfiles\js\workflow.js:2436
-#: .\staticfiles\js\workflow.js:2613 .\staticfiles\js\workflow.js:2697
-#: .\staticfiles\js\workflow.js:6927 .\staticfiles\js\workflow.js:6986
-#: .\staticfiles\js\workflow.js:7070 .\staticfiles\js\workflow.js:7148
-#: .\staticfiles\js\workflow.js:7224 .\staticfiles\js\workflow.js:7309
-#: .\staticfiles\js\workflow.js:7401 .\staticfiles\js\workflow.js:7485
-#: .\staticfiles\js\workflow.js:7583 .\staticfiles\js\workflow.js:7689
-#: .\staticfiles\js\workflow.js:7767 .\staticfiles\js\workflow.js:7837
-#: .\staticfiles\js\workflow.js:7942 .\staticfiles\js\workflow.js:8119
+#: .\staticfiles\js\workflow.js:269 .\staticfiles\js\workflow.js:356
+#: .\staticfiles\js\workflow.js:469 .\staticfiles\js\workflow.js:652
+#: .\staticfiles\js\workflow.js:889 .\staticfiles\js\workflow.js:976
+#: .\staticfiles\js\workflow.js:1198 .\staticfiles\js\workflow.js:1218
+#: .\staticfiles\js\workflow.js:1589 .\staticfiles\js\workflow.js:1675
+#: .\staticfiles\js\workflow.js:1745 .\staticfiles\js\workflow.js:1839
+#: .\staticfiles\js\workflow.js:2153 .\staticfiles\js\workflow.js:2440
+#: .\staticfiles\js\workflow.js:2617 .\staticfiles\js\workflow.js:2701
+#: .\staticfiles\js\workflow.js:6938 .\staticfiles\js\workflow.js:6997
+#: .\staticfiles\js\workflow.js:7081 .\staticfiles\js\workflow.js:7159
+#: .\staticfiles\js\workflow.js:7235 .\staticfiles\js\workflow.js:7320
+#: .\staticfiles\js\workflow.js:7412 .\staticfiles\js\workflow.js:7496
+#: .\staticfiles\js\workflow.js:7594 .\staticfiles\js\workflow.js:7700
+#: .\staticfiles\js\workflow.js:7778 .\staticfiles\js\workflow.js:7848
+#: .\staticfiles\js\workflow.js:7953 .\staticfiles\js\workflow.js:9052
 msgid "取消"
 msgstr "Cancel"
 
 #: .\staticfiles\js\organizer.js:162 .\staticfiles\js\organizer.js:216
 #: .\staticfiles\js\organizer.js:277 .\staticfiles\js\organizer.js:359
-#: .\staticfiles\js\workflow.js:269 .\staticfiles\js\workflow.js:356
-#: .\staticfiles\js\workflow.js:469 .\staticfiles\js\workflow.js:652
-#: .\staticfiles\js\workflow.js:889 .\staticfiles\js\workflow.js:976
-#: .\staticfiles\js\workflow.js:1218 .\staticfiles\js\workflow.js:1586
-#: .\staticfiles\js\workflow.js:1836 .\staticfiles\js\workflow.js:2150
-#: .\staticfiles\js\workflow.js:2437 .\staticfiles\js\workflow.js:2614
-#: .\staticfiles\js\workflow.js:2698 .\staticfiles\js\workflow.js:6928
-#: .\staticfiles\js\workflow.js:6987 .\staticfiles\js\workflow.js:7071
-#: .\staticfiles\js\workflow.js:7149 .\staticfiles\js\workflow.js:7225
-#: .\staticfiles\js\workflow.js:7310 .\staticfiles\js\workflow.js:7402
-#: .\staticfiles\js\workflow.js:7486 .\staticfiles\js\workflow.js:7584
-#: .\staticfiles\js\workflow.js:7690 .\staticfiles\js\workflow.js:7768
-#: .\staticfiles\js\workflow.js:7838 .\staticfiles\js\workflow.js:7943
-#: .\staticfiles\js\workflow.js:8120
+#: .\staticfiles\js\workflow.js:270 .\staticfiles\js\workflow.js:357
+#: .\staticfiles\js\workflow.js:470 .\staticfiles\js\workflow.js:653
+#: .\staticfiles\js\workflow.js:890 .\staticfiles\js\workflow.js:977
+#: .\staticfiles\js\workflow.js:1219 .\staticfiles\js\workflow.js:1590
+#: .\staticfiles\js\workflow.js:1840 .\staticfiles\js\workflow.js:2154
+#: .\staticfiles\js\workflow.js:2441 .\staticfiles\js\workflow.js:2618
+#: .\staticfiles\js\workflow.js:2702 .\staticfiles\js\workflow.js:6939
+#: .\staticfiles\js\workflow.js:6998 .\staticfiles\js\workflow.js:7082
+#: .\staticfiles\js\workflow.js:7160 .\staticfiles\js\workflow.js:7236
+#: .\staticfiles\js\workflow.js:7321 .\staticfiles\js\workflow.js:7413
+#: .\staticfiles\js\workflow.js:7497 .\staticfiles\js\workflow.js:7595
+#: .\staticfiles\js\workflow.js:7701 .\staticfiles\js\workflow.js:7779
+#: .\staticfiles\js\workflow.js:7849 .\staticfiles\js\workflow.js:7954
+#: .\staticfiles\js\workflow.js:9053
 msgid "確定"
 msgstr "Confirm"
 
@@ -292,24 +296,24 @@ msgid "部門組織-"
 msgstr "Department Organization-"
 
 #: .\staticfiles\js\organizer.js:202 .\staticfiles\js\organizer.js:263
-#: .\staticfiles\js\organizer.js:345 .\staticfiles\js\workflow.js:310
-#: .\staticfiles\js\workflow.js:437 .\staticfiles\js\workflow.js:586
-#: .\staticfiles\js\workflow.js:845 .\staticfiles\js\workflow.js:941
-#: .\staticfiles\js\workflow.js:1111 .\staticfiles\js\workflow.js:1644
-#: .\staticfiles\js\workflow.js:1714 .\staticfiles\js\workflow.js:1786
-#: .\staticfiles\js\workflow.js:2101 .\staticfiles\js\workflow.js:2394
-#: .\staticfiles\js\workflow.js:2583 .\staticfiles\js\workflow.js:2667
-#: .\staticfiles\js\workflow.js:7260 .\staticfiles\js\workflow.js:7353
-#: .\staticfiles\js\workflow.js:7438 .\staticfiles\js\workflow.js:7529
-#: .\staticfiles\js\workflow.js:7628 .\staticfiles\js\workflow.js:7875
+#: .\staticfiles\js\organizer.js:345 .\staticfiles\js\workflow.js:311
+#: .\staticfiles\js\workflow.js:438 .\staticfiles\js\workflow.js:587
+#: .\staticfiles\js\workflow.js:846 .\staticfiles\js\workflow.js:942
+#: .\staticfiles\js\workflow.js:1112 .\staticfiles\js\workflow.js:1648
+#: .\staticfiles\js\workflow.js:1718 .\staticfiles\js\workflow.js:1790
+#: .\staticfiles\js\workflow.js:2105 .\staticfiles\js\workflow.js:2398
+#: .\staticfiles\js\workflow.js:2587 .\staticfiles\js\workflow.js:2671
+#: .\staticfiles\js\workflow.js:7271 .\staticfiles\js\workflow.js:7364
+#: .\staticfiles\js\workflow.js:7449 .\staticfiles\js\workflow.js:7540
+#: .\staticfiles\js\workflow.js:7639 .\staticfiles\js\workflow.js:7886
 msgid "設定"
 msgstr "Setting"
 
 #: .\staticfiles\js\organizer.js:208 .\staticfiles\js\organizer.js:269
-#: .\staticfiles\js\organizer.js:351 .\staticfiles\js\workflow.js:1566
-#: .\staticfiles\js\workflow.js:1906 .\staticfiles\js\workflow.js:2196
-#: .\staticfiles\js\workflow.js:3871 .\staticfiles\js\workflow.js:3924
-#: .\staticfiles\js\workflow.js:4286 .\staticfiles\js\workflow.js:4558
+#: .\staticfiles\js\organizer.js:351 .\staticfiles\js\workflow.js:1570
+#: .\staticfiles\js\workflow.js:1910 .\staticfiles\js\workflow.js:2200
+#: .\staticfiles\js\workflow.js:3879 .\staticfiles\js\workflow.js:3932
+#: .\staticfiles\js\workflow.js:4294 .\staticfiles\js\workflow.js:4566
 msgid "輸入資料"
 msgstr "Input data"
 
@@ -389,970 +393,970 @@ msgstr "Choose position"
 msgid "選擇人"
 msgstr "Choose user"
 
-#: .\staticfiles\js\workflow.js:167
+#: .\staticfiles\js\workflow.js:168
 msgid "新增元件"
 msgstr "New component"
 
-#: .\staticfiles\js\workflow.js:172 .\staticfiles\js\workflow.js:3139
+#: .\staticfiles\js\workflow.js:173 .\staticfiles\js\workflow.js:3143
 msgid "執行"
 msgstr "Execute"
 
-#: .\staticfiles\js\workflow.js:173
+#: .\staticfiles\js\workflow.js:174
 msgid "路線"
 msgstr "Route"
 
-#: .\staticfiles\js\workflow.js:174
+#: .\staticfiles\js\workflow.js:175
 msgid "組織圖"
 msgstr "Group tree"
 
-#: .\staticfiles\js\workflow.js:183 .\staticfiles\js\workflow.js:224
-#: .\staticfiles\js\workflow.js:249
+#: .\staticfiles\js\workflow.js:184 .\staticfiles\js\workflow.js:225
+#: .\staticfiles\js\workflow.js:250
 msgid "元件"
 msgstr "Component"
 
-#: .\staticfiles\js\workflow.js:194 .\staticfiles\js\workflow.js:3159
+#: .\staticfiles\js\workflow.js:195 .\staticfiles\js\workflow.js:3163
 msgid "人工輸入"
 msgstr "Manual input"
 
-#: .\staticfiles\js\workflow.js:195
+#: .\staticfiles\js\workflow.js:196
 msgid "使用者填寫表單。"
 msgstr "The user fills out the form."
 
-#: .\staticfiles\js\workflow.js:198 .\staticfiles\js\workflow.js:1113
-#: .\staticfiles\js\workflow.js:2396 .\staticfiles\js\workflow.js:3163
+#: .\staticfiles\js\workflow.js:199 .\staticfiles\js\workflow.js:1114
+#: .\staticfiles\js\workflow.js:2400 .\staticfiles\js\workflow.js:3167
 msgid "欄位設定"
 msgstr "Field settings"
 
-#: .\staticfiles\js\workflow.js:199
+#: .\staticfiles\js\workflow.js:200
 msgid "直接設定表單欄位的值。"
 msgstr "Set the value of the form field directly."
 
-#: .\staticfiles\js\workflow.js:202 .\staticfiles\js\workflow.js:7893
+#: .\staticfiles\js\workflow.js:203 .\staticfiles\js\workflow.js:7904
 msgid "呼叫流程"
 msgstr "Internal flow"
 
-#: .\staticfiles\js\workflow.js:203
+#: .\staticfiles\js\workflow.js:204
 msgid "呼叫此應用的其他流程。"
 msgstr "Call other flows of this application."
 
-#: .\staticfiles\js\workflow.js:206 .\staticfiles\js\workflow.js:846
-#: .\staticfiles\js\workflow.js:3143
+#: .\staticfiles\js\workflow.js:207 .\staticfiles\js\workflow.js:847
+#: .\staticfiles\js\workflow.js:3147
 msgid "子流程"
 msgstr "Sub-flow"
 
-#: .\staticfiles\js\workflow.js:207
+#: .\staticfiles\js\workflow.js:208
 msgid "呼叫自身的子流程。"
 msgstr "Call its own sub-flow."
 
-#: .\staticfiles\js\workflow.js:210
+#: .\staticfiles\js\workflow.js:211
 msgid "程式碼"
 msgstr "Code"
 
-#: .\staticfiles\js\workflow.js:211
+#: .\staticfiles\js\workflow.js:212
 msgid "執行自定義的Python程式碼。"
 msgstr "Execute custom Python code."
 
-#: .\staticfiles\js\workflow.js:214 .\staticfiles\js\workflow.js:1787
-#: .\staticfiles\js\workflow.js:3147 .\staticfiles\js\workflow.js:7893
+#: .\staticfiles\js\workflow.js:215 .\staticfiles\js\workflow.js:1791
+#: .\staticfiles\js\workflow.js:3151 .\staticfiles\js\workflow.js:7904
 msgid "外部流程"
 msgstr "External flow"
 
-#: .\staticfiles\js\workflow.js:215
+#: .\staticfiles\js\workflow.js:216
 msgid "呼叫系統中已上架的流程。"
 msgstr "Call the flow that have been listed in the system."
 
-#: .\staticfiles\js\workflow.js:227
+#: .\staticfiles\js\workflow.js:228
 msgid "條件判斷"
 msgstr "Conditional judgment"
 
-#: .\staticfiles\js\workflow.js:228
+#: .\staticfiles\js\workflow.js:229
 msgid "依據規則判斷，將流程導往指定的一條路線。"
 msgstr "According to the rules, the process is directed to a specified route."
 
-#: .\staticfiles\js\workflow.js:231 .\staticfiles\js\workflow.js:3167
+#: .\staticfiles\js\workflow.js:232 .\staticfiles\js\workflow.js:3171
 msgid "並行"
 msgstr "Async"
 
-#: .\staticfiles\js\workflow.js:232
+#: .\staticfiles\js\workflow.js:233
 msgid "流程會同時往所有的路線前進，並在並行匯集的時候回歸到單一路線。"
 msgstr ""
 "The flow will proceed to all routes at the same time, and return to a single "
 "route when converging in parallel."
 
-#: .\staticfiles\js\workflow.js:235
+#: .\staticfiles\js\workflow.js:236
 msgid "並行匯集"
 msgstr "Async collection"
 
-#: .\staticfiles\js\workflow.js:236
+#: .\staticfiles\js\workflow.js:237
 msgid "所有指向自己的路線都抵達時，流程會繼續前進。"
 msgstr "When all the routes pointing to you arrive, the flow continues."
 
-#: .\staticfiles\js\workflow.js:239 .\staticfiles\js\workflow.js:3175
+#: .\staticfiles\js\workflow.js:240 .\staticfiles\js\workflow.js:3179
 msgid "暫停"
 msgstr "Pause"
 
-#: .\staticfiles\js\workflow.js:240
+#: .\staticfiles\js\workflow.js:241
 msgid "流程執行到暫停時，會暫時停止指定的毫秒後才繼續往前。"
 msgstr ""
 "When the flow is paused, it will temporarily stop for a specified "
 "millisecond before continuing."
 
-#: .\staticfiles\js\workflow.js:252 .\staticfiles\js\workflow.js:3179
+#: .\staticfiles\js\workflow.js:253 .\staticfiles\js\workflow.js:3183
 msgid "同系職務"
 msgstr "Direct position"
 
-#: .\staticfiles\js\workflow.js:253
+#: .\staticfiles\js\workflow.js:254
 msgid "取得在組織圖上，指定使用者同組織最先碰到的職務使用者。"
 msgstr ""
 "Obtain the job user that the designated user and the organization first "
 "encountered on the organization chart."
 
-#: .\staticfiles\js\workflow.js:256 .\staticfiles\js\workflow.js:3183
+#: .\staticfiles\js\workflow.js:257 .\staticfiles\js\workflow.js:3187
 msgid "部門職務"
 msgstr "Department position"
 
-#: .\staticfiles\js\workflow.js:257
+#: .\staticfiles\js\workflow.js:258
 msgid "搜尋組織圖上，指定部門以下的第一個職務。"
 msgstr ""
 "Search for the first postition below the designated department on the group "
 "tree."
 
-#: .\staticfiles\js\workflow.js:305
+#: .\staticfiles\js\workflow.js:306
 msgid "開始-"
 msgstr "Start-"
 
-#: .\staticfiles\js\workflow.js:311 .\staticfiles\js\workflow.js:588
-#: .\staticfiles\js\workflow.js:1554 .\staticfiles\js\workflow.js:2584
-#: .\staticfiles\js\workflow.js:2668 .\staticfiles\js\workflow.js:9334
+#: .\staticfiles\js\workflow.js:312 .\staticfiles\js\workflow.js:589
+#: .\staticfiles\js\workflow.js:1558 .\staticfiles\js\workflow.js:2588
+#: .\staticfiles\js\workflow.js:2672 .\staticfiles\js\workflow.js:9337
 msgid "輸入"
 msgstr "Input"
 
-#: .\staticfiles\js\workflow.js:312 .\staticfiles\js\workflow.js:1115
+#: .\staticfiles\js\workflow.js:313 .\staticfiles\js\workflow.js:1116
 msgid "驗證"
 msgstr "Verification"
 
-#: .\staticfiles\js\workflow.js:313 .\staticfiles\js\workflow.js:1116
+#: .\staticfiles\js\workflow.js:314 .\staticfiles\js\workflow.js:1117
 msgid "驗證輸入"
 msgstr "Verify input"
-
-#: .\staticfiles\js\workflow.js:320 .\staticfiles\js\workflow.js:446
-#: .\staticfiles\js\workflow.js:597 .\staticfiles\js\workflow.js:855
-#: .\staticfiles\js\workflow.js:950 .\staticfiles\js\workflow.js:1126
-#: .\staticfiles\js\workflow.js:1652 .\staticfiles\js\workflow.js:1722
-#: .\staticfiles\js\workflow.js:1796 .\staticfiles\js\workflow.js:2111
-#: .\staticfiles\js\workflow.js:2404 .\staticfiles\js\workflow.js:2592
-#: .\staticfiles\js\workflow.js:2676
-msgid "顯示名稱"
-msgstr "Display name"
 
 #: .\staticfiles\js\workflow.js:321 .\staticfiles\js\workflow.js:447
 #: .\staticfiles\js\workflow.js:598 .\staticfiles\js\workflow.js:856
 #: .\staticfiles\js\workflow.js:951 .\staticfiles\js\workflow.js:1127
-#: .\staticfiles\js\workflow.js:1653 .\staticfiles\js\workflow.js:1723
-#: .\staticfiles\js\workflow.js:1797 .\staticfiles\js\workflow.js:2112
-#: .\staticfiles\js\workflow.js:2405 .\staticfiles\js\workflow.js:2593
-#: .\staticfiles\js\workflow.js:2677
+#: .\staticfiles\js\workflow.js:1656 .\staticfiles\js\workflow.js:1726
+#: .\staticfiles\js\workflow.js:1800 .\staticfiles\js\workflow.js:2115
+#: .\staticfiles\js\workflow.js:2408 .\staticfiles\js\workflow.js:2596
+#: .\staticfiles\js\workflow.js:2680
+msgid "顯示名稱"
+msgstr "Display name"
+
+#: .\staticfiles\js\workflow.js:322 .\staticfiles\js\workflow.js:448
+#: .\staticfiles\js\workflow.js:599 .\staticfiles\js\workflow.js:857
+#: .\staticfiles\js\workflow.js:952 .\staticfiles\js\workflow.js:1128
+#: .\staticfiles\js\workflow.js:1657 .\staticfiles\js\workflow.js:1727
+#: .\staticfiles\js\workflow.js:1801 .\staticfiles\js\workflow.js:2116
+#: .\staticfiles\js\workflow.js:2409 .\staticfiles\js\workflow.js:2597
+#: .\staticfiles\js\workflow.js:2681
 msgid "請輸入名稱..."
 msgstr "Please enter a name..."
 
-#: .\staticfiles\js\workflow.js:325 .\staticfiles\js\workflow.js:614
+#: .\staticfiles\js\workflow.js:326 .\staticfiles\js\workflow.js:615
 msgid "允許外部呼叫"
 msgstr "Allow API"
 
-#: .\staticfiles\js\workflow.js:330 .\staticfiles\js\workflow.js:452
-#: .\staticfiles\js\workflow.js:458 .\staticfiles\js\workflow.js:623
-#: .\staticfiles\js\workflow.js:629 .\staticfiles\js\workflow.js:641
-#: .\staticfiles\js\workflow.js:960 .\staticfiles\js\workflow.js:1137
-#: .\staticfiles\js\workflow.js:1158 .\staticfiles\js\workflow.js:1173
-#: .\staticfiles\js\workflow.js:1188 .\staticfiles\js\workflow.js:1207
-#: .\staticfiles\js\workflow.js:2414 .\staticfiles\js\workflow.js:2420
-#: .\staticfiles\js\workflow.js:2426 .\staticfiles\js\workflow.js:7298
-#: .\staticfiles\js\workflow.js:7475 .\staticfiles\js\workflow.js:7572
-#: .\staticfiles\js\workflow.js:7678 .\staticfiles\js\workflow.js:7928
-#: .\staticfiles\js\workflow.js:7933
+#: .\staticfiles\js\workflow.js:331 .\staticfiles\js\workflow.js:453
+#: .\staticfiles\js\workflow.js:459 .\staticfiles\js\workflow.js:624
+#: .\staticfiles\js\workflow.js:630 .\staticfiles\js\workflow.js:642
+#: .\staticfiles\js\workflow.js:961 .\staticfiles\js\workflow.js:1138
+#: .\staticfiles\js\workflow.js:1159 .\staticfiles\js\workflow.js:1174
+#: .\staticfiles\js\workflow.js:1189 .\staticfiles\js\workflow.js:1208
+#: .\staticfiles\js\workflow.js:2418 .\staticfiles\js\workflow.js:2424
+#: .\staticfiles\js\workflow.js:2430 .\staticfiles\js\workflow.js:7309
+#: .\staticfiles\js\workflow.js:7486 .\staticfiles\js\workflow.js:7583
+#: .\staticfiles\js\workflow.js:7689 .\staticfiles\js\workflow.js:7939
+#: .\staticfiles\js\workflow.js:7944
 msgid "新增"
 msgstr "New"
 
-#: .\staticfiles\js\workflow.js:392 .\staticfiles\js\workflow.js:507
-#: .\staticfiles\js\workflow.js:541 .\staticfiles\js\workflow.js:711
-#: .\staticfiles\js\workflow.js:735 .\staticfiles\js\workflow.js:759
-#: .\staticfiles\js\workflow.js:789 .\staticfiles\js\workflow.js:1011
-#: .\staticfiles\js\workflow.js:1024 .\staticfiles\js\workflow.js:1052
-#: .\staticfiles\js\workflow.js:1065 .\staticfiles\js\workflow.js:1269
-#: .\staticfiles\js\workflow.js:1296 .\staticfiles\js\workflow.js:1323
-#: .\staticfiles\js\workflow.js:1412 .\staticfiles\js\workflow.js:1439
-#: .\staticfiles\js\workflow.js:1466 .\staticfiles\js\workflow.js:1947
-#: .\staticfiles\js\workflow.js:2016 .\staticfiles\js\workflow.js:2023
-#: .\staticfiles\js\workflow.js:2033 .\staticfiles\js\workflow.js:2242
-#: .\staticfiles\js\workflow.js:2309 .\staticfiles\js\workflow.js:2316
-#: .\staticfiles\js\workflow.js:2327 .\staticfiles\js\workflow.js:2337
-#: .\staticfiles\js\workflow.js:2484 .\staticfiles\js\workflow.js:2538
-#: .\staticfiles\js\workflow.js:4030 .\staticfiles\js\workflow.js:4037
-#: .\staticfiles\js\workflow.js:4193 .\staticfiles\js\workflow.js:4197
+#: .\staticfiles\js\workflow.js:393 .\staticfiles\js\workflow.js:508
+#: .\staticfiles\js\workflow.js:542 .\staticfiles\js\workflow.js:712
+#: .\staticfiles\js\workflow.js:736 .\staticfiles\js\workflow.js:760
+#: .\staticfiles\js\workflow.js:790 .\staticfiles\js\workflow.js:1012
+#: .\staticfiles\js\workflow.js:1025 .\staticfiles\js\workflow.js:1053
+#: .\staticfiles\js\workflow.js:1066 .\staticfiles\js\workflow.js:1270
+#: .\staticfiles\js\workflow.js:1297 .\staticfiles\js\workflow.js:1324
+#: .\staticfiles\js\workflow.js:1416 .\staticfiles\js\workflow.js:1443
+#: .\staticfiles\js\workflow.js:1470 .\staticfiles\js\workflow.js:1951
+#: .\staticfiles\js\workflow.js:2020 .\staticfiles\js\workflow.js:2027
+#: .\staticfiles\js\workflow.js:2037 .\staticfiles\js\workflow.js:2246
+#: .\staticfiles\js\workflow.js:2313 .\staticfiles\js\workflow.js:2320
+#: .\staticfiles\js\workflow.js:2331 .\staticfiles\js\workflow.js:2341
+#: .\staticfiles\js\workflow.js:2488 .\staticfiles\js\workflow.js:2542
+#: .\staticfiles\js\workflow.js:4038 .\staticfiles\js\workflow.js:4045
 #: .\staticfiles\js\workflow.js:4201 .\staticfiles\js\workflow.js:4205
-#: .\staticfiles\js\workflow.js:4210 .\staticfiles\js\workflow.js:4214
-#: .\staticfiles\js\workflow.js:4219 .\staticfiles\js\workflow.js:4298
-#: .\staticfiles\js\workflow.js:4305 .\staticfiles\js\workflow.js:4436
-#: .\staticfiles\js\workflow.js:4462 .\staticfiles\js\workflow.js:4487
-#: .\staticfiles\js\workflow.js:4619 .\staticfiles\js\workflow.js:4643
-#: .\staticfiles\js\workflow.js:4650 .\staticfiles\js\workflow.js:4667
-#: .\staticfiles\js\workflow.js:6809
+#: .\staticfiles\js\workflow.js:4209 .\staticfiles\js\workflow.js:4213
+#: .\staticfiles\js\workflow.js:4218 .\staticfiles\js\workflow.js:4222
+#: .\staticfiles\js\workflow.js:4227 .\staticfiles\js\workflow.js:4306
+#: .\staticfiles\js\workflow.js:4313 .\staticfiles\js\workflow.js:4444
+#: .\staticfiles\js\workflow.js:4470 .\staticfiles\js\workflow.js:4495
+#: .\staticfiles\js\workflow.js:4627 .\staticfiles\js\workflow.js:4651
+#: .\staticfiles\js\workflow.js:4658 .\staticfiles\js\workflow.js:4675
+#: .\staticfiles\js\workflow.js:6820
 msgid "變數:"
 msgstr "Variable:"
 
-#: .\staticfiles\js\workflow.js:432
+#: .\staticfiles\js\workflow.js:433
 msgid "結束-"
 msgstr "End-"
 
-#: .\staticfiles\js\workflow.js:438 .\staticfiles\js\workflow.js:587
-#: .\staticfiles\js\workflow.js:942 .\staticfiles\js\workflow.js:1112
-#: .\staticfiles\js\workflow.js:2395
+#: .\staticfiles\js\workflow.js:439 .\staticfiles\js\workflow.js:588
+#: .\staticfiles\js\workflow.js:943 .\staticfiles\js\workflow.js:1113
+#: .\staticfiles\js\workflow.js:2399
 msgid "篩選"
 msgstr "Filter"
 
-#: .\staticfiles\js\workflow.js:439 .\staticfiles\js\workflow.js:590
-#: .\staticfiles\js\workflow.js:1117 .\staticfiles\js\workflow.js:2397
-#: .\staticfiles\js\workflow.js:2585 .\staticfiles\js\workflow.js:2669
+#: .\staticfiles\js\workflow.js:440 .\staticfiles\js\workflow.js:591
+#: .\staticfiles\js\workflow.js:1118 .\staticfiles\js\workflow.js:2401
+#: .\staticfiles\js\workflow.js:2589 .\staticfiles\js\workflow.js:2673
 msgid "輸出"
 msgstr "Output"
 
-#: .\staticfiles\js\workflow.js:581
+#: .\staticfiles\js\workflow.js:582
 msgid "程式碼-"
 msgstr "Code-"
 
-#: .\staticfiles\js\workflow.js:602
+#: .\staticfiles\js\workflow.js:603
 msgid "自動安裝缺少的套件"
 msgstr "Automatically install missing packages"
 
-#: .\staticfiles\js\workflow.js:606 .\staticfiles\js\workflow.js:860
-#: .\staticfiles\js\workflow.js:1801 .\staticfiles\js\workflow.js:2116
+#: .\staticfiles\js\workflow.js:607 .\staticfiles\js\workflow.js:861
+#: .\staticfiles\js\workflow.js:1805 .\staticfiles\js\workflow.js:2120
 msgid "異常時通過/標示異常"
 msgstr "Pass/mark when error"
 
-#: .\staticfiles\js\workflow.js:610
+#: .\staticfiles\js\workflow.js:611
 msgid "分散運算"
 msgstr "Distributed computing"
 
-#: .\staticfiles\js\workflow.js:618 .\staticfiles\js\workflow.js:864
-#: .\staticfiles\js\workflow.js:955 .\staticfiles\js\workflow.js:1131
-#: .\staticfiles\js\workflow.js:1657 .\staticfiles\js\workflow.js:1727
-#: .\staticfiles\js\workflow.js:1805 .\staticfiles\js\workflow.js:2120
-#: .\staticfiles\js\workflow.js:2409
+#: .\staticfiles\js\workflow.js:619 .\staticfiles\js\workflow.js:865
+#: .\staticfiles\js\workflow.js:956 .\staticfiles\js\workflow.js:1132
+#: .\staticfiles\js\workflow.js:1661 .\staticfiles\js\workflow.js:1731
+#: .\staticfiles\js\workflow.js:1809 .\staticfiles\js\workflow.js:2124
+#: .\staticfiles\js\workflow.js:2413
 msgid "紀錄Log"
 msgstr "LOG"
 
-#: .\staticfiles\js\workflow.js:636
+#: .\staticfiles\js\workflow.js:637
 msgid "輸入您的程式碼..."
 msgstr "Enter your code..."
 
-#: .\staticfiles\js\workflow.js:840
+#: .\staticfiles\js\workflow.js:841
 msgid "子流程-"
 msgstr "Sub-flow-"
 
-#: .\staticfiles\js\workflow.js:847
+#: .\staticfiles\js\workflow.js:848
 msgid "子流程輸入"
 msgstr "Sub-flow input"
 
-#: .\staticfiles\js\workflow.js:848
+#: .\staticfiles\js\workflow.js:849
 msgid "子流程輸出"
 msgstr "Sub-flow output"
 
-#: .\staticfiles\js\workflow.js:936
+#: .\staticfiles\js\workflow.js:937
 msgid "條件判斷-"
 msgstr "Conditional judgment-"
 
-#: .\staticfiles\js\workflow.js:943 .\staticfiles\js\workflow.js:1645
-#: .\staticfiles\js\workflow.js:1715
+#: .\staticfiles\js\workflow.js:944 .\staticfiles\js\workflow.js:1649
+#: .\staticfiles\js\workflow.js:1719
 msgid "規則"
 msgstr "Rule"
 
-#: .\staticfiles\js\workflow.js:1106
+#: .\staticfiles\js\workflow.js:1107
 msgid "人工處理-"
 msgstr "Manual processing-"
 
-#: .\staticfiles\js\workflow.js:1114
+#: .\staticfiles\js\workflow.js:1115
 msgid "自訂表單"
 msgstr "Custom form"
 
-#: .\staticfiles\js\workflow.js:1118
+#: .\staticfiles\js\workflow.js:1119
 msgid "動作1"
 msgstr "Action 1"
 
-#: .\staticfiles\js\workflow.js:1119
+#: .\staticfiles\js\workflow.js:1120
 msgid "動作2"
 msgstr "Action 2"
 
-#: .\staticfiles\js\workflow.js:1168 .\staticfiles\js\workflow.js:1183
+#: .\staticfiles\js\workflow.js:1169 .\staticfiles\js\workflow.js:1184
 msgid "名稱"
 msgstr "Name"
 
-#: .\staticfiles\js\workflow.js:1197
+#: .\staticfiles\js\workflow.js:1198
 msgid "載入"
 msgstr "Loading"
 
-#: .\staticfiles\js\workflow.js:1198
+#: .\staticfiles\js\workflow.js:1199
 msgid "新增半區塊"
 msgstr "Add half block"
 
-#: .\staticfiles\js\workflow.js:1199
+#: .\staticfiles\js\workflow.js:1200
 msgid "新增全區塊"
 msgstr "Add blocks"
 
-#: .\staticfiles\js\workflow.js:1347 .\staticfiles\js\workflow.js:1489
-#: .\staticfiles\js\workflow.js:1957 .\staticfiles\js\workflow.js:1963
-#: .\staticfiles\js\workflow.js:2251 .\staticfiles\js\workflow.js:2257
-#: .\staticfiles\js\workflow.js:2508 .\staticfiles\js\workflow.js:4404
-#: .\staticfiles\js\workflow.js:4405 .\staticfiles\js\workflow.js:4411
-#: .\staticfiles\js\workflow.js:6816 .\staticfiles\js\workflow.js:8258
-#: .\staticfiles\js\workflow.js:8259 .\staticfiles\js\workflow.js:8265
+#: .\staticfiles\js\workflow.js:1348 .\staticfiles\js\workflow.js:1493
+#: .\staticfiles\js\workflow.js:1961 .\staticfiles\js\workflow.js:1967
+#: .\staticfiles\js\workflow.js:2255 .\staticfiles\js\workflow.js:2261
+#: .\staticfiles\js\workflow.js:2512 .\staticfiles\js\workflow.js:4412
+#: .\staticfiles\js\workflow.js:4413 .\staticfiles\js\workflow.js:4419
+#: .\staticfiles\js\workflow.js:6827 .\staticfiles\js\workflow.js:8232
+#: .\staticfiles\js\workflow.js:8233 .\staticfiles\js\workflow.js:8239
 msgid "欄位:"
 msgstr "Field:"
 
-#: .\staticfiles\js\workflow.js:1549
+#: .\staticfiles\js\workflow.js:1553
 msgid "暫停-"
 msgstr "Pause-"
 
-#: .\staticfiles\js\workflow.js:1555 .\staticfiles\js\workflow.js:7030
-#: .\staticfiles\js\workflow.js:7195 .\staticfiles\js\workflow.js:7274
-#: .\staticfiles\js\workflow.js:7367 .\staticfiles\js\workflow.js:7451
-#: .\staticfiles\js\workflow.js:7548 .\staticfiles\js\workflow.js:7650
-#: .\staticfiles\js\workflow.js:7742 .\staticfiles\js\workflow.js:7812
+#: .\staticfiles\js\workflow.js:1559 .\staticfiles\js\workflow.js:7041
+#: .\staticfiles\js\workflow.js:7206 .\staticfiles\js\workflow.js:7285
+#: .\staticfiles\js\workflow.js:7378 .\staticfiles\js\workflow.js:7462
+#: .\staticfiles\js\workflow.js:7559 .\staticfiles\js\workflow.js:7661
+#: .\staticfiles\js\workflow.js:7753 .\staticfiles\js\workflow.js:7823
 msgid "預設值"
 msgstr "Default value"
 
-#: .\staticfiles\js\workflow.js:1568
+#: .\staticfiles\js\workflow.js:1572
 msgid "設定暫停的毫秒(ms)數"
 msgstr "Set the number of milliseconds (ms) to pause"
 
-#: .\staticfiles\js\workflow.js:1576
+#: .\staticfiles\js\workflow.js:1580
 msgid "暫停毫秒"
 msgstr "pause ms"
 
-#: .\staticfiles\js\workflow.js:1602
+#: .\staticfiles\js\workflow.js:1606
 msgid " 毫秒"
 msgstr "ms"
 
-#: .\staticfiles\js\workflow.js:1639
+#: .\staticfiles\js\workflow.js:1643
 msgid "並行-"
 msgstr "Async-"
 
-#: .\staticfiles\js\workflow.js:1672 .\staticfiles\js\workflow.js:1742
+#: .\staticfiles\js\workflow.js:1676 .\staticfiles\js\workflow.js:1746
 msgid "關閉"
 msgstr "Close"
 
-#: .\staticfiles\js\workflow.js:1709
+#: .\staticfiles\js\workflow.js:1713
 msgid "並行匯集-"
 msgstr "Async collection-"
 
-#: .\staticfiles\js\workflow.js:1781
+#: .\staticfiles\js\workflow.js:1785
 msgid "外部流程-"
 msgstr "External flow-"
 
-#: .\staticfiles\js\workflow.js:1788 .\staticfiles\js\workflow.js:2103
+#: .\staticfiles\js\workflow.js:1792 .\staticfiles\js\workflow.js:2107
 msgid "流程輸入"
 msgstr "Flow input"
 
-#: .\staticfiles\js\workflow.js:1789 .\staticfiles\js\workflow.js:2104
+#: .\staticfiles\js\workflow.js:1793 .\staticfiles\js\workflow.js:2108
 msgid "流程輸出"
 msgstr "Flow output"
 
-#: .\staticfiles\js\workflow.js:1905 .\staticfiles\js\workflow.js:2195
-#: .\staticfiles\js\workflow.js:3829 .\staticfiles\js\workflow.js:3898
-#: .\staticfiles\js\workflow.js:4557 .\staticfiles\js\workflow.js:7052
-#: .\staticfiles\js\workflow.js:7130 .\staticfiles\js\workflow.js:7206
-#: .\staticfiles\js\workflow.js:7280 .\staticfiles\js\workflow.js:7373
-#: .\staticfiles\js\workflow.js:7457 .\staticfiles\js\workflow.js:7554
-#: .\staticfiles\js\workflow.js:7749 .\staticfiles\js\workflow.js:7819
-#: .\staticfiles\js\workflow.js:7899
+#: .\staticfiles\js\workflow.js:1909 .\staticfiles\js\workflow.js:2199
+#: .\staticfiles\js\workflow.js:3837 .\staticfiles\js\workflow.js:3906
+#: .\staticfiles\js\workflow.js:4565 .\staticfiles\js\workflow.js:7063
+#: .\staticfiles\js\workflow.js:7141 .\staticfiles\js\workflow.js:7217
+#: .\staticfiles\js\workflow.js:7291 .\staticfiles\js\workflow.js:7384
+#: .\staticfiles\js\workflow.js:7468 .\staticfiles\js\workflow.js:7565
+#: .\staticfiles\js\workflow.js:7760 .\staticfiles\js\workflow.js:7830
+#: .\staticfiles\js\workflow.js:7910
 msgid "必填"
 msgstr "Required"
 
-#: .\staticfiles\js\workflow.js:1907 .\staticfiles\js\workflow.js:2197
-#: .\staticfiles\js\workflow.js:3831 .\staticfiles\js\workflow.js:3844
-#: .\staticfiles\js\workflow.js:4288 .\staticfiles\js\workflow.js:4559
+#: .\staticfiles\js\workflow.js:1911 .\staticfiles\js\workflow.js:2201
+#: .\staticfiles\js\workflow.js:3839 .\staticfiles\js\workflow.js:3852
+#: .\staticfiles\js\workflow.js:4296 .\staticfiles\js\workflow.js:4567
 msgid "變數名稱"
 msgstr "Variable name"
 
-#: .\staticfiles\js\workflow.js:1914 .\staticfiles\js\workflow.js:2204
-#: .\staticfiles\js\workflow.js:4566
+#: .\staticfiles\js\workflow.js:1918 .\staticfiles\js\workflow.js:2208
+#: .\staticfiles\js\workflow.js:4574
 msgid "輸出值"
 msgstr "Output value"
 
-#: .\staticfiles\js\workflow.js:1915 .\staticfiles\js\workflow.js:2205
-#: .\staticfiles\js\workflow.js:4567
+#: .\staticfiles\js\workflow.js:1919 .\staticfiles\js\workflow.js:2209
+#: .\staticfiles\js\workflow.js:4575
 msgid "輸出名稱"
 msgstr "Output name"
 
-#: .\staticfiles\js\workflow.js:1989 .\staticfiles\js\workflow.js:2282
+#: .\staticfiles\js\workflow.js:1993 .\staticfiles\js\workflow.js:2286
 msgid "表單欄位"
 msgstr "Form field"
 
-#: .\staticfiles\js\workflow.js:2006 .\staticfiles\js\workflow.js:2299
-#: .\staticfiles\js\workflow.js:4633
+#: .\staticfiles\js\workflow.js:2010 .\staticfiles\js\workflow.js:2303
+#: .\staticfiles\js\workflow.js:4641
 msgid "輸出變數"
 msgstr "Output variable"
 
-#: .\staticfiles\js\workflow.js:2096
+#: .\staticfiles\js\workflow.js:2100
 msgid "呼叫流程-"
 msgstr "Call flow-"
 
-#: .\staticfiles\js\workflow.js:2102 .\staticfiles\js\workflow.js:3151
+#: .\staticfiles\js\workflow.js:2106 .\staticfiles\js\workflow.js:3155
 msgid "流程"
 msgstr "Flow"
 
-#: .\staticfiles\js\workflow.js:2389
+#: .\staticfiles\js\workflow.js:2393
 msgid "欄位設定-"
 msgstr "Field setting-"
 
-#: .\staticfiles\js\workflow.js:2578
+#: .\staticfiles\js\workflow.js:2582
 msgid "組織-同系職務-"
 msgstr "Organization-Direct Position-"
 
-#: .\staticfiles\js\workflow.js:2662
+#: .\staticfiles\js\workflow.js:2666
 msgid "組織-部門職務-"
 msgstr "Organization-Department Position-"
 
-#: .\staticfiles\js\workflow.js:3131
+#: .\staticfiles\js\workflow.js:3135
 msgid "開始"
 msgstr "Start"
 
-#: .\staticfiles\js\workflow.js:3135
+#: .\staticfiles\js\workflow.js:3139
 msgid "結束"
 msgstr "End"
 
-#: .\staticfiles\js\workflow.js:3155
+#: .\staticfiles\js\workflow.js:3159
 msgid "判斷"
 msgstr "Switch"
 
-#: .\staticfiles\js\workflow.js:3171
+#: .\staticfiles\js\workflow.js:3175
 msgid "匯集"
 msgstr "Collection"
 
-#: .\staticfiles\js\workflow.js:3926
+#: .\staticfiles\js\workflow.js:3934
 msgid "設定欄位"
 msgstr "Set field"
 
-#: .\staticfiles\js\workflow.js:3949
+#: .\staticfiles\js\workflow.js:3957
 msgid "轉成大寫"
 msgstr "Convert to uppercase"
 
-#: .\staticfiles\js\workflow.js:3950
+#: .\staticfiles\js\workflow.js:3958
 msgid "轉成小寫"
 msgstr "Convert to lowercase"
 
-#: .\staticfiles\js\workflow.js:3951
+#: .\staticfiles\js\workflow.js:3959
 msgid "取代"
 msgstr "Replace"
 
-#: .\staticfiles\js\workflow.js:3952
+#: .\staticfiles\js\workflow.js:3960
 msgid "取得長度"
 msgstr "Get length"
 
-#: .\staticfiles\js\workflow.js:3953
+#: .\staticfiles\js\workflow.js:3961
 msgid "去除前後空白"
 msgstr "Remove the blank before and after"
 
-#: .\staticfiles\js\workflow.js:3954
+#: .\staticfiles\js\workflow.js:3962
 msgid "取開頭字元"
 msgstr "Take the beginning characters"
 
-#: .\staticfiles\js\workflow.js:3955
+#: .\staticfiles\js\workflow.js:3963
 msgid "取後面字元"
 msgstr "Take the following characters"
 
-#: .\staticfiles\js\workflow.js:3956
+#: .\staticfiles\js\workflow.js:3964
 msgid "擷取字元"
 msgstr "Extract characters"
 
-#: .\staticfiles\js\workflow.js:3957
+#: .\staticfiles\js\workflow.js:3965
 msgid "轉成字串"
 msgstr "Convert to string"
 
-#: .\staticfiles\js\workflow.js:3958
+#: .\staticfiles\js\workflow.js:3966
 msgid "字串相加"
 msgstr "String addition"
 
-#: .\staticfiles\js\workflow.js:3959
+#: .\staticfiles\js\workflow.js:3967
 msgid "數字相加"
 msgstr "Number addition"
 
-#: .\staticfiles\js\workflow.js:3960
+#: .\staticfiles\js\workflow.js:3968
 msgid "數字相減"
 msgstr "Number subtraction"
 
-#: .\staticfiles\js\workflow.js:3961
+#: .\staticfiles\js\workflow.js:3969
 msgid "數字相乘"
 msgstr "Number Multiply"
 
-#: .\staticfiles\js\workflow.js:3962
+#: .\staticfiles\js\workflow.js:3970
 msgid "數字相除"
 msgstr "Number division"
 
-#: .\staticfiles\js\workflow.js:3963
+#: .\staticfiles\js\workflow.js:3971
 msgid "數字取餘數"
 msgstr "Remainders"
 
-#: .\staticfiles\js\workflow.js:3964
+#: .\staticfiles\js\workflow.js:3972
 msgid "開單人"
 msgstr "Create user"
 
-#: .\staticfiles\js\workflow.js:3965
+#: .\staticfiles\js\workflow.js:3973
 msgid "開單人群組"
 msgstr "Create user Group"
 
-#: .\staticfiles\js\workflow.js:3966
+#: .\staticfiles\js\workflow.js:3974
 msgid "使用者所屬群組"
 msgstr "User group"
 
-#: .\staticfiles\js\workflow.js:3967
+#: .\staticfiles\js\workflow.js:3975
 msgid "使用者名稱"
 msgstr "Nickname"
 
-#: .\staticfiles\js\workflow.js:3968
+#: .\staticfiles\js\workflow.js:3976
 msgid "群組名稱"
 msgstr "Group name"
 
-#: .\staticfiles\js\workflow.js:3969
+#: .\staticfiles\js\workflow.js:3977
 msgid "系統參數"
 msgstr "System parameters"
 
-#: .\staticfiles\js\workflow.js:4019
+#: .\staticfiles\js\workflow.js:4027
 msgid "來源"
 msgstr "Source"
 
-#: .\staticfiles\js\workflow.js:4020
+#: .\staticfiles\js\workflow.js:4028
 msgid "結果"
 msgstr "Result"
 
-#: .\staticfiles\js\workflow.js:4084
+#: .\staticfiles\js\workflow.js:4092
 msgid "參數名"
 msgstr "Parameter name"
 
-#: .\staticfiles\js\workflow.js:4104
+#: .\staticfiles\js\workflow.js:4112
 msgid "尋找"
 msgstr "Search"
 
-#: .\staticfiles\js\workflow.js:4105
+#: .\staticfiles\js\workflow.js:4113
 msgid "換成"
 msgstr "Replace with"
 
-#: .\staticfiles\js\workflow.js:4113
+#: .\staticfiles\js\workflow.js:4121
 msgid "字數"
 msgstr "Word count"
 
-#: .\staticfiles\js\workflow.js:4122
+#: .\staticfiles\js\workflow.js:4130
 msgid "第幾個字"
 msgstr "Beginning of the word"
 
-#: .\staticfiles\js\workflow.js:4123
+#: .\staticfiles\js\workflow.js:4131
 msgid "取幾個字"
 msgstr "End of the word"
 
-#: .\staticfiles\js\workflow.js:4131
+#: .\staticfiles\js\workflow.js:4139
 msgid "加上"
 msgstr "Add"
 
-#: .\staticfiles\js\workflow.js:4140
+#: .\staticfiles\js\workflow.js:4148
 msgid "減去"
 msgstr "Subtract"
 
-#: .\staticfiles\js\workflow.js:4149
+#: .\staticfiles\js\workflow.js:4157
 msgid "乘上"
 msgstr "Multiply"
 
-#: .\staticfiles\js\workflow.js:4158
+#: .\staticfiles\js\workflow.js:4166
 msgid "除以"
 msgstr "Divide"
 
-#: .\staticfiles\js\workflow.js:4324 .\staticfiles\js\workflow.js:4357
-#: .\staticfiles\js\workflow.js:4367
+#: .\staticfiles\js\workflow.js:4332 .\staticfiles\js\workflow.js:4365
+#: .\staticfiles\js\workflow.js:4375
 msgid "到"
 msgstr "To"
 
-#: .\staticfiles\js\workflow.js:4325 .\staticfiles\js\workflow.js:4327
+#: .\staticfiles\js\workflow.js:4333 .\staticfiles\js\workflow.js:4335
 msgid "變數"
 msgstr "Variable"
 
-#: .\staticfiles\js\workflow.js:4326 .\staticfiles\js\workflow.js:7877
+#: .\staticfiles\js\workflow.js:4334 .\staticfiles\js\workflow.js:7888
 msgid "條件"
 msgstr "Condition"
 
-#: .\staticfiles\js\workflow.js:4342
+#: .\staticfiles\js\workflow.js:4350
 msgid "相等"
 msgstr "Equal"
 
-#: .\staticfiles\js\workflow.js:4342
+#: .\staticfiles\js\workflow.js:4350
 msgid "不相等"
 msgstr "Not equal"
 
-#: .\staticfiles\js\workflow.js:4342
+#: .\staticfiles\js\workflow.js:4350
 msgid "大於"
 msgstr "More than"
 
-#: .\staticfiles\js\workflow.js:4342
+#: .\staticfiles\js\workflow.js:4350
 msgid "小於"
 msgstr "Less than"
 
-#: .\staticfiles\js\workflow.js:4356
+#: .\staticfiles\js\workflow.js:4364
 msgid "前往:"
 msgstr "Go to:"
 
-#: .\staticfiles\js\workflow.js:4365
+#: .\staticfiles\js\workflow.js:4373
 msgid "主線"
 msgstr "Main line"
 
-#: .\staticfiles\js\workflow.js:4366
+#: .\staticfiles\js\workflow.js:4374
 msgid "來自:"
 msgstr "From:"
 
-#: .\staticfiles\js\workflow.js:4530
+#: .\staticfiles\js\workflow.js:4538
 msgid "不執行"
 msgstr "Not executed"
 
-#: .\staticfiles\js\workflow.js:6921
+#: .\staticfiles\js\workflow.js:6932
 msgid "選擇新增項目"
 msgstr "Select new item"
 
-#: .\staticfiles\js\workflow.js:6959
+#: .\staticfiles\js\workflow.js:6970
 msgid "區塊設定"
 msgstr "Block setting"
 
-#: .\staticfiles\js\workflow.js:6963
+#: .\staticfiles\js\workflow.js:6974
 msgid "標題文字"
 msgstr "Title text"
 
-#: .\staticfiles\js\workflow.js:6964
+#: .\staticfiles\js\workflow.js:6975
 msgid "請輸入標題文字"
 msgstr "Please enter title text"
 
-#: .\staticfiles\js\workflow.js:6967
+#: .\staticfiles\js\workflow.js:6978
 msgid "標示顏色"
 msgstr "Marking color"
 
-#: .\staticfiles\js\workflow.js:6969
+#: .\staticfiles\js\workflow.js:6980
 msgid "灰"
 msgstr "Gray"
 
-#: .\staticfiles\js\workflow.js:6970
+#: .\staticfiles\js\workflow.js:6981
 msgid "紅"
 msgstr "Red"
 
-#: .\staticfiles\js\workflow.js:6971
+#: .\staticfiles\js\workflow.js:6982
 msgid "黃"
 msgstr "Yellow"
 
-#: .\staticfiles\js\workflow.js:6972
+#: .\staticfiles\js\workflow.js:6983
 msgid "藍"
 msgstr "Blue"
 
-#: .\staticfiles\js\workflow.js:6973
+#: .\staticfiles\js\workflow.js:6984
 msgid "水藍"
 msgstr "Water blue"
 
-#: .\staticfiles\js\workflow.js:6974
+#: .\staticfiles\js\workflow.js:6985
 msgid "綠"
 msgstr "Green"
 
-#: .\staticfiles\js\workflow.js:6975
+#: .\staticfiles\js\workflow.js:6986
 msgid "無色區塊"
 msgstr "Colorless block"
 
-#: .\staticfiles\js\workflow.js:6981 .\staticfiles\js\workflow.js:7064
-#: .\staticfiles\js\workflow.js:7142 .\staticfiles\js\workflow.js:7218
-#: .\staticfiles\js\workflow.js:7292 .\staticfiles\js\workflow.js:7385
-#: .\staticfiles\js\workflow.js:7469 .\staticfiles\js\workflow.js:7566
-#: .\staticfiles\js\workflow.js:7672 .\staticfiles\js\workflow.js:7761
-#: .\staticfiles\js\workflow.js:7831 .\staticfiles\js\workflow.js:7911
+#: .\staticfiles\js\workflow.js:6992 .\staticfiles\js\workflow.js:7075
+#: .\staticfiles\js\workflow.js:7153 .\staticfiles\js\workflow.js:7229
+#: .\staticfiles\js\workflow.js:7303 .\staticfiles\js\workflow.js:7396
+#: .\staticfiles\js\workflow.js:7480 .\staticfiles\js\workflow.js:7577
+#: .\staticfiles\js\workflow.js:7683 .\staticfiles\js\workflow.js:7772
+#: .\staticfiles\js\workflow.js:7842 .\staticfiles\js\workflow.js:7922
 msgid "隱藏"
 msgstr "Hidden"
 
-#: .\staticfiles\js\workflow.js:7018
+#: .\staticfiles\js\workflow.js:7029
 msgid "輸入格設定"
 msgstr "Input grid settings"
 
-#: .\staticfiles\js\workflow.js:7022 .\staticfiles\js\workflow.js:7106
-#: .\staticfiles\js\workflow.js:7186 .\staticfiles\js\workflow.js:7269
-#: .\staticfiles\js\workflow.js:7362 .\staticfiles\js\workflow.js:7447
-#: .\staticfiles\js\workflow.js:7538 .\staticfiles\js\workflow.js:7734
-#: .\staticfiles\js\workflow.js:7804 .\staticfiles\js\workflow.js:7884
+#: .\staticfiles\js\workflow.js:7033 .\staticfiles\js\workflow.js:7117
+#: .\staticfiles\js\workflow.js:7197 .\staticfiles\js\workflow.js:7280
+#: .\staticfiles\js\workflow.js:7373 .\staticfiles\js\workflow.js:7458
+#: .\staticfiles\js\workflow.js:7549 .\staticfiles\js\workflow.js:7745
+#: .\staticfiles\js\workflow.js:7815 .\staticfiles\js\workflow.js:7895
 msgid "欄位名稱"
 msgstr "Field name"
 
-#: .\staticfiles\js\workflow.js:7023 .\staticfiles\js\workflow.js:7107
-#: .\staticfiles\js\workflow.js:7187 .\staticfiles\js\workflow.js:7270
-#: .\staticfiles\js\workflow.js:7363 .\staticfiles\js\workflow.js:7448
-#: .\staticfiles\js\workflow.js:7539 .\staticfiles\js\workflow.js:7638
-#: .\staticfiles\js\workflow.js:7647 .\staticfiles\js\workflow.js:7735
-#: .\staticfiles\js\workflow.js:7805 .\staticfiles\js\workflow.js:7885
+#: .\staticfiles\js\workflow.js:7034 .\staticfiles\js\workflow.js:7118
+#: .\staticfiles\js\workflow.js:7198 .\staticfiles\js\workflow.js:7281
+#: .\staticfiles\js\workflow.js:7374 .\staticfiles\js\workflow.js:7459
+#: .\staticfiles\js\workflow.js:7550 .\staticfiles\js\workflow.js:7649
+#: .\staticfiles\js\workflow.js:7658 .\staticfiles\js\workflow.js:7746
+#: .\staticfiles\js\workflow.js:7816 .\staticfiles\js\workflow.js:7896
 msgid "請輸入欄位名稱"
 msgstr "Please enter the field name"
 
-#: .\staticfiles\js\workflow.js:7026 .\staticfiles\js\workflow.js:7191
-#: .\staticfiles\js\workflow.js:7738 .\staticfiles\js\workflow.js:7808
-#: .\staticfiles\js\workflow.js:7888
+#: .\staticfiles\js\workflow.js:7037 .\staticfiles\js\workflow.js:7202
+#: .\staticfiles\js\workflow.js:7749 .\staticfiles\js\workflow.js:7819
+#: .\staticfiles\js\workflow.js:7899
 msgid "註解說明"
 msgstr "Annotation"
 
-#: .\staticfiles\js\workflow.js:7027 .\staticfiles\js\workflow.js:7192
-#: .\staticfiles\js\workflow.js:7739 .\staticfiles\js\workflow.js:7809
-#: .\staticfiles\js\workflow.js:7889
+#: .\staticfiles\js\workflow.js:7038 .\staticfiles\js\workflow.js:7203
+#: .\staticfiles\js\workflow.js:7750 .\staticfiles\js\workflow.js:7820
+#: .\staticfiles\js\workflow.js:7900
 msgid "請輸入註解文字"
 msgstr "Please enter annotation text"
 
-#: .\staticfiles\js\workflow.js:7031 .\staticfiles\js\workflow.js:7196
-#: .\staticfiles\js\workflow.js:7275 .\staticfiles\js\workflow.js:7368
-#: .\staticfiles\js\workflow.js:7452 .\staticfiles\js\workflow.js:7743
-#: .\staticfiles\js\workflow.js:7813
+#: .\staticfiles\js\workflow.js:7042 .\staticfiles\js\workflow.js:7207
+#: .\staticfiles\js\workflow.js:7286 .\staticfiles\js\workflow.js:7379
+#: .\staticfiles\js\workflow.js:7463 .\staticfiles\js\workflow.js:7754
+#: .\staticfiles\js\workflow.js:7824
 msgid "請輸入預設值"
 msgstr "Please enter the default value"
 
-#: .\staticfiles\js\workflow.js:7034 .\staticfiles\js\workflow.js:7892
+#: .\staticfiles\js\workflow.js:7045 .\staticfiles\js\workflow.js:7903
 msgid "類型"
 msgstr "Type"
 
-#: .\staticfiles\js\workflow.js:7036
+#: .\staticfiles\js\workflow.js:7047
 msgid "文字"
 msgstr "Text"
 
-#: .\staticfiles\js\workflow.js:7037
+#: .\staticfiles\js\workflow.js:7048
 msgid "數字"
 msgstr "Number"
 
-#: .\staticfiles\js\workflow.js:7038
+#: .\staticfiles\js\workflow.js:7049
 msgid "密碼"
 msgstr "Password"
 
-#: .\staticfiles\js\workflow.js:7039
+#: .\staticfiles\js\workflow.js:7050
 msgid "電子郵件"
 msgstr "Email"
 
-#: .\staticfiles\js\workflow.js:7040
+#: .\staticfiles\js\workflow.js:7051
 msgid "網址"
 msgstr "URL"
 
-#: .\staticfiles\js\workflow.js:7041
+#: .\staticfiles\js\workflow.js:7052
 msgid "唯一值"
 msgstr "Unique value"
 
-#: .\staticfiles\js\workflow.js:7046 .\staticfiles\js\workflow.js:7124
-#: .\staticfiles\js\workflow.js:7200
+#: .\staticfiles\js\workflow.js:7057 .\staticfiles\js\workflow.js:7135
+#: .\staticfiles\js\workflow.js:7211
 msgid "格式檢查(REGEX)"
 msgstr "Format check(REGEX)"
 
-#: .\staticfiles\js\workflow.js:7047 .\staticfiles\js\workflow.js:7125
-#: .\staticfiles\js\workflow.js:7201
+#: .\staticfiles\js\workflow.js:7058 .\staticfiles\js\workflow.js:7136
+#: .\staticfiles\js\workflow.js:7212
 msgid "請輸入regex語法"
 msgstr "Please enter regex syntax"
 
-#: .\staticfiles\js\workflow.js:7058 .\staticfiles\js\workflow.js:7136
-#: .\staticfiles\js\workflow.js:7212 .\staticfiles\js\workflow.js:7286
-#: .\staticfiles\js\workflow.js:7379 .\staticfiles\js\workflow.js:7463
-#: .\staticfiles\js\workflow.js:7560 .\staticfiles\js\workflow.js:7666
-#: .\staticfiles\js\workflow.js:7755 .\staticfiles\js\workflow.js:7825
-#: .\staticfiles\js\workflow.js:7905
+#: .\staticfiles\js\workflow.js:7069 .\staticfiles\js\workflow.js:7147
+#: .\staticfiles\js\workflow.js:7223 .\staticfiles\js\workflow.js:7297
+#: .\staticfiles\js\workflow.js:7390 .\staticfiles\js\workflow.js:7474
+#: .\staticfiles\js\workflow.js:7571 .\staticfiles\js\workflow.js:7677
+#: .\staticfiles\js\workflow.js:7766 .\staticfiles\js\workflow.js:7836
+#: .\staticfiles\js\workflow.js:7916
 msgid "唯讀"
 msgstr "Read Only"
 
-#: .\staticfiles\js\workflow.js:7102
+#: .\staticfiles\js\workflow.js:7113
 msgid "多行輸入設定"
 msgstr "Multi-line input settings"
 
-#: .\staticfiles\js\workflow.js:7111
+#: .\staticfiles\js\workflow.js:7122
 msgid "行數"
 msgstr "Rows"
 
-#: .\staticfiles\js\workflow.js:7181
+#: .\staticfiles\js\workflow.js:7192
 msgid "標題設定"
 msgstr "Title setting"
 
-#: .\staticfiles\js\workflow.js:7255
+#: .\staticfiles\js\workflow.js:7266
 msgid "狀態欄位"
 msgstr "Status field"
 
-#: .\staticfiles\js\workflow.js:7261 .\staticfiles\js\workflow.js:7354
-#: .\staticfiles\js\workflow.js:7439 .\staticfiles\js\workflow.js:7530
-#: .\staticfiles\js\workflow.js:7629
+#: .\staticfiles\js\workflow.js:7272 .\staticfiles\js\workflow.js:7365
+#: .\staticfiles\js\workflow.js:7450 .\staticfiles\js\workflow.js:7541
+#: .\staticfiles\js\workflow.js:7640
 msgid "選項"
 msgstr "Options"
 
-#: .\staticfiles\js\workflow.js:7348
+#: .\staticfiles\js\workflow.js:7359
 msgid "燈號設定"
 msgstr "Light setting"
 
-#: .\staticfiles\js\workflow.js:7433 .\staticfiles\js\workflow.js:9459
+#: .\staticfiles\js\workflow.js:7444 .\staticfiles\js\workflow.js:9462
 msgid "下拉選單"
 msgstr "Drop-down list"
 
-#: .\staticfiles\js\workflow.js:7524
+#: .\staticfiles\js\workflow.js:7535
 msgid "勾選欄位"
 msgstr "Check field"
 
-#: .\staticfiles\js\workflow.js:7544
+#: .\staticfiles\js\workflow.js:7555
 msgid "複選"
 msgstr "Multiple"
 
-#: .\staticfiles\js\workflow.js:7549
+#: .\staticfiles\js\workflow.js:7560
 msgid "預設值1,預設值2,預設值3"
 msgstr "Default value1,Default value2,Default value3"
 
-#: .\staticfiles\js\workflow.js:7623
+#: .\staticfiles\js\workflow.js:7634
 msgid "受派人及組織"
 msgstr "Assignees and Group"
 
-#: .\staticfiles\js\workflow.js:7637
+#: .\staticfiles\js\workflow.js:7648
 msgid "組織欄位名稱"
 msgstr "Group field name"
 
-#: .\staticfiles\js\workflow.js:7642
+#: .\staticfiles\js\workflow.js:7653
 msgid "包含受派人欄位"
 msgstr "Include assignee field"
 
-#: .\staticfiles\js\workflow.js:7646
+#: .\staticfiles\js\workflow.js:7657
 msgid "受派人欄位名稱"
 msgstr "Assignee field name"
 
-#: .\staticfiles\js\workflow.js:7651
+#: .\staticfiles\js\workflow.js:7662
 msgid "組織,受派人"
 msgstr "Group, assignee"
 
-#: .\staticfiles\js\workflow.js:7655
+#: .\staticfiles\js\workflow.js:7666
 msgid "組織必填"
 msgstr "Group is required"
 
-#: .\staticfiles\js\workflow.js:7660
+#: .\staticfiles\js\workflow.js:7671
 msgid "受派人必填"
 msgstr "Assignee is required"
 
-#: .\staticfiles\js\workflow.js:7730
+#: .\staticfiles\js\workflow.js:7741
 msgid "日期設定"
 msgstr "Date setting"
 
-#: .\staticfiles\js\workflow.js:7800
+#: .\staticfiles\js\workflow.js:7811
 msgid "日期/時間設定"
 msgstr "Date/Time setting"
 
-#: .\staticfiles\js\workflow.js:7870
+#: .\staticfiles\js\workflow.js:7881
 msgid "子查詢設定"
 msgstr "Subquery setting"
 
-#: .\staticfiles\js\workflow.js:7876
+#: .\staticfiles\js\workflow.js:7887
 msgid "表單"
 msgstr "Form"
 
-#: .\staticfiles\js\workflow.js:7878
+#: .\staticfiles\js\workflow.js:7889
 msgid "回填"
 msgstr "Fill"
 
-#: .\staticfiles\js\workflow.js:8105 .\staticfiles\js\workflow.js:9438
-#: .\staticfiles\js\workflow.js:9463
-msgid "子查詢"
-msgstr "Subquery"
-
-#: .\staticfiles\js\workflow.js:8140 .\staticfiles\js\workflow.js:8323
-#: .\staticfiles\js\workflow.js:8346
+#: .\staticfiles\js\workflow.js:8114 .\staticfiles\js\workflow.js:8297
+#: .\staticfiles\js\workflow.js:8320
 msgid "顯示文字"
 msgstr "Display text"
 
-#: .\staticfiles\js\workflow.js:8179
+#: .\staticfiles\js\workflow.js:8153
 msgid "包含"
 msgstr "Include"
 
-#: .\staticfiles\js\workflow.js:8179
+#: .\staticfiles\js\workflow.js:8153
 msgid "不包含"
 msgstr "Exclude"
 
-#: .\staticfiles\js\workflow.js:8180
+#: .\staticfiles\js\workflow.js:8154
 msgid "數字,字串"
 msgstr "Number,string"
 
-#: .\staticfiles\js\workflow.js:8322 .\staticfiles\js\workflow.js:8345
+#: .\staticfiles\js\workflow.js:8296 .\staticfiles\js\workflow.js:8319
 msgid "值"
 msgstr "Value"
 
-#: .\staticfiles\js\workflow.js:9223
+#: .\staticfiles\js\workflow.js:9038 .\staticfiles\js\workflow.js:9441
+#: .\staticfiles\js\workflow.js:9466
+msgid "子查詢"
+msgstr "Subquery"
+
+#: .\staticfiles\js\workflow.js:9226
 msgid "異常"
 msgstr "Error"
 
-#: .\staticfiles\js\workflow.js:9225
+#: .\staticfiles\js\workflow.js:9228
 msgid "正常"
 msgstr "Normal"
 
-#: .\staticfiles\js\workflow.js:9234 .\staticfiles\js\workflow.js:9399
+#: .\staticfiles\js\workflow.js:9237 .\staticfiles\js\workflow.js:9402
 msgid "黃燈"
 msgstr "Yellow"
 
-#: .\staticfiles\js\workflow.js:9236 .\staticfiles\js\workflow.js:9402
+#: .\staticfiles\js\workflow.js:9239 .\staticfiles\js\workflow.js:9405
 msgid "紅燈"
 msgstr "Red"
 
-#: .\staticfiles\js\workflow.js:9238 .\staticfiles\js\workflow.js:9396
+#: .\staticfiles\js\workflow.js:9241 .\staticfiles\js\workflow.js:9399
 msgid "綠燈"
 msgstr "Green"
 
-#: .\staticfiles\js\workflow.js:9344 .\staticfiles\js\workflow.js:9458
+#: .\staticfiles\js\workflow.js:9347 .\staticfiles\js\workflow.js:9461
 msgid "多行輸入"
 msgstr "Multi-line input"
 
-#: .\staticfiles\js\workflow.js:9352
+#: .\staticfiles\js\workflow.js:9355
 msgid "選單"
 msgstr "Menu"
 
-#: .\staticfiles\js\workflow.js:9359
+#: .\staticfiles\js\workflow.js:9362
 msgid "勾選"
 msgstr "Check"
 
-#: .\staticfiles\js\workflow.js:9368
+#: .\staticfiles\js\workflow.js:9371
 msgid "未命名"
 msgstr "Unnamed"
 
-#: .\staticfiles\js\workflow.js:9374
+#: .\staticfiles\js\workflow.js:9377
 msgid "標題"
 msgstr "Title"
 
-#: .\staticfiles\js\workflow.js:9390
+#: .\staticfiles\js\workflow.js:9393
 msgid "燈號"
 msgstr "Level"
 
-#: .\staticfiles\js\workflow.js:9411
+#: .\staticfiles\js\workflow.js:9414
 msgid "組織"
 msgstr "Group"
 
-#: .\staticfiles\js\workflow.js:9416
+#: .\staticfiles\js\workflow.js:9419
 msgid "受派人"
 msgstr "Assignee"
 
-#: .\staticfiles\js\workflow.js:9422 .\staticfiles\js\workflow.js:9461
+#: .\staticfiles\js\workflow.js:9425 .\staticfiles\js\workflow.js:9464
 msgid "日期"
 msgstr "Date"
 
-#: .\staticfiles\js\workflow.js:9430 .\staticfiles\js\workflow.js:9462
+#: .\staticfiles\js\workflow.js:9433 .\staticfiles\js\workflow.js:9465
 msgid "日期/時間"
 msgstr "Date/Time"
 
-#: .\staticfiles\js\workflow.js:9457
+#: .\staticfiles\js\workflow.js:9460
 msgid "輸入方塊"
 msgstr "Input box"
 
-#: .\staticfiles\js\workflow.js:9460
+#: .\staticfiles\js\workflow.js:9463
 msgid "單選/複選選單"
 msgstr "Single/multiple selection menu"
 
-#: .\staticfiles\js\workflow.js:9465
+#: .\staticfiles\js\workflow.js:9468
 msgid "半區塊"
 msgstr "Half block"
 
-#: .\staticfiles\js\workflow.js:9469
+#: .\staticfiles\js\workflow.js:9472
 msgid "*標題"
 msgstr "*Title"
 
-#: .\staticfiles\js\workflow.js:9473
+#: .\staticfiles\js\workflow.js:9476
 msgid "*狀態"
 msgstr "*Status"
 
-#: .\staticfiles\js\workflow.js:9477
+#: .\staticfiles\js\workflow.js:9480
 msgid "*燈號"
 msgstr "*Level"
 
-#: .\staticfiles\js\workflow.js:9481
+#: .\staticfiles\js\workflow.js:9484
 msgid "*受派人及組織"
 msgstr "*Assignees and Group"

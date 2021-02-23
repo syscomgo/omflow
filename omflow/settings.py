@@ -128,7 +128,7 @@ LANGUAGES = [
 ]
 
 
-LANGUAGE_CODE = 'ar'
+LANGUAGE_CODE = 'en'
 #TIME_ZONE = 'Africa/Cairo'
 TIME_ZONES = [(tz, tz) for tz in common_timezones]
 DATE_FORMAT = '%Y-%m-%d'

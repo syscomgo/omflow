@@ -1,0 +1,28 @@
+[2021-02-20 13:04:55] - ERROR    - ['127.0.0.1', 'youssri.ahmed', '/accounts/api/multiple-login/check/', 'checkMultipleLoginAjax'] - can't compare offset-naive and offset-aware datetimes
+Traceback (most recent call last):
+  File "E:\programing\python\qhse-erp\home\aeraeg\python\apps\omflow\omuser\views.py", line 131, in checkMultipleLoginAjax
+    if expire_date > datetime.now():
+TypeError: can't compare offset-naive and offset-aware datetimes
+[2021-02-20 13:04:56] - ERROR    - ['127.0.0.1', 'youssri.ahmed', '/accounts/api/multiple-login/check/', 'checkMultipleLoginAjax'] - 
+{'csrfmiddlewaretoken': 'Nugymahx7TQXwa6Y7NvDKeKVwuhV9nTJ6VHqncJFmHjzav8nPZ7k2aV7HxCQWzAE'}
+[2021-02-20 13:05:09] - ERROR    - ['127.0.0.1', 'youssri.ahmed', '/accounts/api/multiple-login/check/', 'checkMultipleLoginAjax'] - can't compare offset-naive and offset-aware datetimes
+Traceback (most recent call last):
+  File "E:\programing\python\qhse-erp\home\aeraeg\python\apps\omflow\omuser\views.py", line 131, in checkMultipleLoginAjax
+    if expire_date > datetime.now():
+TypeError: can't compare offset-naive and offset-aware datetimes
+[2021-02-20 13:05:09] - ERROR    - ['127.0.0.1', 'youssri.ahmed', '/accounts/api/multiple-login/check/', 'checkMultipleLoginAjax'] - 
+{'csrfmiddlewaretoken': 'Nugymahx7TQXwa6Y7NvDKeKVwuhV9nTJ6VHqncJFmHjzav8nPZ7k2aV7HxCQWzAE'}
+[2021-02-20 13:05:10] - ERROR    - ['127.0.0.1', 'youssri.ahmed', '/accounts/api/multiple-login/check/', 'checkMultipleLoginAjax'] - can't compare offset-naive and offset-aware datetimes
+Traceback (most recent call last):
+  File "E:\programing\python\qhse-erp\home\aeraeg\python\apps\omflow\omuser\views.py", line 131, in checkMultipleLoginAjax
+    if expire_date > datetime.now():
+TypeError: can't compare offset-naive and offset-aware datetimes
+[2021-02-20 13:05:10] - ERROR    - ['127.0.0.1', 'youssri.ahmed', '/accounts/api/multiple-login/check/', 'checkMultipleLoginAjax'] - 
+{'csrfmiddlewaretoken': 'Nugymahx7TQXwa6Y7NvDKeKVwuhV9nTJ6VHqncJFmHjzav8nPZ7k2aV7HxCQWzAE'}
+[2021-02-20 13:06:35] - ERROR    - ['127.0.0.1', 'youssri.ahmed', '/accounts/api/multiple-login/check/', 'checkMultipleLoginAjax'] - can't compare offset-naive and offset-aware datetimes
+Traceback (most recent call last):
+  File "E:\programing\python\qhse-erp\home\aeraeg\python\apps\omflow\omuser\views.py", line 131, in checkMultipleLoginAjax
+    if expire_date > datetime.now():
+TypeError: can't compare offset-naive and offset-aware datetimes
+[2021-02-20 13:06:35] - ERROR    - ['127.0.0.1', 'youssri.ahmed', '/accounts/api/multiple-login/check/', 'checkMultipleLoginAjax'] - 
+{'csrfmiddlewaretoken': 'Nugymahx7TQXwa6Y7NvDKeKVwuhV9nTJ6VHqncJFmHjzav8nPZ7k2aV7HxCQWzAE'}

@@ -205,7 +205,7 @@ msgstr "وصف التدفق"
 #: .\omformmodel\models.py:66 .\omformmodel\views.py:215
 #: .\omformmodel\views.py:239 .\ommessage\models.py:20
 #: .\ommission\models.py:27
- .\omuser\models.py:32 .\omuser\models.py:66
+#: .\omuser\models.py:32 .\omuser\models.py:66
 msgid "更新時間"
 msgstr "تحديث الوقت"
 
@@ -657,7 +657,7 @@ msgstr "اليومية"
 
 #: .\omformflow\models.py:105
 msgid "操作歷程"
-msgstr تاريخ العمليات""
+msgstr "تاريخ العمليات"
 
 #: .\omformflow\models.py:106
 msgid "建立任務"
@@ -704,7 +704,7 @@ msgstr "الرقم المسلسل للبيانات"
 #: .\omformmodel\models.py:58 .\omformmodel\views.py:202
 #: .\omformmodel\views.py:230 .\ommessage\models.py:18
 #: .\ommission\models.py:18
- .\templates\myform.html:522
+#: .\templates\myform.html:522
 msgid "資料編號"
 msgstr "رقم البيانات"
 
@@ -838,9 +838,9 @@ msgstr "انتهاك"
 #: .\ommission\models.py:17 .\ommission\templates\mission.html:44
 #: .\ommission\templates\mission.html:83
 #: .\ommission\templates\mission.html:119
- .\omservice\templates\list.html:170
+#: .\omservice\templates\list.html:170
 #: .\templates\home.html:71
- .\templates\myform.html:267
+#: .\templates\myform.html:267
 #: .\templates\myform.html:425
 msgid "標題"
 msgstr "مسمي"
@@ -1123,7 +1123,7 @@ msgstr "تحرير SLA"
 
 #: .\omformflow\templates\SLA_manage.html:543
 msgid "刪除下列服務水準"
-msgstr " التاليةSLA الغاء
+msgstr " التاليةSLA الغاء"
 
 #: .\omformflow\templates\SLA_manage.html:696
 #: .\omformflow\templates\SLA_manage.html:819
@@ -2023,7 +2023,7 @@ msgstr "الرقم الخاص بالبيانات"
 #: .\omformflow\templates\workflow_manage.html:678
 #: .\omformflow\templates\workflow_manage.html:681
 msgid "資料的唯一編號，推單時使用"
-msgstr "البيانات الغير مكررة ، مستخدمة عندما يتم ارسال البيانات
+msgstr "البيانات الغير مكررة ، مستخدمة عندما يتم ارسال البيانات"
 #: .\omformflow\templates\workflow_manage.html:679
 #: .\omformflow\templates\workflow_manage.html:682
 msgid "停留的關卡名稱(人工處理點名稱"
@@ -2153,15 +2153,15 @@ msgstr "فشلت القراءة"
 
 #: .\omformflow\views.py:1690
 msgid "缺少schedule_id。\n"
-msgstr "الجدولة فشلت"
+msgstr "الجدولة فشلت \n"
 
 #: .\omformflow\views.py:1738
 msgid "請選擇日期或星期。\n"
-msgstr "برجاء تحديد بيانات الاسبوع"
+msgstr "برجاء تحديد بيانات الاسبوع\n"
 
 #: .\omformflow\views.py:1745
 msgid "請選擇流程。\n"
-msgstr "برجاء تحديد التدفق"
+msgstr "برجاء تحديد التدفق \n"
 
 #: .\omformflow\views.py:1786
 msgid "找不到該排程。"
@@ -2344,7 +2344,7 @@ msgstr "نوع المرحلة"
 #: .\omformmodel\views.py:211 .\omformmodel\views.py:234
 #: .\ommission\models.py:22 .\templates\myform.html:86
 msgid "關卡名稱"
-msgstr " "اسم المرحلة"
+msgstr "اسم المرحلة"
 
 #: .\omformmodel\models.py:28 .\omformmodel\views.py:212
 msgid "執行標記"
@@ -2466,7 +2466,7 @@ msgstr "ارسال الرقم المعرف"
 
 #: .\ommessage\templates\compose.html:42
 msgid "訊息發送身分"
-msgstr تعريف ارسال الرسالة""
+msgstr "تعريف ارسال الرسالة"
 
 #: .\ommessage\templates\compose.html:48
 msgid "訊息成員"
@@ -2635,7 +2635,7 @@ msgstr "مجموعة التخصص"
 
 #: .\ommission\templates\mission.html:49
 #: .\ommission\templates\mission.html:123
- .\templates\myform.html:388
+#: .\templates\myform.html:388
 msgid "更新日期"
 msgstr "تحديث الوقت"
 
@@ -3817,7 +3817,7 @@ msgstr "خرية العالم"
 
 #: .\templates\home.html:73 .\templates\home.html:544
 #: .\templates\home.html:553
- .\templates\home.html:564
+#: .\templates\home.html:564
 msgid "單位"
 msgstr "وحدة"
 
@@ -3875,11 +3875,11 @@ msgstr "آخر عام"
 
 #: .\templates\home.html:93
 msgid "查詢表單"
-msgstr نموذج استعلام
+msgstr "نموذج استعلام"
 
 #: .\templates\home.html:94
 msgid "查詢欄位"
-msgstr ""
+msgstr "مجال الاستعلام"
 
 #: .\templates\home.html:95
 msgid "最新值"
