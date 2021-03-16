@@ -20,7 +20,7 @@ from django.conf.urls import url
 from django.views.i18n import JavaScriptCatalog
 from django.conf.urls.static import static
 from django.conf import settings
-from django.contrib import admin
+#from django.contrib import admin
 #from django.contrib.staticfiles.urls import staticfiles_urlpatterns  #for active static files
 
 
@@ -56,7 +56,7 @@ urlpatterns = [
     url(r'^api/history-files/download/(?P<path>.+)$', views.downloadHistoryFilesAjax),
     path('jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog'),
     #default
-    path('admin/', admin.site.urls),
+    #path('admin/', admin.site.urls),
 ]
 urlpatterns  +=  static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 #urlpatterns += staticfiles_urlpatterns()   #for active static files

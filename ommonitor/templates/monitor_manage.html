@@ -1,0 +1,963 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %} 
+{% block content %}
+<!-- 
+	monitor_manage.html monitorManagePage
+	author : Pei lin
+-->
+	<script src="{% static 'components/chartjs/Chart.bundle.js'%}"></script>
+	<!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+       	 {% trans ' 收集器流程'%}
+        <small>{% trans '流程列表'%}</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i>{% trans ' 首頁'%}</a></li>
+		<li>{% trans '資料收集'%}</li>
+        <li class="active"><a href="/monitor/page/monitorManagePage/">{% trans ' 收集器流程'%}</a></li>
+      </ol>
+    </section>
+    <section class="content">
+      <div class="row">
+      	<div class="col-xs-12">
+      	  <div class="box box-primary">
+      	    <div class="box-header with-border">
+      	      <div class="pull-left">
+      	        <button type="button" class="btn btn-default" onclick="monitor_edit('create')" style="margin:1px 0px;"><i class="fa fa-plus"></i> {% trans '新增'%}</button>
+			    <button type="button" class="btn btn-default" onclick="omflowListDialogue('delete','{% trans "刪除下列應用"%}', monitor_edit,'delete')" id="delete_flowapp" disabled="disabled" style="margin:1px 0px;"><i class="fa fa-trash-o"></i> {% trans '刪除'%}</button>
+			    <button type="button" class="btn btn-default" onclick="filter_flowapp()" style="margin:1px 0px;"><i class="fa fa-filter"></i> {% trans '篩選'%}</button>
+                <button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default" onclick="filter_default()" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
+              </div>
+              <div class="pull-right">
+                <button type="button" class="btn btn-default" id="flowapp_input" onclick="$('#file').click()" style="margin:1px 0px;"><i class="fa fa-download"></i> {% trans '匯入'%}</button>
+                <input type="file" id="file" onchange="flowapp_input(this.files)" style="display:none;"/>
+			    <button type="button" class="btn btn-default" id="flowapp_output" onclick="flowapp_output()" style="margin:1px 0px;" disabled="disabled"><i class="fa fa-upload"></i> {% trans '匯出'%}</button>
+			    <button type="button" class="btn btn-info" id="cloud_input" onclick="cloud_input('','rule_timer.json', 'root')" style="margin:1px 0px;"><i class="fa fa-cloud-download"></i> {% trans '下載'%}</button>
+			  </div>
+      	    </div>
+      	    <!-- box-header -->
+      	    <div class="box-body">
+      	      <table id="app_table" class="table table-bordered table-striped table-hover">
+				<thead>
+				  <tr>
+					<th style="width:15px"><a><i class="fa fa-lg fa-check-square-o checkbox-toggle" style="color:SteelBlue"></i></a></th>
+					<th>{% trans '名稱'%}</th>
+					<th>{% trans '類型'%}</th>
+					<th>{% trans '使用者'%}</th>
+					<th>{% trans '最後修改時間'%}</th>
+					<th></th>
+				  </tr>
+				</thead>
+				<tbody>
+				</tbody>
+			  </table>
+      	    </div>
+			<!-- box-body -->
+      	  </div>
+      	  <!-- box -->
+      	</div>
+      	<!-- col -->
+      </div>
+      <!-- row -->
+    </section>
+    
+    
+    <div class="modal fade" id="modal-flow-app-upadte" data-backdrop="static">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title"><i class="fa fa-edit"></i>&nbsp;&nbsp;{%trans '設定應用'%}</h4>
+		  </div>
+		  <div class="modal-body">
+            <div class="form-group">
+          	  <label>{% trans '應用名稱' %}</label>
+          	  <input type="text" name="flow_app_name" class="form-control" placeholder="{%trans '應用名稱'%}" required="true"/>
+            </div>
+            <!-- /.form-group -->
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">{%trans '取消'%}</button>
+			<button type="button" class="btn btn-primary" data-dismiss="modal">{%trans '確定'%}</button>
+		  </div>
+		</div>
+	  </div><!-- /.modal-content -->
+	</div>
+    
+    
+    <div class="modal fade" id="modal-flow_input" data-backdrop="static">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title"><i class="fa fa-download"></i>&nbsp;&nbsp;{% trans '流程匯入'%}</h4>
+		  </div>
+		  <div class="modal-body">
+		  	<ul class="mailbox-attachments clearfix" id="flow_input_name">
+            </ul>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">{% trans '取消'%}</button>
+			<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="flowapp_input_save()">{% trans '確定'%}</button>
+		  </div>
+		</div>
+	  </div><!-- /.modal-content -->
+	</div>
+	
+	<div class="modal fade" id="modal-monitor-dispatch" data-backdrop="static">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title"><i class="fa fa-lg  fa-sitemap" style="color:SteelBlue;"> {% trans "派送"%}</i></h4>
+          </div>
+          <div class="modal-body">
+            <div class="box">
+              <div class="box-body">
+                <div class="form-group">
+	 			  <button type="button" class="btn btn-default" id="monitor_dispatch" style="margin:1px 0px;" disabled="disabled"><i class="far fa-calendar-plus"></i> {% trans "派送"%}</button>
+	          	  <button type="button" class="btn btn-default" id="monitor_remove" style="margin:1px 0px;" disabled="disabled"><i class="far fa-calendar-minus"></i> {% trans "移除"%}</button>            
+	            </div>
+              	<table class="table table-bordered table-striped table-hover" id="dispatch_node_table">
+            	</table>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">{% trans "關閉"%}</button>
+          </div>
+		</div>
+      </div>
+	</div>
+	
+	<div class="modal fade" id="modal-policy-data" data-backdrop="static">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title"><i class="fa fa-lg fa-sitemap" style="color:SteelBlue;"> {% trans "數據"%}</i></h4>
+          </div>
+          <div class="modal-body"  style="padding-bottom:0;">
+            <div class="box box-default" style="margin:0;">
+              <div class="box-header with-border">
+                <div class="container-fluid">
+                  <div class="col-md-3">
+	                <div class="form-group">
+		          	  <label>{% trans '收集器名稱' %}</label>
+		          	  <select type="text" id="data_node_nick_name" class="form-control" style="width:100%"></select>
+		            </div>
+		            <!-- /.form-group -->
+		          </div>
+		          <div class="col-md-3">
+		          	<div class="form-group">
+		          	  <label>{% trans '欄位名稱' %}</label>
+		          	  <select type="text" id="data_policy_output" class="form-control" style="width:100%"></select>
+		            </div>
+		            <!-- /.form-group -->
+		          </div>
+		          <div class="col-md-6">
+		          	<div class="form-group">
+		          	  <label>{% trans '範圍' %}</label>
+		          	  <input type="text" id="data_time_range" class="form-control">
+		            </div>
+		            <!-- /.form-group -->
+		          </div>
+		        </div>
+              </div>
+              <div class="box-body" style="width:100%;height:270px;padding:20px;">
+              	<canvas id="line_chart"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">{% trans "關閉"%}</button>
+          </div>
+		</div>
+      </div>
+	</div>
+	
+	<div class="modal fade" id="modal-cloud-flow" data-backdrop="static">
+	  <div class="modal-dialog modal-lg">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title"><i class="fa fa-cloud-download" style="color:#00acd6"></i>&nbsp;&nbsp;{% trans "雲端流程" %}</h4>
+		  </div>
+		  <div class="modal-body">
+		  	<table id="cloud_flow_table" class="table no-margin table-hover">
+		  	  <thead>
+			    <tr>
+				  <th width="3%"></th>
+				  <th width="20%">{% trans "名稱" %}</th>
+				  <th width="40%">{% trans "說明" %}</th>
+				  <th width="10%">{% trans "版本" %}</th>
+				  <th width="20%">{% trans "修改日期" %}</th>
+				  <th width="7%"></th>
+				</tr>
+			  </thead>	
+		  	  <tbody></tbody>
+		  	</table>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">{% trans "關閉" %}</button>
+		  </div>
+		</div>
+	  </div><!-- /.modal-content -->
+	</div>
+	<style>
+		table tbody tr{
+		  cursor:pointer;
+		}
+	</style>
+	<script>
+	var csrfmiddlewaretoken="{{ csrf_token }}";
+    var table ;
+    var date = new Date();
+    var policy_attr =[];
+    var textFile = null; //設計檔案
+    var input_file;
+    var data_tmp;
+	var data_len;
+	var data_page;
+	var checkbox_status = [];
+	var dispatch_node_table ;
+	var dispatch_node_data_tmp;
+	var dispatch_node_data_len;
+	var dispatch_node_data_page;
+	var dispatch_flag = 'A';
+	var line_chart = null;
+	
+	date.setDate(date.getDate() + 1);
+	select_time = date.getFullYear() +'-'+(date.getMonth()+1)+'-'+date.getDate();
+    $(function () {
+		table = $('#app_table').DataTable({
+			"autoWidth": false,
+			"order": [[ 4, "desc" ]], 
+			"dom":"<<t>'row'<'col-sm-5'i><'col-sm-7'p>>",
+			"language": __const_language__,
+			"serverSide": true,							//	serverside data loading
+			"deferRender": true,
+			"ajax": {
+           		"url": "{% url 'listMonitorFlowAjax' %}",
+            	"type": "POST",
+            	"headers": { "X-CSRFToken": csrfmiddlewaretoken },
+				"contentType": "application/json;charset=utf-8;",
+            	"data": function ( d ) {
+							return JSON.stringify($.extend( {}, d, {
+								updatetime: select_time,
+								policy_attr: 1,
+								datatable: 'True'
+							}));
+						},
+				"dataSrc": function(data){
+						a = dataCompare(data,data_tmp,data_len,data_page,table);
+						data_tmp = a['data_tmp']
+						data_len = a['data_len']
+						data_page = a['data_page']
+						data.data = a['data.data']
+						return data.data;
+					},
+        	},   
+			"columns":[
+				{"width": "15px", "data": "flow_name", "orderable": false, "render": function (data, type, row)
+                	{return '<input type="checkbox" class="icheckbox_minimal-blue" value="'+data+'" id="'+row.id+'" data-value="'+data+'"><label for="'+row.id+'"></label>'}
+                },
+				{"data": "flow_name"},
+				{"data": "type"},
+				{"data": "create_user_id__username", "orderable": false},
+				{"data": "updatetime","width": "150px", "render": function(data)
+					{return data.slice(0,-7)}
+				},
+				{"data":"flow_name", "orderable": false, "width": "100px", "render": function(data, type, row)
+					{return '<button class="btn btn-xs btn-default" onclick="monitor_dispatch(\''+data+'\')">{% trans '派送'%}</button>&nbsp;<button class="btn btn-xs btn-default" onclick="data_view(\''+data+'\',\''+row.id+'\')">{% trans '數據'%}</button>'}
+				}
+			],
+			rowCallback: function( row, data ) {
+			      $('td:not(:eq(0), :last)', row).attr('onclick', 'javascript:location.href="/monitor/page/monitorDesignPage/'+data.id+'"')
+			},
+			drawCallback: function(){
+				omflowCheckAll()
+				$('#app_table input[type="checkbox"]').change(function(){
+			    	enablebtt();
+			    });
+			    $.each(checkbox_status, function(){
+					$('#app_table input[type="checkbox"]#'+this).prop('checked', true);
+				});
+			},
+			preDrawCallback: function(settings) {
+    			checkbox_status = []
+    			$.each($('#app_table input[type="checkbox"]'), function(){
+    				if (this.checked)
+    				{	
+    					checkbox_status.push(this.id)
+    				}
+    			});
+    		} 
+		});
+	});
+	
+	function create_monitor()
+	{
+		window.location.href="/monitor/page/monitorDesignPage/newmonitor"
+	}
+	
+	
+	function enablebtt()
+	{
+		var count = $('#app_table input:checkbox:checked').length;
+    	if (count == 0)
+    	{
+    		$('#delete_flowapp, #flowapp_output').prop('disabled', 'disabled');
+    	}
+    	else if (count == 1)
+    	{
+    		$('#delete_flowapp, #flowapp_output').prop('disabled', '');
+    	}
+    	else
+    	{
+    		$('#flowapp_output, #delete_flowapp').prop('disabled', '');
+    	} 
+	}
+		
+		
+	function monitor_edit(action, app_id_list)
+	{
+		var app_name = '';
+		if (action == 'create')
+			{window.location.href="/monitor/page/monitorDesignPage/newmonitor"}
+		else if (action == 'delete')
+			{	
+				flow_name_list = [];
+				$('#app_table input:checkbox:checked').each(function(){
+					flow_name_list.push($(this).val());
+				});
+				var postdata = 
+				{
+					flow_name: flow_name_list, 
+				};
+			
+				omflowJsonAjax(postdata, "{% url 'deleteMonitorFlowAjax'%}", callback);
+				Swal.fire({
+				  title: '{% trans '處理中'%}...',
+				  toast: true,
+				  position: 'bottom-start',
+				  showConfirmButton: false,
+				});
+				Swal.showLoading();
+			}	
+		
+		function callback(data)
+		{
+			Swal.close();
+			if(data.status == 200)
+			{
+				LSide();
+				table.draw(false);
+				Swal.fire({
+		      	  icon : 'success',
+		      	  title: '{% trans '成功'%}',
+		      	  toast: true,
+			  	  position: 'bottom-start',
+			  	  showConfirmButton: false,
+		      	  timer: 2000,
+	  		    });
+			}	
+			else if (data.status == 404)
+			{
+				omflowAlert('yellow', data.message);
+			}
+			else if (data.status == 500)
+			{
+				omflowAlert('blue', data.message);
+			}
+			else if (data.status == 403)
+			{
+				omflowAlert('red', data.message);
+			}
+		}
+	}	
+	
+	
+	function monitor_dispatch(flow_name)
+	{
+		$('#monitor_dispatch').off('click').on('click', function(){ monitor_set('dispatch', flow_name) })
+		$('#monitor_remove').off('click').on('click', function(){ monitor_set('remove', flow_name) })
+		if(dispatch_node_table != undefined)
+		{
+			dispatch_node_table.clear();
+			dispatch_node_table.destroy();
+			$('#dispatch_node_table').empty();
+		}
+		$('#dispatch_node_table').append('<thead>'
+			      +'<tr>'
+			      	+'<th align="center"><a><i class="fa fa-lg fa-check-square-o checkbox-toggle" style="color:SteelBlue"></i></a></th>'
+			      	+'<th>{% trans "名稱 "%}</th>'
+	              	+'<th>{% trans "主機位置"%}</th>'
+	              	+'<th>{% trans "作業系統"%}</th>'
+	              	+'<th>{% trans "已派送版本"%}</th>'
+			      +'</tr>'
+			    +'</thead>')
+		dispatch_node_table = $('#dispatch_node_table').DataTable({
+			"autoWidth": false,
+			"order": [[ 3, "desc" ]], 
+			"dom":"<<t>'row'<'col-sm-5'i><'col-sm-7'p>>",
+			"language": __const_language__,
+			"serverSide": true,							//	serverside data loading
+			"deferRender": true,
+			"ajax": {
+           		"url": "{% url 'listCollectorAjax' %}",
+            	"type": "POST",
+            	"headers": { "X-CSRFToken": csrfmiddlewaretoken },
+				"contentType": "application/json;charset=utf-8;",
+            	"data": function ( d ) {
+							return JSON.stringify($.extend( {}, d, {
+								flow_name: flow_name,
+								dispatch: dispatch_flag,
+								datatable: 'True'
+							}));
+						},
+				"dataSrc": function(data){
+						a = dataCompare(data,dispatch_node_data_tmp,dispatch_node_data_len,dispatch_node_data_page,table);
+						dispatch_node_data_tmp = a['data_tmp']
+						dispatch_node_data_len = a['data_len']
+						dispatch_node_data_page = a['data_page']
+						data.data = a['data.data']
+						return data.data;
+					},
+        	},   
+			"columns":[
+				{"data": "unique_id", "width": "15px", "orderable": false, "render": function(data, tyoe, row)
+					{ return '<input type="checkbox" class="icheckbox_minimal-blue" id="node_'+data+'" data-version="'+row.version+'" data-value="'+row.nick_name+'" data-id="'+data+'"><label for="node_'+data+'"></label>'}
+				},
+				{"data": "nick_name", "width": "15%"},
+				{"data": "ip_address", "width": "10%"},
+				{"data": "os_type", "width": "10%"},
+				{"data": "version", "render": function(data, type, row)
+					{ 
+						if (data)
+						{
+							return '<div class="label label-success">{% trans '已派送'%} V.'+data+'</div>'
+						}
+						else
+						{
+							return ''
+						}
+					}
+				}
+			],
+			"rowCallback": function(row, data){
+				$(row).attr('id', 'tr_'+data.unique_id);
+			},
+			"drawCallback": function(){
+				$('#dispatch_node_table input:checkbox').change(function(){
+					var count = $('#dispatch_node_table input:checkbox:checked').length
+					var uncount = $('#dispatch_node_table input:checkbox:checked[data-version="undefined"]').length
+					if (count == 0)
+					{
+						$('#monitor_dispatch, #monitor_remove').prop('disabled', 'disabled');
+					}
+					else if (count != 0 && uncount == 0)
+					{
+						$('#monitor_dispatch, #monitor_remove').prop('disabled', '');
+						
+					}
+					else
+					{
+						$('#monitor_dispatch').prop('disabled', '');
+						$('#monitor_remove').prop('disabled', 'disabled');
+					}
+				});	
+			}
+		});
+		$('#modal-monitor-dispatch').modal('show')
+	}
+	
+	
+	function monitor_set(action, flow_name)
+    {
+    	Swal.fire({
+		  title: '{% trans '處理中'%}...',
+		  toast: true,
+		  position: 'bottom-start',
+		  showConfirmButton: false,
+		});
+		Swal.showLoading()
+		var monitor_set_stop = false;
+		var monitor_set_fail = '';
+    	var monitor_set_count = $('#dispatch_node_table input:checkbox:checked').length;
+    	$.each($('#dispatch_node_table input:checkbox:checked'), function(){
+    		if (monitor_set_stop)
+    		{
+    			monitor_stop_call();
+    			return false
+    		}
+    		var unique_id = $(this).data('id');
+    		var url = '';
+	    	if (action == 'dispatch')
+	    	{
+	    		$('#tr_'+unique_id+' td:last').html('<div class="label label-default"><i class="fas fa-spinner fa-spin"></i> {% trans '派送中'%}</div>');
+	    		url = '{% url "dispatchMonitorFlowAjax"%}';
+	    	}
+	    	else if (action == 'remove')
+	    	{
+	    		$('#tr_'+unique_id+' td:last').html('<div class="label label-default"><i class="fas fa-spinner fa-spin"></i> {% trans '移除中'%}</div>');
+	    		url = '{% url "removePolicyCollectorAjax"%}';
+	    	}
+			var postdata = 
+	    	{
+	    		flow_name : flow_name,
+	    		unique_id : unique_id
+	    	};	    	
+	    	$.ajax({
+				url: url,
+				type: 'post',
+				headers: { "X-CSRFToken": csrfmiddlewaretoken },
+		        data: JSON.stringify(postdata),
+		        dataType: 'json',
+		        contentType: "application/json;charset=utf-8;",
+		        success: function (data) {
+		        	--monitor_set_count;
+					if(data.status == 200)
+					{
+						//改變派送狀態
+						if (action == 'dispatch')
+				    	{
+				    		$('#tr_'+unique_id+' td:last').html('<div class="label label-success">{% trans '已派送'%}</div>');
+				    	}
+				    	else if (action == 'remove')
+				    	{
+				    		$('#tr_'+unique_id+' td:last').html('');
+				    	}
+						
+					}
+					else if (data.status == 404)
+					{
+						if(data.result != null)
+						{
+							monitor_set_stop = true;
+							omflowAlert('yellow', data.message);
+						}
+						else
+						{
+							//改變派送狀態
+							$('#tr_'+unique_id+' td:last').html('<div class="label label-danger">'+data.message+'</div>');
+						}
+					}
+					else
+					{
+						$('#tr_'+unique_id+' td:last').html('<div class="label label-danger">'+data.message.slice(1,-1)+'</div>');
+					}
+					if (monitor_set_count == 0)
+					{
+						Swal.fire({
+				      	  icon : 'success',
+				      	  title: '{% trans '成功'%}',
+				      	  toast: true,
+					  	  position: 'bottom-start',
+					  	  showConfirmButton: false,
+				      	  timer: 2000,
+			  		    });
+			  		}
+			  		$('#node_'+unique_id).click();
+		        },
+		        error: function(req, status, err) {
+		        	monitor_set_stop = true;
+		        	if (monitor_set_fail != (status+err))
+		        	{
+		        		monitor_set_fail += (status+err);
+		        	}
+					
+		    	}
+			});
+    	});
+    	
+    	function monitor_stop_call()
+    	{
+    		$('#modal_error').modal('show');
+        	console.log('Something went wrong', monitor_set_fail);
+    	}
+    }
+	
+	
+	function flowapp_output(){
+		omflowListDialogue('output', "{% trans '匯出下列收集器API' %}", output_confirm);
+		//產生
+		var makeTextFile = function (text) {
+            var data = new Blob([text], {
+                type: 'text/plain'
+            });
+
+            // If we are replacing a previously generated file we need to
+            // manually revoke the object URL to avoid memory leaks.
+            if (textFile !== null) {
+                window.URL.revokeObjectURL(textFile);
+            }
+            textFile = window.URL.createObjectURL(data);
+
+            return textFile;
+        };
+        
+        //產生檔名
+        var NowDate = new Date();
+		var Y = NowDate.getYear()+1900;
+		var M = NowDate.getMonth()+1;
+		var d = NowDate.getDate();
+		var h = NowDate.getHours();
+		var m = NowDate.getMinutes();
+		var s = NowDate.getSeconds();
+        var filename = "OMFLOW-FlowObject_"+Y+"-"+M+"-"+d+"_"+h+"-"+m+"-"+s+".omf";
+		$('#modal-default-list-text').append('<li class="list-group-item"><div class="mailbox-attachment-info">'+
+			        	'<p class="mailbox-attachment-name" style="word-break: break-all;"><i class="fa fa-paperclip"></i>&nbsp;&nbsp;'+filename+'</p>'+
+			            '<span class="mailbox-attachment-size"></span>'+
+			      		'</div></li>')
+		
+		var flow_name_list =[];
+		$('#app_table input:checkbox:checked').each(function(){
+			flow_name_list.push($(this).val());
+		});
+		
+		var postbody = {flow_name_list: flow_name_list};
+		omflowJsonAjax(postbody, "{% url 'exportMonitorApplicationAjax'%}", actions);
+		
+		function actions(data)
+		{	
+			$('body').append($('<a id="exporta" href="'+makeTextFile(JSON.stringify(data.result))+'" download="'+filename+'" style="display:none;"></a>'));
+		}
+		
+		function output_confirm()
+		{
+			$('#exporta')[0].click();
+			$('#exporta').remove();
+		}
+	}
+	
+	
+	function flowapp_input(files) {
+	    if (files.length) {
+	        var file = files[0];
+	        var reader = new FileReader();
+	        reader.onload = function(event) {
+	        	$('#flow_input_name').empty().append('<li style="width:100%;"><div class="mailbox-attachment-info">'+
+				        	'<p class="mailbox-attachment-name" style="word-break: break-all;"><i class="fa fa-paperclip"></i>&nbsp;&nbsp;'+file.name+'</p>'+
+				            '<span class="mailbox-attachment-size">'+omflowSizeUnit(file.size)+'</span>'+
+				      		'</div></li>')
+				$('#modal-flow_input').modal('show');
+				input_file = reader.result;
+	        }
+	            reader.readAsText(file);
+	            
+        }
+    }
+    
+    
+    function flowapp_input_save(){
+    	input_file = JSON.stringify(JSON.parse(input_file));
+    	Swal.fire({
+		  title: '{% trans '處理中'%}...',
+		  toast: true,
+		  position: 'bottom-start',
+		  showConfirmButton: false,
+		});
+		Swal.showLoading() ;
+	
+		var postbody =
+			{
+				app_list	: input_file
+			}
+		omflowJsonAjax(postbody, '{% url "importMonitorApplicationAjax"%}', actions);
+		$('#file').val('');
+    }
+    
+	
+	function filter_flowapp(){
+		omflowFilter(['filter_search','filter_length']);
+		$('#modal-default-filter-confirm').off("click").on("click",function(){
+			var searchkey = $.trim($('#modal-default-filter #search').val());
+			var page_length = $('#modal-default-filter #page_length').val();
+			table.page.len(page_length);
+			table.search(searchkey).draw();
+			
+		});
+	}
+	
+    function filter_default(){
+    	app_attr = [];	
+{#		select_time = date.getFullYear() +'-'+(date.getMonth()+1)+'-'+date.getDate();#}
+		table.page.len(10);
+		table.search('');
+    	table.draw(false)
+    }
+	
+	
+	function actions(data)
+	{
+		Swal.close();
+		if(data.status == 200)
+		{
+			LSide();
+			table.draw(false);
+			Swal.fire({
+	      	  icon : 'success',
+	      	  title: '{% trans '成功'%}',
+	      	  toast: true,
+		  	  position: 'bottom-start',
+		  	  showConfirmButton: false,
+	      	  timer: 2000,
+  		    });
+		}	
+		else if (data.status == 404)
+		{
+			omflowAlert('yellow', data.message);
+		}
+		else if (data.status == 500)
+		{
+			omflowAlert('blue', data.message);
+		}
+		else if (data.status == 403)
+		{
+			omflowAlert('red', data.message);
+		}
+	}
+	
+	var table_routine = setInterval(function(){table.draw(false);}, {{user.frequency}}*1000);
+	
+	var path_map = '';
+	function cloud_input(path, file, pos)
+	{
+		Swal.fire({
+		  title: '{% trans '讀取中'%}...',
+		  toast: true,
+		  position: 'bottom-start',
+		  showConfirmButton: false,
+		});
+		Swal.showLoading();
+		var cloud_postbody = {content: path+file}
+		omflowJsonAjax(cloud_postbody, '{% url "getCloudFlowAjax" %}', callback)
+		
+		function callback(data)
+		{	
+			Swal.close();
+			if (data.status == 200)
+			{
+				$('#cloud_flow_table tbody').empty();
+				if (pos != 'root' && path != '')
+				{
+					path_map = path.split('/').pop();
+					if (path_map == '')
+					{
+						$('#cloud_flow_table tbody').append('<tr onclick="cloud_input(\''+path_map+'\', \'rule_timer.json\', \'back\')" title="{% trans '回上一層'%}"><th><i class="fa fa-folder" style="color:#79b8ff"></i></th><th>..</th><th></th><th></th><th></th><th></th></tr>')
+					}
+					else
+					{
+						$('#cloud_flow_table tbody').append('<tr onclick="cloud_input(\''+path_map+'\', \''+file+'\', \'back\')" title="{% trans '回上一層'%}"><th><i class="fa fa-folder" style="color:#79b8ff"></i></th><th>..</th><th></th><th></th><th></th><th></th></tr>')
+					}
+				}
+				data.result.content.forEach(function(item){
+					var des = escapeHtml(item.description)
+					des = des.replace(/\n/g, '<br />');
+					if (item.type == 'main')
+					{
+						$('#cloud_flow_table tbody').append('<tr onclick="cloud_input(\''+item.path+'\', \''+item.file+'\', \'next\')" title="{% trans '檢視'%}'+item.name+'"><th><i class="fa fa-folder" style="color:#79b8ff"></i></th><th>'+item.name+'</th><th>'+des+'</th><th>'+item.version+'</th><th>'+item.update_time+'</th><th></th></tr>')
+					}
+					else if (item.type == 'flowobject')
+					{
+						$('#cloud_flow_table tbody').append('<tr><th><i class="fas fa-file-code"></i></th><th>'+item.name+'</th><th>'+des+'</th><th>'+item.version+'</th><th>'+item.update_time+'</th><th><button onclick="cloud_import(\''+item.path+'\', \''+item.file+'\')" class="btn btn-xs btn-default" title="{% trans '匯入'%}'+item.name+'">{% trans '匯入'%}</button></th></tr>')
+					}
+				});
+				$('#modal-cloud-flow').modal('show');
+			}
+			else
+			{
+				actions(data)
+			}
+		}
+	}
+	
+	function cloud_import(path, file)
+	{
+		Swal.fire({
+		  title: '{% trans '流程匯入中'%}...',
+		  toast: true,
+		  position: 'bottom-start',
+		  showConfirmButton: false,
+		});
+		Swal.showLoading();
+		var cloud_postbody = {content: path+file}
+		omflowJsonAjax(cloud_postbody, '{% url "getCloudFlowAjax" %}', callback)
+		
+		function callback(data)
+		{
+			if (data.status == 200)
+			{
+				input_file = JSON.stringify(data.result);
+				flowapp_input_save()
+			}
+			else
+			{
+				actions(data)
+			}
+		}
+	}
+	
+	
+	function data_view(flow_name, flow_id)
+	{
+		
+		var postdata = {flow_name: flow_name}
+		omflowJsonAjax(postdata, '{% url "loadPolicyCollectorsAjax"%}', callback)
+		
+		function callback(data)
+		{
+			if (data.status == 200)
+			{
+				var node_option = '';
+				(data.result.nodes).forEach(function(item){
+					node_option += '<option value="'+item.node_id__unique_id+'">'+item.node_id__nick_name+'</option>'
+				});
+				$('#data_node_nick_name').html(node_option);
+				$('#data_node_nick_name').select2();
+				var output_option = '';
+				(data.result.output).forEach(function(item){
+					output_option += '<option value="'+item.name+'">'+item.des+'</option>'
+				});
+				$('#data_policy_output').html(output_option);
+				$('#data_policy_output').select2();
+				$('#data_time_range').daterangepicker({ timePicker: true, timePickerIncrement: 1, locale: { format: 'YYYY-MM-DD HH:mm' }})
+				$('#data_node_nick_name, #data_policy_output, #data_time_range').change(function(){
+					if (this.value)
+					{
+						data_chart();
+					}
+				});
+				$('#data_node_nick_name').trigger('change');
+				$('#modal-policy-data').modal('show')
+				$('#modal-policy-data').on('hidden.bs.modal', function(){
+					$('#data_node_nick_name, #data_policy_output, #data_time_range').off('change');
+				});
+			}
+			else
+			{
+				actions(data)
+			}
+		}
+		
+		function data_chart()
+		{
+			//變數flow_name 可以直接使用
+			var unique_id 	=  $('#data_node_nick_name').val(); //node 的 unique_id
+			var data_name	=  $('#data_policy_output').val();	//欄位
+			var time_range 	=  $('#data_time_range').val();		//時間範圍
+			
+			//畫圖囉!!!
+			var postbody = {
+					unique_id : unique_id,
+					flow_name : flow_name,
+					data_name : data_name,
+					time_range : time_range
+				};
+				
+			var callback = function(){
+					data = arguments[0];
+					if (data.status==200){
+						chart_draw( data.result );
+					}
+					else
+					{actions(data)}
+				};
+			omflowJsonAjax(postbody,"{% url 'loadPolicyDataAjax'%}",callback);
+		}
+		
+		function chart_draw( result )
+		{
+			var canvas = $('#line_chart').empty();
+			var ctx = document.getElementById('line_chart').getContext('2d');
+			
+			if( line_chart!=null ){
+				line_chart.destroy();
+			}
+			
+			var datasets=[];
+				datasets.push({
+		            label: $('#data_policy_output').val(),
+		            data: result.value,
+			        backgroundColor: 'rgba(238,44,44,0.1)',
+					borderColor: 'rgba(255,48,48,1)',
+					borderWidth: 1
+		        });
+			
+			var chartJson = {
+				    type: 'line',
+				    data: {
+				        labels: result.time,
+				        datasets: datasets
+				    },
+				    options: {
+						responsive: true, 
+						maintainAspectRatio: false,
+						tooltips: {
+							mode: 'index',
+							intersect: false,
+						},
+						hover: {
+							mode: 'nearest',
+							intersect: true
+						},
+			            legend: {
+			            	display: false,
+			                position: 'right',
+			                labels: {
+			                    boxWidth: 20,
+			                    padding: 20
+			                }
+			            },
+			            elements: {
+		                    point:{
+		                        radius: 0
+		                    },
+		                    line:{
+		                    	tension: 0,
+			        			fill: true
+		                    }
+		                },
+				        scales: {
+							bounds: 'ticks',
+							xAxes: [{
+								gridLines: {
+									color: "rgba(0, 0, 0, 0)"
+								},
+								type: 'time',
+							    ticks: {
+							        autoSkip: true,
+							        maxTicksLimit: 10,
+							        maxRotation: 0
+							    },
+							    distribution: 'series',
+							    source: 'auto'
+							}],
+				            yAxes: [{
+								gridLines: {
+									color: "rgba(0, 0, 0, 0)"
+								},
+				                ticks: {
+			                    	beginAtZero:true
+				                    //suggestedMin: item.setting.setY
+				                }
+				            }]
+				        }
+				    }
+				};
+			line_chart = new Chart(ctx, chartJson);
+		}
+	}
+	</script>
+	
+{% endblock %}

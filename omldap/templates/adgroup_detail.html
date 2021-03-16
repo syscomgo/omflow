@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %} 
+{% block content %}
+<!-- 
+	adgroup_detail.html adgroupDetailPage
+	author : Pei lin
+-->
+<!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        {% trans 'AD檢視' %}
+        <small id="h1_small"></small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="{% url 'homePage' %}"><i class="fa fa-dashboard"></i>{% trans '首頁' %}</a></li>
+        <li><a href="#">{% trans '人員管理' %}</a></li>
+        <li><a href="/accounts/page/adgroup-management/">{% trans 'AD檢視' %}</a></li>
+      </ol>
+    </section>
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+       <!-- column -->
+        <div class="col-md-12">
+          <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+              <li class="active"><a href="#p1" data-toggle="tab">{% trans '設定' %}</a></li>
+              <li><a href="#p2" data-toggle="tab">{% trans '使用者' %}</a></li>
+            </ul>
+            <div class="tab-content">
+              <div class="tab-pane active" id="p1">
+              	<div class="box box-default">
+              	  <div class="box-body">
+				  	<div class="row">
+					  <div class="col-md-6">
+					    <div class="form-group has-warning">
+					      <label>{% trans 'AD名稱'%}</label>
+							<input type="text" name="group_name" id="group_name" class="form-control" placeholder="{% trans 'AD名稱'%}" readonly="true"/>					
+						</div>
+					  </div>
+					  <!-- /.col -->
+					</div>
+					<!-- /.row -->
+				  </div>
+				  <!-- /.bos-body -->
+              	</div>
+              	<!-- /.box -->
+              </div>
+              <!-- /.tab-pane p1 -->
+              <div class="tab-pane" id="p2">
+              	<div class="box box-default">
+              	  <div class="box-header with-border">
+			  	  	<button type="button" class="btn btn-default" onclick="store_group()" id="store_group_button" style="margin:1px 0px;display:None;"><i class="fa fa-save"></i> {% trans '儲存' %}</button>
+			  	  	<button type="button" title="{% trans '篩選使用者' %}" class="btn btn-default" onclick="filter_search(user_table_body)" style="margin:1px 0px;"><i class="fa fa-filter"></i>{% trans ' 篩選' %}</button>
+			  	  	<button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default" onclick="filter_default(user_table_body)" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
+				  </div>
+              	  <div class="box-body">
+				  	<div class="row">
+					  <div class="col-md-12">
+				  	  	<table id="user_table" class="table no-margin">
+					      <col width="5%">
+					      <col width="30%">
+					      <col width="30%">
+					      <col width="20%">
+					      <col width="15%">
+					      <thead>
+					      	<tr>
+					      	  <th></th>
+					      	  <th>{% trans '使用者帳號' %}</th>
+					      	  <th>{% trans '使用者名稱' %}</th>
+					      	  <th>{% trans '公司' %}</th>
+					      	  <th>{% trans '狀態' %}</th>
+					      	</tr>
+					      </thead>
+					      <tbody id="user_table_body">
+					   
+					      </tbody>
+					  	</table>
+				      </div>
+				      <!-- /.col -->
+				    </div>
+				  	<!-- /.row -->
+			      </div>
+			      <!-- /.bos-body -->
+			    </div>
+			    <!-- /.box -->	
+			  </div>
+			  <!-- /.tab-pane p2 -->
+			</div>
+			<!-- /.tab-content -->
+		  </div>
+		  <!-- /.nav-tabs-custiom -->
+		</div>
+		<!-- /.col -->
+	  </div>
+	  <!-- /.row -->
+	</section>
+	<!-- /.content -->
+	<script>
+	var group_edit = location.pathname.split('/')[4];
+	$(function (){
+		var postdata = {group_id: group_edit, 'functional_flag': 'False', 'ad_flag':'True'};
+		omflowJsonAjax( postdata, '{% url "loadGroupAjax" %}', load_group_action)
+	});	
+	
+	function load_group_action(data)
+	{
+		var all_user_list = data.result.all_user_list;
+		var group_user_list = data.result.group_user_list;
+		$('#h1_small').text(data.result.group);
+		$('.breadcrumb').append('<li><a href="javascript:location.reload();">'+data.result.group+'</a></li>');
+		$('#group_name').val(data.result.group);
+		$('#group_descript').val(data.result.description);
+		$.each(all_user_list, function(index, value){
+			if (value.is_active==true)
+			{
+				$('#user_table_body').append('<tr><td><input type="checkbox" data-name="checkbox" class="icheckbox_minimal-blue" id="'+value.username+'" value="'+value.username+'"><label for="'+value.username+'"></label></td>'+
+											 '<td>&nbsp;&nbsp;'+value.username+'</td>'+'<td>'+value.nick_name+'</td>'+'<td>&nbsp;&nbsp;'+value.company+'</td>'+
+											 '<td><span class="label label-success">{% trans '啟用'%}</span></td></tr>');
+			}else
+			{
+				$('#user_table_body').append('<tr><td><input type="checkbox" data-name="checkbox" class="icheckbox_minimal-blue" id="'+value.username+'" value="'+value.username+'"><label for="'+value.username+'"></label></td>'+
+											 '<td>&nbsp;&nbsp;'+value.username+'</td>'+'<td>'+value.nick_name+'</td>'+'<td>&nbsp;&nbsp;'+value.company+'</td>'+
+											 '<td><span class="label label-warning">{% trans '停用'%}</span></td></tr>');
+			}
+		});
+		$.each(group_user_list, function(index, value){
+			$('#'+value).prop('checked', true);
+		});
+		$('input[type="checkbox"].icheckbox_minimal-blue').prop('disabled',true);
+		$('ul.sidebar-menu ul.treeview-menu > li > a[href="/accounts/page/adgroup-management/"]').parentsUntil(".sidebar-menu > .treeview-menu").siblings().removeClass('active menu-open').end().addClass('active menu-open');
+	}
+	
+	function filter_search(table)
+	{
+		omflowFilter(['filter_search']);
+		$('#modal-default-filter-confirm').off("click").on("click",function(callback){
+			var searchkey = $.trim($('#modal-default-filter #search').val());
+			if (searchkey)
+			{
+				$('#'+table.id+' tr').hide();
+				$('#'+table.id+' tr:contains("'+searchkey+'")').show();
+			}
+			else
+			{
+				$('#'+table.id+' tr').show();
+			}	
+		});
+	}
+	
+	function filter_default(table)
+	{
+		$('#'+table.id+' tr').show();
+	}
+	</script>
+{% endblock %}

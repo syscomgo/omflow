@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %} 
+{% load omflow_tags %}
+{% block content %}
+<!-- 
+	organization_manage.html organizationPage
+	author : Pei lin
+-->
+    <!-- Content Header (Page header) -->
+    <script src="/static/js/organizer.js?version={%omflow_version%}"></script>
+    <section class="content-header">
+      <h1>
+        {% trans '組織圖管理' %}
+        <small id="tt"></small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="{% url 'homePage' %}"><i class="fa fa-dashboard"></i>{% trans '首頁' %}</a></li>
+        <li><a href="#">{% trans '人員管理' %}</a></li>
+        <li><a href="/accounts/page/organization-tree-management/">{% trans '組織圖管理' %}</a></li>
+      </ol>
+    </section>
+    
+    <section class="content">
+      <div class="row">
+       <!-- column -->
+        <div class="col-xs-12">
+	      <div class="box box-primary" style="margin-bottom:0px;">
+	        <div class="box-header with-border">
+	          <button type="button" class="btn btn-default" data-toggle="modal" data-target="#flowcontent_add_chart_modal"style="margin:1px 0px;"><i class="fa fa-plus"></i> {% trans '新增'%}</button>
+	          <button type="button" class="btn btn-default pull-right" style="margin:1px 0px;" id="store_button" onclick="organizer_save()"><i class="fa fa-save"></i> {% trans '儲存' %}</button>
+	        </div>
+	       	<div class="box-body">
+	       	  <div id="flowcontent" style="width:calc(100vh-10px);height:70vh">
+	       	</div>
+	      </div>
+	    </div>
+	  </div>
+	</section>
+	
+	<script>
+		var csrfmiddlewaretoken = '{{ csrf_token }}'
+		var flowcontent = new organizer('flowcontent');
+		$(function(){
+			flowcontent.event_group_list(load_group_list);
+			flowcontent.event_role_list(load_role_list);
+			flowcontent.event_user_list(load_user_list);
+			flowcontent.init(true);
+			
+			var postbody = {}
+			omflowJsonAjax(postbody, '{% url "loadOrganizationAjax"%}', load_callback)
+		});
+		
+		
+		function load_callback(data)
+		{
+			if (data.status == 200)
+			{
+				if (data.result.length == 0)
+				{
+					flowcontent.load('{"version":16777216,"flow_item_counter":3,"flow_line_counter":2,"max_dept_noid":0,"max_role_noid":0,"max_people_noid":0,"uid":1591146036341,"form_object":{"items":[]},"is_sub":false,"subflow":[],"items":[{"id":"FITEM_1","type":"dept","text":"{% trans '新組織'%}","left":0,"top":0,"config":{"noid":0,"top":0,"left":150}},{"id":"FITEM_2","type":"role","text":"{% trans '新職務'%}","left":0,"top":0,"config":{"noid":0,"top":125,"left":150}},{"id":"FITEM_3","type":"people","text":"{% trans '新人員'%}","left":0,"top":0,"config":{"noid":0,"top":250,"left":150}},{"id":"FLINE_MW1","type":"line","config":{"target_side":"top","source_side":"bottom","target_item":"FITEM_2","source_item":"FITEM_1","idcounter":1,"linebox_left":210,"linebox_top":112.5,"linebox_long":0,"linebox_top_width":32.5,"linebox_bottom_width":-32.5,"linebox_arrow_top":135,"linebox_arrow_left":206}},{"id":"FLINE_MW2","type":"line","config":{"target_side":"top","source_side":"bottom","target_item":"FITEM_3","source_item":"FITEM_2","idcounter":2,"linebox_left":210,"linebox_top":237.5,"linebox_long":0,"linebox_top_width":32.5,"linebox_bottom_width":-32.5,"linebox_arrow_top":260,"linebox_arrow_left":206}}]} ')
+				}
+				else
+				{
+					flowcontent.load(data.result)
+				}
+			}
+			else
+			{
+				actions(data)
+			}
+		}
+		
+		
+		function organizer_save()
+		{
+			var org = flowcontent.toString();
+			var postdata = {org: org}
+			omflowJsonAjax(postdata, '{% url "updateOrganizationAjax"%}', actions)
+			Swal.fire({
+			  title: '{% trans '處理中'%}...',
+			  toast: true,
+			  position: 'bottom-start',
+			  showConfirmButton: false,
+			});
+			Swal.showLoading();
+		}
+		
+		
+		function actions(data)
+		{		
+			Swal.close();
+			if(data.status == 200)
+			{
+				Swal.fire({
+		      	  icon : 'success',
+		      	  title: data.message,
+		      	  toast: true,
+			  	  position: 'bottom-start',
+			  	  showConfirmButton: false,
+		      	  timer: 2000,
+			    });
+			}	
+			else if (data.status == 404)
+			{
+				omflowAlert('yellow', data.message, cactions, data);
+			}
+			else if (data.status == 500)
+			{
+				omflowAlert('blue', data.message);
+			}
+			else if (data.status == 403)
+			{
+				omflowAlert('red', data.message);
+			}
+		}
+		
+		
+		function load_group_list()
+		{
+			var grouplist=[];
+			var postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, 'functional_flag': 'False', 'ad_flag': ['1', '0']};
+			$.ajax({
+				url	: '{% url 'listGroupAjax' %}',
+				type: 'post',
+		        data: postbody,
+		        async:false,
+		        dataType: 'json',
+		        success: function (data) {
+		            grouplist = data.result;
+		        },
+		        error: function(req, status, err) {
+					$('#modal_error').modal('show');
+		        	console.log('Something went wrong', status, err);
+		    	}
+			});
+			return grouplist;
+		}
+		
+		
+		function load_role_list()
+		{
+			var grouplist=[];
+			var postbody = {csrfmiddlewaretoken: csrfmiddlewaretoken, 'functional_flag': 'True', 'ad_flag': ['0']};
+			$.ajax({
+				url	: '{% url 'listPositionAjax' %}',
+				type: 'post',
+		        data: postbody,
+		        async:false,
+		        dataType: 'json',
+		        success: function (data) {
+		            grouplist = data.result;
+		        },
+		        error: function(req, status, err) {
+					$('#modal_error').modal('show');
+		        	console.log('Something went wrong', status, err);
+		    	}
+			});
+			return grouplist;
+		}
+		
+		
+		function load_user_list()
+		{
+			var userlist = []
+			$.ajax({
+				url: "{% url 'listUserAjax' %}",
+				type: 'post',
+				async:false,
+				data: { csrfmiddlewaretoken: '{{ csrf_token }}' , is_active: ['1'], ad_flag: ['1', '0']},
+				success: function (data) {
+					userlist = data.result;
+				},
+				error: function(req, status, err) {
+					$('#modal_error').modal('show');
+		        	console.log('Something went wrong', status, err);
+		    	}
+			});
+			return userlist;
+		}
+	</script>
+    
+{% endblock %}

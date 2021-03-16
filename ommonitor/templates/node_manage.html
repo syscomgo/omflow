@@ -1,0 +1,597 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %} 
+{% block content %}
+<!-- 
+    node_manage.html
+	author : Pei lin
+-->
+	<script src="{% static 'components/chartjs/Chart.bundle.js'%}"></script>
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="{% url 'homePage' %}"><i class="fa fa-dashboard"></i>{% trans '首頁' %}</a></li>
+        <li>{% trans '資料收集' %}</li>
+        <li><a href="/monitor/page/nodeGroupsManagePage/">{% trans '收集器管理' %}</a></li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+       <!-- column -->
+        <div class="col-md-12">
+          <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+              <li class="active"><a href="#p1" data-toggle="tab">{% trans '基本資料' %}</a></li>
+              <li><a href="#p2" data-toggle="tab">{% trans '流程' %}</a></li>
+            </ul>
+            <div class="tab-content">
+              <div class="tab-pane active" id="p1">
+                <div class="box box-default">
+                  <div class="box-header with-border">
+                    <button class="btn btn-default" style="margin:1px 0px;" onclick="edit_node()"><i class="fa fa-save"></i> {% trans '儲存' %}</button>
+                  </div>
+                  <div class="box-body">
+                    <div class="row">
+					  <div class="col-md-4">
+						<div class="form-group">
+						  <label>{% trans '顯示名稱' %}</label>
+						  <input type="text" name="nick_name" id="nick_name" class="form-control" placeholder="{%trans '顯示名稱'%}"/>					
+						</div>
+						<!-- /.form-group -->
+						<div class="form-group">
+						  <label>{% trans '主機名稱' %}</label>
+						  <input type="text" name="host_name" id="host_name" class="form-control" placeholder="{%trans '主機名稱'%}" readonly="true"/>					
+						</div>
+						<!-- /.form-group -->
+						<div class="form-group">
+						  <label>{% trans '最後更新時間' %}</label>
+						  <input type="text" name="updatetime" id="updatetime" class="form-control" placeholder="{%trans '最後更新時間'%}" readonly="true"/>					
+						</div>
+						<!-- /.form-group -->
+					  </div>
+					  <div class="col-md-4">
+					    <div class="form-group">
+						  <label>{% trans '主機位置' %}</label>
+						  <input type="text" name="ip_address" id="ip_address" class="form-control" placeholder="{%trans '主機位置'%}"/>					
+						</div>
+						<!-- /.form-group -->
+						<div class="form-group">
+						  <label>{% trans 'PORT' %}</label>
+						  <input type="text" name="access_port" id="access_port" class="form-control" placeholder="{%trans 'PORT'%}"/>					
+						</div>
+						<!-- /.form-group -->
+						<div class="form-group">
+						  <label>{% trans 'OMFLOW版本' %}</label>
+						  <input type="text" name="omflow_version" id="omflow_version" class="form-control" placeholder="{%trans 'OMFLOW版本'%}" readonly="true"/>					
+						</div>
+						<!-- /.form-group -->
+					  </div>
+					  <div class="col-md-4">
+						<div class="form-group">
+						  <label>{% trans '作業系統' %}</label>
+						  <input type="text" name="os_type" id="os_type" class="form-control" placeholder="{%trans '作業系統'%}" readonly="true"/>					
+						</div>
+						<!-- /.form-group -->
+						<div class="form-group">
+						  <label>{% trans '作業系統版本一' %}</label>
+						  <input type="text" name="os_version" id="os_version" class="form-control" placeholder="{%trans '作業系統版本'%}" readonly="true"/>					
+						</div>
+						<!-- /.form-group -->
+						<div class="form-group">
+						  <label>{% trans '作業系統版本二' %}</label>
+						  <input type="text" name="os_release" id="os_release" class="form-control" placeholder="{%trans '作業系統'%}" readonly="true"/>					
+						</div>
+						<!-- /.form-group -->
+					  </div>
+					  <div class="col-md-12">
+					    <div class="form-group">
+						  <label>{% trans '硬體資訊' %}</label>
+						  <textarea class="form-control" style="resize:none;" readonly="true"></textarea>					
+						</div>
+						<!-- /.form-group -->
+						<div class="form-group">
+						  <label>{% trans '軟體資訊' %}</label>
+						  <textarea class="form-control" style="resize:none;" readonly="true"></textarea>					
+						</div>
+						<!-- /.form-group -->
+					  </div>
+					</div>
+                  </div>
+                </div>
+              </div>
+              <!-- /.tab-pane p1 -->
+              <div class="tab-pane" id="p2">
+                <div class="box">
+                  <div class="box-header with-border">
+                    <button type="button" class="btn btn-default" onclick="omflowListDialogue('remove', '{% trans "移除下列監控原則"%}', monitor_set, 'remove')" id="monitor_remove" style="margin:1px 0px;" disabled="disabled"><i class="far fa-calendar-minus"></i> {% trans " 移除"%}</button>
+                  </div>
+                  <div class="box-body">
+                  	<table class="table table-bordered table-striped table-hover" id="monitor_table">
+                  	  <thead>
+                  	    <tr>
+                  	      <th style="width:15px"><a><i class="fa fa-lg fa-check-square-o checkbox-toggle" style="color:SteelBlue"></i></a></th>
+                  	      <th>{% trans "名稱"%}</th>
+                  	      <th>{% trans "版本"%}</th>
+                  	      <th>{% trans "派送時間"%}</th>
+                  	      <th></th>
+                  	    </tr>
+                  	  </thead>
+                  	</table>
+                  </div>
+                </div>
+              </div>
+              <!-- /.tab-pane -->
+            </div>
+            <!-- /.tab-content -->
+          </div>
+          <!-- /.nav-tabs-custom -->
+        </div>
+        <!--/.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    
+    <div class="modal fade" id="modal-policy-data" data-backdrop="static">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title"><i class="fa fa-lg fa-sitemap" style="color:SteelBlue;"> {% trans "數據"%}</i></h4>
+          </div>
+          <div class="modal-body">
+            <div class="box box-default">
+              <div class="box-header with-border">
+                <div class="container-fluid">
+                  <div class="col-md-3">
+	                <div class="form-group">
+		          	  <label>{% trans '收集器名稱' %}</label>
+		          	  <select type="text" id="data_node_nick_name" class="form-control" style="width:100%"></select>
+		            </div>
+		            <!-- /.form-group -->
+		          </div>
+		          <div class="col-md-3">
+		          	<div class="form-group">
+		          	  <label>{% trans '欄位名稱' %}</label>
+		          	  <select type="text" id="data_policy_output" class="form-control" style="width:100%"></select>
+		            </div>
+		            <!-- /.form-group -->
+		          </div>
+		          <div class="col-md-6">
+		          	<div class="form-group">
+		          	  <label>{% trans '範圍' %}</label>
+		          	  <input type="text" id="data_time_range" class="form-control">
+		            </div>
+		            <!-- /.form-group -->
+		          </div>
+		        </div>
+              </div>
+              <div class="box-body" style="width:100%;height:270px;padding:20px;">
+                <canvas id="line_chart"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">{% trans "關閉"%}</button>
+          </div>
+		</div>
+      </div>
+	</div>
+    
+    <script>
+    	var csrfmiddlewaretoken="{{ csrf_token }}";
+    	var unique_id = '';
+    	var table ;
+	    var data_tmp;
+		var data_len;
+		var data_page;
+		var checkbox_status = [];
+		var line_chart = null;
+		
+    	$(function(){
+    		var postdata = {node_id: {{node_id}}}
+    		omflowJsonAjax(postdata, "{% url 'loadCollectorAjax' %}", node_action)
+    		
+    		list_monitor_table();
+    	});
+    	
+    	
+    	function node_action(data)
+    	{
+    		if (data.status == 200)
+    		{
+    			$('.breadcrumb').append('<li><a href="/monitor/page/nodeListManagePage/'+data.result.nodegroup_id+'/">'+data.result.nodegroup_id__name+'</a></li><li><a href="/monitor/page/nodeManagePage/{{node_id}}/">'+data.result.nick_name+'</a></li>')
+    			$('#nick_name').val(data.result.nick_name);
+    			$('#host_name').val(data.result.host_name);
+    			$('#updatetime').val(data.result.updatetime.slice(0,-4).replace(/T/g, ' '));
+    			$('#ip_address').val(data.result.ip_address);
+    			$('#access_port').val(data.result.access_port);
+    			$('#os_type').val(data.result.os_type);
+    			$('#os_version').val(data.result.os_version);
+    			$('#os_release').val(data.result.os_release);
+    			$('#omflow_version').val(data.result.omflow_version);
+    			$('.content-header h1').html(data.result.nick_name+'<small>'+data.result.ip_address+'</small>')
+    			unique_id = data.result.unique_id;
+    		}
+    	}
+    	
+    	function edit_node()
+    	{
+    		var postbody = {
+    			unique_id: unique_id,
+    			nick_name: $('#nick_name').val(),
+    			host_name: $('#host_name').val(),
+    			ip_address: $('#ip_address').val(),
+    			access_port: $('#access_port').val(),
+    			os_type: $('#os_type').val(),
+    			os_version: $('#os_version').val(),
+    			os_release: $('#os_release').val(),
+    			omflow_version: $('#omflow_version').val(),
+    		}
+    		omflowJsonAjax(postbody, '{% url "editCollectorAjax"%}', actions);
+    		Swal.fire({
+			  title: '{% trans '處理中'%}...',
+			  toast: true,
+			  position: 'bottom-start',
+			  showConfirmButton: false,
+			});
+			Swal.showLoading();
+    	}
+    	
+    	
+    	function list_monitor_table()
+    	{
+    		table = $('#monitor_table').DataTable({
+				"autoWidth": false,
+				"order": [[ 3, "desc" ]], 
+				"dom":"<<t>'row'<'col-sm-5'i><'col-sm-7'p>>",
+				"language": __const_language__,
+				"serverSide": true,							//	serverside data loading
+				"deferRender": true,
+				"processing": true,
+				"ajax": {
+	           		"url": "{% url 'listNodePolicysAjax' %}",
+	            	"type": "POST",
+	            	"headers": { "X-CSRFToken": csrfmiddlewaretoken },
+					"contentType": "application/json;charset=utf-8;",
+	            	"data": function ( d ) {
+								return JSON.stringify($.extend( {}, d, {
+									node_id: {{node_id}},
+									datatable: 'True'
+								}));
+							},
+					"dataSrc": function(data){
+							a = dataCompare(data,data_tmp,data_len,data_page,table);
+							data_tmp = a['data_tmp']
+							data_len = a['data_len']
+							data_page = a['data_page']
+							data.data = a['data.data']
+							return data.data;
+						},
+	        	},   
+				"columns":[
+					{"width": "15px", "data": "policy_id__flow_name", "orderable": false, "render": function (data, type, row)
+	                	{return '<input type="checkbox" class="icheckbox_minimal-blue" value="'+data+'" id="monitor_'+row.id+'" data-value="'+data+'"><label for="monitor_'+row.id+'"></label>'}
+	                },
+	                {"data": "policy_id__flow_name"},
+	                {"data": "policy_version", "render": function(data, type, row)
+	                	{return 'V.'+data}
+	                },
+	                {"data": "createtime"
+	                	, "render": function(data, type, row)
+	                	{return data.slice(0,-7)}
+	                },
+	                {"data": "policy_id__flow_name", "render": function(data, type, row)
+	                	{return '<button class="btn btn-xs btn-default" onclick="data_view(\''+data+'\')">{% trans '數據'%}</button>'}
+	                }
+	            ],
+	            "rawCallback": function(row, data){
+	            	$(row).attr('id', 'tr_'+data.id)
+	            },
+	            "drawCallback": function(){
+	            	omflowCheckAll();
+					$('.table input[type="checkbox"]').change(function(){
+				    	enablebtt();
+				    });
+	            }
+            });
+    	}
+    	
+    	
+    	function enablebtt()
+    	{
+    		var count = $('.table input:checkbox:checked').length;
+	    	if (count == 0)
+	    	{
+	    		$('#monitor_remove').prop('disabled', 'disabled');
+	    	}
+	    	else
+	    	{
+	    		$('#monitor_remove').prop('disabled', '');
+	    	} 
+    	}
+    	
+    	
+    	function monitor_set(action, flow_name)
+	    {
+	    	Swal.fire({
+			  title: '{% trans '處理中'%}...',
+			  toast: true,
+			  position: 'bottom-start',
+			  showConfirmButton: false,
+			});
+			Swal.showLoading()
+			var monitor_set_stop = false;
+			var monitor_set_fail = '';
+	    	var monitor_set_count = $('#monitor_table input:checkbox:checked').length;
+	    	$.each($('#monitor_table input:checkbox:checked'), function(){
+	    		var monitor_id = this.id
+	    		if (monitor_set_stop)
+	    		{
+	    			monitor_stop_call();
+	    			return false
+	    		}
+		    	$('#tr_'+monitor_id+' td:eq(2)').html('<div class="label label-default"><i class="fas fa-spinner fa-spin"></i> {% trans '移除中'%}</div>');
+				var postdata = 
+		    	{
+		    		flow_name : this.value,
+		    		unique_id : unique_id
+		    	};	    	
+		    	$.ajax({
+					url: '{% url "removePolicyCollectorAjax"%}',
+					type: 'post',
+					headers: { "X-CSRFToken": csrfmiddlewaretoken },
+			        data:JSON.stringify(postdata),
+			        dataType: 'json',
+			        contentType: "application/json;charset=utf-8;",
+			        success: function (data) {
+			        	--monitor_set_count;
+						if(data.status == 200)
+						{
+							//改變派送狀態
+							if (action == 'dispatch')
+					    	{
+					    		$('#tr_'+monitor_id+' td:eq(2)').html('<div class="label label-success">{% trans '已派送'%}</div>');
+					    	}
+					    	else if (action == 'remove')
+					    	{
+					    		$('#tr_'+monitor_id+' td:eq(2)').html('');
+					    	}
+							
+						}
+						else if (data.status == 404)
+						{
+							if(data.result != null)
+							{
+								monitor_set_stop = true;
+								omflowAlert('yellow', data.message);
+							}
+							else
+							{
+								//改變派送狀態
+								$('#tr_'+monitor_id+' td:eq(2)').html('<div class="label label-danger">'+data.message+'</div>');
+							}
+						}
+						else
+						{
+							$('#tr_'+monitor_id+' td:last').html('<div class="label label-danger">'+data.message.slice(1,-1)+'</div>');
+						}
+						if (monitor_set_count == 0)
+						{
+							Swal.fire({
+					      	  icon : 'success',
+					      	  title: '{% trans '成功'%}',
+					      	  toast: true,
+						  	  position: 'bottom-start',
+						  	  showConfirmButton: false,
+					      	  timer: 2000,
+				  		    });
+				  		}
+				  		$('#monitor_'+monitor_id).click();
+			        },
+			        error: function(req, status, err) {
+			        	monitor_set_stop = true;
+			        	if (monitor_set_fail != (status+err))
+			        	{
+			        		monitor_set_fail += (status+err);
+			        	}
+						
+			    	}
+				});
+	    	});
+	    	
+	    	function monitor_stop_call()
+	    	{
+	    		$('#modal_error').modal('show');
+	        	console.log('Something went wrong', monitor_set_fail);
+	    	}
+	    }
+    	
+    	
+    	function actions(data)
+    	{
+    		Swal.close();
+			if(data.status == 200)
+			{
+				LSide();
+				Swal.fire({
+		      	  icon : 'success',
+		      	  title: '{% trans '成功'%}',
+		      	  toast: true,
+			  	  position: 'bottom-start',
+			  	  showConfirmButton: false,
+		      	  timer: 2000,
+	  		    });
+			}	
+			else if (data.status == 404)
+			{
+				omflowAlert('yellow', data.message);
+			}
+			else if (data.status == 500)
+			{
+				omflowAlert('blue', data.message);
+			}
+			else if (data.status == 403)
+			{
+				omflowAlert('red', data.message);
+			}
+    	}
+    	
+    	
+    	function data_view(flow_name)
+		{
+			
+			var postdata = {flow_name: flow_name}
+			omflowJsonAjax(postdata, '{% url "loadPolicyCollectorsAjax"%}', callback)
+			
+			function callback(data)
+			{
+				if (data.status == 200)
+				{
+					var node_option = '';
+					(data.result.nodes).forEach(function(item){
+						node_option += '<option value="'+item.node_id__unique_id+'">'+item.node_id__nick_name+'</option>'
+					});
+					$('#data_node_nick_name').html(node_option);
+					$('#data_node_nick_name').select2();
+					var output_option = '';
+					(data.result.output).forEach(function(item){
+						output_option += '<option value="'+item.name+'">'+item.des+'</option>'
+					});
+					$('#data_policy_output').html(output_option);
+					$('#data_policy_output').select2();
+					$('#data_time_range').daterangepicker({ timePicker: true, timePickerIncrement: 1, locale: { format: 'YYYY-MM-DD HH:mm' }})
+					$('#data_node_nick_name, #data_policy_output, #data_time_range').change(function(){
+						if(this.value)
+						{
+							data_chart();
+						}
+					});
+					$('#data_node_nick_name').val(unique_id).trigger('change').prop('disabled', 'disabled');
+					$('#modal-policy-data').modal('show')
+					$('#modal-policy-data').on('hidden.bs.modal', function(){
+						$('#data_node_nick_name, #data_policy_output, #data_time_range').off('change');
+					});
+				}
+				else
+				{
+					actions(data)
+				}
+			}
+			
+			function data_chart()
+			{
+				//變數  flow_name, unique_id 可以直接使用
+				var data_name		=  $('#data_policy_output').val();	//欄位
+				var time_range 	=  $('#data_time_range').val();		//時間範圍
+				
+				//畫圖囉!!!
+				var postbody = {
+					csrfmiddlewaretoken : csrfmiddlewaretoken,
+					unique_id : unique_id,
+					flow_name : flow_name,
+					data_name : data_name,
+					time_range : time_range
+				};
+				
+				var callback = function(){
+					data = arguments[0];
+					if (data.status==200){
+						chart_draw( data.result );
+					}
+					else
+					{actions(data)}
+				};
+				omflowJsonAjax(postbody,"{% url 'loadPolicyDataAjax'%}",callback);
+			}
+			
+			function chart_draw( result )
+			{
+				var canvas = $('#line_chart').empty();
+				var ctx = document.getElementById('line_chart').getContext('2d');
+				
+				if( line_chart!=null ){
+					line_chart.destroy();
+				}
+				
+				var datasets=[];
+					datasets.push({
+			            label: $('#data_policy_output').val(),
+			            data: result.value,
+				        backgroundColor: 'rgba(238,44,44,0.1)',
+						borderColor: 'rgba(255,48,48,1)',
+						borderWidth: 1
+			        });
+				
+				var chartJson = {
+					    type: 'line',
+					    data: {
+					        labels: result.time,
+					        datasets: datasets
+					    },
+					    options: {
+							responsive: true, 
+							maintainAspectRatio: false,
+							tooltips: {
+							mode: 'index',
+							intersect: false,
+						},
+						hover: {
+							mode: 'nearest',
+							intersect: true
+						},
+				            legend: {
+				            	display: false,
+				                position: 'right',
+				                labels: {
+				                    boxWidth: 20,
+				                    padding: 20
+				                }
+				            },
+				            elements: {
+			                    point:{
+			                        radius: 0
+			                    },
+			                    line:{
+			                    	tension: 0,
+				        			fill: true
+			                    }
+			                },
+					        scales: {
+								bounds: 'ticks',
+								xAxes: [{
+									gridLines: {
+										color: "rgba(0, 0, 0, 0)"
+									},
+									type: 'time',
+								    ticks: {
+								        autoSkip: true,
+								        maxTicksLimit: 10,
+								        maxRotation: 0
+								    },
+								    distribution: 'series',
+								    source: 'auto'
+								}],
+					            yAxes: [{
+									gridLines: {
+										color: "rgba(0, 0, 0, 0)"
+									},
+					                ticks: {
+				                    	beginAtZero:true
+					                    //suggestedMin: item.setting.setY
+					                }
+					            }]
+					        }
+					    }
+					};
+				line_chart = new Chart(ctx, chartJson);
+			}
+		}
+    </script>
+{% endblock%}

@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %} 
+{% block content %}
+<!-- 
+	AD.html ADPage
+	author : Pei lin
+-->
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        {% trans 'AD檢視' %}
+        <small id="tt"></small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="{% url 'homePage' %}"><i class="fa fa-dashboard"></i>{% trans '首頁' %}</a></li>
+        <li><a href="#">{% trans '人員管理' %}</a></li>
+        <li><a href="/accounts/page/adgroup-management/">{% trans 'AD檢視' %}</a></li>
+      </ol>
+    </section>
+    <section class="content">
+      <div class="row">
+       <!-- column -->
+        <div class="col-xs-12">
+	      <div class="box box-primary">
+	        <div class="box-header with-border">
+	          <button type="button" class="btn btn-default" onclick="manual_sync()" id="manual_sync" style="margin:1px 0px;"><i class="fa fa-refresh"></i> {% trans 'LDAP 同步' %}</button>
+		  	  <button type="button" class="btn btn-default" id="expander" style="margin:1px 0px;"><i class="fa fa-chevron-down"></i> {% trans '展開 ' %}</button>
+			  <button type="button" class="btn btn-default" id="collapser" style="margin:1px 0px;"><i class="fa fa-chevron-up"></i> {% trans '收合 ' %}</button>
+			  <button type="button" title="{% trans '篩選組織' %}" class="btn btn-default " onclick="filter_group()" id="filter_group" style="margin:1px 0px;"><i class="fa fa-filter"></i>{% trans ' 篩選' %}</button>
+			  <button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default " onclick="filter_default()" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
+			</div>
+			<div class="box-body">
+			  <div class="row">
+				<div class="col-md-12">
+			  	  <table id="group_table" class="table no-margin">
+			  	  	<col width="5%">
+				    <col width="95%">
+				    <thead>
+				      <tr>
+				        <th>{% trans '編號' %}</th>
+				      	<th>{% trans 'AD列表' %}</th>
+				      </tr>
+				    </thead>
+				    <tbody id="group_table_body">
+				    </tbody>
+				  </table>
+			    </div>
+			    <!-- /.col -->
+			  </div>
+			  <!-- /.row -->
+		    </div>
+		    <!-- /.box-body -->
+	      </div>
+	    </div>
+	  </div>
+	</section>
+	<script>
+	var grouplist;
+	var csrfmiddlewaretoken = '{{ csrf_token }}'
+	$(function (){
+		postdata = {'functional_flag': 'False', 'ad_flag': ['1']};
+		omflowJsonAjax(postdata, '{% url 'listGroupAjax' %}', listgroup);
+		
+	});
+	
+	function listgroup(data){
+		$('#group_table_body').empty();
+		grouplist = data.result;
+		$.each(grouplist, function(index, value){
+			if (value.parent_group==null)
+			{
+				$('#group_table_body').prepend( '<tr data-node-id="'+value.id+'" id="group_id_'+value.id+'">'+
+					'<td>'+value.id+'</td>'+
+					'<td>&nbsp;&nbsp;<a href="/accounts/page/adgroup-detail/'+value.id+'/" title="編輯'+value.display_name+'" style="color:black;"><i class="fa fa-fw fa-edit" style="color:SteelBlue"></i>' +value.display_name+'</a></td>'+
+					'</tr>')
+			}
+			else
+			{
+				$("#group_id_"+value.parent_group).after( '<tr data-node-id="'+value.id+'" data-node-pid="'+value.parent_group+'" id="group_id_'+value.id+'">'+
+					'<td>'+value.id+'</td>'+
+					'<td>&nbsp;&nbsp;<a href="/accounts/page/adgroup-detail/'+value.id+'/" title="{% trans '編輯'%}'+value.display_name+'" style="color:black;"><i class="fa fa-fw fa-edit" style="color:SteelBlue"></i>' +value.display_name+'</a></td>'+
+					'</tr>')
+			}	
+		});
+		$('#group_table').simpleTreeTable({
+		    expander: $('#expander'),
+		    collapser: $('#collapser'),
+		    iconPosition: ':eq(1)	',
+		    opened: 'all'
+		});
+		
+		check_permission();
+	}
+	
+	function check_permission()
+	{
+		{#如果有OmGroup_Modify權限，將顯示選取及儲存#}	
+		{% if perms.omuser.OmGroup_Modify %}
+			$('#store_group_button').show();
+			$('#store_role_button').show();
+		{% endif %}
+	}
+	
+	function filter_group()		
+	{
+		omflowFilter(['filter_search']);
+		$('#modal-default-filter button:eq(2)').off("click").on("click",function(){
+			var searchkey = $('#modal-default-filter #search').val();
+			if (searchkey!=null && searchkey.length!=0)
+			{
+				$('tr').hide();
+				$.each($('tr:contains("'+searchkey+'")'),function(){
+					var thisDom = $(this).show();
+					var pid =  $(this).data("node-pid");
+					if(typeof(pid)!="undefined" && pid.length!="0"){
+						showParent(pid);
+					}
+				});
+				//
+				function showParent(pid){
+					$('tr[data-node-id="'+pid+'"]').show();
+					var thisPid = $('tr[data-node-id="'+pid+'"]').data("node-pid");
+					if(typeof(thisPid)!="undefined" && thisPid.length!="0"){
+						showParent(thisPid);
+					}
+				}
+			}
+			else
+			{
+				$('tr').show();
+				$('#group_table').data('simple-tree-table').collapse();
+			}
+			$('#modal-default-filter').modal('hide');
+		});
+	}
+	
+	function filter_default()
+	{
+		$('tr').show();
+	}
+	
+	function manual_sync()
+	{
+		omflowJsonAjax({}, '{% url 'ldapManualSyncAjax' %}', manual_sync_actions)
+		Swal.fire({
+		  title: '{% trans '處理中'%}...',
+		  toast: true,
+		  position: 'bottom-start',
+		  showConfirmButton: false,
+		});
+		Swal.showLoading();
+	}
+	
+	function manual_sync_actions(data)
+	{
+		Swal.close();
+		if(data.status == 200)
+		{
+			Swal.fire({
+	      	  icon : 'success',
+	      	  title: data.message,
+	      	  toast: true,
+		  	  position: 'bottom-start',
+		  	  showConfirmButton: false,
+	      	  timer: 2000,
+  		    });
+  		    var postdata = {'functional_flag': 'False', 'ad_flag': ['1']};
+  		    omflowJsonAjax(postdata, '{% url 'listGroupAjax' %}', listgroup);
+		}	
+		else if (data.status == 404)
+		{
+			omflowAlert('yellow', data.message);
+		}else if (data.status == 403)
+		{
+			omflowAlert('red', data.message);
+		}
+	}
+	</script>
+{% endblock %}

@@ -11,35 +11,26 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
-from pytz import common_timezones
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '1han1v%@fd0#e40#tm0z!g2twgo3+!gf9-kr3--1v5)_bkfv4q'
-
+SECRET_KEY = 'r&94@o%)q8s-=gmxw@8a9o5161%90&2jo$0*&a&57*5$rx)@ar'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-TEMPLATE_DEBUG = DEBUG
 
 ALLOWED_HOSTS = ["*"]
+
 
 # Application definition
 
 INSTALLED_APPS = [
-     #default
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    
-    #local components
     'omuser',
     'ommessage',
     'omformflow',
@@ -48,7 +39,17 @@ INSTALLED_APPS = [
     'omformmodel',
     'omservice',
     'ommission',
-   
+    'omldap',
+    'ommonitor',
+    'ompolicymodel',
+    'omorganization',
+    #default
+    #'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
 ]
 AUTH_USER_MODEL = 'omuser.OmUser'
 LOGIN_REDIRECT_URL = '/home/'
@@ -62,8 +63,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    
-    
 ]
 
 ROOT_URLCONF = 'omflow.urls'
@@ -77,13 +76,9 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
+                'django.template.context_processors.i18n',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'django.template.context_processors.media',
-                'django.template.context_processors.i18n',
-                'django.template.context_processors.static',
-                'django.template.context_processors.tz',
-                'django.template.context_processors.csrf',
             ],
         },
     },
@@ -94,6 +89,8 @@ WSGI_APPLICATION = 'omflow.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
+
+DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3","NAME": os.path.join(BASE_DIR, "db.omflow"),"OPTIONS": {"timeout": 300,}}}
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -113,33 +110,31 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-#PASSWORD_RESET_TIMEOUT_DAYS = 1
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
-
 LOCALE_PATHS = (
     os.path.join(BASE_DIR, 'locale'),
 )
 
 LANGUAGES = [
-
-    ("en", "English"),("zh-hant", "Traditional_Chinese"),("zh-hans", "Simplified_Chinese"),("ja", "Japanese"),("ar","Arabic")
+#     ('en', "English"),    
+    ("en", "English"),("zh-hant", "Traditional_Chinese"),("zh-hans", "Simplified_Chinese"),("ja", "Japanese"),("ar","arabic")
 ]
 
 
 LANGUAGE_CODE = 'en'
-#TIME_ZONE = 'Africa/Cairo'
-TIME_ZONES = [(tz, tz) for tz in common_timezones]
+
+TIME_ZONE = 'Asia/Taipei'
 DATE_FORMAT = '%Y-%m-%d'
 DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 DATETIME_INPUT_FORMATS = '%Y-%m-%d %H:%M:%S'
 
 USE_I18N = True
 
-USE_L10N = True
+USE_L10N = False
 
-USE_TZ = False
+# USE_TZ = True
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 # SESSION_COOKIE_AGE = 3600
@@ -152,28 +147,16 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 52428800
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
-
-#STATICFILES_FINDERS = (
-#    'django.contrib.staticfiles.finders.FileSystemFinder',
-#    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#)
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.2/howto/static-files/
-#for prifex langages
 STATIC_URL = '/static/'
-
 # static url Mapping folder
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'staticfiles'),
-    #os.path.join(BASE_DIR, 'omuser', 'staticfiles'),
+#    os.path.join(BASE_DIR, 'omuser', 'staticfiles'),
 )
-
+# staticfiles_dirs Mapping folder
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-#STATIC_ROOT = os.path.join(BASE_DIR, '..', 'static')
 
 LOG_DIR = os.path.join(BASE_DIR, 'logs')
-    
 LOG_LEVEL = 'ERROR'
 LOGGING = {
     'version': 1,
@@ -240,15 +223,14 @@ LOGGING = {
       
 }
 
-DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3","NAME": os.path.join(BASE_DIR, "db.omflow"),"OPTIONS": {"timeout": 300,}}}
 #omflow type(server/collector)
 OMFLOW_TYPE = "server"
 #local info
-LOCAL_IP = ""
-LOCAL_PORT = ""
+LOCAL_IP = "0.0.0.0"
+LOCAL_PORT = "80"
 UNIQUE_ID = ""
 #server info
 SERVER_IP = ""
 SERVER_PORT = ""
 #python.exe filepath
-PYTHON_PATH = ""
+PYTHON_PATH = "C:/Program Files/OMFLOW Server/Python/python.exe"

@@ -8,3 +8,5 @@ ommessage/migrations
 ommission/migrations
 omservice/migrations
 omuser/migrations
+build
+dist

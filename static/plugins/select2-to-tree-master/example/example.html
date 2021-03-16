@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Select2-to-Tree * example</title>
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet">
+	<link href="../src/select2totree.css" rel="stylesheet">
+	<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+	<script src="../src/select2totree.js"></script>
+</head>
+<body>
+	<h3>Example 1</h3>
+	<select id="sel_1" style="width:16em" multiple>
+	</select>
+	<script>
+		var mydata = [
+		   {id:1, text:"USA", inc:[
+		      {text:"west", inc:[
+		         {id:111, text:"California", inc:[
+		            {id:1111, text:"Los Angeles", inc:[
+		               {id:11111, text:"Hollywood"}
+		            ]},
+		            {id:1112, text:"San Diego"}
+		         ]},
+		         {id:112, text:"Oregon"}
+		      ]}
+		   ]},
+		   {id:2, text:"India"},
+		   {id:3, text:"中国"}
+		];
+		$("#sel_1").select2ToTree({treeData: {dataArr: mydata}, maximumSelectionLength: 3});
+	</script>
+
+	<br>
+
+	<h3>Example 2</h3>
+	<select id="sel_2" style="width:8em">
+		<option value="1" class="l1 non-leaf">opt_1</option>
+		<option value="11" data-pup="1" class="l2 non-leaf">opt_11</option>
+		<option value="111" data-pup="11" class="l3">opt_111</option>
+		<option value="12" data-pup="2" class="l2">opt_12</option>
+		<option value="2" class="l1">opt_2</option>
+		<option value="3" class="l1">opt_3</option>
+	</select>
+	<script>
+		$("#sel_2").select2ToTree();
+	</script>
+
+	<br>
+
+	<h3>Example 3</h3>
+	<select id="sel_3" style="width:16em" multiple>
+	</select>
+	<script>
+		var ind = mydata[1];
+		ind.inc = [{text:"north", inc:[]}];
+		var inc = ind.inc[0].inc;
+		for (var i = 1; i <= 1500; i++) {
+			inc.push({ id: 10000+i, text: "the city "+i });
+		}
+		$("#sel_3").select2ToTree({treeData: {dataArr: mydata}, maximumSelectionLength: 3,
+				templateResult: formatState, templateSelection: formatState});
+
+		function formatState (state) {
+			if (state.id >= 1 && state.id <= 3) {
+				return $(
+					'<span><img src="./' + state.element.value.toLowerCase() + '.png" class="img-flag" /> ' + state.text + '</span>'
+				);
+			}
+			else return state.text;
+		};
+	</script>
+</body>
+</html>

@@ -1,32 +1,9 @@
-[2021-02-23 11:59:35] - ERROR    - ['127.0.0.1', 'youssri.ahmed', '/accounts/api/multiple-login/check/', 'checkMultipleLoginAjax'] - can't compare offset-naive and offset-aware datetimes
-Traceback (most recent call last):
-  File "E:\programing\python\qhse-erp\home\aeraeg\python\apps\omflow\omuser\views.py", line 131, in checkMultipleLoginAjax
-    if expire_date > datetime.now():
-TypeError: can't compare offset-naive and offset-aware datetimes
-[2021-02-23 11:59:36] - ERROR    - ['127.0.0.1', 'youssri.ahmed', '/accounts/api/multiple-login/check/', 'checkMultipleLoginAjax'] - 
-{'csrfmiddlewaretoken': '92cVyCJdLHDKka3k9sEbfjkPOL5Wf3LMstDNzEbl0v6mYv5JREgSxfv1ZOqR2fsH'}
-[2021-02-23 11:59:50] - ERROR    - ['127.0.0.1', 'youssri.ahmed', '/accounts/api/multiple-login/check/', 'checkMultipleLoginAjax'] - can't compare offset-naive and offset-aware datetimes
-Traceback (most recent call last):
-  File "E:\programing\python\qhse-erp\home\aeraeg\python\apps\omflow\omuser\views.py", line 131, in checkMultipleLoginAjax
-    if expire_date > datetime.now():
-TypeError: can't compare offset-naive and offset-aware datetimes
-[2021-02-23 11:59:50] - ERROR    - ['127.0.0.1', 'youssri.ahmed', '/accounts/api/multiple-login/check/', 'checkMultipleLoginAjax'] - 
-{'csrfmiddlewaretoken': 'Wa6dn3uYgkJwKaAMgGTqmjADmd4DxUf5fBx5o5W6v8c8ovCbYSv7EfLPxgpyk6W0'}
-[2021-02-23 12:00:06] - ERROR    - ['127.0.0.1', 'youssri.ahmed', '/accounts/api/multiple-login/check/', 'checkMultipleLoginAjax'] - can't compare offset-naive and offset-aware datetimes
-Traceback (most recent call last):
-  File "E:\programing\python\qhse-erp\home\aeraeg\python\apps\omflow\omuser\views.py", line 131, in checkMultipleLoginAjax
-    if expire_date > datetime.now():
-TypeError: can't compare offset-naive and offset-aware datetimes
-[2021-02-23 12:00:06] - ERROR    - ['127.0.0.1', 'youssri.ahmed', '/accounts/api/multiple-login/check/', 'checkMultipleLoginAjax'] - 
-{'csrfmiddlewaretoken': 'xNN5GhZ3T0S7xvLQJEJGdAMfRlMJ5athQeeXHjrb8OlJbQNfrQlnvwXr2o7ESmac'}
-[2021-02-23 12:01:00] - ERROR    - ['127.0.0.1', 'youssri.ahmed', '/accounts/api/multiple-login/check/', 'checkMultipleLoginAjax'] - can't compare offset-naive and offset-aware datetimes
-Traceback (most recent call last):
-  File "E:\programing\python\qhse-erp\home\aeraeg\python\apps\omflow\omuser\views.py", line 131, in checkMultipleLoginAjax
-    if expire_date > datetime.now():
-TypeError: can't compare offset-naive and offset-aware datetimes
-[2021-02-23 12:01:00] - ERROR    - ['127.0.0.1', 'youssri.ahmed', '/accounts/api/multiple-login/check/', 'checkMultipleLoginAjax'] - 
-{'csrfmiddlewaretoken': 'CczZFDE833rbLAJsvEcFGMPOMHaiwkhzVD0RGF6giRUNpVLRdQOmYI00XKvdjwYu'}
-[2021-02-23 12:02:32] - ERROR    - ['127.0.0.1', 'hany.mohamed', '/accounts/api/multiple-login/check/', 'checkMultipleLoginAjax'] - OmUser matching query does not exist.
+[2021-03-16 09:58:17] - ERROR    - ['localhost', 'system'] - LDAP error：No module named 'ldap3'
+[2021-03-16 09:58:30] - ERROR    - ['localhost', 'system'] - LDAP error：No module named 'ldap3'
+[2021-03-16 09:58:39] - ERROR    - ['localhost', 'system'] - LDAP error：No module named 'ldap3'
+[2021-03-16 09:58:45] - ERROR    - ['localhost', 'system'] - LDAP error：No module named 'ldap3'
+[2021-03-16 09:58:48] - ERROR    - ['localhost', 'system'] - LDAP error：No module named 'ldap3'
+[2021-03-16 09:59:10] - ERROR    - ['127.0.0.1', 'youssri.ahmed', '/accounts/api/multiple-login/check/', 'checkMultipleLoginAjax'] - OmUser matching query does not exist.
 Traceback (most recent call last):
   File "E:\programing\python\qhse-erp\home\aeraeg\python\apps\omflow\omuser\views.py", line 113, in checkMultipleLoginAjax
     usersearch = OmUser.objects.get(username=username)
@@ -35,31 +12,12 @@ Traceback (most recent call last):
   File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\db\models\query.py", line 431, in get
     self.model._meta.object_name
 omuser.models.OmUser.DoesNotExist: OmUser matching query does not exist.
-[2021-02-23 12:02:32] - ERROR    - ['127.0.0.1', 'hany.mohamed', '/accounts/api/multiple-login/check/', 'checkMultipleLoginAjax'] - 
-{'csrfmiddlewaretoken': 'CczZFDE833rbLAJsvEcFGMPOMHaiwkhzVD0RGF6giRUNpVLRdQOmYI00XKvdjwYu'}
-[2021-02-23 12:34:10] - ERROR    - ['127.0.0.1', 'youssri.ahmed', '/accounts/api/multiple-login/check/', 'checkMultipleLoginAjax'] - can't compare offset-naive and offset-aware datetimes
-Traceback (most recent call last):
-  File "E:\programing\python\qhse-erp\home\aeraeg\python\apps\omflow\omuser\views.py", line 131, in checkMultipleLoginAjax
-    if expire_date > datetime.now():
-TypeError: can't compare offset-naive and offset-aware datetimes
-[2021-02-23 12:34:10] - ERROR    - ['127.0.0.1', 'youssri.ahmed', '/accounts/api/multiple-login/check/', 'checkMultipleLoginAjax'] - 
-{'csrfmiddlewaretoken': 'O4zX1WSYXdFrHGUKwW0p24uepQjblHMV7v0P2Yk6c183l1W9e8C6k0FqATE68TtQ'}
-[2021-02-23 12:34:16] - ERROR    - ['127.0.0.1', '', '/accounts/api/multiple-login/check/', 'checkMultipleLoginAjax'] - OmUser matching query does not exist.
-Traceback (most recent call last):
-  File "E:\programing\python\qhse-erp\home\aeraeg\python\apps\omflow\omuser\views.py", line 113, in checkMultipleLoginAjax
-    usersearch = OmUser.objects.get(username=username)
-  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\db\models\manager.py", line 85, in manager_method
-    return getattr(self.get_queryset(), name)(*args, **kwargs)
-  File "C:\Users\youssri.ahmed.CONTACTGROUP\.conda\envs\omflow\lib\site-packages\django\db\models\query.py", line 431, in get
-    self.model._meta.object_name
-omuser.models.OmUser.DoesNotExist: OmUser matching query does not exist.
-[2021-02-23 12:34:16] - ERROR    - ['127.0.0.1', '', '/accounts/api/multiple-login/check/', 'checkMultipleLoginAjax'] - 
-{'csrfmiddlewaretoken': '49GYF7aWWtq8ieqrulOfzhecHlXf8ahfnA7QG9C4bhTKWzsQcxqWRdpoSoiaVmYa'}
-[2021-02-23 12:36:28] - ERROR    - ['127.0.0.1', 'youssri.ahmed', '/accounts/api/multiple-login/check/', 'checkMultipleLoginAjax'] - can't compare offset-naive and offset-aware datetimes
-Traceback (most recent call last):
-  File "E:\programing\python\qhse-erp\home\aeraeg\python\apps\omflow\omuser\views.py", line 131, in checkMultipleLoginAjax
-    if expire_date > datetime.now():
-TypeError: can't compare offset-naive and offset-aware datetimes
-[2021-02-23 12:36:28] - ERROR    - ['127.0.0.1', 'youssri.ahmed', '/accounts/api/multiple-login/check/', 'checkMultipleLoginAjax'] - 
-{'csrfmiddlewaretoken': 'dUrwDDfQzyILPqYgpzqfcyilycmZ8xDYwlSoEFHYOmbntL0F7L2WuutxJfHUVJkT'}
-[2021-02-23 12:41:35] - ERROR    - "GET /static/components/bootstrap/dist/fonts/glyphicons-halflings-regular.woff2 HTTP/1.1" 500 59
+[2021-03-16 09:59:10] - ERROR    - ['127.0.0.1', 'youssri.ahmed', '/accounts/api/multiple-login/check/', 'checkMultipleLoginAjax'] - 
+{'csrfmiddlewaretoken': 'f60A1x7d4DGVtoQwq3wzxdLvynZNpzGATFIyzaFNP40jOYeJl4xPjckOYPQKaFmZ'}
+[2021-03-16 10:01:06] - ERROR    - "GET /service/page/list/ HTTP/1.1" 500 59
+[2021-03-16 10:03:53] - ERROR    - ['localhost', 'system'] - LDAP error：No module named 'ldap3'
+[2021-03-16 10:05:08] - ERROR    - "POST /accounts/api/multiple-login/check/ HTTP/1.1" 500 59
+[2021-03-16 10:06:39] - ERROR    - ['localhost', 'system'] - LDAP error：No module named 'ldap3'
+[2021-03-16 10:06:45] - ERROR    - "POST /api/workinfo/load/ HTTP/1.1" 500 59
+[2021-03-16 10:06:45] - ERROR    - "POST /api/l-side/load/ HTTP/1.1" 500 59
+[2021-03-16 10:08:03] - ERROR    - "POST /accounts/api/multiple-login/check/ HTTP/1.1" 500 59
