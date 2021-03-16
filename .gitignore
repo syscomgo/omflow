@@ -1,5 +1,5 @@
 settings/base.py
-plan.xlsx
+
 omdashboard/migrations
 omflow/migrations
 omflow/templates
@@ -11,3 +11,8 @@ omuser/migrations
 build
 dist
 db.omflow
+omldap
+ommonitor
+omorganization
+ompolicymodel
+static
