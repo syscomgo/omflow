@@ -39,6 +39,10 @@ INSTALLED_APPS = [
     'omformmodel',
     'omservice',
     'ommission',
+    'omldap',
+    'ommonitor',
+    'ompolicymodel',
+    'omorganization',
     #default
     #'django.contrib.admin',
     'django.contrib.auth',
@@ -115,11 +119,11 @@ LOCALE_PATHS = (
 
 LANGUAGES = [
 #     ('en', "English"),    
-    ("en", "English"),("zh-hant", "Traditional_Chinese"),("zh-hans", "Simplified_Chinese"),("ja", "Japanese")
+    ("en", "English"),("zh-hant", "Traditional_Chinese"),("zh-hans", "Simplified_Chinese"),("ja", "Japanese"),("ar","arabic")
 ]
 
 
-LANGUAGE_CODE = 'zh-Hant'
+LANGUAGE_CODE = 'en'
 
 TIME_ZONE = 'Asia/Taipei'
 DATE_FORMAT = '%Y-%m-%d'
@@ -147,7 +151,7 @@ STATIC_URL = '/static/'
 # static url Mapping folder
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'staticfiles'),
-    os.path.join(BASE_DIR, 'omuser', 'staticfiles'),
+#    os.path.join(BASE_DIR, 'omuser', 'staticfiles'),
 )
 # staticfiles_dirs Mapping folder
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
@@ -222,11 +226,11 @@ LOGGING = {
 #omflow type(server/collector)
 OMFLOW_TYPE = "server"
 #local info
-LOCAL_IP = ""
-LOCAL_PORT = ""
+LOCAL_IP = "0.0.0.0"
+LOCAL_PORT = "80"
 UNIQUE_ID = ""
 #server info
 SERVER_IP = ""
 SERVER_PORT = ""
 #python.exe filepath
-PYTHON_PATH = ""
+PYTHON_PATH = "C:/Program Files/OMFLOW Server/Python/python.exe"

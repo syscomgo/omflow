@@ -1,0 +1,345 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %} 
+{% block content %}
+<!-- 
+	node_list_manage.html
+	author : Pei lin
+-->
+	
+	<!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+       	  {{group_name}}
+        <small>{% trans ' 收集器列表' %}</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i>{% trans ' 首頁' %}</a></li>
+		<li>{% trans ' 資料收集' %}</li>
+        <li><a href="/monitor/page/nodeGroupsManagePage/">{% trans ' 收集器管理' %}</a></li>
+        <li class="active"><a href="/monitor/page/nodeListManagePage/{{group_id}}/">{{group_name}}</a></li>
+      </ol>
+    </section>
+    <section class="content">
+      <div class="row">
+      	<div class="col-xs-12">
+      	  <div class="box box-primary">
+      	    <div class="box-header with-border">
+      	      <div class="pull-left">
+			    <button type="button" class="btn btn-default" onclick="node_move()" id="node_move" style="margin:1px 0px;" disabled="disabled"><i class="fas fa-external-link-alt"></i>{% trans " 移動"%}</button>
+			    <button type="button" class="btn btn-default" onclick="omflowListDialogue('delete', '{% trans '移除下列收集器'%}', node_delete)" id="node_delete" style="margin:1px 0px;" disabled="disabled"><i class="fa fa-trash-o"></i>{% trans " 刪除"%}</button>
+			    <button type="button" class="btn btn-default" onclick="filter_node()" style="margin:1px 0px;"><i class="fa fa-filter"></i> {% trans '篩選'%}</button>
+                <button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default" onclick="filter_default()" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
+              </div>
+      	    </div>
+      	    <!-- box-header -->
+      	    <div class="box-body">
+      	      <table id="node_list_table" class="table table-bordered table-striped table-hover">
+      	        <col width="3%"></col>
+      	        <col width="5%"></col>
+				<thead>
+				  <tr>
+					<th style="width:15px"><a><i class="fa fa-lg fa-check-square-o checkbox-toggle" style="color:SteelBlue"></i></a></th>
+					<th>{% trans '燈號'%}</th>
+					<th>{% trans '名稱'%}</th>
+					<th>{% trans '主機名稱'%}</th>
+					<th>{% trans '作業系統'%}</th>
+					<th>{% trans '版本'%}</th>
+				  </tr>
+				</thead>
+				<tbody>
+				</tbody>
+			  </table>
+      	    </div>
+			<!-- box-body -->
+      	  </div>
+      	  <!-- box -->
+      	</div>
+      	<!-- col -->
+      </div>
+      <!-- row -->
+    </section>
+    
+    
+    <div class="modal fade" id="modal-node_move" data-backdrop="static">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title"><i class="fas fa-external-link-alt"></i>&nbsp;&nbsp;{% trans '移動收集器'%}</h4>
+		  </div>
+		  <div class="modal-body">
+		    <div class="form-group">
+		       <label>{% trans '目標群組'%} </label>
+			  <select id="node_group_target" class="form-control" style="width:100%">
+			  </select>
+		    </div>
+		  	<ul class="list-group list-group-unbordered" id="node_move_list">
+		  	</ul>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">{% trans '取消'%}</button>
+			<button type="button" class="btn btn-primary" id="modal-node_move_submit">{% trans '確定'%}</button>
+		  </div>
+		</div>
+	  </div><!-- /.modal-content -->
+	</div>
+    
+    
+    <style>
+      table tbody tr{
+		  cursor:pointer;
+		}
+    </style>
+    
+    <script>
+    	var csrfmiddlewaretoken="{{ csrf_token }}";
+    	var table;
+    	var data_tmp;
+		var data_len;
+		var data_page;
+		var checkbox_status = [];
+		var node_group_list_opt='';
+    	$(function(){
+    		table = $('#node_list_table').DataTable({
+				"autoWidth": false,
+				"order": [[ 3, "desc" ]], 
+				"dom":"<<t>'row'<'col-sm-5'i><'col-sm-7'p>>",
+				"language": __const_language__,
+				"serverSide": true,							//	serverside data loading
+				"deferRender": true,
+				"processing": true,
+				"ajax": {
+	           		"url": "{% url 'listCollectorAjax' %}",
+	            	"type": "POST",
+	            	"headers": { "X-CSRFToken": csrfmiddlewaretoken },
+					"contentType": "application/json;charset=utf-8;",
+	            	"data": function ( d ) {
+								return JSON.stringify($.extend( {}, d, {
+									csrfmiddlewaretoken: csrfmiddlewaretoken, 
+									nodegroup_id: '{{group_id}}',
+									datatable: 'True'
+								}));
+							},
+					"dataSrc": function(data){
+							a = dataCompare(data,data_tmp,data_len,data_page,table);
+							data_tmp = a['data_tmp']
+							data_len = a['data_len']
+							data_page = a['data_page']
+							data.data = a['data.data']
+							return data.data;
+						},
+	        	},  
+	        	"columns":[
+	        		{"data": "id", "width": "15px", "orderable": false, "render": function(data, type, row)
+	        			{return '<input type="checkbox" class="icheckbox_minimal-blue" id="'+data+'" data-value="'+row.nick_name+'"><label for='+data+'></label>'}
+	        		},
+	        		{"data": "level", "orderable": false, "width": "40px", "render": function(data, type, row)
+	        			{
+	        				if (data == 5)
+	        				{	
+	        					return '<div class="label label-danger">&nbsp;&nbsp;&nbsp;&nbsp;</div>'
+	        				}
+	        				else if (data == 4)
+	        				{	
+	        					return '<div class="label label-warning">&nbsp;&nbsp;&nbsp;&nbsp;</div>'
+	        				}
+	        				else if (data == 3)
+	        				{	
+	        					return '<div class="label label-wrong">&nbsp;&nbsp;&nbsp;&nbsp;</div>'
+	        				}
+	        				else if (data == 1)
+	        				{	
+								return '<div class="label label-success">&nbsp;&nbsp;&nbsp;&nbsp;</div>'	        					
+	        				}
+	        				else
+	        				{	
+	        					return '<div class="label label-info">&nbsp;&nbsp;&nbsp;&nbsp;</div>'
+	        				}
+	        			}
+	        		},
+	        		{"data": "nick_name"},
+	        		{"data": "host_name"},
+	        		{"data": "ip_address"},
+	        		{"data": "os_type"}
+	        	],
+	        	rowCallback: function( row, data ) {
+			    	$('td:not(:eq(0), :last)', row).attr('onclick', 'javascript:location.href="/monitor/page/nodeManagePage/'+data.id+'"')
+				},
+	        	drawCallback: function() {
+	        		omflowCheckAll();
+	        		$('.table input[type="checkbox"]').change(function(){
+				    	enablebtt();
+				    });
+	        		$.each(checkbox_status, function(){
+						$('.table input[type="checkbox"]#'+this).prop('checked', true);
+					});
+	        	},
+				preDrawCallback: function(settings) {
+	    			checkbox_status = []
+	    			$.each($('.table input[type="checkbox"]'), function(){
+	    				if (this.checked)
+	    				{	
+	    					checkbox_status.push(this.id)
+	    				}
+	    			});
+	    		} 
+			});
+			
+			$('ul.treeview-menu > li > a[href="/monitor/page/nodeGroupsManagePage/"]').parentsUntil(".sidebar-menu > .treeview-menu").siblings().removeClass('active menu-open').end().addClass('active menu-open');
+			
+			omflowJsonAjax({}, '{% url "listCollectorGroupAjax"%}', node_group_callback)
+    	});
+    	
+    	
+    	function node_group_callback(data)
+    	{
+    		if (data.status == 200)
+    		{
+    			$.each(data.result, function(){
+    				if (this.id != {{group_id}})
+    				{
+    					node_group_list_opt += '<option value="'+this.id+'">'+this.name+'</option>'
+    				}			
+    			});
+    			$('#node_group_target').change(function(){
+    				if (this.value)
+    				{
+    					$('#modal-node_move_submit').prop('disabled', false)
+    				}
+    				else
+    				{
+    					$('#modal-node_move_submit').prop('disabled', true)
+    				}
+    			});
+    			$('#node_group_target').empty().append(node_group_list_opt).val('').trigger('change')
+    			$('#node_group_target').select2()
+    		}
+    		else
+    		{
+    			actions(data)
+    		}
+    	}
+    	
+    	
+    	function node_move()
+    	{
+    		var node_id_list = [];
+    		$('#node_move_list').empty();
+			$.each( $('#node_list_table input:checkbox:checked'), function(){
+				node_id_list.push(this.id);
+				var this_check = $(this).data('value');
+				var status = $(this).closest('tr').find('.label:eq(0)').parent().html();
+				$('#node_move_list').prepend('<li class="list-group-item"><i class="fa fa-circle"></i>&nbsp;&nbsp;<b class="text-light-blue">'+this_check+'</b> <a class="pull-right">'+status+'</li>');
+			});
+			
+			$('#modal-node_move').modal('show');
+			
+			$('#modal-node_move_submit').off('click').on('click', function(){
+				var move_postdata = {
+					group_id		: $('#node_group_target').val(),
+					node_id_list	: node_id_list
+				}
+				omflowJsonAjax(move_postdata, '{% url "groupCollectorAjax"%}', actions)
+				Swal.fire({
+				  title: '{% trans '處理中'%}...',
+				  toast: true,
+				  position: 'bottom-start',
+				  showConfirmButton: false,
+				});
+				Swal.showLoading();
+				$('#modal-node_move').modal('hide');
+			});
+    	}
+    	
+    	
+    	function node_delete()
+    	{
+    		
+    		var postdata = {
+				collector_ids	: []
+			}
+			$.each( $('#node_list_table input:checkbox:checked'), function(){
+				postdata.collector_ids.push(this.id);
+			});
+			
+			
+			omflowJsonAjax(postdata, '{% url "deleteCollectorAjax"%}', actions)
+			Swal.fire({
+			  title: '{% trans '處理中'%}...',
+			  toast: true,
+			  position: 'bottom-start',
+			  showConfirmButton: false,
+			});
+			Swal.showLoading();
+    	}
+    	
+    	
+    	function enablebtt()
+    	{
+    		var count = $('.table input:checkbox:checked').length
+			if (count == 0)
+			{
+				$('#node_move, #node_delete').prop('disabled', 'disabled');
+			}
+			else
+			{
+				$('#node_move, #node_delete').prop('disabled', '');
+			}
+    	}
+    	
+    	
+    	function filter_node()
+    	{
+    		omflowFilter(['filter_search', 'filter_length']);
+			$('#modal-default-filter-confirm').off("click").on("click",function(){
+				var searchkey = $.trim($('#modal-default-filter #search').val());
+				var page_length = $('#modal-default-filter #page_length').val();
+				table.page.len(page_length);
+				table.search(searchkey).draw();
+			});
+    	}
+    	
+    	
+    	function filter_default(){
+			table.page.len(10);
+			table.search('');
+	    	table.draw(false)
+	    }
+    	
+    	
+    	function actions(data)
+		{
+			Swal.close();
+			if(data.status == 200)
+			{
+				LSide();
+				table.draw(false);
+				Swal.fire({
+		      	  icon : 'success',
+		      	  title: '{% trans '成功'%}',
+		      	  toast: true,
+			  	  position: 'bottom-start',
+			  	  showConfirmButton: false,
+		      	  timer: 2000,
+	  		    });
+			}	
+			else if (data.status == 404)
+			{
+				omflowAlert('yellow', data.message);
+			}
+			else if (data.status == 500)
+			{
+				omflowAlert('blue', data.message);
+			}
+			else if (data.status == 403)
+			{
+				omflowAlert('red', data.message);
+			}
+		}
+		
+		var table_routine = setInterval(function(){table.draw(false);}, {{user.frequency}}*1000);
+    </script>
+    
+ {% endblock %}

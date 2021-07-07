@@ -1,0 +1,937 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %} 
+{% block content %}
+<!-- 
+	event_manage.html eventManagePage
+	author : Pei lin
+-->
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+      {% trans '事件管理'%}
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i>{% trans ' 首頁'%}</a></li>
+		<li>{% trans ' 資料收集'%}</li>
+        <li><a href="/monitor/page/eventManagePage/">{% trans ' 事件管理'%}</a></li>
+      </ol>
+    </section>
+    
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+              <li class="active"><a href="#p1" data-toggle="tab">{% trans ' 事件列表'%}</a></li>
+			  <li><a href="#p2" data-toggle="tab">{% trans ' 事故規則'%}</a></li>
+            </ul>
+            <div class="tab-content">
+              <div class="tab-pane active" id="p1">
+                <div class="box box-default">
+                  <div class="box-header">
+					<button type="button" class="btn btn-default" onclick="filter_event()" style="margin:1px 0px;"><i class="fa fa-filter"></i> {% trans '篩選'%}</button>
+        			<button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default" onclick="filter_default()" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
+                  </div>
+                  <div class="box-body">
+                  	<table class="table table-bordered table-striped table-hover" style="width:100%" id="event_view_table">
+	                  <col width="6%">
+	                  <col width="20%">
+	                  <col width="45%">
+	                  <col width="10%">
+	                  <col width="15%">
+	                  <col width="5%">
+                  	  <thead>
+                  	    <tr>
+                  	      <th>{% trans '嚴重等級'%}</th>
+                  	      <th>{% trans '標題'%}</th>
+                  	      <th>{% trans '內文'%}</th>
+                  	      <th>{% trans '來源'%}</th>
+                  	      <th>{% trans '時間'%}</th>
+                  	      <th></th>
+                  	    </tr>
+                  	  </thead>
+                  	</table>
+                  </div>
+                </div>
+              </div>
+              <!-- /.p1 -->
+              <div class="tab-pane" id="p2">
+                <div class="box box-default">
+                  <div class="box-header">
+                  	<button type="button" class="btn btn-default" onclick="event_edit('create')" style="margin:1px 0px;"><i class="fa fa-plus"></i>{% trans ' 新增'%}</button>
+                  	<button type="button" class="btn btn-default" onclick="event_edit('delete')" style="margin:1px 0px;"><i class="fa fa-trash-o"></i>{% trans ' 刪除'%}</button>
+                  	<button type="button" class="btn btn-default pull-right" onclick="rule_save()"><i class="fa fa-save"></i>{% trans ' 儲存'%}</button>
+                  </div>
+                  <div class="box-body">
+                  	<table class="table table-bordered table-striped" id="event_table">
+			          <thead>
+			            <tr>
+			              <th></th>	
+			              <th style="width:15px"><a><i class="fa fa-lg fa-check-square-o checkbox-toggle" style="color:SteelBlue"></i></a></th>
+			              <th>{% trans '規則名稱'%}</th>
+			              <th>{% trans '標題'%}</th>
+			              <th>{% trans '內文'%}</th>
+			              <th></th>
+			            </tr>
+			          </thead>
+			          <tbody>
+			          </tbody>
+			        </table>
+                  </div>
+                </div>
+              </div>
+              <!-- /.p2 -->
+            </div>
+            <!-- /.tab-content -->
+          </div>
+          <!-- /.nav-tabs-custom -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    
+    <div class="modal fade" id="modal-event-result" data-backdrop="static">
+	  <div class="modal-dialog modal-lg">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span>
+			</button>
+	        <h4 class="modal-title"></h4>
+		  </div>
+		  <div class="modal-body">
+		    <div class="container-fluid">
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label>{% trans '事故名稱'%}</label><font color="red">*</font>
+                    <input id="event_name" type="text" class="form-control" placeholder="{% trans '事故名稱'%}">
+                  </div>
+                  <div class="form-group ">
+	                <label>{% trans '事故主旨'%}</label><font color="red">*</font>
+	                <input id="event_title" type="text" class="form-control" placeholder="{% trans '事故主旨'%}">
+	              </div>
+	              <div class="form-group ">
+                    <label>{% trans '事故內容'%}</label><font color="red">*</font>
+                    <textarea id="event_content" class="form-control" placeholder="{% trans '事故內容'%}" style="height:108px;resize:none;"></textarea>
+                  </div>
+                </div>
+                <!--/.col -->
+                <div class="col-md-4">
+                  <div class="form-group ">
+                    <label>{% trans '影響性'%}</label>
+                    <select id="event_impact" class="form-control" style="width:100%">
+                      <option value="4">{% trans '嚴重'%}</option>
+                      <option value="3">{% trans '高'%}</option>
+                      <option value="2">{% trans '中'%}</option>
+                      <option value="1">{% trans '低'%}</option>
+                    </select>
+                  </div>
+                 <div class="form-group ">
+                    <label>{% trans '緊急性'%}</label>
+                    <select id="event_urgency" class="form-control" style="width:100%">
+                      <option value="4">{% trans '嚴重'%}</option>
+                      <option value="3">{% trans '高'%}</option>
+                      <option value="2">{% trans '中'%}</option>
+                      <option value="1">{% trans '低'%}</option>
+                    </select>
+                  </div>
+                  <div class="form-group ">
+                    <label>{% trans '優先等級'%}</label>
+                    <select id="event_priority" class="form-control" style="width:100%">
+                      <option value="4">{% trans '嚴重'%}</option>
+                      <option value="3">{% trans '高'%}</option>
+                      <option value="2">{% trans '中'%}</option>
+                      <option value="1">{% trans '低'%}</option>
+                    </select>
+                  </div>
+                  <div class="form-group ">
+                    <label>{% trans '燈號'%}</label>
+                    <select id="event_level" class="form-control" style="width:100%">
+                      <option value="red">{% trans '紅燈'%}</option>
+                      <option value="yellow">{% trans '黃燈'%}</option>
+                      <option value="green">{% trans '綠燈'%}</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group ">
+                    <label>{% trans '受派組織'%}</label><font color="red">*</font>
+                    <select id="event_group" type="text" class="form-control" style="width:100%">
+                    </select>
+                  </div>
+                  <div class="form-group ">
+                    <label>{% trans '受派人'%}</label>
+                    <select id="event_user" type="text" class="form-control" style="width:100%">
+                    </select>
+                  </div>
+                  <div class="form-group ">
+	                <label>{% trans '應用程式'%}</label>
+	                <input id="event_app" type="text" class="form-control" placeholder="{% trans '應用程式'%}">
+	              </div>
+                  <div class="form-group ">
+                    <label>{% trans '分類'%}</label>
+                    <input id="event_type" type="text" class="form-control" placeholder="{% trans '分類'%}">
+                  </div>
+                </div>
+                <!--/.col -->
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <div class="sep-line"></div>
+                    <label>{% trans '事故觸發條件'%}</label>
+                    <button type="button" class="btn btn-default" onclick="event_result_add()" style="margin:1px 0px;"><i class="fa fa-plus"></i>{% trans ' 新增'%}</button>
+                  </div>  
+                  <div class="form-group">
+                    <ul style="list-style-type: none; margin: 0; padding: 0">
+                      <li class="ui-state-default" style="margin: 0 0 0 0;height:30px;">
+                        <table width="100%">
+                  	      <tr>
+                  	        <td width="4%"></td>
+                  	        <td><input id="event_time" type="text" class="form-control" placeholder="{% trans '時間'%}"></input></td>
+                  	        <td><select id="event_unit" class="form-control" style="width:100%"><option value="sec">{% trans '秒'%}</option><option value="min">{% trans '分'%}</option><option value="hour">{% trans '時'%}</option><option value="day">{% trans '天'%}</option></select></td>
+                  	        <td><input id="event_freq"  type="text" class="form-control" placeholder="{% trans '次數'%}"></input></td>
+                  	        <td width="6%"></td>
+                  	      </tr>
+                        </table>
+                      </li>
+                    </ul>
+                  </div>  
+                  <div class="form-group">
+                    <ul id="event_result_list" style="list-style-type: none; margin: 0; padding: 0">
+					</ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">{% trans '取消'%}</button>
+			<button type="button" class="btn btn-primary" id="modal-event-result_check">{% trans '確定'%}</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+	
+	<div class="modal fade" id="modal-event-view" data-backdrop="static">
+	  <div class="modal-dialog modal-lg">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span>
+			</button>
+	        <h4 class="modal-title"><i class="fas fa-lg fa-info" style="color:SteelBlue;">&nbsp;&nbsp;{% trans "事件內容"%}</i></h4>
+		  </div>
+		  <div class="modal-body">
+		    <div class="container-fluid">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group ">
+	                <label>{% trans '標題'%}</label>
+	                <input id="event_title_view" type="text" class="form-control" placeholder="{% trans '標題'%}" disabled="disabled">
+	              </div>
+	              <div class="form-group ">
+                    <label>{% trans '內文'%}</label>
+                    <textarea id="event_content_view" class="form-control" placeholder="{% trans '內文'%}" style="height:150px;resize:none;" disabled="disabled"></textarea>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group ">
+                    <label>{% trans '嚴重等級'%}</label>
+                    <select id="event_level_view" type="text" class="form-control" style="width:100%" disabled="disabled">
+                      <option value="5">Critical</option>
+                      <option value="4">Major</option>
+                      <option value="3">Minor</option>
+                      <option value="2">Warning</option>
+                      <option value="1">Normal</option>
+                    </select>
+                  </div>
+                  <div class="form-group ">
+                    <label>{% trans '來源'%}</label>
+                    <textarea id="event_source_view" class="form-control" placeholder="{% trans '來源'%}" style="height:150px;resize:none;" disabled="disabled"></textarea>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group ">
+                    <label>{% trans '時間'%}</label>
+                    <input id="event_time_view" type="text" class="form-control" placeholder="{% trans '時間'%}" disabled="disabled">
+                  </div>
+                </div>
+                <!--/.col -->
+                <div class="col-md-12">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group ">
+		                <label>{% trans '應用程式'%}</label>
+		                <input id="event_app_view" type="text" class="form-control" placeholder="{% trans '應用程式'%}" disabled="disabled">
+		              </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group ">
+	                    <label>{% trans '分類'%}</label>
+	                    <input id="event_type_view" type="text" class="form-control" placeholder="{% trans '分類'%}" disabled="disabled">
+	                  </div>
+                    </div>
+                  </div>
+                </div>
+                <!--/.col -->
+              </div>
+            </div>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">{% trans '關閉'%}</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+	
+	
+	<style>
+		table td {
+			max-width: 120px;
+			white-space: break-spaces;
+			text-overflow: ellipsis;
+			word-break: break-all;
+			overflow: hidden;
+		}
+		thead th { white-space: nowrap; }
+	</style>
+	
+	<script>
+	var csrfmiddlewaretoken="{{ csrf_token }}";
+	var event_view_table ;
+	var date = new Date();
+	date.setDate(date.getDate() + 1);
+	var select_time=date.getFullYear() +'-'+(date.getMonth()+1)+'-'+date.getDate();
+	var event_view_data_tmp;
+	var event_view_data_len;
+	var event_view_data_page;
+	var event_view_checkbox_status = [];
+	var is_closed=['0'];
+	
+	var event = {};
+    var event_count = 0;
+    
+    $(function(){
+    	event_view_table = $('#event_view_table').DataTable({
+    		"autoWidth": false,
+			"order": [[ 4, "desc" ]], 
+			"dom":"<<t>'row'<'col-sm-5'i><'col-sm-7'p>>",
+			"language": __const_language__,
+			"serverSide": true,							//	serverside data loading
+			"deferRender": true,
+			"processing": true,
+			"ajax": {
+           		"url": "{% url 'listEventAjax' %}",
+            	"type": "POST",
+            	"headers": { "X-CSRFToken": csrfmiddlewaretoken },
+				"contentType": "application/json;charset=utf-8;",
+            	"data": function ( d ) {
+							return JSON.stringify($.extend( {}, d, {
+								closed: is_closed,
+								createtime: select_time,
+								datatable: 'True'
+							}));
+						},
+				"dataSrc": function(data){
+						a = dataCompare(data,event_view_data_tmp,event_view_data_len,event_view_data_page,event_view_table);
+						event_view_data_tmp = a['data_tmp']
+						event_view_data_len = a['data_len']
+						event_view_data_page = a['data_page']
+						data.data = a['data.data']
+						return data.data;
+					},
+        	},  
+        	"columns":[
+{#        		{"data": "id", "width": "3%", "orderable": false, "render": function(data, type, row)#}
+{#        			{return '<input type="checkbox" class="icheckbox_minimal-blue" id="'+data+'" data-value="'+row.title+'"><label for='+data+'></label>'}#}
+{#        		},#}
+        		{"data": "critical", "render": function(data, type, row)
+        			{
+        				if (data == 5)
+        				{	
+        					return '<div class="label label-danger">&nbsp;&nbsp;&nbsp;&nbsp;</div>'
+        				}
+        				else if (data == 4)
+        				{	
+        					return '<div class="label label-warning">&nbsp;&nbsp;&nbsp;&nbsp;</div>'
+        				}
+        				else if (data == 3)
+        				{	
+        					return '<div class="label label-wrong">&nbsp;&nbsp;&nbsp;&nbsp;</div>'
+        				}
+        				else if (data == 1)
+        				{	
+        					return '<div class="label label-info">&nbsp;&nbsp;&nbsp;&nbsp;</div>'
+        				}
+        				else
+        				{	
+        					return '<div class="label label-success">&nbsp;&nbsp;&nbsp;&nbsp;</div>'
+        				}
+        			}
+        		},
+        		{"data": "title"},
+        		{"data": "content", "render": function(data,type, row)
+        			{
+        				return data.slice(0,105) 
+        			}
+        		},
+        		{"data": "source", "render": function(data,type, row)
+        			{
+        				if (data == 'sla')
+        				{
+        					return '{% trans "服務水準"%}'
+        				}
+        				else if (data == 'schedule')
+        				{
+        					return '{% trans "定期檢查"%}'
+        				}
+        				else if (data == 'policy')
+        				{
+        					return '{% trans "資料收集"%}'
+        				}
+        			}
+        		},
+        		{"data": "createtime", "render": function(data,type, row)
+        			{
+        				return data.slice(0,-7) 
+        			}
+        		},
+        		{"data": "id", "render": function(data,type, row)
+        			{ 
+        				return '<button class="btn btn-xs btn-default" onclick="event_view(\''+data+'\')">{% trans '檢視'%}</button>'
+        			}
+        		}
+        	],
+        	drawCallback: function() {
+        		$.each(event_view_checkbox_status, function(){
+					$('.table input[type="checkbox"]#'+this).prop('checked', true);
+				});
+        	},
+			preDrawCallback: function(settings) {
+    			event_view_checkbox_status = []
+    			$.each($('.table input[type="checkbox"]'), function(){
+    				if (this.checked)
+    				{	
+    					event_view_checkbox_status.push(this.id)
+    				}
+    			});
+    		} 
+    	})
+    	list_incident();
+    	load_group_list();
+    	$('#event_level').select2({placeholder: "{% trans '燈號'%}"});
+    	$('#event_impact').select2({placeholder: "{% trans '影響性'%}"});
+    	$('#event_urgency').select2({placeholder: "{% trans '緊急性'%}"});
+    	$('#event_priority').select2({placeholder: "{% trans '優先等級'%}"});
+    });
+    
+    
+    function list_incident()
+    {
+    	omflowJsonAjax({}, '{% url "loadIncidentRuleAjax" %}', callback)
+    	
+    	
+    	function callback(data)
+    	{
+    		event = JSON.parse(data.result);
+	    	if (event.event_count == undefined)
+			{
+				event_count = 0;
+			}
+			else
+			{
+				event_count = event.event_count;
+			}
+			if(event.event_result != undefined)
+			{
+				event.event_result.forEach(function(item){
+					var thisid = item.event_id.substring(6)
+					$('#event_table tbody').append('<tr id="event_tr_event_'+thisid+'"><td width="4%" style="vertical-align:middle;"><span class="fa fa-arrows-v"></span></td>'
+												+'<td><input type="checkbox" class="icheckbox_minimal-blue" data-value="'+item.event_name+'" id="event_'+thisid+'" onchange="enablebtt()"><label for="event_'+thisid+'"></label></td>'
+												+'<td>'+item.event_name+'</td>'
+												+'<td>'+item.title+'</td>'
+												+'<td>'+item.content+'</td>'
+												+'<td><button class="btn btn-xs btn-default" data-id="event_'+thisid+'" onclick="event_edit(\'update\', this)">{% trans "編輯"%}</button></td>'
+												+'</tr>')
+				});
+				$('#event_level').select2({placeholder: "{% trans '嚴重等級'%}"});
+			}
+		}
+    }
+	
+	
+	var event_result_count = 1;
+	function event_edit(action, obj)
+	{
+		event_result_count = 1;
+		if(action == 'create')
+		{
+			
+			$('#modal-event-result .modal-title').empty().append('<i class="fa fa-plus"></i>&nbsp;&nbsp;{% trans "新增事故規則"%}')
+			$('#event_name').val('');
+			$('#event_content').val('');
+			$('#event_title').val('');
+			$('#event_app').val('');
+			$('#event_type').val('');
+			$('#event_time').val('');
+			$('#event_freq').val('');
+			$('#event_unit').val('sec').trigger('change')
+			$('#event_priority').val(4).trigger('change')
+			$('#event_impact').val(4).trigger('change')
+			$('#event_urgency').val(4).trigger('change')
+			$('#event_level').val('red').trigger('change')
+			$('#event_group').val(null).trigger('change')
+			$('#event_user').val('').trigger('change')
+			$('#event_result_list').empty();
+			event_result_add();
+			event_count++;
+			$('#modal-event-result').modal('show');
+			
+			$('#modal-event-result_check').off('click').on('click', event_check);
+		}
+		else if(action == 'update')
+		{
+			$('#modal-event-result .modal-title').empty().append('<i class="fa fa-edit"></i>&nbsp;&nbsp;{% trans "編輯事故規則"%}')
+			$('#event_result_list').empty()
+			event['event_result'].forEach(function(item){
+				if (item.event_id == $(obj).data('id'))
+				{
+					$('#event_name').val(item.event_name);
+					$('#event_time').val(item.event_time);
+					$('#event_freq').val(item.event_freq);
+					$('#event_unit').val(item.event_unit).trigger('change');
+					$('#event_level').val(item.critical).trigger('change');
+					$('#event_impact').val(item.impact).trigger('change');
+					$('#event_urgency').val(item.urgency).trigger('change');
+					$('#event_priority').val(item.priority).trigger('change');
+					$('#event_group').val(item.group).trigger('change');
+					$('#event_user').val(item.user).trigger('change');
+					$('#event_content').val(item.content);
+					$('#event_title').val(item.title);
+					$('#event_app').val(item.application);
+					$('#event_type').val(item.type);
+					$.each(item.event_result_compare, function(index, value){
+						event_result_add();
+						var thiscount = event_result_count - 1;
+						$('#event_result_switch_'+thiscount).val(value['switch_'+thiscount]).trigger('change');
+						$('#event_result_output_'+thiscount).val(value['output_'+thiscount]).trigger('change');
+						$('#event_result_rule_'+thiscount).val(value['rule_'+thiscount]).trigger('change');
+						$('#event_result_value_'+thiscount).val(value['value_'+thiscount]);
+					});
+				}
+			});
+			$('#modal-event-result').modal('show');
+			
+			$('#modal-event-result_check').off('click').on('click', event_check);
+		}
+		else if(action == 'delete')
+		{
+			omflowListDialogue('delete', '{% trans "刪除下列規則"%}', event_check)
+		}
+		
+		function event_check()
+		{
+			if(action == 'create')
+			{
+				var event_result_compare = [];
+				var i = 1;
+				$.each($('#event_result_list li'), function(){
+					var thisid = this.id.substring(21)
+					var compare = {}
+					compare['switch_'+i] = $('#event_result_switch_'+thisid).val();
+					compare['output_'+i] = $('#event_result_output_'+thisid).val();
+					compare['rule_'+i]   = $('#event_result_rule_'+thisid).val();
+					compare['value_'+i]  = $('#event_result_value_'+thisid).val();
+					event_result_compare.push(compare);
+					i++
+				});
+				
+				event['event_count'] = event_count;
+				if (event['event_result'] == undefined)
+				{ 
+					event['event_result'] = [] 
+				}
+				event['event_result'].push({
+					'event_id'		: 'event_'+event_count,
+					'event_name' 	: $('#event_name').val(),
+					'event_time' 	: $('#event_time').val(),
+					'event_unit' 	: $('#event_unit').val(),
+					'event_freq'	: $('#event_freq').val(),
+					'critical' 		: $('#event_level').val(),
+					'impact' 		: $('#event_impact').val(),
+					'urgency' 		: $('#event_urgency').val(),
+					'priority' 		: $('#event_priority').val(),
+					'group' 		: $('#event_group').val(),
+					'user' 			: $('#event_user').val(),
+					'title' 		: $('#event_title').val(),
+					'content' 		: $('#event_content').val(),
+					'application' 	: $('#event_app').val(),
+					'type' 			: $('#event_type').val(),
+					'event_result_compare'	: event_result_compare
+				});
+				
+				$('#event_table tbody').append('<tr id="event_tr_event_'+event_count+'"><td width="4%" style="vertical-align:middle;"><span class="fa fa-arrows-v"></span></td>'
+											+'<td><input type="checkbox" class="icheckbox_minimal-blue" data-value="'+$('#event_name').val()+'" id="event_'+event_count+'" onchange="enablebtt()"><label for="event_'+event_count+'"></label></td>'
+											+'<td>'+$('#event_name').val()+'</td>'
+											+'<td>'+$('#event_title').val()+'</td>'
+											+'<td>'+$('#event_content').val()+'</td>'
+											+'<td><button class="btn btn-xs btn-default" data-id="event_'+event_count+'" onclick="event_edit(\'update\', this)">{% trans '編輯'%}</button></td>'
+											+'</tr>')
+				$('#modal-event-result').modal('hide');
+			}	
+			else if(action == 'update')
+			{
+				var update_id = $(obj).data('id')
+				var event_result_compare = [];
+				var i = 1;
+				$.each($('#event_result_list li'), function(){
+					var thisid = this.id.substring(21)
+					var compare = {}
+					compare['switch_'+i] = $('#event_result_switch_'+thisid).val();
+					compare['output_'+i] = $('#event_result_output_'+thisid).val();
+					compare['rule_'+i] 	 = $('#event_result_rule_'+thisid).val();
+					compare['value_'+i]  = $('#event_result_value_'+thisid).val();
+					event_result_compare.push(compare);
+					i++
+				});
+				
+				event['event_result'].forEach(function(item, index){
+					if (item.event_id == update_id)
+					{
+						event['event_result'][index]['event_name'] 	= $('#event_name').val();
+						event['event_result'][index]['event_time'] 	= $('#event_time').val();
+						event['event_result'][index]['event_unit'] 	= $('#event_unit').val();
+						event['event_result'][index]['event_freq'] 	= $('#event_freq').val();
+						event['event_result'][index]['critical'] 	= $('#event_level').val();
+						event['event_result'][index]['impact'] 		= $('#event_impact').val();
+						event['event_result'][index]['urgency'] 	= $('#event_urgency').val();
+						event['event_result'][index]['priority'] 	= $('#event_priority').val();
+						event['event_result'][index]['group'] 		= $('#event_group').val();
+						event['event_result'][index]['user'] 		= $('#event_user').val();
+						event['event_result'][index]['title'] 		= $('#event_title').val();
+						event['event_result'][index]['content'] 	= $('#event_content').val();
+						event['event_result'][index]['application'] = $('#event_app').val();
+						event['event_result'][index]['type'] 		= $('#event_type').val();
+						event['event_result'][index]['event_result_compare'] = event_result_compare;
+						
+						$('#event_tr_'+update_id).html('<td width="4%" style="vertical-align:middle;"><span class="fa fa-arrows-v"></span></td>'
+											+'<td><input type="checkbox" class="icheckbox_minimal-blue" data-value="'+$('#event_name').val()+'" id="event_'+update_id+'"><label for="event_'+update_id+'"></label></td>'
+											+'<td>'+$('#event_name').val()+'</td>'
+											+'<td>'+$('#event_title').val()+'</td>'
+											+'<td>'+$('#event_content').val()+'</td>'
+											+'<td><button class="btn btn-xs btn-default" data-id="'+update_id+'" onclick="event_edit(\'update\', this)">{% trans '編輯'%}</button></td>')
+					}
+				});
+				
+				$('#modal-event-result').modal('hide');
+			
+			}
+			else if(action == 'delete')
+			{
+				var delete_lst = []
+				$.each($('#event_table input:checkbox:checked'), function(checkbox_index, checkbox_value){
+					event['event_result'].forEach(function(result_item, result_index){
+						if (result_item.event_id == checkbox_value.id)
+						{
+							event['event_result'].splice(result_index, 1);
+							$('#event_tr_'+result_item.event_id).remove();
+						}
+					});
+				});
+			}
+		}
+	}
+	
+	
+	function event_result_add()
+	{
+		if ($('#event_result_list li').length == 0)
+		{
+			$('#event_result_list').append('<li id="event_result_compare_'+event_result_count+'" class="ui-state-default" style="margin: 0 0 0 0;height:30px;">'
+				  +'<table width="100%">'
+				    +'<tr>'
+					  +'<td width="4%" style="vertical-align:middle;"></td>'
+					  +'<td width="10%"><input type="text" class="form-control" disabled="disabled"></td>'
+					  +'<td width="20%"><select id="event_result_output_'+event_result_count+'" class="form-control select2" style="width:100%"><option value="title">{% trans '欄位'%}:{% trans '標題'%}</option><option value="content">{% trans '欄位'%}:{% trans '內文'%}</option><option value="critical">{% trans '欄位'%}:{% trans '嚴重等級'%}</option><option value="source">{% trans '欄位'%}:{% trans '來源'%}</option><option value="node">{% trans '欄位'%}:{% trans '收集器'%}</option><option value="application">{% trans '欄位'%}:{% trans '應用程式'%}</option><option value="type">{% trans '欄位'%}:{% trans '分類'%}</option></select></select></td>'
+					  +'<td width="30%"><select id="event_result_rule_'+event_result_count+'" class="form-control select2" style="width:100%"><option>></option><option>>=</option><option>=</option><option><=</option><option><</option><option>!=</option><option value="include">{% trans '包含'%}</option><option value="exclude">{% trans '不包含'%}</option></select></td>'
+					  +'<td width="30%"><input id="event_result_value_'+event_result_count+'" type="text" class="form-control" placeholder="{% trans '值'%}"></input></td>'
+					  +'<td width="6%" align="right" style="color:silver;"></td>'
+					+'</tr>'
+				  +'</table>'
+				+'</li>');
+		}
+		else
+		{
+			$('#event_result_list').append('<li id="event_result_compare_'+event_result_count+'" class="ui-state-default" style="margin: 0 0 0 0;height:30px;">'
+				  +'<table width="100%">'
+				    +'<tr>'
+					  +'<td width="4%" style="vertical-align:middle;"><span class="fa fa-arrows-v"></span></td>'
+					  +'<td width="10%"><select id="event_result_switch_'+event_result_count+'" class="form-control select2" style="width:100%"><option value="and">{% trans '且'%}</option><option value="or">{%　trans '或'%}</option></select></td>'
+					  +'<td width="20%"><select id="event_result_output_'+event_result_count+'" class="form-control select2" style="width:100%"><option value="title">{% trans '欄位'%}:{% trans '標題'%}</option><option value="content">{% trans '欄位'%}:{% trans '內文'%}</option><option value="critical">{% trans '欄位'%}:{% trans '嚴重等級'%}</option><option value="source">{% trans '欄位'%}:{% trans '來源'%}</option><option value="node">{% trans '欄位'%}:{% trans '收集器'%}</option><option value="application">{% trans '欄位'%}:{% trans '應用程式'%}</option><option value="type">{% trans '欄位'%}:{% trans '分類'%}</option></select></td>'
+					  +'<td width="30%"><select id="event_result_rule_'+event_result_count+'" class="form-control select2" style="width:100%"><option>></option><option>>=</option><option>=</option><option><=</option><option><</option><option>!=</option><option value="include">{% trans '包含'%}</option><option value="exclude">{% trans '不包含'%}</option></select></td>'
+					  +'<td width="30%"><input id="event_result_value_'+event_result_count+'" type="text" class="form-control" placeholder="{% trans '值'%}"></input></td>'
+					  +'<td width="6%" align="right" style="color:silver;"><i class="far fa-trash-alt" onclick="event_result_delete('+event_result_count+')" ></i></td>'
+					+'</tr>'
+				  +'</table>'
+				+'</li>');
+			$('#event_result_switch_'+event_result_count).select2();
+		}
+		$('#event_result_output_'+event_result_count).select2({placeholder: "{% trans '輸出結果'%}"});
+		$('#event_result_rule_'+event_result_count).select2();
+		$('#event_result_list').sortable({
+			items:  'li:not(#event_result_compare_1)'
+		});
+		event_result_count ++;
+	}
+	
+	
+	function event_result_delete(count)
+	{
+		$('#event_result_compare_'+count).remove();
+	}
+	
+	
+	function load_group_list()
+	{
+		var grouplist=[];
+		var postbody = {'functional_flag': 'False', 'ad_flag': ['1', '0']};
+		$.ajax({
+			url	: '{% url 'listGroupAjax' %}',
+			type: 'post',
+			headers: { "X-CSRFToken": csrfmiddlewaretoken },
+	        data: JSON.stringify(postbody),
+	        async:false,
+	        dataType: 'json',
+	        contentType: "application/json;charset=utf-8;",
+	        success: function (data) {
+	            callback(data)
+	        },
+	        error: function(req, status, err) {
+				$('#modal_error').modal('show');
+	        	console.log('Something went wrong', status, err);
+	    	}
+		});
+		function callback(data)
+		{
+			if (data.status == 200)
+			{
+				var grouplist = data.result;
+				var option = []
+				var output = '';
+				grouplist.forEach( function(option_item){
+					if(option_item.parent_group == null)
+					{
+						option.push({'id': option_item.id, 'value':option_item.id, 'text': option_item.display_name, 'parent': null, 'level': 1 ,'nonleaf': 'non-leaf'})
+					}
+					else
+					{
+						var new_class = 0;
+						var parent_id = '';
+						option.forEach(function(parent_item)
+						{
+							if(parent_item.id == option_item.parent_group)
+							{
+								new_class = parent_item.level + 1;
+								parent_id = parent_item.id;
+							}
+						});
+						var nonleaf = '';
+						grouplist.forEach(function(find_item)
+						{
+							if(find_item.parent_group == option_item.id)
+							{
+								nonleaf = 'non-leaf';
+							}
+						});
+						option.push({'id': option_item.id, 'value':option_item.id,'text': option_item.display_name , 'parent_group': option_item.parent_group ,'parent':parent_id, 'level':new_class,'nonleaf':nonleaf });
+						
+					}
+				});
+				option.forEach(function (group_item){
+					if (group_item.parent==null)
+					{
+						output += '<option value="' + group_item.id + '" class="l' + group_item.level + ' ' + group_item.nonleaf + '" >' + group_item.text + '</option><!--' + group_item.value + '-->';
+					}
+					else
+					{
+						output = output.replace('<!--' + group_item.parent + '-->','<option value="' + group_item.id + '" data-pup="' + group_item.parent + '" class="l' + group_item.level + ' ' + group_item.nonleaf + '" >' + group_item.text + '</option><!--' + group_item.value + '--><!--' + group_item.parent + '-->'); 
+					}
+				});
+				$('#event_group').change(function(){
+					load_user_list($(this).val());
+				});
+				$('#event_group').html(output).val(null).trigger('change');
+				$('#event_group').select2ToTree({placeholder: "{% trans '受派組織'%}"}); 
+				
+			}
+		}
+	}
+	
+	
+	function load_user_list(group_id)
+	{
+		var postdata = {searchkey: group_id}
+		
+		$.ajax({
+			url	: '{% url 'searchGroupUserAjax' %}',
+			type: 'post',
+			headers: { "X-CSRFToken": csrfmiddlewaretoken },
+	        data: JSON.stringify(postdata),
+	        async:false,
+	        dataType: 'json',
+	        contentType: "application/json;charset=utf-8;",
+	        success: function (data) {
+	            callback(data)
+	        },
+	        error: function(req, status, err) {
+				$('#modal_error').modal('show');
+	        	console.log('Something went wrong', status, err);
+	    	}
+		});
+		function callback(data)
+		{
+			if (data.status == 200)
+			{
+				if (group_id != null)
+				{
+					var userlist = data.result;
+					var output = '';
+					userlist.forEach(function(item){
+						output += '<option value="'+item.id+'">'+item.nick_name+'</option>'
+					});
+				}
+				$('#event_user').html(output).val(null).trigger('change');
+				$('#event_user').select2ToTree({placeholder: "{% trans '受派人'%}", language: {noResults: function (params) {return " "}}}); 
+			}
+			else
+			{
+				actions(data)
+			}
+		}
+	}
+	
+	
+	function rule_save()
+	{
+		var postbody = {rule:  JSON.stringify(event)}
+		omflowJsonAjax(postbody, '{% url "editIncidentRuleAjax" %}', actions);
+		Swal.fire({
+		  title: '{% trans '處理中'%}...',
+		  toast: true,
+		  position: 'bottom-start',
+		  showConfirmButton: false,
+		});
+		Swal.showLoading() ;
+	}
+	
+	
+	function event_view(event_id)
+	{
+		$('#modal-event-view').modal('show')
+		event_view_data_tmp.forEach(function(item){
+			if (item.id == event_id)
+			{
+				$('#event_title_view').val(item.title);
+				$('#event_content_view').val(item.content);
+				$('#event_level_view').val(item.critical).trigger('change');
+				$('#event_app_view').val(item.application);
+				$('#event_type_view').val(item.type);
+				$('#event_time_view').val(item.createtime.slice(0,-7));
+				$('#event_source_view').val(source_trans(item.source, unescapeHtml(item.source2)));
+			}
+		});
+	}
+	
+	
+	function source_trans(source, source2)
+	{
+		var result = ''
+		if (source == 'sla')
+		{
+			var myRe = /(.+)<(.*)><(.*)><(.*)>/g;
+			source2 = myRe.exec(source2);
+			result = '{% trans "類型"%}'+' : '+'{% trans "服務水準"%}'+'\r\n'
+					+'{% trans "名稱"%}'+' : '+source2[1]+'\r\n'
+					+'{% trans "應用"%}'+' : '+source2[2]+'\r\n'
+					+'{% trans "流程"%}'+' : '+source2[3]+'\r\n'
+					+'{% trans "單號"%}'+' : '+paddingLeft(source2[4],8)+'\r\n'
+					
+		}
+		else if (source == 'schedule')
+		{
+			result = '{% trans "類型"%}'+' : '+'{% trans "系統定期檢查"%}'+'\r\n'
+					+'{% trans "名稱"%}'+' : '+'{% trans "收集器狀態檢查"%}'+'\r\n'
+		}
+		else if (source == 'policy')
+		{
+			var myRe = /(.+)<(.*)><(.*)><(.*)>/g;
+			source2 = myRe.exec(source2);
+			result = '{% trans "類型"%}'+' : '+'{% trans "服務水準"%}'+'\r\n'
+					+'{% trans "流程"%}'+' : '+source2[1]+'\r\n'
+					+'{% trans "事件"%}'+' : '+source2[2]+'\r\n'
+					+'{% trans "收集器"%}'+' : '+source2[3]+'\r\n'
+		}
+		return result
+	}
+	
+	
+	function actions(data)
+	{
+		Swal.close();
+		if(data.status == 200)
+		{
+			LSide();
+			Swal.fire({
+	      	  icon : 'success',
+	      	  title: '{% trans "成功"%}',
+	      	  toast: true,
+		  	  position: 'bottom-start',
+		  	  showConfirmButton: false,
+	      	  timer: 2000,
+  		    });
+		}	
+		else if (data.status == 404)
+		{
+			omflowAlert('yellow', data.message);
+		}
+		else if (data.status == 500)
+		{
+			omflowAlert('blue', data.message);
+		}
+		else if (data.status == 403)
+		{
+			omflowAlert('red', data.message);
+		}
+	}
+	
+	
+	function filter_event()
+    {
+    	omflowFilter(['filter_search','filter_closed','filter_length']);
+    	$('#modal-default-filter-confirm').off("click").on("click",function(){
+    		is_closed = [];
+			var searchkey = $.trim($('#modal-default-filter #search').val());
+			var page_length = $('#modal-default-filter #page_length').val();
+			$.each($('[name="filter_closed"] input:checkbox:checked'), function(){
+				is_closed.push($(this).data('value'));
+			});
+			event_view_table.page.len(page_length);
+			event_view_table.search(searchkey).draw();
+		});
+    }
+    
+    function filter_default(){
+		is_closed = ['0'];
+    	event_view_table.page.len(10);
+		event_view_table.search('');
+    	event_view_table.draw(false);
+    }
+	
+	
+	var table_routine = setInterval(function(){event_view_table.draw(false);}, {{user.frequency}}*1000);
+	
+	</script>
+{% endblock %}

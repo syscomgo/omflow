@@ -1,0 +1,365 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %} 
+{% block content %}
+<!-- 
+	node_groups_manage.html
+	author : Pei lin
+-->
+	
+	<!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+       	 {% trans ' 收集器管理'%}
+        <small>{% trans ' 群組列表'%}</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i>{% trans '  首頁'%}</a></li>
+		<li>{% trans ' 資料收集'%}</li>
+        <li class="active"><a href="/monitor/page/nodeGroupsManagePage/">{% trans '  收集器管理'%}</a></li>
+      </ol>
+    </section>
+    <section class="content">
+      <div class="row">
+      	<div class="col-xs-12">
+      	  <div class="box box-primary">
+      	    <div class="box-header with-border">
+      	      <div class="pull-left">
+      	        <button type="button" class="btn btn-default" onclick="node_group_edit('create')" style="margin:1px 0px;"><i class="fa fa-plus"></i> {% trans '新增'%}</button>
+			    <button type="button" class="btn btn-default" onclick="node_group_edit('delete')" id="delete_node_group" disabled="disabled" style="margin:1px 0px;"><i class="fa fa-trash-o"></i> {% trans '刪除'%}</button>
+			    <button type="button" class="btn btn-default" onclick="filter_node_group()" style="margin:1px 0px;"><i class="fa fa-filter"></i> {% trans '篩選'%}</button>
+                <button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default" onclick="filter_default()" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
+              </div>
+      	    </div>
+      	    <!-- box-header -->
+      	    <div class="box-body">
+      	      <table id="node_group_table" class="table table-bordered table-striped table-hover">
+      	      	<col width="3%"></col>
+      	      	<col width="8%"></col>
+      	      	<col width="50%"></col>
+      	      	<col width="22%"></col>
+				<thead>
+				  <tr>
+					<th style="width:15px"><a><i class="fa fa-lg fa-check-square-o checkbox-toggle" style="color:SteelBlue"></i></a></th>
+					<th>{% trans '燈號'%}</th>
+					<th>{% trans '名稱'%}</th>
+					<th>{% trans '說明'%}</th>
+					<th></th>
+				  </tr>
+				</thead>
+				<tbody>
+				</tbody>
+			  </table>
+      	    </div>
+			<!-- box-body -->
+      	  </div>
+      	  <!-- box -->
+      	</div>
+      	<!-- col -->
+      </div>
+      <!-- row -->
+    </section>
+    
+    <div class="modal fade" id="modal-node-group-creat" data-backdrop="static">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title"><i class="fa fa-plus"></i>&nbsp;&nbsp;{%trans '建立群組'%}</h4>
+		  </div>
+		  <div class="modal-body">
+		    <!-- /.form-group -->
+            <div class="form-group">
+          	  <label>{% trans '群組名稱' %}</label>
+          	  <input type="text" name="node_group_name" class="form-control" placeholder="{%trans '群組名稱'%}"/>
+            </div>
+            <!-- /.form-group -->
+            <div class="form-group">
+          	  <label>{% trans '說明' %}</label>
+          	  <input type="text" name="description" class="form-control" placeholder="{%trans '說明'%}"/>
+            </div>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">{%trans '取消'%}</button>
+			<button type="button" class="btn btn-primary" data-dismiss="modal" id="modal_node_group_submit">{%trans '確定'%}</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+    
+    
+	<style>
+		table tbody tr{
+		  cursor:pointer;
+		}
+	</style>
+	<script>
+	var csrfmiddlewaretoken="{{ csrf_token }}";
+    var table ;
+    var date = new Date();
+    var textFile = null; //設計檔案
+    var input_file;
+    var data_tmp;
+	var data_len;
+	var data_page;
+	var checkbox_status = [];
+	date.setDate(date.getDate() + 1);
+	select_time = date.getFullYear() +'-'+(date.getMonth()+1)+'-'+date.getDate();
+    $(function () {
+		table = $('#node_groups_table').DataTable({
+			"autoWidth": false,
+			"dom":"<<t>'row'<'col-sm-5'i><'col-sm-7'p>>",
+			"language": __const_language__,
+			rowCallback: function( row, data ) {
+			      $('td:not(:eq(0), :last)', row).attr('onclick', 'javascript:location.href="/monitor/page/nodeListManagePage/nogroup/"')
+			}
+		});
+		table = $('#node_group_table').DataTable({
+			"autoWidth": false,
+			"order": [[ 4, "asc" ]], 
+			"ordering":false,
+			"dom":"<<t>'row'<'col-sm-5'i><'col-sm-7'p>>",
+			"language": __const_language__,
+			"serverSide": true,							//	serverside data loading
+			"deferRender": true,
+			"processing": true,
+			"ajax": {
+           		"url": "{% url 'listCollectorGroupAjax' %}",
+            	"type": "POST",
+            	"headers": { "X-CSRFToken": csrfmiddlewaretoken },
+				"contentType": "application/json;charset=utf-8;",
+            	"data": function ( d ) {
+							return JSON.stringify($.extend( {}, d, {
+								csrfmiddlewaretoken: csrfmiddlewaretoken, 
+								datatable: 'True'
+							}));
+						},
+				"dataSrc": function(data){
+						a = dataCompare(data,data_tmp,data_len,data_page,table);
+						data_tmp = a['data_tmp']
+						data_len = a['data_len']
+						data_page = a['data_page']
+						data.data = a['data.data']
+						return data.data;
+					},
+        	},   
+			"columns":[
+				{"width": "15px", "data": "id", "orderable": false, "render": function (data, type, row)
+                	{
+                		if (data == 1 | data == 2)
+                		{
+                			return ''
+                		}
+                		else
+                		{
+                			return '<input type="checkbox" class="icheckbox_minimal-blue" value="'+data+'" data-value="'+row.name+'" id="group_'+data+'"><label for=group_'+data+'></label>'
+                		}
+                	}
+                },
+                {"data": "level", "orderable": false, "render": function(data, type, row)
+                	{
+                		if (data == 5)
+	        				{	
+	        					return '<div class="label label-danger">&nbsp;&nbsp;&nbsp;&nbsp;</div>'
+	        				}
+	        				else if (data == 4)
+	        				{	
+	        					return '<div class="label label-warning">&nbsp;&nbsp;&nbsp;&nbsp;</div>'
+	        				}
+	        				else if (data == 3)
+	        				{	
+	        					return '<div class="label label-wrong">&nbsp;&nbsp;&nbsp;&nbsp;</div>'
+	        				}
+	        				else if (data == 1)
+	        				{	
+								return '<div class="label label-success">&nbsp;&nbsp;&nbsp;&nbsp;</div>'	        					
+	        				}
+	        				else
+	        				{	
+	        					return '<div class="label label-info">&nbsp;&nbsp;&nbsp;&nbsp;</div>'
+	        				}
+                	}
+                },
+				{"data": "name"},
+				{"data": "description"},
+				{"data": "id","width": "150px", "render": function(data)
+					{
+						return '<button class="btn btn-xs btn-default" data-id="'+data+'" onclick="node_group_edit(\'update\', this)">{% trans '設定'%}</button> <button class="btn btn-xs btn-default" onclick="location.href=\'/monitor/page/parameterPage/'+data+'/\'">{% trans '參數'%}</button'
+					}
+				},
+			],
+			rowCallback: function( row, data ) {
+				$('td:not(:eq(0), :last)', row).attr('onclick', 'javascript:location.href="/monitor/page/nodeListManagePage/'+data.id+'/"')
+			},
+			drawCallback: function(){
+				omflowCheckAll()
+				$('.table input[type="checkbox"]').change(function(){
+			    	enablebtt();
+			    });
+			    $.each(checkbox_status, function(){
+					$('.table input[type="checkbox"]#'+this).prop('checked', true);
+				});
+			},
+			preDrawCallback: function(settings) {
+    			checkbox_status = []
+    			$.each($('.table input[type="checkbox"]'), function(){
+    				if (this.checked)
+    				{	
+    					checkbox_status.push(this.id)
+    				}
+    			});
+    		} 
+		});
+	});
+	
+	
+	function enablebtt()
+	{
+		var count = $('.table input:checkbox:checked').length;
+    	if (count == 0)
+    	{
+    		$('#delete_node_group,').prop('disabled', 'disabled');
+    	}
+    	else if (count == 1)
+    	{
+    		$('#delete_node_group').prop('disabled', '');
+    	}
+    	else
+    	{
+    		$('#delete_node_group').prop('disabled', '');
+    	} 
+	}
+		
+		
+	function node_group_edit(action, obj)
+	{
+		$('input[name="node_group_name"], input[name="description"]').val('');
+		if (action == 'create')
+		{
+			$('#modal-node-group-creat .modal-title').empty().append('<i class="fa fa-plus"></i>&nbsp;&nbsp;{% trans '新增群組'%}');
+			$('#modal-node-group-creat').modal('show');
+		}
+		else if (action == 'update')
+		{
+			$('input[name="node_group_name"]').val($(obj).parent().siblings(':eq(2)').text()) 
+			$('input[name="description"]').val($(obj).parent().siblings(':eq(3)').text())
+			$('#modal-node-group-creat .modal-title').empty().append('<i class="fa fa-edit"></i>&nbsp;&nbsp;{% trans '編輯群組'%}');
+			$('#modal-node-group-creat').modal('show');
+		}
+		else if (action == 'delete')
+		{	
+			omflowListDialogue('delete', '{% trans '刪除下列群組'%}', node_group_submit);
+		}	
+		
+		$('#modal_node_group_submit').off('click').on('click', node_group_submit)
+		
+		function node_group_submit()
+		{
+			if (action == 'create' | action == 'update')
+			{
+				var postdata = {
+					name: $('input[name="node_group_name"]').val(),
+					description: $('input[name="description"]').val(),
+			 	}
+			 	if(action == 'create')
+				{
+					omflowJsonAjax(postdata, '{% url 'createCollectorGroupAjax' %}', actions)
+					Swal.fire({
+					  title: '{% trans '處理中'%}...',
+					  toast: true,
+					  position: 'bottom-start',
+					  showConfirmButton: false,
+					});
+					Swal.showLoading();
+				}
+				else
+				{
+					postdata['id'] = $(obj).data('id')
+					omflowJsonAjax(postdata, '{% url 'updateCollectorGroupAjax' %}', actions)
+					Swal.fire({
+					  title: '{% trans '處理中'%}...',
+					  toast: true,
+					  position: 'bottom-start',
+					  showConfirmButton: false,
+					});
+					Swal.showLoading();
+				}
+				
+				$('#modal-node-group-creat').modal('hide');
+			}
+			else if (action == 'delete')
+			{
+				var delete_lst = []
+				$.each($('#node_group_table input:checkbox:checked'), function(){
+					delete_lst.push(this.value);
+				})
+				var postdata = {
+					id: delete_lst,
+				}
+				omflowJsonAjax(postdata, '{% url 'deleteCollectorGroupAjax' %}', actions)
+				Swal.fire({
+				  title: '{% trans '處理中'%}...',
+				  toast: true,
+				  position: 'bottom-start',
+				  showConfirmButton: false,
+				});
+				Swal.showLoading();
+			}
+			
+			 
+		}
+	}	
+		
+	
+	function filter_node_group(){
+		omflowFilter(['filter_search', 'filter_length']);
+		$('#modal-default-filter-confirm').off("click").on("click",function(){
+			var searchkey = $.trim($('#modal-default-filter #search').val());
+			var page_length = $('#modal-default-filter #page_length').val();
+			table.page.len(page_length);
+			table.search(searchkey).draw();
+		});
+	}
+	
+    function filter_default(){
+		table.page.len(10);
+		table.search('');
+    	table.draw(false)
+    }
+	
+	
+	function actions(data)
+	{
+		Swal.close();
+		if(data.status == 200)
+		{
+			LSide();
+			table.draw(false);
+			Swal.fire({
+	      	  icon : 'success',
+	      	  title: '{% trans '成功'%}',
+	      	  toast: true,
+		  	  position: 'bottom-start',
+		  	  showConfirmButton: false,
+	      	  timer: 2000,
+  		    });
+		}	
+		else if (data.status == 404)
+		{
+			omflowAlert('yellow', data.message);
+		}
+		else if (data.status == 500)
+		{
+			omflowAlert('blue', data.message);
+		}
+		else if (data.status == 403)
+		{
+			omflowAlert('red', data.message);
+		}
+	}
+	
+	var table_routine = setInterval(function(){table.draw(false);}, {{user.frequency}}*1000);
+	
+	</script>
+	
+{% endblock %}

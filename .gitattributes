@@ -2,3 +2,8 @@
 *.css linguist-language=Python
 *.js linguist-language=Python
 
+*.js linguist-detectable=false
+*.css linguist-detectable=false
+*.python linguist-detectable=true 
+*.html linguist-detectable=false  
+*.xml linguist-detectable=false 

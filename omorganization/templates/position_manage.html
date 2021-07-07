@@ -1,0 +1,283 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %} 
+{% block content %}
+<!-- 
+	position_manage.html positionManagePage
+	author : Pei lin
+-->
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        {% trans '職務管理' %}
+        <small></small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="{% url 'homePage' %}"><i class="fa fa-dashboard"></i>{% trans '首頁' %}</a></li>
+        <li><a href="#">{% trans '人員管理' %}</a></li>
+        <li><a href="/organization/page/position-management/">{% trans '職務管理' %}</a></li>
+      </ol>
+    </section>
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+       <!-- column -->
+        <div class="col-xs-12">
+	      <div class="box box-primary">
+	        <div class="box-header with-border">
+	          <!-- Check all button -->
+	          <button type="button" title="{% trans '新增職務' %}" class="btn btn-default" onclick="position_edit('create')" style="margin:1px 0px;" id="create_position"><i class="fa fa-plus"></i> {% trans '新增' %}</button>
+			  <button type="button" title="{% trans '刪除職務' %}" class="btn btn-default" onclick="position_edit('delete')" style="margin:1px 0px;" id="delete_position" disabled="true"><i class="fa fa-trash-o"></i> {% trans '刪除' %}</button>
+			  <button type="button" title="{% trans '篩選職務' %}" class="btn btn-default " onclick="filter_position()" id="filter_position" style="margin:1px 0px;"><i class="fa fa-filter"></i>{% trans ' 篩選' %}</button>
+			  <button type="button" title="{% trans '清除篩選條件' %}" class="btn btn-default " onclick="filter_default()" style="margin:1px 0px;"><i class="fa fa-undo"></i>{% trans ' 還原' %}</button>
+	        </div>
+	        <!-- /.box-header -->
+	        <div class="box-body">
+              <table id="position_table" class="table table-bordered table-striped table-hover">
+                <thead>
+                  <tr>
+                  	<th style="width:15px"><a><i class="fa fa-lg fa-check-square-o checkbox-toggle" style="color:SteelBlue"></i></a></th>
+                  	<th>{% trans '編號' %}</th>
+                  	<th>{% trans '職務名稱' %}</th>
+                  	<th>{% trans '說明' %}</th>
+                  	<th></th>
+	              </tr>
+                </thead>
+              </table>
+            </div>
+            <!-- /.box-body -->
+	      </div>
+	      <!-- /.box -->
+        </div>
+        <!--/.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    
+    
+    <!-- create-role-Modal -->
+	<div class="modal fade" id="modal-create-position" data-backdrop="static">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title"></h4>
+		  </div>
+		  <div class="modal-body">
+			  <div class="row">
+	            <div class="col-md-12">
+	              <div class="form-group">
+	              	<label>{%trans '職務名稱'%}</label>
+	              	<input type="text" name="position_name" id="position_name" class="form-control" placeholder="{%trans '職務名稱'%}" required="true"/>
+	              </div>
+	              <div class="form-group">
+	              	<label>{%trans '說明'%}</label>
+	              	<input type="text" name="position_description" id="position_description" class="form-control" placeholder="{%trans '說明'%}" required="true"/>
+	              </div>
+	              <!-- /.form-group -->
+	            </div>
+	            <!-- /.col -->
+	          </div>
+	          <!-- /.row -->
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">{% trans '取消'%}</button>
+			<button type="button" class="btn btn-primary" data-dismiss="modal" id="modal-create-position-submit">{% trans '確定'%}</button>
+		  </div>
+		</div>
+	  </div><!-- /.modal-content -->
+	</div>
+    
+    <script>
+    var csrfmiddlewaretoken = "{{ csrf_token }}"
+    var table;
+    var data_tmp;
+	var data_len;
+	var data_page;
+	var checkbox_status = [];
+    $(function(){
+    	table = $('#position_table').DataTable({
+    		"autoWidth": false,
+    		"order": [[ 1, "asc" ]], 
+    		"dom":"<<t>'row'<'col-sm-5'i><'col-sm-7'p>>",
+    		"serverSide": true,
+    		"ajax": {
+           		"url": "{% url 'listPositionAjax' %}",
+            	"type": "POST",
+            	"headers": { "X-CSRFToken": csrfmiddlewaretoken },
+				"contentType": "application/json;charset=utf-8;",
+            	"data":function ( d ) {
+					return JSON.stringify($.extend( {}, d, {
+						datatable: 'True'
+					}));
+				},
+            	"dataSrc": function(data){
+						a = dataCompare(data,data_tmp,data_len,data_page,table);
+						data_tmp = a['data_tmp']
+						data_len = a['data_len']
+						data_page = a['data_page']
+						data.data = a['data.data']
+						return data.data;
+					},
+        	}, 
+        	"columns": [
+        		{"data": "id", "width": "15px", "orderable": false, "render": function(data, type, row)
+        			{return '<input type="checkbox" data-name="checkbox" class="icheckbox_minimal-blue" id="'+data+'" data-value="'+row.display_name+'"><label for="'+data+'"></label>'}
+        		},
+        		{"data": "id", "width": "30px"},
+                {"data": "display_name", "width": "30%"},
+        		{"data": "description", "orderable": false},
+        		{"data": "id", "orderable": false, "render": function(data, type, row)
+        			{return '<button class="btn btn-xs btn-default" data-id="'+data+'" data-name="'+row.display_name+'" data-description="'+row.description+'" onclick="position_edit(\'update\', this)">{% trans '編輯'%}</button>'}
+        		},
+        	],
+        	"language": __const_language__,
+        	drawCallback: function (data) {
+        		$.each(checkbox_status, function(){
+					$('.table input[type="checkbox"]#'+this).prop('checked', true);
+				});
+    			check_permission();
+    			omflowCheckAll();
+    			$('.table input[type="checkbox"]').change(function(){
+			    	enablebtt();
+			    });
+    		},
+    		preDrawCallback: function(settings) {
+    			checkbox_status = []
+    			$.each($('.table input[type="checkbox"]'), function(){
+    				if (this.checked)
+    				{	
+    					checkbox_status.push(this.id)
+    				}
+    			});
+    		}
+    	});    
+    });
+    
+    function enablebtt()
+    {
+    	var count = $('.table input:checkbox:checked').length;
+    	if (count == 0)
+    	{
+    		$('#delete_position').prop('disabled', 'disabled');
+    	}
+    	else
+    	{
+    		$('#delete_position').prop('disabled', '');
+    	}
+    }
+    
+    function check_permission()
+    {
+    	{#如果沒OmGroup_Add權限，將隱藏新增角色按鈕#}
+      	{% if perms.omuser.OmGroup_Add %}
+			$('#create_position_button').show();
+		{% endif %}
+		{#如果沒OmGroup_Delete權限，將隱藏刪除角色按鈕#}
+		{% if perms.omuser.OmGroup_Delete %}
+			$('#delete_position_button').show();
+		{% endif %}
+    }
+    
+    function filter_position()		
+	{
+		omflowFilter(['filter_search','filter_length']);
+		$('#modal-default-filter-confirm').off("click").on("click",function(){
+			var searchkey = $.trim($('#modal-default-filter #search').val());
+			var page_length = $('#modal-default-filter #page_length').val();
+			table.page.len(page_length);
+			table.search(searchkey).draw();	
+		});
+	}
+	function filter_default()
+	{
+		table.page.len(10);
+		table.search('');
+		table.draw(false);
+	}
+	
+	function position_edit(action, obj)
+	{
+		if (action == 'create')
+		{
+			$('#modal-create-position .modal-title').html('<i class="fa fa-plus"></i>&nbsp;&nbsp;{% trans "新增職務"%}');
+			$('#position_name').val('');
+			$('#position_description').val('');
+			
+			$('#modal-create-position-submit').off('click').on('click', position_submit);
+			$('#modal-create-position').modal('show');
+		}
+		else if (action == 'update')
+		{
+			$('#modal-create-position .modal-title').html('<i class="fa fa-edit"></i>&nbsp;&nbsp;{% trans "編輯職務"%}');
+			$('#position_name').val($(obj).data('name'));
+			$('#position_description').val($(obj).data('description'));
+			
+			$('#modal-create-position-submit').off('click').on('click', position_submit);
+			$('#modal-create-position').modal('show');
+		}
+		else if (action == 'delete')
+		{
+			omflowListDialogue('delete', '{% trans "刪除職務" %}', position_submit);
+		}
+		
+		function position_submit()
+		{
+			if (action == 'create' | action == 'update')
+			{
+				var postdata = {
+					display_name		: $('#position_name').val(),
+					description	: $('#position_description').val(),
+				}	
+				
+				if (action == 'create')
+				{
+					omflowJsonAjax(postdata, '{% url "createPositionAjax"%}', actions);
+				}
+				else if (action == 'update')
+				{
+					postdata['id'] = $(obj).data('id');
+					omflowJsonAjax(postdata, '{% url "updatePositionAjax"%}', actions);
+				}		
+				$('#modal-create-position').modal('hide');	
+			}
+			else if (action == 'delete')
+			{
+				var position_id_list = [];
+				$.each($('#position_table input[type="checkbox"]:checked'), function(){
+					position_id_list.push(this.id)
+				});
+				var postdata = {
+					id		: position_id_list
+				}	
+				omflowJsonAjax(postdata, '{% url "deletePositionAjax"%}', actions);
+			}
+		}
+	}
+	
+	
+	function actions(data)
+	{
+		Swal.close();
+		if(data.status == 200)
+		{	
+			table.draw(false);
+			Swal.fire({
+	      	  icon : 'success',
+	      	  title: data.message,
+	      	  toast: true,
+		  	  position: 'bottom-start',
+		  	  showConfirmButton: false,
+	      	  timer: 2000,
+  		    });
+		}	
+		else
+		{	
+			omflowAlert('yellow', data.message);
+		}
+	}
+	var table_routine = setInterval(function(){ table.draw(false);}, {{user.frequency}}*1000);
+    </script>
+
+{% endblock %}

@@ -18,10 +18,15 @@ from omflow import views
 from django.urls.conf import include
 from django.conf.urls import url
 from django.views.i18n import JavaScriptCatalog
+from django.conf.urls.static import static
+from django.conf import settings
+#from django.contrib import admin
+#from django.contrib.staticfiles.urls import staticfiles_urlpatterns  #for active static files
+
 
 urlpatterns = [
     url(r'^announcement/', include('ommessage.urls')),
-    url(r'^accounts/', include('omuser.urls')),
+    url(r'accounts/', include('omuser.urls')),
     url(r'^flowmanage/', include('omformflow.urls')),
     url(r'^dashboard/', include('omdashboard.urls')),
     url(r'^service/', include('omservice.urls')),
@@ -53,3 +58,5 @@ urlpatterns = [
     #default
     #path('admin/', admin.site.urls),
 ]
+urlpatterns  +=  static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+#urlpatterns += staticfiles_urlpatterns()   #for active static files
